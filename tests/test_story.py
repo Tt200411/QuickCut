@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from quickcut.story import build_basic_vlog, write_story
 from quickcut.types import IndexManifest, Shot
-from quickcut.vlm import plan_story
+from quickcut.vlm import plan_story, plan_with_ollama
 
 
 def make_manifest() -> IndexManifest:
@@ -34,3 +34,29 @@ def test_basic_story_plan_uses_transcript_and_keeps_editable_timeline():
 def test_deterministic_vlm_mode_is_noop_without_local_ollama():
     plan = plan_story(make_manifest(), "a quiet journey", mode="deterministic")
     assert plan == {}
+
+
+def test_ollama_plan_normalizes_partial_json(monkeypatch):
+    class Response:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def read(self):
+            return b'{"response": {"beats": [{"text": "A grounded opening"}]}}'
+
+    monkeypatch.setattr("quickcut.vlm._open_ollama", lambda request, timeout, base_url: Response())
+    plan = plan_with_ollama(make_manifest(), "a quiet journey", timeout=1)
+    assert plan["narration"]
+    assert plan["theme"] == "a quiet journey"
+    assert plan["beats"][0]["source"] == "source"
+
+
+def test_auto_planner_falls_back_when_ollama_is_unavailable(monkeypatch):
+    def fail(*args, **kwargs):
+        raise RuntimeError("offline")
+
+    monkeypatch.setattr("quickcut.vlm.plan_with_ollama", fail)
+    assert plan_story(make_manifest(), "a quiet journey", mode="auto") == {}

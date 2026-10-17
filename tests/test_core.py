@@ -21,6 +21,7 @@ def test_index_localize_and_edit_round_trip(tmp_path: Path):
     make_video(video)
     manifest = build_index(video, tmp_path / "cache", window=3, encoder_mode="fallback")
     assert manifest.shots
+    assert Path(manifest.shots[0].keyframe).is_absolute()
     timeline = localize(manifest, "sky blue scenic 8 seconds", encoder_mode="fallback")
     validate_timeline(timeline)
     assert timeline.index_id == manifest.index_id

@@ -156,7 +156,9 @@ def build_index(
         return load_manifest(existing)
     duration = metadata["duration"]
     shots: list[Shot] = []
-    keyframe_dir = Path(cache_dir) / f"{index_id}.keyframes"
+    # Store absolute keyframe paths in the manifest so a later API/UI process
+    # can load cached images even when its working directory differs.
+    keyframe_dir = Path(cache_dir).expanduser().resolve() / f"{index_id}.keyframes"
     keyframe_dir.mkdir(parents=True, exist_ok=True)
     start = 0.0
     while start < duration and len(shots) < 240:
