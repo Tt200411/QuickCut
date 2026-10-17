@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quickcut"
+version = "0.1.0"
+description = "Local prompt-guided source localization and editable short-clip MVP"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+server = ["fastapi>=0.115", "uvicorn[standard]>=0.30", "python-multipart>=0.0.9"]
+ui = ["gradio>=5.0"]
+runtime = ["imageio-ffmpeg>=0.5"]
+ml = ["open_clip_torch>=2.30", "torch>=2.4", "torchvision>=0.19", "pillow>=10.0"]
+asr = ["faster-whisper>=1.0"]
+dev = ["pytest>=8.0", "httpx>=0.27"]
+all = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "python-multipart>=0.0.9",
+  "gradio>=5.0",
+  "imageio-ffmpeg>=0.5",
+  "open_clip_torch>=2.30",
+  "torch>=2.4",
+  "torchvision>=0.19",
+  "pillow>=10.0",
+  "faster-whisper>=1.0",
+]
+
+[project.scripts]
+quickcut = "quickcut.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["quickcut*"]
