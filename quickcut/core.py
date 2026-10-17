@@ -19,7 +19,7 @@ from .asr import (
     make_asr,
     save_transcript_sidecar,
 )
-from .encoder import make_encoder
+from .encoder import make_encoder, ppm_to_png
 from .types import IndexManifest, Shot, Timeline, TimelineItem
 
 
@@ -156,6 +156,8 @@ def build_index(
         return load_manifest(existing)
     duration = metadata["duration"]
     shots: list[Shot] = []
+    keyframe_dir = Path(cache_dir) / f"{index_id}.keyframes"
+    keyframe_dir.mkdir(parents=True, exist_ok=True)
     start = 0.0
     while start < duration and len(shots) < 240:
         end = min(duration, start + window)
@@ -163,11 +165,16 @@ def build_index(
         try:
             ppm = extract_keyframe(video_path, midpoint)
             embedding = encoder.encode_image(ppm)
+            keyframe_path = keyframe_dir / f"shot-{len(shots):04d}.png"
+            keyframe_path.write_bytes(ppm_to_png(ppm))
         except Exception as exc:
             if encoder.name != "fallback-color-histogram":
                 raise RuntimeError(f"Unable to encode keyframe at {midpoint:.2f}s: {exc}") from exc
             embedding = []
-        shots.append(Shot(shot_id=f"shot-{len(shots):04d}", start=round(start, 3), end=round(end, 3), embedding=embedding, backend=encoder.name))
+            keyframe_path = None
+        shots.append(Shot(shot_id=f"shot-{len(shots):04d}", start=round(start, 3), end=round(end, 3),
+                          keyframe=str(keyframe_path) if keyframe_path else None,
+                          embedding=embedding, backend=encoder.name))
         start += stride
     transcript_segments = []
     if asr.name != "none":

@@ -4,6 +4,8 @@ import io
 import math
 import os
 import re
+import struct
+import zlib
 from typing import Iterable
 
 
@@ -64,6 +66,18 @@ def parse_ppm(data: bytes) -> tuple[int, int, bytes]:
         return width, height, data[pos:]
     values = bytes(int(x) for x in data[pos:].split())
     return width, height, values
+
+
+def ppm_to_png(data: bytes) -> bytes:
+    """Convert an ffmpeg PPM frame to PNG using only the standard library."""
+    width, height, pixels = parse_ppm(data)
+    rows = b"".join(b"\x00" + pixels[row * width * 3:(row + 1) * width * 3] for row in range(height))
+
+    def chunk(kind: bytes, payload: bytes) -> bytes:
+        return struct.pack(">I", len(payload)) + kind + payload + struct.pack(">I", zlib.crc32(kind + payload) & 0xFFFFFFFF)
+
+    header = struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)
+    return b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", header) + chunk(b"IDAT", zlib.compress(rows, 6)) + chunk(b"IEND", b"")
 
 
 class FallbackEncoder:

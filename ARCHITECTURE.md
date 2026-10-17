@@ -8,7 +8,7 @@ QuickCut is the local MVP for the EditForge proposal. It accepts one source vide
 - **FFmpeg** handles probing, keyframe extraction, trimming, caption burn-in, audio muxing, and final MP4 rendering. `imageio-ffmpeg` is an optional bundled-binary fallback when the host has no system FFmpeg.
 - **Fixed windows** (three seconds by default) keep indexing deterministic and lightweight. PySceneDetect can replace this stage later without changing the timeline contract.
 - **Fallback visual encoder** is a normalized RGB histogram plus prompt color prototypes. It needs no model download and is used for the smoke-test path.
-- **Optional OpenCLIP/MobileCLIP** is loaded only when `QUICKCUT_ENCODER=openclip` or `auto`; normalized image embeddings are persisted in the cache and reused across prompts.
+- **Optional OpenCLIP/MobileCLIP** is loaded only when `QUICKCUT_ENCODER=openclip` or `auto`; normalized image embeddings are persisted in the cache and reused across prompts. Midpoint keyframes are also cached as PNG for optional local VLM review.
 - **Optional faster-whisper tiny/int8** transcribes once per source. Transcript segments are assigned to overlapping shots and saved as a versioned sidecar, so visual-only and transcript indexes never collide.
 - **Local narration** uses macOS `say` or `espeak`; captions are emitted as SRT and burned locally with FFmpeg.
 
@@ -24,7 +24,7 @@ QuickCut is the local MVP for the EditForge proposal. It accepts one source vide
 
 The schema supports `external` and `generated` provenance. A licensed B-roll resolver can fill illustrative gaps while concrete events stay source-grounded. The deterministic story planner can be replaced by a local Ollama/Qwen or other VLM planner that reads transcript plus shot metadata and returns the same beat schema. Dense re-sampling or a short-window VLM can refine boundaries after coarse retrieval.
 
-CLIP is used as an image-text alignment model, not as a conversion between modalities: it is the efficient coarse retrieval signal. A VLM is useful for Advanced story interpretation and short-window verification, but running it over every frame of a five-minute source would add latency and memory pressure. The intended path is fixed-window CLIP plus Whisper for the full index, then a local Qwen2.5-VL/Ollama call only on the top-k windows and transcript evidence. `--planner auto` implements that boundary and falls back cleanly when the local VLM is absent.
+CLIP is used as an image-text alignment model, not as a conversion between modalities: it is the efficient coarse retrieval signal. A VLM is useful for Advanced story interpretation and short-window verification, but running it over every frame of a five-minute source would add latency and memory pressure. The intended path is fixed-window CLIP plus Whisper for the full index, then a local Qwen2.5-VL/Ollama call only on a small set of cached keyframes and transcript evidence. `--planner auto` implements that boundary and falls back cleanly when the local VLM is absent.
 
 ## Acceptance checks
 

@@ -9,6 +9,8 @@ keeping the same JSON contract. No remote API is used.
 
 import json
 import os
+import base64
+from pathlib import Path
 from urllib.error import URLError
 from urllib.request import Request, urlopen
 
@@ -19,18 +21,34 @@ def plan_with_ollama(manifest: IndexManifest, prompt: str, *, model: str | None 
     model = model or os.getenv("QUICKCUT_VLM_MODEL", "qwen2.5vl:3b")
     base_url = (base_url or os.getenv("QUICKCUT_OLLAMA_URL", "http://127.0.0.1:11434")).rstrip("/")
     evidence = [
-        {"shot_id": shot.shot_id, "start": shot.start, "end": shot.end, "transcript": shot.transcript}
+        {"shot_id": shot.shot_id, "start": shot.start, "end": shot.end, "transcript": shot.transcript,
+         "image_available": bool(shot.keyframe)}
         for shot in manifest.shots
     ]
+    max_frames = max(1, int(os.getenv("QUICKCUT_VLM_MAX_FRAMES", "8")))
+    candidates = manifest.shots[::max(1, len(manifest.shots) // max_frames)][:max_frames]
+    images: list[str] = []
+    image_slots: list[str] = []
+    for shot in candidates:
+        if not shot.keyframe:
+            continue
+        try:
+            image = base64.b64encode(Path(shot.keyframe).read_bytes()).decode("ascii")
+        except OSError:
+            continue
+        images.append(image)
+        image_slots.append(shot.shot_id)
     instruction = {
         "prompt": prompt,
         "shots": evidence,
+        "image_slots": image_slots,
         "task": "Write a 3-beat source-grounded montage plan. Return JSON with theme, narration, and beats[]. Never invent concrete events absent from the prompt or transcript.",
         "schema": {"theme": "string", "narration": "string", "beats": [{"id": "hook|journey|close", "label": "string", "text": "string", "source": "prompt|transcript|source"}]},
     }
     request = Request(
         f"{base_url}/api/generate",
-        data=json.dumps({"model": model, "prompt": json.dumps(instruction, ensure_ascii=False), "format": "json", "stream": False}).encode("utf-8"),
+        data=json.dumps({"model": model, "prompt": json.dumps(instruction, ensure_ascii=False),
+                         "images": images, "format": "json", "stream": False}).encode("utf-8"),
         headers={"Content-Type": "application/json"}, method="POST",
     )
     try:
