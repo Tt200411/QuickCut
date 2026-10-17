@@ -9,6 +9,7 @@ __pycache__/
 .env
 cache/
 outputs/
+inputs/
 tmp/
 *.mp4
 *.mov

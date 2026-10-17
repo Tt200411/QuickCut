@@ -1,0 +1,36 @@
+from __future__ import annotations
+
+from quickcut.story import build_basic_vlog, write_story
+from quickcut.types import IndexManifest, Shot
+from quickcut.vlm import plan_story
+
+
+def make_manifest() -> IndexManifest:
+    return IndexManifest(
+        index_id="story-index", source_video="source.mp4", source_size=1, source_mtime=1.0,
+        duration=12.0, window=3.0, stride=3.0, created_at="now", encoder="fallback",
+        shots=[
+            Shot("shot-0000", 0, 3, transcript="scenic blue ocean opening"),
+            Shot("shot-0001", 3, 6, transcript="friends walk through the forest"),
+            Shot("shot-0002", 6, 9, transcript="group moments on the road"),
+            Shot("shot-0003", 9, 12, transcript="atmospheric sunset close"),
+        ],
+    )
+
+
+def test_basic_story_plan_uses_transcript_and_keeps_editable_timeline():
+    manifest = make_manifest()
+    plan = write_story(manifest, "scenic travel and group moments")
+    assert plan["grounded_transcript"] is True
+    timeline = build_basic_vlog(manifest, "scenic travel and group moments", duration=12, encoder_mode="fallback")
+    assert timeline.coverage == "source"
+    assert timeline.index_id == manifest.index_id
+    assert 5 <= timeline.duration <= 12
+    assert timeline.story["beats"]
+    assert timeline.narration
+    assert len(timeline.captions) == len(timeline.items)
+
+
+def test_deterministic_vlm_mode_is_noop_without_local_ollama():
+    plan = plan_story(make_manifest(), "a quiet journey", mode="deterministic")
+    assert plan == {}

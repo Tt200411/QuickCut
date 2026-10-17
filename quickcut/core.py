@@ -13,7 +13,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from .encoder import FallbackEncoder, make_encoder
+from .asr import (
+    assign_transcripts,
+    load_transcript_sidecar,
+    make_asr,
+    save_transcript_sidecar,
+)
+from .encoder import make_encoder
 from .types import IndexManifest, Shot, Timeline, TimelineItem
 
 
@@ -74,8 +80,16 @@ def extract_keyframe(video_path: str | Path, timestamp: float) -> bytes:
     return result.stdout
 
 
-def _index_id(video_path: Path, source_size: int, source_mtime: float, window: float, stride: float, encoder: str) -> str:
-    key = f"{video_path.resolve()}|{source_size}|{source_mtime:.6f}|{window}|{stride}|{encoder}"
+def _index_id(
+    video_path: Path,
+    source_size: int,
+    source_mtime: float,
+    window: float,
+    stride: float,
+    encoder: str,
+    transcript_backend: str = "none",
+) -> str:
+    key = f"{video_path.resolve()}|{source_size}|{source_mtime:.6f}|{window}|{stride}|{encoder}|{transcript_backend}"
     return hashlib.sha1(key.encode()).hexdigest()[:16]
 
 
@@ -92,23 +106,51 @@ def save_manifest(manifest: IndexManifest, cache_dir: str | Path) -> Path:
 
 
 def load_manifest(path: str | Path) -> IndexManifest:
-    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    path = Path(path)
+    data = json.loads(path.read_text(encoding="utf-8"))
     shots = [Shot(**shot) for shot in data.pop("shots", [])]
-    return IndexManifest(shots=shots, **data)
+    manifest = IndexManifest(shots=shots, **data)
+    # Older manifests did not persist shot transcripts.  If a sidecar exists,
+    # hydrate those fields at load time while keeping the manifest JSON stable.
+    if manifest.transcript_file:
+        sidecar = path.parent / manifest.transcript_file
+    else:
+        sidecar = path.with_name(f"{manifest.index_id}.transcript.json")
+    if sidecar.exists() and any(not shot.transcript for shot in manifest.shots):
+        try:
+            _payload, segments = load_transcript_sidecar(sidecar)
+            assign_transcripts(manifest.shots, segments)
+        except (OSError, ValueError, TypeError):
+            # A damaged optional sidecar should not make a visual-only index
+            # unusable.  Retrieval simply runs without transcript evidence.
+            pass
+    return manifest
 
 
 def find_manifest(cache_dir: str | Path, index_id: str) -> IndexManifest:
     return load_manifest(_cache_path(Path(cache_dir), index_id))
 
 
-def build_index(video_path: str | Path, cache_dir: str | Path = "cache", *, window: float = 3.0, stride: float | None = None, encoder_mode: str | None = None, force: bool = False) -> IndexManifest:
+def build_index(
+    video_path: str | Path,
+    cache_dir: str | Path = "cache",
+    *,
+    window: float = 3.0,
+    stride: float | None = None,
+    encoder_mode: str | None = None,
+    asr_mode: str | None = None,
+    force: bool = False,
+) -> IndexManifest:
     video_path = Path(video_path).expanduser().resolve()
     if not video_path.exists():
         raise FileNotFoundError(video_path)
     stride = stride or window
     metadata = probe_video(video_path)
     encoder = make_encoder(encoder_mode)
-    index_id = _index_id(video_path, metadata["size"], video_path.stat().st_mtime, window, stride, encoder.name)
+    asr = make_asr(asr_mode)
+    index_id = _index_id(
+        video_path, metadata["size"], video_path.stat().st_mtime, window, stride, encoder.name, asr.name
+    )
     existing = _cache_path(Path(cache_dir), index_id)
     if existing.exists() and not force:
         return load_manifest(existing)
@@ -127,10 +169,43 @@ def build_index(video_path: str | Path, cache_dir: str | Path = "cache", *, wind
             embedding = []
         shots.append(Shot(shot_id=f"shot-{len(shots):04d}", start=round(start, 3), end=round(end, 3), embedding=embedding, backend=encoder.name))
         start += stride
+    transcript_segments = []
+    if asr.name != "none":
+        try:
+            transcript_segments = asr.transcribe(video_path)
+        except Exception as exc:
+            # ``auto`` is intentionally resilient to a missing model download,
+            # unsupported audio codec, or unavailable local runtime.  Explicit
+            # backends surface the failure so callers know indexing is partial.
+            requested_asr = (asr_mode or os.getenv("QUICKCUT_ASR", "none")).lower()
+            if requested_asr == "auto":
+                print(f"[quickcut] ASR unavailable, using visual-only index: {exc}")
+                asr = make_asr("none")
+                index_id = _index_id(
+                    video_path, metadata["size"], video_path.stat().st_mtime, window, stride, encoder.name, asr.name
+                )
+            else:
+                raise RuntimeError(f"Unable to transcribe source video with {asr.name}: {exc}") from exc
+    assign_transcripts(shots, transcript_segments)
+    transcript_file = None
+    if transcript_segments or asr.name != "none":
+        transcript_file = f"{index_id}.transcript.json"
+        save_transcript_sidecar(
+            Path(cache_dir) / transcript_file,
+            transcript_segments,
+            index_id=index_id,
+            source_video=str(video_path),
+            source_size=metadata["size"],
+            source_mtime=video_path.stat().st_mtime,
+            backend=asr.name,
+            model=getattr(asr, "model", None),
+            language=getattr(asr, "language", None),
+        )
     manifest = IndexManifest(
         index_id=index_id, source_video=str(video_path), source_size=metadata["size"],
-        source_mtime=video_path.stat().st_mtime, duration=duration, window=window,
-        stride=stride, created_at=datetime.now(timezone.utc).isoformat(), encoder=encoder.name, shots=shots,
+        source_mtime=video_path.stat().st_mtime, duration=duration, window=window, stride=stride,
+        created_at=datetime.now(timezone.utc).isoformat(), encoder=encoder.name, shots=shots,
+        transcript_backend=asr.name, transcript_file=transcript_file,
     )
     save_manifest(manifest, cache_dir)
     return manifest

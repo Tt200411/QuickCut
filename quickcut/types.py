@@ -23,6 +23,18 @@ class Shot:
 
 
 @dataclass
+class TranscriptSegment:
+    segment_id: str
+    start: float
+    end: float
+    text: str
+
+    @property
+    def duration(self) -> float:
+        return max(0.0, self.end - self.start)
+
+
+@dataclass
 class TimelineItem:
     item_id: str
     provenance: Provenance
@@ -49,6 +61,9 @@ class Timeline:
     items: list[TimelineItem] = field(default_factory=list)
     message: str = ""
     preset: str = "clean"
+    story: dict[str, Any] = field(default_factory=dict)
+    narration: str = ""
+    captions: list[dict[str, Any]] = field(default_factory=list)
 
     @property
     def duration(self) -> float:
@@ -73,6 +88,8 @@ class IndexManifest:
     created_at: str
     encoder: str
     shots: list[Shot] = field(default_factory=list)
+    transcript_backend: str = "none"
+    transcript_file: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         data = asdict(self)
