@@ -54,6 +54,16 @@ def _complete_narration(story: dict[str, Any], prompt: str, duration: float | No
     texts += ["", "", ""]
     theme = str(story.get("theme") or prompt).strip(" ,.;:!?，。！？") or "this journey"
     theme = " ".join(theme.split()[:12])
+    # Qwen sometimes uses a sentence fragment as ``theme`` (for example
+    # “A large rabbit ... is”). Trim dangling function words before inserting
+    # it after “we enter”, and lower-case the first token to avoid an awkward
+    # mid-sentence capital.
+    while theme.split() and theme.split()[-1].lower().strip(" ,.;:!?，。！？") in {
+        "a", "an", "the", "is", "are", "was", "were", "with", "and", "of",
+    }:
+        theme = " ".join(theme.split()[:-1])
+    if theme:
+        theme = theme[0].lower() + theme[1:]
     def clip_spoken(text: str, limit: int = 14) -> str:
         # Prefer complete model sentences. A raw word slice can end with an
         # article ("a") or conjunction ("and"), which sounds broken in TTS.
@@ -112,8 +122,18 @@ def _complete_narration(story: dict[str, Any], prompt: str, duration: float | No
     # target in normal English. If a very short/CJK prompt still falls below
     # the requested word floor, add one final neutral sentence rather than
     # repeating a shot description mechanically.
+    fillers = (
+        "Each transition stays connected to the same story, carrying the viewer from the opening through the change to the ending.",
+        "The final image leaves enough space to understand how the moment has changed.",
+    )
+    filler_idx = 0
     while target and _narration_word_count(result) < target:
-        result = f"{result} Each transition stays connected to the same story, carrying the viewer from the opening through the change to the ending."
+        filler = fillers[filler_idx % len(fillers)]
+        if result.rstrip().endswith(filler):
+            filler_idx += 1
+            filler = fillers[filler_idx % len(fillers)]
+        result = f"{result} {filler}"
+        filler_idx += 1
     return result
 
 
@@ -493,7 +513,45 @@ def _reorder_montage(items: list[TimelineItem], manifest: IndexManifest, *, clos
     return ordered
 
 
-def _captions(items: list[TimelineItem], beats: list[dict[str, Any]], prompt: str) -> list[dict[str, Any]]:
+def _captions(
+    items: list[TimelineItem],
+    beats: list[dict[str, Any]],
+    prompt: str,
+    narration: str | None = None,
+) -> list[dict[str, Any]]:
+    # When a narration track exists, caption its exact spoken sentences. This
+    # prevents a beat summary such as “the rabbit explores” from appearing
+    # while the voice is saying an added bridge (“the middle shows the change”).
+    # The visual beat fallback below remains useful for API callers that have
+    # not synthesized narration yet.
+    if narration and str(narration).strip() and items:
+        spoken = [part.strip() for part in re.split(r"(?<=[.!?。！？])\s+|[;；]\s*", str(narration)) if part.strip()]
+        spoken = [part for part in spoken if part]
+        if spoken:
+            weights = [max(1, _narration_word_count(part)) for part in spoken]
+            total_weight = sum(weights)
+            starts: list[int] = []
+            cumulative = 0
+            for idx, weight in enumerate(weights):
+                if idx == 0:
+                    start = 0
+                else:
+                    start = round(cumulative * len(items) / total_weight)
+                    start = max(starts[-1] + 1, start)
+                starts.append(min(len(items) - 1, start))
+                cumulative += weight
+            by_start = {start: text for start, text in zip(starts, spoken)}
+            captions: list[dict[str, Any]] = []
+            cursor = 0.0
+            for item_idx, item in enumerate(items):
+                captions.append({
+                    "start": round(cursor, 3),
+                    "end": round(cursor + item.duration, 3),
+                    "text": by_start.get(item_idx, ""),
+                })
+                cursor += item.duration
+            return captions
+
     beat_sentences: list[list[str]] = []
     for beat in beats:
         raw_text = str(beat.get("text") or "") if isinstance(beat, dict) else ""
@@ -636,7 +694,7 @@ def build_basic_vlog(
         timeline.items = _reorder_montage(timeline.items, manifest)
     timeline.story = story
     timeline.narration = story["narration"]
-    timeline.captions = _captions(timeline.items, story["beats"], prompt)
+    timeline.captions = _captions(timeline.items, story["beats"], prompt, story.get("narration"))
     timeline.preset = "warm"
     validate_timeline(timeline)
     return timeline
