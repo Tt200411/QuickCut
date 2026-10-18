@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from quickcut.story import build_basic_vlog, write_story, _narration_word_count
+from quickcut.story import build_basic_vlog, write_story, _candidate_shot_ids, _captions, _narration_word_count
 from quickcut.types import IndexManifest, Shot, Timeline, TimelineItem
 from quickcut.vlm import normalize_shot_plan, plan_story, plan_with_ollama
 
@@ -47,6 +47,43 @@ def test_basic_story_can_fill_a_one_minute_budget_with_complete_beats():
     assert timeline.duration == 60
     assert [beat["id"] for beat in timeline.story["beats"]] == ["hook", "journey", "close"]
     assert len(timeline.captions) == len(timeline.items)
+
+
+def test_story_captions_are_monotonic_and_do_not_repeat_each_cut():
+    manifest = make_manifest()
+    items = [TimelineItem(f"item-{idx}", "source", shot.shot_id, shot.start, shot.end) for idx, shot in enumerate(manifest.shots)]
+    beats = [
+        {"id": "hook", "text": "The opening scene sets the place. The subject begins to move.", "source_shot_ids": ["shot-0000", "shot-0001"]},
+        {"id": "journey", "text": "The middle follows the change.", "source_shot_ids": ["shot-0002"]},
+        {"id": "close", "text": "The final frame settles.", "source_shot_ids": ["shot-0003"]},
+    ]
+    captions = _captions(items, beats, "a short journey")
+    assert len(captions) == len(items)
+    assert all(caption["end"] > caption["start"] for caption in captions)
+    assert all(left["end"] <= right["start"] for left, right in zip(captions, captions[1:]))
+    texts = [caption["text"] for caption in captions if caption["text"]]
+    assert len(texts) == len(set(texts))
+
+
+def test_qwen_candidate_pool_is_a_contiguous_source_window(monkeypatch):
+    manifest = IndexManifest(
+        index_id="candidate-index", source_video="source.mp4", source_size=1, source_mtime=1.0,
+        duration=300.0, window=3.0, stride=3.0, created_at="now", encoder="fallback",
+        shots=[Shot(f"shot-{idx:04d}", idx * 3, (idx + 1) * 3) for idx in range(100)],
+    )
+    timeline = Timeline(
+        version="1.0", source_video="source.mp4", query="forest", duration_budget=60,
+        index_id=manifest.index_id, coverage="source", items=[
+            TimelineItem("a", "source", "shot-0000", 0, 3, score=0.1),
+            TimelineItem("b", "source", "shot-0050", 150, 153, score=0.9),
+            TimelineItem("c", "source", "shot-0090", 270, 273, score=0.2),
+        ],
+    )
+    monkeypatch.setenv("QUICKCUT_VLM_CANDIDATE_SHOTS", "8")
+    ids = _candidate_shot_ids(manifest, timeline)
+    starts = [manifest.shots[int(shot_id.split("-")[-1])].start for shot_id in ids]
+    assert len(ids) == 8
+    assert max(b - a for a, b in zip(starts, starts[1:])) <= manifest.window
 
 
 def test_deterministic_vlm_mode_is_noop_without_local_ollama():

@@ -4,7 +4,7 @@ import subprocess
 
 from quickcut.core import _has_audio_stream, _require_binary
 from quickcut.types import Timeline, TimelineItem
-from quickcut.voice import render_story_timeline, write_srt
+from quickcut.voice import _mix_narration, render_story_timeline, write_srt
 
 
 def test_write_srt_uses_relative_timeline_captions(tmp_path):
@@ -37,3 +37,47 @@ def test_caption_render_keeps_original_audio(tmp_path):
     output = render_story_timeline(timeline, tmp_path / "captioned.mp4", narration=False)
     assert _has_audio_stream(output)
     subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-i", str(output), "-f", "null", "-"], check=True)
+
+    # Caption rendering must rebase both streams to the same zero origin.  A
+    # non-zero first video PTS (typically one H.264 frame from encoder delay)
+    # is enough to make a narration/caption feel late in strict players.
+    video_probe = subprocess.run([
+        ffmpeg, "-hide_banner", "-loglevel", "info", "-i", str(output),
+        "-vf", "showinfo", "-an", "-frames:v", "1", "-f", "null", "-",
+    ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    audio_probe = subprocess.run([
+        ffmpeg, "-hide_banner", "-loglevel", "info", "-i", str(output),
+        "-vn", "-af", "ashowinfo", "-frames:a", "1", "-f", "null", "-",
+    ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    assert "pts_time:0" in video_probe.stderr
+    assert "pts_time:0" in audio_probe.stderr
+
+
+def test_narration_mix_rebases_and_bounds_both_streams(tmp_path):
+    ffmpeg = _require_binary("ffmpeg")
+    source = tmp_path / "source.mp4"
+    narration = tmp_path / "narration.wav"
+    output = tmp_path / "mixed.mp4"
+    subprocess.run([
+        ffmpeg, "-hide_banner", "-loglevel", "error",
+        "-f", "lavfi", "-i", "color=c=skyblue:s=320x180:d=6",
+        "-f", "lavfi", "-i", "sine=frequency=440:duration=6",
+        "-map", "0:v:0", "-map", "1:a:0", "-c:v", "libx264", "-bf", "0", "-pix_fmt", "yuv420p",
+        "-c:a", "aac", "-ar", "48000", "-ac", "2", str(source), "-y",
+    ], check=True)
+    subprocess.run([
+        ffmpeg, "-hide_banner", "-loglevel", "error", "-f", "lavfi",
+        "-i", "sine=frequency=880:duration=2", "-c:a", "pcm_s16le", str(narration), "-y",
+    ], check=True)
+    _mix_narration(source, narration, output, 6.0)
+    subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-i", str(output), "-f", "null", "-"], check=True)
+    video_probe = subprocess.run([
+        ffmpeg, "-hide_banner", "-loglevel", "info", "-i", str(output),
+        "-vf", "showinfo", "-an", "-frames:v", "1", "-f", "null", "-",
+    ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    audio_probe = subprocess.run([
+        ffmpeg, "-hide_banner", "-loglevel", "info", "-i", str(output),
+        "-vn", "-af", "ashowinfo", "-frames:a", "1", "-f", "null", "-",
+    ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    assert "pts_time:0" in video_probe.stderr
+    assert "pts_time:0" in audio_probe.stderr

@@ -93,7 +93,12 @@ def _complete_narration(story: dict[str, Any], prompt: str, duration: float | No
     )
     covered = not malformed and len(beat_markers) == 3 and all(marker in current_lower for marker in beat_markers)
     try:
-        target = max(24, int(math.ceil(float(duration) * 1.5))) if duration is not None else 0
+        # macOS ``say`` speaks roughly 2.4 English words per second at its
+        # default rate.  The old 1.5 words/second floor left a 60-second edit
+        # with 15--20 seconds of narration-free captions.  Target the actual
+        # spoken span while retaining a small tolerance for voice backends
+        # with a different natural rate.
+        target = max(24, int(math.ceil(float(duration) * 2.4))) if duration is not None else 0
     except (TypeError, ValueError):
         target = 0
     # Keep speech inside a one-minute edit. At a calm 90 words/minute the
@@ -102,13 +107,13 @@ def _complete_narration(story: dict[str, Any], prompt: str, duration: float | No
     maximum = target + 24 if target else 0
     result = current if covered and (not maximum or _narration_word_count(current) <= maximum) else structured
     if target and _narration_word_count(result) < target:
-        result = f"{result} The pacing remains purposeful: the opening establishes context, the middle shows meaningful change, and the closing image gives the viewer time to understand the result."
+        result = f"{result} The camera stays with the same character and place as the action develops. Small changes in movement lead naturally to the next image. The final moments slow down so the result is clear and complete."
     # The template above is deliberately long enough for the 60-second
     # target in normal English. If a very short/CJK prompt still falls below
     # the requested word floor, add one final neutral sentence rather than
     # repeating a shot description mechanically.
     while target and _narration_word_count(result) < target:
-        result = f"{result} Each transition stays connected to the same story, with a clear beginning, development, and ending."
+        result = f"{result} Each transition stays connected to the same story, carrying the viewer from the opening through the change to the ending."
     return result
 
 
@@ -242,6 +247,28 @@ def _qwen_items(
     if not ordered:
         return []
 
+    # Qwen's creative reorder is useful for a short montage, but a long edit
+    # must remain temporally legible. If the proposed order jumps across a
+    # distant source scene, retain the selected set and stabilize it in source
+    # chronology. The model still owns which shots enter the edit; this pass
+    # only removes impossible backwards jumps that make the result feel like
+    # unrelated material spliced together.
+    max_jump = max(8.0, manifest.window * 3.0)
+    jumps = [abs(ordered[idx + 1].start - ordered[idx].start) for idx in range(len(ordered) - 1)]
+    if any(jump > max_jump for jump in jumps):
+        ordered.sort(key=lambda shot: (shot.start, shot.end, shot.shot_id))
+        story["shot_order"] = [shot.shot_id for shot in ordered]
+        story["selected_shot_ids"] = list(story["shot_order"])
+        # Keep hook → journey → close aligned with the repaired chronology.
+        base, extra = divmod(len(ordered), 3)
+        cursor = 0
+        for idx, beat in enumerate(story.get("beats", [])[:3]):
+            size = base + (1 if idx < extra else 0)
+            if isinstance(beat, dict):
+                beat["source_shot_ids"] = story["shot_order"][cursor:cursor + size]
+            cursor += size
+        story["coherence_reordered"] = True
+
     per_item = duration / len(ordered)
     items: list[TimelineItem] = []
     remaining = duration
@@ -288,6 +315,8 @@ def _pad_qwen_items(
     selected: list[TimelineItem],
     fallback: list[TimelineItem],
     duration: float,
+    *,
+    manifest: IndexManifest | None = None,
 ) -> list[TimelineItem]:
     """Fill a short Qwen selection with retrieval candidates.
 
@@ -301,7 +330,30 @@ def _pad_qwen_items(
     result = list(selected)
     used = {item.asset_id for item in result}
     remaining = duration - sum(item.duration for item in result)
-    for candidate in fallback:
+    # A short VLM order must be completed from the same source scene.  The
+    # previous implementation padded from the retrieval timeline, which may
+    # contain distant visually similar shots and can jump from 57s back to an
+    # unrelated opening.  Prefer missing shots inside/adjacent to the selected
+    # source range; only use the retrieval fallback when no manifest is given.
+    candidates = list(fallback)
+    if manifest and result:
+        by_id = {shot.shot_id: (idx, shot) for idx, shot in enumerate(manifest.shots)}
+        selected_indices = [by_id[item.asset_id][0] for item in result if item.asset_id in by_id]
+        if selected_indices:
+            lo, hi = min(selected_indices), max(selected_indices)
+            nearby = [
+                shot for shot in manifest.shots
+                if shot.shot_id not in used and not _probable_credit_shot(manifest, shot, "")
+            ]
+            nearby.sort(key=lambda shot: (0 if lo <= by_id[shot.shot_id][0] <= hi else 1,
+                                          min(abs(by_id[shot.shot_id][0] - lo), abs(by_id[shot.shot_id][0] - hi)),
+                                          by_id[shot.shot_id][0]))
+            candidates = [TimelineItem(
+                item_id=f"pad-{idx:03d}", provenance="source", asset_id=shot.shot_id,
+                start=shot.start, end=shot.end, score=0.0,
+                transcript=shot.transcript, license_note="Source video provided by user",
+            ) for idx, shot in enumerate(nearby)]
+    for candidate in candidates:
         if remaining <= 0.1:
             break
         if candidate.asset_id in used:
@@ -318,6 +370,14 @@ def _pad_qwen_items(
         ))
         used.add(candidate.asset_id)
         remaining -= length
+    if manifest and duration >= 30.0 and result:
+        # For a long story, keep the selected scene and its adjacent padding
+        # in source chronology. This prevents the final four seconds from
+        # jumping from the end of a scene back to its opening just because
+        # padding was appended after Qwen's order.
+        result.sort(key=lambda item: (item.start, item.end, item.asset_id))
+        for idx, item in enumerate(result):
+            item.item_id = f"item-{idx:03d}"
     return result
 
 
@@ -345,6 +405,23 @@ def _candidate_shot_ids(manifest: IndexManifest, timeline: Timeline) -> list[str
         limit = 8
     by_id = {shot.shot_id: (idx, shot) for idx, shot in enumerate(manifest.shots)}
     selected = [by_id[item.asset_id] for item in timeline.items if item.asset_id in by_id]
+    # A scored retrieval timeline often contains visually similar shots spread
+    # across a long source (for example 24s, 246s, 405s). Sending that whole
+    # spread to Qwen produces a montage that jumps between unrelated scenes,
+    # even when the model orders the IDs correctly. Build the legal candidate
+    # pool around the strongest retrieval anchor instead: a contiguous source
+    # window gives Qwen a real beginning/middle/end event to choose from while
+    # retaining the model's shot selection and ordering authority.
+    if selected:
+        anchor_idx, _anchor = max(selected, key=lambda pair: next(
+            (item.score for item in timeline.items if item.asset_id == pair[1].shot_id), 0.0
+        ))
+        span = min(limit, len(manifest.shots))
+        start = max(0, min(anchor_idx - span // 2, len(manifest.shots) - span))
+        contiguous = manifest.shots[start:start + span]
+        if len(contiguous) >= min(8, limit):
+            return [shot.shot_id for shot in contiguous
+                    if not _probable_credit_shot(manifest, shot, timeline.query)][:limit]
     result: list[str] = []
     seen: set[str] = set()
 
@@ -420,29 +497,71 @@ def _captions(items: list[TimelineItem], beats: list[dict[str, Any]], prompt: st
     beat_sentences: list[list[str]] = []
     for beat in beats:
         raw_text = str(beat.get("text") or "") if isinstance(beat, dict) else ""
-        # Split long model prose into readable caption-sized clauses. A full
-        # beat paragraph repeated over every three-second shot becomes a wall
-        # of text in a 60-second export.
-        sentences = [part.strip() for part in re.split(r"(?<=[.!?。！？])\s+|[,，;；]\s*", raw_text) if part.strip()]
+        # Split prose into sentence-sized captions. A caption spans the whole
+        # run of source items assigned to that sentence, so it stays aligned
+        # with the spoken phrase instead of cycling the first sentence every
+        # few seconds (the old behavior repeated the hook and close text).
+        raw_sentences = [part.strip() for part in re.split(r"(?<=[.!?。！？])\s+|[;；]\s*", raw_text) if part.strip()]
+        # Keep short comma-led fragments ("A large," / "its fur") with the
+        # following clause so a caption never begins with an orphan adjective
+        # or pronoun. Full stops remain the primary timing boundary.
+        sentences: list[str] = []
+        for part in raw_sentences:
+            if sentences and len(sentences[-1].split()) < 4:
+                sentences[-1] = f"{sentences[-1].rstrip(' ,，')} {part}".strip()
+            else:
+                sentences.append(part)
         beat_sentences.append(sentences or [raw_text or prompt])
+
+    # Assign items to beats from the source IDs emitted by Qwen. If a padded
+    # retrieval item has no explicit beat, place it in the nearest proportional
+    # group so captions remain monotonic and cover the complete timeline.
+    beat_by_asset: dict[str, int] = {}
+    for beat_idx, beat in enumerate(beats):
+        if not isinstance(beat, dict):
+            continue
+        for source_id in beat.get("source_shot_ids", []) if isinstance(beat.get("source_shot_ids"), list) else []:
+            beat_by_asset.setdefault(str(source_id), beat_idx)
+    item_beats: list[int] = []
+    for idx, item in enumerate(items):
+        item_beats.append(beat_by_asset.get(item.asset_id, min(len(beats) - 1, int(idx * len(beats) / max(1, len(items)))) if beats else 0))
+
+    # Keep one metadata entry per visual item for the editing UI/API. Every
+    # cue owns exactly one cut interval, so subtitle timing is monotonic and a
+    # phrase cannot bleed into the next shot. When a beat contains fewer
+    # clauses than cuts, hold the clause over the adjacent cuts.
+    beat_counts: dict[int, int] = {}
+    for beat_idx in item_beats:
+        beat_counts[beat_idx] = beat_counts.get(beat_idx, 0) + 1
+    beat_offsets: dict[int, int] = {}
+    beat_texts = {str(beat.get("text") or "").strip() for beat in beats if isinstance(beat, dict)}
     captions: list[dict[str, Any]] = []
     cursor = 0.0
-    beat_offsets = [0] * len(beat_sentences)
-    beat_texts = {str(beat.get("text") or "").strip() for beat in beats if isinstance(beat, dict)}
-    for idx, item in enumerate(items):
-        # Keep generated beat text grouped into hook/journey/close ranges for
-        # long deterministic stories. Cycling beats every shot makes a
-        # one-minute montage read like a loop instead of a resolved event.
-        if item.transcript and item.transcript.strip() not in beat_texts:
-            text = item.transcript
-        elif beats:
-            beat_idx = min(len(beats) - 1, int(idx * len(beats) / max(1, len(items))))
-            sentences = beat_sentences[beat_idx]
-            text = sentences[beat_offsets[beat_idx] % len(sentences)]
-            beat_offsets[beat_idx] += 1
-        else:
+    for item_idx, item in enumerate(items):
+        beat_idx = item_beats[item_idx] if beats else 0
+        sentences = beat_sentences[beat_idx] if beat_sentences else [prompt]
+        local_idx = beat_offsets.get(beat_idx, 0)
+        beat_offsets[beat_idx] = local_idx + 1
+        count = max(1, beat_counts.get(beat_idx, 1))
+        starts = [(sentence * count) // len(sentences) for sentence in range(len(sentences))]
+        sentence_idx = max(
+            (sentence for sentence, start in enumerate(starts) if start <= local_idx),
+            default=0,
+        )
+        text = item.transcript.strip() if item.transcript and item.transcript.strip() not in beat_texts else sentences[sentence_idx]
+        # Emit each clause once at the beginning of its visual run. Empty
+        # continuation rows remain in the API for item-level editing but are
+        # skipped by write_srt, so a close sentence is never burned six times.
+        sentence_start = (sentence_idx * count) // len(sentences)
+        if local_idx != sentence_start:
+            text = ""
+        if not text and local_idx == sentence_start:
             text = prompt
-        captions.append({"start": round(cursor, 3), "end": round(cursor + item.duration, 3), "text": text})
+        captions.append({
+            "start": round(cursor, 3),
+            "end": round(cursor + item.duration, 3),
+            "text": text,
+        })
         cursor += item.duration
     return captions
 
@@ -489,11 +608,30 @@ def build_basic_vlog(
                         candidate_shot_ids=candidate_ids, duration=duration)
     qwen_items = _qwen_items(manifest, story, duration, avoid_credits=True) if story.get("shot_selection") else []
     if qwen_items:
-        timeline.items = _pad_qwen_items(qwen_items, timeline.items, duration)
+        timeline.items = _pad_qwen_items(qwen_items, timeline.items, duration, manifest=manifest)
         selected_count = len(qwen_items)
         padded_count = len(timeline.items) - selected_count
-        suffix = f"; padded with {padded_count} retrieval segment(s)" if padded_count else ""
-        timeline.message = f"Qwen selected and ordered {selected_count} source segment(s) from the indexed candidate pool{suffix}."
+        suffix = f"; completed with {padded_count} adjacent source segment(s)" if padded_count else ""
+        repair_note = "; continuity-repaired in source order" if story.get("coherence_reordered") else ""
+        timeline.message = f"Qwen selected and ordered {selected_count} source segment(s) from the indexed candidate pool{suffix}{repair_note}."
+        if padded_count:
+            # Keep the executable story metadata in lockstep with the final
+            # timeline. ``_pad_qwen_items`` has already placed adjacent
+            # padding in source order; repartition the acts so captions and
+            # narration remain aligned after the continuity repair.
+            final_order = [item.asset_id for item in timeline.items]
+            story["shot_order"] = final_order
+            story["selected_shot_ids"] = list(final_order)
+            story["padding_count"] = padded_count
+            story["coherence_reordered"] = True
+            beats = story.get("beats") if isinstance(story.get("beats"), list) else []
+            base, extra = divmod(len(final_order), 3)
+            cursor = 0
+            for beat_idx, beat in enumerate(beats[:3]):
+                size = base + (1 if beat_idx < extra else 0)
+                if isinstance(beat, dict):
+                    beat["source_shot_ids"] = final_order[cursor:cursor + size]
+                cursor += size
     else:
         timeline.items = _reorder_montage(timeline.items, manifest)
     timeline.story = story

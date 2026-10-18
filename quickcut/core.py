@@ -406,7 +406,7 @@ def render_timeline(timeline: Timeline, output_path: str | Path, *, preset: str 
         clips: list[Path] = []
         for idx, item in enumerate(timeline.items):
             clip = temp_dir / f"clip-{idx:03d}.mp4"
-            filters = []
+            filters = ["setpts=PTS-STARTPTS"]
             if preset == "warm":
                 filters.append("eq=saturation=1.08:contrast=1.03")
             vf = ",".join(filters) if filters else "null"
@@ -417,11 +417,15 @@ def render_timeline(timeline: Timeline, output_path: str | Path, *, preset: str 
             command = [
                 ffmpeg, "-hide_banner", "-loglevel", "error", "-ss", f"{item.start:.3f}",
                 "-t", f"{item.duration:.3f}", "-i", str(source), "-map", "0:v:0",
-                "-vf", vf, "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
+                "-vf", vf, "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-bf", "0",
                 "-pix_fmt", "yuv420p",
             ]
             if has_audio:
-                command += ["-map", "0:a:0?", "-c:a", "aac", "-b:a", "128k", "-ar", "48000", "-ac", "2"]
+                # Reset each extracted audio segment as well.  AAC packet
+                # timestamps otherwise retain a tiny encoder delay, which
+                # accumulates at every concat boundary on some players.
+                command += ["-map", "0:a:0?", "-af", "asetpts=PTS-STARTPTS",
+                            "-c:a", "aac", "-b:a", "128k", "-ar", "48000", "-ac", "2"]
             else:
                 command += ["-an"]
             command += ["-movflags", "+faststart", str(clip), "-y"]
@@ -431,13 +435,18 @@ def render_timeline(timeline: Timeline, output_path: str | Path, *, preset: str 
         concat.write_text("\n".join(f"file '{clip.as_posix()}'" for clip in clips), encoding="utf-8")
         join = [
             ffmpeg, "-hide_banner", "-loglevel", "error", "-f", "concat", "-safe", "0",
-            "-i", str(concat), "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
+            "-i", str(concat), "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-bf", "0",
             "-pix_fmt", "yuv420p",
         ]
         if has_audio:
-            join += ["-c:a", "aac", "-b:a", "128k", "-ar", "48000", "-ac", "2"]
+            join += ["-af", "asetpts=PTS-STARTPTS", "-c:a", "aac", "-b:a", "128k",
+                     "-ar", "48000", "-ac", "2"]
         else:
             join += ["-an"]
-        join += ["-movflags", "+faststart", str(output_path), "-y"]
+        # Keep the output bound to the timeline contract.  The concat demuxer
+        # may add one AAC priming packet (typically < 20ms); truncating at the
+        # requested duration prevents that packet from becoming an apparent
+        # audio tail or a later A/V drift.
+        join += ["-t", f"{timeline.duration:.3f}", "-movflags", "+faststart", str(output_path), "-y"]
         _run(join)
     return output_path
