@@ -67,7 +67,7 @@ def _complete_narration(story: dict[str, Any], prompt: str, duration: float | No
     def clip_spoken(text: str, limit: int = 14) -> str:
         # Prefer complete model sentences. A raw word slice can end with an
         # article ("a") or conjunction ("and"), which sounds broken in TTS.
-        sentences = [part.strip() for part in re.split(r"(?<=[.!?])\s+", text) if part.strip()]
+        sentences = [part.strip() for part in re.split(r"(?<=[.!?。！？])\s*", text) if part.strip()]
         chosen: list[str] = []
         for sentence in sentences:
             # Never cut a complete model sentence merely to hit the soft word
@@ -78,7 +78,8 @@ def _complete_narration(story: dict[str, Any], prompt: str, duration: float | No
             else:
                 break
         if chosen:
-            return " ".join(chosen).strip(" ,.;:!?，。！？") + "."
+            joined = " ".join(chosen).strip(" ,.;:!?，。！？")
+            return joined + ("。" if re.search(r"[\u4e00-\u9fff]", joined) else ".")
         words = text.split()
         clipped_words = words[:limit]
         while clipped_words and clipped_words[-1].lower().strip(" ,.;:!?，。！？") in {
@@ -86,13 +87,23 @@ def _complete_narration(story: dict[str, Any], prompt: str, duration: float | No
         }:
             clipped_words.pop()
         clipped = " ".join(clipped_words).strip(" ,.;:!?，。！？")
-        return f"{clipped}." if clipped else "The selected images carry the story forward."
+        if clipped:
+            return f"{clipped}{'。' if re.search(r'[\u4e00-\u9fff]', clipped) else '.'}"
+        return "画面让故事继续向前。" if chinese else "The selected images carry the story forward."
 
-    structured = (
-        f"First, we enter {theme}. {clip_spoken(texts[0], 18)} This opening sets the scene. "
-        f"Next, the journey develops. {clip_spoken(texts[1], 18)} The middle shows the change and keeps the thread moving. "
-        f"Finally, the story settles. {clip_spoken(texts[2], 18)} The ending resolves the moment and gives the viewer time to understand it."
-    )
+    chinese = bool(re.search(r"[\u4e00-\u9fff]", " ".join([current, prompt, theme, *texts])))
+    if chinese:
+        structured = (
+            f"首先，我们进入{theme}。{clip_spoken(texts[0], 18)}开场交代了环境。"
+            f"接着，旅程逐渐展开。{clip_spoken(texts[1], 18)}中段呈现变化，让故事继续向前。"
+            f"最后，故事慢慢收束。{clip_spoken(texts[2], 18)}结尾保留片刻余韵，让观众看清结果。"
+        )
+    else:
+        structured = (
+            f"First, we enter {theme}. {clip_spoken(texts[0], 18)} This opening sets the scene. "
+            f"Next, the journey develops. {clip_spoken(texts[1], 18)} The middle shows the change and keeps the thread moving. "
+            f"Finally, the story settles. {clip_spoken(texts[2], 18)} The ending resolves the moment and gives the viewer time to understand it."
+        )
     # A model narration that already covers the three beats is preferable;
     # otherwise keep its useful prose after the explicit three-act bridge.
     current_lower = current.lower()
@@ -108,7 +119,14 @@ def _complete_narration(story: dict[str, Any], prompt: str, duration: float | No
         # with 15--20 seconds of narration-free captions.  Target the actual
         # spoken span while retaining a small tolerance for voice backends
         # with a different natural rate.
-        target = max(24, int(math.ceil(float(duration) * 2.4))) if duration is not None else 0
+        if chinese:
+            # CJK characters are counted individually by _narration_word_count;
+            # Mandarin speech uses roughly 3.2 characters per second at a
+            # measured local ``say`` rate. Keep enough text for a full edit
+            # without forcing the TTS time-stretch to become unnatural.
+            target = max(24, int(math.ceil(float(duration) * 3.2))) if duration is not None else 0
+        else:
+            target = max(24, int(math.ceil(float(duration) * 2.4))) if duration is not None else 0
     except (TypeError, ValueError):
         target = 0
     # Keep speech inside a one-minute edit. At a calm 90 words/minute the
@@ -117,14 +135,19 @@ def _complete_narration(story: dict[str, Any], prompt: str, duration: float | No
     maximum = target + 24 if target else 0
     result = current if covered and (not maximum or _narration_word_count(current) <= maximum) else structured
     if target and _narration_word_count(result) < target:
-        result = f"{result} The camera stays with the same character and place as the action develops. Small changes in movement lead naturally to the next image. The final moments slow down so the result is clear and complete."
+        if chinese:
+            result = f"{result}镜头始终跟随同一个角色和场景，动作在画面之间自然发展。细微的变化带来下一幅画面，最后的镜头放慢节奏，让结果清晰完整。"
+        else:
+            result = f"{result} The camera stays with the same character and place as the action develops. Small changes in movement lead naturally to the next image. The final moments slow down so the result is clear and complete."
     # The template above is deliberately long enough for the 60-second
     # target in normal English. If a very short/CJK prompt still falls below
     # the requested word floor, add one final neutral sentence rather than
     # repeating a shot description mechanically.
     fillers = (
-        "Each transition stays connected to the same story, carrying the viewer from the opening through the change to the ending.",
-        "The final image leaves enough space to understand how the moment has changed.",
+        ("画面始终围绕同一段经历推进，从开场、变化走向结尾。", "最后的画面留下足够空间，让观众看清这一刻的变化。")
+        if chinese else
+        ("Each transition stays connected to the same story, carrying the viewer from the opening through the change to the ending.",
+         "The final image leaves enough space to understand how the moment has changed.")
     )
     filler_idx = 0
     while target and _narration_word_count(result) < target:
@@ -525,7 +548,7 @@ def _captions(
     # The visual beat fallback below remains useful for API callers that have
     # not synthesized narration yet.
     if narration and str(narration).strip() and items:
-        spoken = [part.strip() for part in re.split(r"(?<=[.!?。！？])\s+|[;；]\s*", str(narration)) if part.strip()]
+        spoken = [part.strip() for part in re.split(r"(?<=[.!?。！？])\s*|[;；]\s*", str(narration)) if part.strip()]
         spoken = [part for part in spoken if part]
         if spoken:
             weights = [max(1, _narration_word_count(part)) for part in spoken]

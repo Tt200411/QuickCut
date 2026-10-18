@@ -10,6 +10,7 @@ keeping the same JSON contract. No remote API is used.
 import json
 import os
 import base64
+import re
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
@@ -184,6 +185,12 @@ def plan_with_ollama(
     metadata_evidence = [entry for entry in evidence if entry["shot_id"] not in candidate_ids]
     evidence = (visual_evidence + metadata_evidence)[:evidence_limit]
     evidence_ids = {shot["shot_id"] for shot in evidence}
+    chinese_requested = bool(re.search(r"[\u4e00-\u9fff]", prompt))
+    language_instruction = (
+        "Respond entirely in Simplified Chinese: theme, narration, beat labels, and beat text must all be Chinese."
+        if chinese_requested else
+        "Respond in the language used by the prompt."
+    )
     images: list[str] = []
     image_slots: list[str] = []
     for shot in candidates:
@@ -201,7 +208,7 @@ def plan_with_ollama(
         "image_slots": image_slots,
         "duration_seconds": requested_duration,
         "target_shot_count": target_shots,
-        "task": f"Act as the video editor. Build a complete story for about {requested_duration:g} seconds. Choose enough distinct source shots to cover that duration (target {target_shots}) and put them in a purposeful montage order. Then write exactly three beats in hook, journey, close order. Write a coherent local voiceover with at least {max(24, min(110, int(requested_duration * 1.5)))} words, covering the hook, journey, and close instead of a single summary sentence. You MUST copy exact shot_id strings from shots into shot_order and each beat's source_shot_ids. Every beat source_shot_id must also appear in shot_order. Do not leave these arrays empty or repeat a shot. Use different shots when they show different moments. Ground every sentence in what is visibly present in the supplied frames or transcript: when transcript is empty, describe only observable composition, characters, movement, and setting. Do not name an animal, object, action, outcome, time of day, or emotion unless the frames clearly support it. Never invent a chase, sunset, return home, dialogue, or other concrete event absent from the prompt, transcript, or images.",
+        "task": f"Act as the video editor. {language_instruction} Build a complete story for about {requested_duration:g} seconds. Choose enough distinct source shots to cover that duration (target {target_shots}) and put them in a purposeful montage order. Then write exactly three beats in hook, journey, close order. Write a coherent local voiceover with at least {max(24, min(110, int(requested_duration * 1.5)))} words or Chinese characters, covering the hook, journey, and close instead of a single summary sentence. You MUST copy exact shot_id strings from shots into shot_order and each beat's source_shot_ids. Every beat source_shot_id must also appear in shot_order. Do not leave these arrays empty or repeat a shot. Use different shots when they show different moments. Ground every sentence in what is visibly present in the supplied frames or transcript: when transcript is empty, describe only observable composition, characters, movement, and setting. Do not name an animal, object, action, outcome, time of day, or emotion unless the frames clearly support it. Never invent a chase, sunset, return home, dialogue, or other concrete event absent from the prompt, transcript, or images.",
         "schema": {"theme": "string", "narration": "string", "shot_order": ["shot-0000"], "beats": [{"id": "hook|journey|close", "label": "string", "text": "string", "source": "prompt|transcript|source", "source_shot_ids": ["shot-0000"]}]},
     }
     # Ollama accepts a JSON Schema in ``format``. Supplying the exact enum of
