@@ -114,7 +114,11 @@ def build_basic_vlog(manifest: IndexManifest, prompt: str, *, duration: float = 
     """Create a rhythmic, source-grounded Vlog opening from one indexed video."""
     duration = min(15.0, max(5.0, float(duration)))
     story = write_story(manifest, prompt, style="basic-vlog", planner=planner)
-    timeline = localize(manifest, f"{prompt} {duration:g} seconds", encoder_mode=encoder_mode, top_k=5)
+    # A Basic opening should not jump into end-credit rolls simply because
+    # their text-heavy frames match a broad visual prompt. Explicit credits
+    # requests still pass through via localize's query opt-in.
+    timeline = localize(manifest, f"{prompt} {duration:g} seconds", encoder_mode=encoder_mode,
+                        top_k=5, avoid_credits=True)
     if timeline.coverage == "abstain":
         items = _fallback_items(manifest, duration)
         if not items:

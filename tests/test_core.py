@@ -4,7 +4,8 @@ import json
 import subprocess
 from pathlib import Path
 
-from quickcut.core import _has_audio_stream, _require_binary, build_index, localize, render_timeline, update_timeline, validate_timeline
+from quickcut.core import _has_audio_stream, _probable_credit_shot, _require_binary, build_index, localize, render_timeline, update_timeline, validate_timeline
+from quickcut.types import IndexManifest, Shot
 
 
 def make_video(path: Path) -> None:
@@ -52,3 +53,20 @@ def test_render_keeps_source_audio_and_produces_decodable_h264(tmp_path: Path):
         _require_binary("ffmpeg"), "-hide_banner", "-loglevel", "error", "-i", str(rendered),
         "-f", "null", "-",
     ], check=True)
+
+
+def test_localize_avoids_end_credit_roll_for_basic_montage():
+    manifest = IndexManifest(
+        index_id="long", source_video="source.mp4", source_size=1, source_mtime=1.0,
+        duration=600.0, window=3.0, stride=3.0, created_at="now", encoder="fallback",
+        shots=[
+            Shot("shot-credit", 540, 543, transcript="forest credits"),
+            Shot("shot-a", 100, 103, transcript="forest path"),
+            Shot("shot-b", 200, 203, transcript="forest group"),
+            Shot("shot-c", 300, 303, transcript="forest close"),
+        ],
+    )
+    assert _probable_credit_shot(manifest, manifest.shots[0], "forest") is True
+    assert _probable_credit_shot(manifest, manifest.shots[0], "show the end credits") is False
+    timeline = localize(manifest, "forest 8 seconds", encoder_mode="fallback", avoid_credits=True)
+    assert all(item.asset_id != "shot-credit" for item in timeline.items)

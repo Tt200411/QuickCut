@@ -229,6 +229,28 @@ def _transcript_score(query: str, transcript: str) -> float:
     return len(q & t) / max(1, len(q))
 
 
+_CREDIT_TERMS = ("credit", "credits", "end credit", "片尾", "谢幕", "片尾字幕", "结尾字幕")
+
+
+def _query_allows_credits(query: str) -> bool:
+    lowered = query.lower()
+    return any(term in lowered for term in _CREDIT_TERMS)
+
+
+def _probable_credit_shot(manifest: IndexManifest, shot: Shot, query: str) -> bool:
+    """Conservatively identify end-credit windows for montage retrieval.
+
+    Long-form sources often end with a text-heavy credit roll. Without OCR,
+    the reliable signal available to the zero-weight MVP is that the roll is
+    in the final part of the source. Keep short fixtures untouched and allow
+    an explicit credits query to opt back in.
+    """
+    if manifest.duration < 60.0 or _query_allows_credits(query):
+        return False
+    tail_start = max(manifest.duration * 0.80, manifest.duration - 120.0)
+    return shot.start >= tail_start
+
+
 def parse_prompt(prompt: str, duration: float | None = None) -> tuple[list[str], float]:
     matches = re.findall(r"(?<!\d)(\d+(?:\.\d+)?)\s*(?:s|sec|secs|second|seconds)\b", prompt.lower())
     budget = float(matches[0]) if matches else (duration or 8.0)
@@ -238,7 +260,8 @@ def parse_prompt(prompt: str, duration: float | None = None) -> tuple[list[str],
     return beats or [clean.strip() or prompt.strip()], budget
 
 
-def localize(manifest: IndexManifest, prompt: str, *, encoder_mode: str | None = None, top_k: int = 3, threshold: float = 0.22) -> Timeline:
+def localize(manifest: IndexManifest, prompt: str, *, encoder_mode: str | None = None, top_k: int = 3,
+             threshold: float = 0.22, avoid_credits: bool = False) -> Timeline:
     beats, budget = parse_prompt(prompt)
     encoder = make_encoder(encoder_mode or manifest.encoder)
     beat_budget = budget / max(1, min(len(beats), top_k))
@@ -246,6 +269,8 @@ def localize(manifest: IndexManifest, prompt: str, *, encoder_mode: str | None =
     for beat in beats:
         candidates: list[tuple[float, Shot]] = []
         for shot in manifest.shots:
+            if avoid_credits and _probable_credit_shot(manifest, shot, prompt):
+                continue
             if shot.embedding:
                 score = encoder.score_text_image(beat, shot.embedding)
             else:

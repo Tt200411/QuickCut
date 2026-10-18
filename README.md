@@ -78,6 +78,8 @@ quickcut basic ./my-trip.mp4 'freedom inside a relationship' \
 
 `--planner auto` attempts this local endpoint and falls back to the deterministic planner when Ollama is unavailable. Basic does not require a VLM: CLIP/OpenCLIP is useful for shot-level visual retrieval, while a VLM is reserved for the Advanced story interpretation step where transcript, shot order, and short-window visual evidence need to be narrated into a new structure.
 
+Basic montage retrieval filters likely end-credit rolls from the final portion of long sources so a broad visual prompt does not insert a production credit card. A prompt containing `credits`, `片尾`, or `谢幕` explicitly opts into those windows.
+
 For a user-owned or openly licensed internet source, the optional downloader keeps the video under a duration limit and avoids playlists:
 
 ```bash
