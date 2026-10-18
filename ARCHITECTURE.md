@@ -16,15 +16,15 @@ QuickCut is the local MVP for the EditForge proposal. It accepts one source vide
 
 1. `quickcut.core.build_index` probes the video, extracts one midpoint keyframe per fixed window, encodes it, optionally runs local Whisper, and writes `cache/<index_id>.json` plus a transcript sidecar.
 2. `quickcut.core.localize` parses duration and beats, scores candidates as visual similarity plus transcript overlap, applies a confidence threshold, and emits a `Timeline`.
-3. `quickcut.story.build_basic_vlog` creates a deterministic hook/journey/atmospheric-close plan, selects visually diverse source windows, and writes narration/caption metadata into the same Timeline.
+3. `quickcut.story.build_basic_vlog` first performs coarse source retrieval, then either creates a deterministic hook/journey/atmospheric-close plan or asks local Qwen to select and order a whitelisted candidate pool. The resulting beat, narration, and caption metadata stay in the same Timeline.
 4. `quickcut.core.update_timeline` changes trim/order/replacement metadata without touching the index. Gradio exposes those operations with source-shot replacement and strict reorder validation.
 5. `quickcut.voice.render_story_timeline` renders the montage, optionally burns SRT captions, and adds a locally synthesized narration track.
 
 ## Advanced extension path
 
-The schema supports `external` and `generated` provenance. A licensed B-roll resolver can fill illustrative gaps while concrete events stay source-grounded. The deterministic story planner can be replaced by a local Ollama/Qwen or other VLM planner that reads transcript plus shot metadata and returns the same beat schema. Dense re-sampling or a short-window VLM can refine boundaries after coarse retrieval.
+The schema supports `external` and `generated` provenance. A licensed B-roll resolver can fill illustrative gaps while concrete events stay source-grounded. The local Ollama/Qwen planner reads transcript, cached keyframes, and candidate shot metadata, then returns three story beats plus an explicit source-shot order. IDs are constrained to the candidate pool and invalid plans fall back to deterministic retrieval. Dense re-sampling or a short-window VLM can refine boundaries after coarse retrieval.
 
-CLIP is used as an image-text alignment model, not as a conversion between modalities: it is the efficient coarse retrieval signal. A VLM is useful for Advanced story interpretation and short-window verification, but running it over every frame of a five-minute source would add latency and memory pressure. The intended path is fixed-window CLIP plus Whisper for the full index, then a local Qwen2.5-VL/Ollama call only on a small set of cached keyframes and transcript evidence. `--planner auto` implements that boundary and falls back cleanly when the local VLM is absent.
+CLIP is used as an image-text alignment model, not as a conversion between modalities: it is the efficient coarse retrieval signal. Running a VLM over every frame of a five-minute source would add latency and memory pressure. The intended path is fixed-window CLIP plus Whisper for the full index, then a local Qwen2.5-VL/Ollama call only on a small set of cached keyframes and transcript evidence to choose, order, and structure the montage. `--planner auto` implements that boundary and falls back cleanly when the local VLM is absent.
 
 ## Acceptance checks
 

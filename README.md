@@ -66,7 +66,7 @@ quickcut basic ./my-trip.mp4 'scenic shots and group moments' \
   --cache-dir cache --asr auto --duration 15 --render
 ```
 
-`quickcut basic` stores the story plan and captions in the Timeline JSON. `--render` burns captions, keeps the source soundtrack, and mixes narration through the local macOS `say` voice (or `espeak` when available); no cloud TTS is used. Render a saved story timeline later with `quickcut render-story ...`. The story planner is a deterministic local baseline: it uses transcript evidence when present and falls back to prompt-grounded hook, journey, and atmospheric-close beats. A local Ollama/Qwen VLM planner can be selected without changing the timeline schema. Each cut is re-encoded with stable H.264/AAC parameters before joining so hardware players receive clean reference frames.
+`quickcut basic` stores the story plan and captions in the Timeline JSON. `--render` burns captions, keeps the source soundtrack, and mixes narration through the local macOS `say` voice (or `espeak` when available); no cloud TTS is used. Render a saved story timeline later with `quickcut render-story ...`. The deterministic story planner uses transcript evidence when present and falls back to prompt-grounded hook, journey, and atmospheric-close beats. With `--planner ollama`, local Qwen2.5-VL receives a small candidate pool of retrieval-relevant keyframes, chooses the source shots, orders them, and writes `shot_order` plus per-beat `source_shot_ids`; the renderer follows that order and safely falls back if the plan is invalid. Each cut is re-encoded with stable H.264/AAC parameters before joining so hardware players receive clean reference frames.
 
 For the Advanced direction, run a local Ollama server with a Qwen2.5-VL model and opt into its story planner:
 
@@ -76,7 +76,7 @@ quickcut basic ./my-trip.mp4 'freedom inside a relationship' \
   --planner ollama --asr auto --duration 15 --render
 ```
 
-`--planner auto` attempts this local endpoint and falls back to the deterministic planner when Ollama is unavailable. Basic does not require a VLM: CLIP/OpenCLIP is useful for shot-level visual retrieval, while a VLM is reserved for the Advanced story interpretation step where transcript, shot order, and short-window visual evidence need to be narrated into a new structure.
+`--planner auto` attempts this local endpoint and falls back to the deterministic planner when Ollama is unavailable. Basic does not require a VLM: CLIP/OpenCLIP remains useful for shot-level visual retrieval, while Qwen is invoked only on the small candidate pool to make the higher-level shot selection, ordering, and hook/journey/close structure.
 
 Basic montage retrieval filters likely end-credit rolls from the final portion of long sources so a broad visual prompt does not insert a production credit card. A prompt containing `credits`, `片尾`, or `谢幕` explicitly opts into those windows.
 
