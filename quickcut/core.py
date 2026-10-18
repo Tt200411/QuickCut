@@ -59,6 +59,7 @@ def _require_binary(name: str) -> str:
 
 
 def probe_video(video_path: str | Path) -> dict[str, Any]:
+    video_path = Path(video_path).expanduser()
     probe = shutil.which("ffprobe")
     if probe:
         result = _run([
@@ -139,6 +140,30 @@ def find_manifest(cache_dir: str | Path, index_id: str) -> IndexManifest:
     return load_manifest(_cache_path(Path(cache_dir), index_id))
 
 
+def _manifest_has_keyframes(manifest: IndexManifest) -> bool:
+    """Only reuse visual indexes backed by the PNGs we actually extracted.
+
+    Early caches stored embeddings alone, and the fallback encoder used to
+    silently create entries even when FFmpeg failed to extract a frame. Neither
+    is usable evidence for a visual language model.
+    """
+    if not manifest.shots:
+        return False
+    for shot in manifest.shots:
+        if not shot.keyframe:
+            return False
+        try:
+            with Path(shot.keyframe).open("rb") as frame:
+                if frame.read(8) != b"\x89PNG\r\n\x1a\n":
+                    return False
+                frame.seek(-12, 2)
+                if frame.read() != b"\x00\x00\x00\x00IEND\xaeB`\x82":
+                    return False
+        except (OSError, ValueError):
+            return False
+    return True
+
+
 def build_index(
     video_path: str | Path,
     cache_dir: str | Path = "cache",
@@ -152,7 +177,9 @@ def build_index(
     video_path = Path(video_path).expanduser().resolve()
     if not video_path.exists():
         raise FileNotFoundError(video_path)
-    stride = stride or window
+    stride = window if stride is None else stride
+    if not all(math.isfinite(value) and value > 0 for value in (window, stride)):
+        raise ValueError("window and stride must be positive finite seconds")
     metadata = probe_video(video_path)
     encoder = make_encoder(encoder_mode)
     asr = make_asr(asr_mode)
@@ -161,7 +188,9 @@ def build_index(
     )
     existing = _cache_path(Path(cache_dir), index_id)
     if existing.exists() and not force:
-        return load_manifest(existing)
+        cached = load_manifest(existing)
+        if _manifest_has_keyframes(cached):
+            return cached
     duration = metadata["duration"]
     shots: list[Shot] = []
     # Store absolute keyframe paths in the manifest so a later API/UI process
@@ -169,7 +198,7 @@ def build_index(
     keyframe_dir = Path(cache_dir).expanduser().resolve() / f"{index_id}.keyframes"
     keyframe_dir.mkdir(parents=True, exist_ok=True)
     start = 0.0
-    while start < duration and len(shots) < 240:
+    while start < duration:
         end = min(duration, start + window)
         midpoint = (start + end) / 2
         try:
@@ -178,12 +207,9 @@ def build_index(
             keyframe_path = keyframe_dir / f"shot-{len(shots):04d}.png"
             keyframe_path.write_bytes(ppm_to_png(ppm))
         except Exception as exc:
-            if encoder.name != "fallback-color-histogram":
-                raise RuntimeError(f"Unable to encode keyframe at {midpoint:.2f}s: {exc}") from exc
-            embedding = []
-            keyframe_path = None
+            raise RuntimeError(f"Unable to encode keyframe at {midpoint:.2f}s: {exc}") from exc
         shots.append(Shot(shot_id=f"shot-{len(shots):04d}", start=round(start, 3), end=round(end, 3),
-                          keyframe=str(keyframe_path) if keyframe_path else None,
+                          keyframe=str(keyframe_path),
                           embedding=embedding, backend=encoder.name))
         start += stride
     transcript_segments = []
@@ -405,7 +431,9 @@ def render_timeline(timeline: Timeline, output_path: str | Path, *, preset: str 
         temp_dir = Path(temp)
         clips: list[Path] = []
         for idx, item in enumerate(timeline.items):
-            clip = temp_dir / f"clip-{idx:03d}.mp4"
+            # PCM intermediates avoid inserting AAC encoder priming/silence at
+            # every cut. AAC is encoded once, after the complete join.
+            clip = temp_dir / f"clip-{idx:03d}.mkv"
             filters = ["setpts=PTS-STARTPTS"]
             if preset == "warm":
                 filters.append("eq=saturation=1.08:contrast=1.03")
@@ -417,29 +445,38 @@ def render_timeline(timeline: Timeline, output_path: str | Path, *, preset: str 
             command = [
                 ffmpeg, "-hide_banner", "-loglevel", "error", "-ss", f"{item.start:.3f}",
                 "-t", f"{item.duration:.3f}", "-i", str(source), "-map", "0:v:0",
-                "-vf", vf, "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-bf", "0",
+                "-vf", vf, "-c:v", "libx264", "-preset", "veryfast", "-crf", "19", "-bf", "0",
                 "-pix_fmt", "yuv420p",
             ]
             if has_audio:
                 # Reset each extracted audio segment as well.  AAC packet
                 # timestamps otherwise retain a tiny encoder delay, which
                 # accumulates at every concat boundary on some players.
-                command += ["-map", "0:a:0?", "-af", "asetpts=PTS-STARTPTS",
-                            "-c:a", "aac", "-b:a", "128k", "-ar", "48000", "-ac", "2"]
+                command += ["-map", "0:a:0", "-af",
+                            "asetpts=PTS-STARTPTS,aresample=async=1:first_pts=0,"
+                            f"apad,atrim=duration={item.duration:.6f}",
+                            "-c:a", "pcm_s16le", "-ar", "48000", "-ac", "2"]
             else:
                 command += ["-an"]
-            command += ["-movflags", "+faststart", str(clip), "-y"]
+            command += [str(clip), "-y"]
             _run(command)
             clips.append(clip)
         concat = temp_dir / "concat.txt"
-        concat.write_text("\n".join(f"file '{clip.as_posix()}'" for clip in clips), encoding="utf-8")
+        # Matroska's duration may round to a video frame. Explicit durations
+        # keep each cut at its requested audio/sample boundary.
+        concat.write_text("\n".join(
+            f"file '{clip.as_posix()}'\nduration {item.duration:.6f}"
+            for clip, item in zip(clips, timeline.items)
+        ), encoding="utf-8")
         join = [
             ffmpeg, "-hide_banner", "-loglevel", "error", "-f", "concat", "-safe", "0",
-            "-i", str(concat), "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-bf", "0",
+            "-i", str(concat), "-map", "0:v:0", "-vf", "setpts=PTS-STARTPTS",
+            "-c:v", "libx264", "-preset", "veryfast", "-crf", "19", "-bf", "0",
             "-pix_fmt", "yuv420p",
         ]
         if has_audio:
-            join += ["-af", "asetpts=PTS-STARTPTS", "-c:a", "aac", "-b:a", "128k",
+            join += ["-map", "0:a:0", "-af", "asetpts=PTS-STARTPTS,aresample=async=1:first_pts=0",
+                     "-c:a", "aac", "-b:a", "192k",
                      "-ar", "48000", "-ac", "2"]
         else:
             join += ["-an"]

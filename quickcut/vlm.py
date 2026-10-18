@@ -10,6 +10,9 @@ keeping the same JSON contract. No remote API is used.
 import json
 import os
 import base64
+import hashlib
+import io
+import math
 import re
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -17,7 +20,7 @@ from urllib.parse import urlsplit
 from urllib.request import Request, ProxyHandler, build_opener, urlopen
 
 from .core import DEFAULT_TIMELINE_SECONDS, MAX_TIMELINE_SECONDS, MIN_TIMELINE_SECONDS
-from .types import IndexManifest
+from .types import IndexManifest, Shot
 
 
 def _shot_id_values(value: object) -> list[str]:
@@ -132,6 +135,151 @@ def _open_ollama(request: Request, *, timeout: float, base_url: str):
     return urlopen(request, timeout=timeout)
 
 
+
+def _visual_payload(
+    available_shots: list[Shot],
+    *,
+    require_visual: bool,
+    visual_mode: str,
+    contact_sheet_size: int,
+) -> tuple[list[str], list[dict], list[dict]]:
+    """Encode every candidate's real keyframe, with an auditable image mapping.
+
+    A labeled contact sheet amortizes the VLM image-token cost without allowing
+    metadata-only candidates into a visually grounded selection. No old cache
+    entry with a missing or corrupt keyframe is silently accepted in strict mode.
+    """
+    if visual_mode not in {"contact_sheet", "frames"}:
+        raise ValueError("VLM visual_mode must be contact_sheet or frames")
+    if not 1 <= contact_sheet_size <= 24:
+        raise ValueError("VLM contact_sheet_size must be between 1 and 24")
+    try:
+        from PIL import Image, ImageDraw, ImageOps
+    except ImportError as exc:
+        raise RuntimeError("Local visual planning requires Pillow to validate keyframes") from exc
+
+    frames: list[tuple[object, object, bytes]] = []
+    keyframes: list[dict] = []
+    for shot in available_shots:
+        try:
+            if not shot.keyframe:
+                raise ValueError("keyframe path is missing")
+            contents = Path(shot.keyframe).read_bytes()
+            with Image.open(io.BytesIO(contents)) as source:
+                source.load()
+                frame = source.convert("RGB")
+        except (OSError, ValueError) as exc:
+            if require_visual:
+                raise ValueError(
+                    f"Local VLM requires a readable keyframe for {shot.shot_id}: {exc}. "
+                    "Rebuild the visual index; metadata-only caches cannot be used."
+                ) from exc
+            continue
+        frames.append((shot, frame, contents))
+        keyframes.append({
+            "shot_id": shot.shot_id, "path": str(Path(shot.keyframe).resolve()),
+            "sha256": hashlib.sha256(contents).hexdigest(),
+            "width": frame.width, "height": frame.height,
+        })
+    if require_visual and not frames:
+        raise ValueError("Local VLM received no real keyframes")
+
+    images: list[str] = []
+    image_slots: list[dict] = []
+    group_size = contact_sheet_size if visual_mode == "contact_sheet" else 1
+    for start in range(0, len(frames), group_size):
+        group = frames[start:start + group_size]
+        if visual_mode == "frames":
+            # Re-encode the validated RGB image, avoiding ambiguous formats or
+            # corrupt trailing data from an otherwise decodable cache entry.
+            image = group[0][1]
+        else:
+            columns = min(4, len(group))
+            tile_width, tile_height, label_height = 320, 180, 24
+            rows = math.ceil(len(group) / columns)
+            image = Image.new("RGB", (columns * tile_width, rows * (tile_height + label_height)), "#171717")
+            draw = ImageDraw.Draw(image)
+            for tile_index, (shot, frame, _) in enumerate(group):
+                x = (tile_index % columns) * tile_width
+                y = (tile_index // columns) * (tile_height + label_height)
+                thumb = ImageOps.contain(frame, (tile_width, tile_height))
+                image.paste(thumb, (x + (tile_width - thumb.width) // 2,
+                                    y + (tile_height - thumb.height) // 2))
+                draw.text((x + 6, y + tile_height + 5),
+                          f"{shot.shot_id}  {shot.start:.1f}-{shot.end:.1f}s", fill="white")
+        output = io.BytesIO()
+        image.save(output, format="JPEG", quality=90)
+        encoded = output.getvalue()
+        images.append(base64.b64encode(encoded).decode("ascii"))
+        image_slots.append({
+            "image_index": len(images) - 1,
+            "layout": "row-major, left to right, top to bottom" if visual_mode == "contact_sheet" else "single keyframe",
+            "shot_ids": [shot.shot_id for shot, _, _ in group],
+            "sha256": hashlib.sha256(encoded).hexdigest(),
+            "width": image.width, "height": image.height,
+        })
+    return images, image_slots, keyframes
+
+
+
+class VLMSelectionError(ValueError):
+    """Rejected model decisions, retaining the actual inference for auditing."""
+
+    def __init__(self, message: str, *, inference: dict):
+        super().__init__(message)
+        self.inference = inference
+
+
+def _validate_strict_selection(
+    model_plan: object,
+    *,
+    shots: list[Shot],
+    duration: float,
+    min_shots: int,
+    max_shots: int,
+    act_candidate_shot_ids: dict[str, list[str]] | None,
+    target_shot_counts: dict[str, int] | None,
+    chronological: bool,
+) -> None:
+    """Check model choices without synthesizing IDs or repartitioning acts."""
+    if not isinstance(model_plan, dict):
+        raise ValueError("Strict VLM selection requires an object response")
+    order = model_plan.get("shot_order")
+    if not isinstance(order, list) or not order or not all(isinstance(value, str) for value in order):
+        raise ValueError("Strict VLM selection requires an explicit nonempty shot_order array")
+    by_id = {shot.shot_id: shot for shot in shots}
+    if len(order) != len(set(order)):
+        raise ValueError("Strict VLM shot_order contains duplicate IDs")
+    if not set(order) <= by_id.keys():
+        raise ValueError("Strict VLM shot_order contains ungrounded or unknown IDs")
+    if not min_shots <= len(order) <= max_shots:
+        raise ValueError(f"Strict VLM selected {len(order)} shots; expected {min_shots}–{max_shots}")
+    selected_duration = sum(by_id[shot_id].duration for shot_id in order)
+    if selected_duration > duration + 0.001:
+        raise ValueError(f"Strict VLM source selection is {selected_duration:g}s, exceeding {duration:g}s budget")
+    if chronological and any(by_id[left].start > by_id[right].start for left, right in zip(order, order[1:])):
+        raise ValueError("Strict VLM shot_order is not chronological")
+    beats = model_plan.get("beats")
+    act_ids = ["hook", "journey", "close"]
+    if not isinstance(beats, list) or len(beats) != 3 or any(not isinstance(beat, dict) for beat in beats):
+        raise ValueError("Strict VLM selection requires exactly three acts")
+    if [beat.get("id") for beat in beats] != act_ids:
+        raise ValueError("Strict VLM acts must be hook, journey, close in that order")
+    flattened = []
+    for beat in beats:
+        act_id = beat["id"]
+        ids = beat.get("source_shot_ids")
+        if not isinstance(ids, list) or not ids or not all(isinstance(value, str) for value in ids):
+            raise ValueError(f"Strict VLM {act_id} requires a nonempty source_shot_ids array")
+        if target_shot_counts and len(ids) != target_shot_counts[act_id]:
+            raise ValueError(f"Strict VLM {act_id} selected {len(ids)} shots; expected {target_shot_counts[act_id]}")
+        if act_candidate_shot_ids and not set(ids) <= set(act_candidate_shot_ids[act_id]):
+            raise ValueError(f"Strict VLM {act_id} selected an ID outside its act candidates")
+        flattened.extend(ids)
+    if flattened != order:
+        raise ValueError("Strict VLM beat source IDs must partition shot_order exactly, without overlaps, extra IDs, omissions, or reordered IDs")
+
+
 def plan_with_ollama(
     manifest: IndexManifest,
     prompt: str,
@@ -141,6 +289,13 @@ def plan_with_ollama(
     timeout: float = 30.0,
     candidate_shot_ids: set[str] | list[str] | None = None,
     duration: float | None = None,
+    require_visual: bool = True,
+    visual_mode: str | None = None,
+    contact_sheet_size: int = 12,
+    strict_selection: bool = True,
+    act_candidate_shot_ids: dict[str, list[str]] | None = None,
+    target_shot_counts: dict[str, int] | None = None,
+    chronological: bool = False,
 ) -> dict:
     model = model or os.getenv("QUICKCUT_VLM_MODEL", "qwen2.5vl:3b")
     base_url = (base_url or os.getenv("QUICKCUT_OLLAMA_URL", "http://127.0.0.1:11434")).rstrip("/")
@@ -148,24 +303,17 @@ def plan_with_ollama(
     available_shots = [shot for shot in manifest.shots if shot.shot_id in allowed_ids]
     if not available_shots:
         raise ValueError("Local VLM has no valid source-shot candidates")
+    visual_mode = visual_mode or os.getenv("QUICKCUT_VLM_VISUAL_MODE", "contact_sheet")
+    images, image_slots, keyframes = _visual_payload(
+        available_shots, require_visual=require_visual, visual_mode=visual_mode,
+        contact_sheet_size=contact_sheet_size,
+    )
+    grounded_ids = {entry["shot_id"] for entry in keyframes}
     evidence = [
         {"shot_id": shot.shot_id, "start": shot.start, "end": shot.end, "transcript": shot.transcript,
-         "image_available": bool(shot.keyframe)}
+         "image_available": shot.shot_id in grounded_ids}
         for shot in available_shots
     ]
-    try:
-        # Four frames keep Qwen2.5-VL inside its small CPU context while still
-        # giving it a wide temporal sample of a long source video. Increase
-        # QUICKCUT_VLM_MAX_FRAMES only when using a larger local context.
-        max_frames = max(1, int(os.getenv("QUICKCUT_VLM_MAX_FRAMES", "4")))
-    except ValueError:
-        max_frames = 4
-    candidates = available_shots[::max(1, len(available_shots) // max_frames)][:max_frames]
-    candidate_ids = {shot.shot_id for shot in candidates}
-    # Keep the metadata for the complete candidate pool. Images are sampled
-    # separately above, but a one-minute story needs more than four legal IDs
-    # to cover its source windows without repeating the same shot. The cap is
-    # intentionally modest so the local model's context remains bounded.
     try:
         requested_duration = (
             max(MIN_TIMELINE_SECONDS, min(MAX_TIMELINE_SECONDS, float(duration)))
@@ -174,40 +322,41 @@ def plan_with_ollama(
     except (TypeError, ValueError):
         requested_duration = DEFAULT_TIMELINE_SECONDS
     typical_window = sorted(max(0.1, shot.duration) for shot in available_shots)[len(available_shots) // 2]
-    target_shots = max(3, min(len(available_shots), int((requested_duration + typical_window - 0.01) // typical_window)))
-    evidence_limit = max(max_frames * 3, target_shots)
-    # Keep every image-bearing sample in the legal evidence set even when the
-    # candidate pool is ordered by source time. A long-video pool may sample
-    # the last shot outside the first ``evidence_limit`` records; dropping it
-    # here would make its keyframe visible to Qwen but its ID illegal in the
-    # response schema.
-    visual_evidence = [entry for entry in evidence if entry["shot_id"] in candidate_ids]
-    metadata_evidence = [entry for entry in evidence if entry["shot_id"] not in candidate_ids]
-    evidence = (visual_evidence + metadata_evidence)[:evidence_limit]
+    # Full windows must fit within the maximum budget. ceil() would demand
+    # 20 three-second shots for a 58-second request, making strict validation
+    # impossible. Variable-length candidates are checked again after inference.
+    target_shots = max(1, min(len(available_shots), int(requested_duration // typical_window)))
     evidence_ids = {shot["shot_id"] for shot in evidence}
+    act_ids = {"hook", "journey", "close"}
+    if act_candidate_shot_ids is not None:
+        if set(act_candidate_shot_ids) != act_ids or any(not ids or not set(ids) <= evidence_ids for ids in act_candidate_shot_ids.values()):
+            raise ValueError("act_candidate_shot_ids must give nonempty grounded candidates for hook, journey, close")
+    if target_shot_counts is not None:
+        if set(target_shot_counts) != act_ids or any(not isinstance(count, int) or count < 1 for count in target_shot_counts.values()):
+            raise ValueError("target_shot_counts must give a positive integer for hook, journey, close")
+        target_shots = sum(target_shot_counts.values())
+        if target_shots > len(available_shots):
+            raise ValueError("Requested act shot counts exceed the number of visual candidates")
+        if act_candidate_shot_ids and any(target_shot_counts[act_id] > len(set(act_candidate_shot_ids[act_id])) for act_id in act_ids):
+            raise ValueError("Requested act shot count exceeds that act's visual candidates")
     chinese_requested = bool(re.search(r"[\u4e00-\u9fff]", prompt))
     language_instruction = (
         "Respond entirely in Simplified Chinese: theme, narration, beat labels, and beat text must all be Chinese."
         if chinese_requested else
         "Respond in the language used by the prompt."
     )
-    images: list[str] = []
-    image_slots: list[str] = []
-    for shot in candidates:
-        if not shot.keyframe:
-            continue
-        try:
-            image = base64.b64encode(Path(shot.keyframe).read_bytes()).decode("ascii")
-        except OSError:
-            continue
-        images.append(image)
-        image_slots.append(shot.shot_id)
     instruction = {
         "prompt": prompt,
         "shots": evidence,
         "image_slots": image_slots,
+        "visual_format": visual_mode,
+        "image_reading_instruction": "Each supplied image contains labeled keyframes. Read every tile using its exact shot_id. Tile order is row-major, left to right then top to bottom. All candidates have a real frame; do not infer a shot solely from neighboring timestamps.",
         "duration_seconds": requested_duration,
         "target_shot_count": target_shots,
+        "target_shot_counts": target_shot_counts,
+        "act_candidate_shot_ids": act_candidate_shot_ids,
+        "selection_constraints": "shot_order is authoritative. The concatenation of hook, journey, close source_shot_ids MUST equal shot_order exactly. Never list a candidate unless it is selected; do not add IDs, duplicate IDs between acts, or reorder them. The total selected source duration must not exceed duration_seconds.",
+        "chronological": chronological,
         "task": f"Act as the video editor. {language_instruction} Build a complete story for about {requested_duration:g} seconds. Choose enough distinct source shots to cover that duration (target {target_shots}) and put them in a purposeful montage order. Then write exactly three beats in hook, journey, close order. Write a coherent local voiceover with at least {max(24, min(110, int(requested_duration * 1.5)))} words or Chinese characters, covering the hook, journey, and close instead of a single summary sentence. You MUST copy exact shot_id strings from shots into shot_order and each beat's source_shot_ids. Every beat source_shot_id must also appear in shot_order. Do not leave these arrays empty or repeat a shot. Use different shots when they show different moments. Ground every sentence in what is visibly present in the supplied frames or transcript: when transcript is empty, describe only observable composition, characters, movement, and setting. Do not name an animal, object, action, outcome, time of day, or emotion unless the frames clearly support it. Never invent a chase, sunset, return home, dialogue, or other concrete event absent from the prompt, transcript, or images.",
         "schema": {"theme": "string", "narration": "string", "shot_order": ["shot-0000"], "beats": [{"id": "hook|journey|close", "label": "string", "text": "string", "source": "prompt|transcript|source", "source_shot_ids": ["shot-0000"]}]},
     }
@@ -220,23 +369,32 @@ def plan_with_ollama(
     # three short clips; the story builder still pads from retrieval if a
     # small model returns fewer legal IDs than requested.
     order_min = min(target_shots, max(1, len(evidence_ids)))
-    order_max = min(max(8, target_shots), max(order_min, len(evidence_ids)))
+    order_max = target_shots if strict_selection else min(max(8, target_shots), max(order_min, len(evidence_ids)))
+    if strict_selection and target_shots < 3:
+        raise ValueError("Strict three-act planning needs at least three source shots within its budget")
+
+    def beat_schema(act_id: str | None = None) -> dict:
+        candidate_ids = act_candidate_shot_ids[act_id] if act_id and act_candidate_shot_ids else sorted(evidence_ids)
+        count = target_shot_counts[act_id] if act_id and target_shot_counts else None
+        return {
+            "type": "object", "required": ["id", "label", "text", "source", "source_shot_ids"],
+            "properties": {
+                "id": {"type": "string", "enum": [act_id] if act_id else ["hook", "journey", "close"]},
+                "label": {"type": "string"}, "text": {"type": "string"}, "source": {"type": "string"},
+                "source_shot_ids": {"type": "array", "items": {"type": "string", "enum": candidate_ids},
+                                    "minItems": count or 1, "maxItems": count or max(1, target_shots - 2), "uniqueItems": True},
+            },
+        }
+    beat_items = ({"anyOf": [beat_schema(act_id) for act_id in ("hook", "journey", "close")]}
+                  if act_candidate_shot_ids or target_shot_counts else beat_schema())
     response_schema = {
         "type": "object",
         "required": ["theme", "narration", "shot_order", "beats"],
         "properties": {
             "theme": {"type": "string"},
             "narration": {"type": "string", "minLength": max(24, min(110, int(requested_duration * 1.5)))},
-            "shot_order": {"type": "array", "items": shot_id_schema, "minItems": order_min, "maxItems": order_max},
-            "beats": {"type": "array", "minItems": 3, "maxItems": 3, "items": {
-                "type": "object",
-                "required": ["id", "label", "text", "source", "source_shot_ids"],
-                "properties": {
-                    "id": {"type": "string", "enum": ["hook", "journey", "close"]}, "label": {"type": "string"},
-                    "text": {"type": "string"}, "source": {"type": "string"},
-                    "source_shot_ids": {"type": "array", "items": shot_id_schema, "minItems": 1},
-                },
-            }},
+            "shot_order": {"type": "array", "items": shot_id_schema, "minItems": order_min, "maxItems": order_max, "uniqueItems": True},
+            "beats": {"type": "array", "minItems": 3, "maxItems": 3, "items": beat_items},
         },
     }
     try:
@@ -253,9 +411,10 @@ def plan_with_ollama(
     # local planning to finish; callers can override this with an environment
     # variable when running on slower hardware.
     effective_timeout = configured_timeout if configured_timeout > 0 else max(timeout, 120.0 if requested_duration >= 30.0 else timeout)
+    request_prompt = json.dumps(instruction, ensure_ascii=False)
     request = Request(
         f"{base_url}/api/generate",
-        data=json.dumps({"model": model, "prompt": json.dumps(instruction, ensure_ascii=False),
+        data=json.dumps({"model": model, "prompt": request_prompt,
                          "images": images, "format": response_schema, "stream": False,
                          # Qwen2.5-VL commonly defaults to a 4096-token
                          # context. Multiple keyframes plus the evidence
@@ -275,7 +434,8 @@ def plan_with_ollama(
         raise RuntimeError(f"Local Ollama VLM unavailable at {base_url}: HTTP {exc.code} {detail}") from exc
     except (OSError, URLError, TimeoutError) as exc:
         raise RuntimeError(f"Local Ollama VLM unavailable at {base_url}: {exc}") from exc
-    raw = payload.get("response", payload)
+    raw_response = payload.get("response", payload)
+    raw = raw_response
     if isinstance(raw, str):
         try:
             raw = json.loads(raw)
@@ -291,7 +451,39 @@ def plan_with_ollama(
                 raise ValueError("Local VLM returned invalid JSON") from exc
     # Restrict the model to IDs actually sent in the evidence payload.  This
     # prevents a plausible-looking but unseen source ID from becoming a clip.
+    model_plan = json.loads(json.dumps(raw))
+    inference = {
+        "model": payload.get("model", model), "endpoint": base_url,
+        "request_prompt": request_prompt, "response": raw_response,
+        "model_plan": model_plan,
+        "input_image_count": len(images), "image_slots": image_slots,
+        "visual_mode": visual_mode, "require_visual": require_visual,
+        "strict_selection": strict_selection, "chronological": chronological,
+        "grounded_shot_ids": [shot.shot_id for shot in available_shots if shot.shot_id in grounded_ids],
+        "candidate_shot_ids": [shot.shot_id for shot in available_shots],
+        "keyframes": keyframes,
+        "metrics": {key: payload[key] for key in (
+            "created_at", "done", "done_reason", "total_duration", "load_duration",
+            "prompt_eval_count", "prompt_eval_duration", "eval_count", "eval_duration",
+        ) if key in payload},
+    }
+    if strict_selection:
+        try:
+            _validate_strict_selection(
+                model_plan, shots=available_shots, duration=requested_duration,
+                min_shots=order_min, max_shots=order_max,
+                act_candidate_shot_ids=act_candidate_shot_ids,
+                target_shot_counts=target_shot_counts, chronological=chronological,
+            )
+        except ValueError as exc:
+            inference["validation_error"] = str(exc)
+            raise VLMSelectionError(str(exc), inference=inference) from exc
     raw = normalize_shot_plan(raw, allowed_shot_ids=evidence_ids)
+    if require_visual and not raw["shot_order"]:
+        raise VLMSelectionError("Local VLM returned no visually grounded source-shot selection", inference=inference)
+    inference["normalization_changed"] = any(raw.get(key) != model_plan.get(key) for key in ("beats", "shot_order"))
+    inference["selected_source_duration"] = sum(shot.duration for shot in available_shots if shot.shot_id in raw["shot_order"])
+    raw["inference"] = inference
     raw["theme"] = str(raw.get("theme") or prompt)
     raw["narration"] = str(raw.get("narration") or f"We set out with {prompt}.")
     raw["planner"] = f"ollama:{model}"

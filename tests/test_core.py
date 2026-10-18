@@ -1,9 +1,15 @@
 from __future__ import annotations
 
 import json
+import math
+import re
 import subprocess
+from array import array
 from pathlib import Path
 
+import pytest
+
+import quickcut.core as core
 from quickcut.core import (
     MAX_TIMELINE_SECONDS,
     _has_audio_stream,
@@ -64,6 +70,151 @@ def test_render_keeps_source_audio_and_produces_decodable_h264(tmp_path: Path):
         _require_binary("ffmpeg"), "-hide_banner", "-loglevel", "error", "-i", str(rendered),
         "-f", "null", "-",
     ], check=True)
+
+
+@pytest.mark.parametrize("damage", ["missing-field", "deleted-file", "truncated-file"])
+def test_index_rebuilds_caches_without_real_keyframes(tmp_path: Path, monkeypatch, damage: str):
+    video = tmp_path / "sample.mp4"
+    make_video(video)
+    cache = tmp_path / "cache"
+    manifest = build_index(video, cache, window=6, encoder_mode="fallback")
+    manifest_path = cache / f"{manifest.index_id}.json"
+    payload = json.loads(manifest_path.read_text())
+    frame = Path(manifest.shots[0].keyframe)
+    if damage == "missing-field":
+        payload["shots"][0].pop("keyframe")
+        manifest_path.write_text(json.dumps(payload))
+    elif damage == "deleted-file":
+        frame.unlink()
+    else:
+        frame.write_bytes(b"\x89PNG\r\n\x1a\n")
+    extract = core.extract_keyframe
+    calls = []
+
+    def record_extract(path, timestamp):
+        calls.append(timestamp)
+        return extract(path, timestamp)
+
+    monkeypatch.setattr(core, "extract_keyframe", record_extract)
+    rebuilt = build_index(video, cache, window=6, encoder_mode="fallback")
+    assert len(calls) == len(rebuilt.shots)
+    assert all(Path(shot.keyframe).is_file() for shot in rebuilt.shots)
+    assert core._manifest_has_keyframes(rebuilt)
+    calls.clear()
+    build_index(video, cache, window=6, encoder_mode="fallback")
+    assert calls == []  # A complete index remains reusable.
+
+
+def test_fallback_index_does_not_hide_failed_extraction(tmp_path: Path, monkeypatch):
+    video = tmp_path / "sample.mp4"
+    video.touch()
+    monkeypatch.setattr(core, "probe_video", lambda _: {"duration": 3.0, "size": 1})
+
+    def fail_extract(*args):
+        raise RuntimeError("damaged media")
+
+    monkeypatch.setattr(core, "extract_keyframe", fail_extract)
+    with pytest.raises(RuntimeError, match="Unable to encode keyframe.*damaged media"):
+        build_index(video, tmp_path / "cache", encoder_mode="fallback")
+    assert not list((tmp_path / "cache").glob("*.json"))
+
+
+def test_probe_accepts_string_path_without_ffprobe(tmp_path: Path, monkeypatch):
+    video = tmp_path / "sample.mp4"
+    make_video(video)
+    which = core.shutil.which
+    monkeypatch.setattr(core.shutil, "which", lambda name: None if name == "ffprobe" else which(name))
+    result = core.probe_video(str(video))
+    assert result["duration"] == 12.0
+    assert result["size"] == video.stat().st_size
+
+
+def test_index_covers_tail_beyond_240_windows(tmp_path: Path, monkeypatch):
+    video = tmp_path / "long.mp4"
+    video.touch()
+    monkeypatch.setattr(core, "probe_video", lambda _: {"duration": 241.0, "size": 1})
+    monkeypatch.setattr(core, "extract_keyframe", lambda *_: b"P6\n1 1\n255\n\x80\x80\x80")
+    manifest = build_index(video, tmp_path / "cache", window=1, encoder_mode="fallback")
+    assert len(manifest.shots) == 241
+    assert manifest.shots[-1].end == 241.0
+
+
+@pytest.mark.parametrize("window,stride", [(0, None), (3, 0), (-1, 1), (1, float("nan"))])
+def test_index_rejects_invalid_windows(tmp_path: Path, window, stride):
+    video = tmp_path / "sample.mp4"
+    video.touch()
+    with pytest.raises(ValueError, match="positive finite"):
+        build_index(video, window=window, stride=stride)
+
+
+def test_render_preserves_audio_at_reordered_fractional_cuts_and_zero_pts(tmp_path: Path):
+    ffmpeg = _require_binary("ffmpeg")
+    source = tmp_path / "sync-source.mp4"
+    subprocess.run([
+        ffmpeg, "-hide_banner", "-loglevel", "error",
+        "-f", "lavfi", "-i", "testsrc2=size=160x90:rate=25:duration=8",
+        "-f", "lavfi", "-i",
+        "aevalsrc=0.2*sin(2*PI*if(lt(t\\,2)\\,440\\,if(lt(t\\,4)\\,660\\,if(lt(t\\,6)\\,880\\,1100)))*t):s=48000:d=8",
+        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", str(source), "-y",
+    ], check=True)
+    timeline = Timeline(
+        version="1.0", source_video=str(source), query="sync test", duration_budget=6,
+        index_id="sync", coverage="source", items=[
+            TimelineItem("first", "source", "a", 4, 6.04),
+            TimelineItem("second", "source", "b", 0.6, 2.4),
+            TimelineItem("third", "source", "c", 6, 7.36),
+        ],
+    )
+    rendered = render_timeline(timeline, tmp_path / "sync-output.mp4")
+    # -copyts keeps container timing visible, instead of letting FFmpeg shift
+    # a delayed first stream to zero before the assertions see it.
+    probe = subprocess.run([
+        ffmpeg, "-hide_banner", "-loglevel", "info", "-copyts", "-i", str(rendered),
+        "-vf", "showinfo", "-af", "ashowinfo", "-t", "0.05", "-f", "null", "-",
+    ], check=True, capture_output=True, text=True)
+    assert re.search(r"Parsed_showinfo.*n:\s*0\s+pts:\s*0\s+pts_time:0(?:\s|$)", probe.stderr)
+    assert re.search(r"Parsed_ashowinfo.*n:0\s+pts:0\s+pts_time:0(?:\s|$)", probe.stderr)
+    decoded = subprocess.run([
+        ffmpeg, "-hide_banner", "-loglevel", "error", "-i", str(rendered),
+        "-vn", "-ac", "1", "-ar", "48000", "-f", "f32le", "pipe:1",
+    ], check=True, capture_output=True)
+    samples = array("f", decoded.stdout)
+    assert abs(len(samples) / 48000 - timeline.duration) < 0.04
+    output_cursor = 0.0
+    for item, expected_frequency in zip(timeline.items, [880, 440, 1100]):
+        start = round((output_cursor + 0.3) * 48000)
+        section = samples[start:start + 9600]
+        rms = math.sqrt(sum(value * value for value in section) / len(section))
+        # Spectral projection verifies the original sound belongs to the
+        # corresponding source cut, rather than merely checking an audio track.
+        real = sum(value * math.cos(2 * math.pi * expected_frequency * i / 48000)
+                   for i, value in enumerate(section))
+        imag = sum(value * math.sin(2 * math.pi * expected_frequency * i / 48000)
+                   for i, value in enumerate(section))
+        amplitude = 2 * math.hypot(real, imag) / len(section)
+        assert rms > 0.08
+        assert amplitude > 0.12
+        output_cursor += item.duration
+    subprocess.run([
+        ffmpeg, "-hide_banner", "-loglevel", "error", "-xerror", "-i", str(rendered),
+        "-f", "null", "-",
+    ], check=True)
+
+
+def test_summary_verifier_rejects_overlapping_zero_length_and_repeated_cues(tmp_path: Path):
+    from scripts.verify_chinese_summary import inspect_subtitles
+
+    srt = tmp_path / "invalid.srt"
+    srt.write_text(
+        "1\n00:00:00,000 --> 00:00:02,000\n故事开始。\n\n"
+        "2\n00:00:01,900 --> 00:00:03,000\n故事开始。\n\n"
+        "3\n00:00:03,000 --> 00:00:03,000\n故事结束。\n",
+        encoding="utf-8",
+    )
+    _, errors = inspect_subtitles(srt, 5)
+    assert any("overlaps" in error for error in errors)
+    assert any("zero or negative" in error for error in errors)
+    assert any("repeats" in error for error in errors)
 
 
 def test_localize_avoids_end_credit_roll_for_basic_montage():

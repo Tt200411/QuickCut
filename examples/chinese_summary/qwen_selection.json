@@ -1,0 +1,541 @@
+{
+  "model": "ollama:qwen2.5vl:3b",
+  "strategy": "three independent single-image acts",
+  "shot_order": [
+    "shot-0127",
+    "shot-0129",
+    "shot-0130",
+    "shot-0132",
+    "shot-0133",
+    "shot-0135",
+    "shot-0138",
+    "shot-0139",
+    "shot-0140",
+    "shot-0141",
+    "shot-0142",
+    "shot-0150",
+    "shot-0151",
+    "shot-0152",
+    "shot-0153",
+    "shot-0154",
+    "shot-0155",
+    "shot-0162",
+    "shot-0163",
+    "shot-0164"
+  ],
+  "beats": [
+    {
+      "id": "hook",
+      "label": "开头",
+      "text": "大白兔站在树下，棕色飞鼠展开身体起跳。",
+      "narration": "大白兔站在树下，棕色飞鼠展开身体起跳。",
+      "source": "source",
+      "source_shot_ids": [
+        "shot-0127",
+        "shot-0129",
+        "shot-0130",
+        "shot-0132",
+        "shot-0133",
+        "shot-0135"
+      ]
+    },
+    {
+      "id": "journey",
+      "label": "中段",
+      "text": "飞鼠在空中滑翔，避开地面尖桩，最终抓住果实。",
+      "narration": "飞鼠在空中滑翔，避开地面尖桩，最终抓住果实。",
+      "source": "source",
+      "source_shot_ids": [
+        "shot-0138",
+        "shot-0139",
+        "shot-0140",
+        "shot-0141",
+        "shot-0142",
+        "shot-0150",
+        "shot-0151",
+        "shot-0152"
+      ]
+    },
+    {
+      "id": "close",
+      "label": "结尾",
+      "text": "白兔抓住棕色小飞鼠，蝴蝶飞过，白兔在草地上牵线。",
+      "narration": "白兔抓住棕色小飞鼠，蝴蝶飞过，白兔在草地上牵线。",
+      "source": "source",
+      "source_shot_ids": [
+        "shot-0153",
+        "shot-0154",
+        "shot-0155",
+        "shot-0162",
+        "shot-0163",
+        "shot-0164"
+      ]
+    }
+  ],
+  "calls": [
+    {
+      "act": {
+        "id": "hook",
+        "start": 378,
+        "end": 414,
+        "count": 6,
+        "required_ids": [
+          "shot-0127",
+          "shot-0135"
+        ],
+        "instruction": "这是开头。大白兔站在森林地面，棕色飞鼠爬上树并展开身体跳起。要建立环境、兔子、飞鼠、起跳。必须选shot-0127（树下大白兔）和shot-0135（飞鼠展开身体起跳）；另四个由你根据画面选择。旁白约五十汉字。"
+      },
+      "request_prompt": "你是剪辑师。图中每格标有大号编号和源时间。这是开头。大白兔站在森林地面，棕色飞鼠爬上树并展开身体跳起。要建立环境、兔子、飞鼠、起跳。必须选编号2（树下大白兔）和编号10（飞鼠展开身体起跳）；另四个由你根据画面选择。旁白约五十汉字。\n从这12个镜头里选恰好6个，删除重复视角，保留关键动作，按时间从早到晚排序。返回selected_positions整数数组，再用一句中文在description概括所选镜头中的动作。必须看清谁抓住谁，不能颠倒角色。不要虚构追逐，不要写创作说明。selected_positions只写图中所选镜头编号，必须从小到大严格升序，不要把必选镜头放在数组最前面。不能把全部候选照抄。忽略之前旁白字数要求，只返回一句概括。",
+      "model_plan": {
+        "selected_positions": [
+          2,
+          10,
+          4,
+          5,
+          7,
+          8
+        ],
+        "description": "大白兔站在树下，棕色飞鼠展开身体起跳。"
+      },
+      "image_slots": [
+        {
+          "sha256": "9972c436b3222251af5f6383700576758ef5cb550e6787712dd413e1810e43fa",
+          "position_to_shot_id": {
+            "1": "shot-0126",
+            "2": "shot-0127",
+            "3": "shot-0128",
+            "4": "shot-0129",
+            "5": "shot-0130",
+            "6": "shot-0131",
+            "7": "shot-0132",
+            "8": "shot-0133",
+            "9": "shot-0134",
+            "10": "shot-0135",
+            "11": "shot-0136",
+            "12": "shot-0137"
+          }
+        }
+      ],
+      "keyframes": [
+        {
+          "shot_id": "shot-0126",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0126.png",
+          "sha256": "61ac72bae15d16b4ee4b05bc070ecc1b875d9f1171b6a05ebfacc47679b517a9",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0127",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0127.png",
+          "sha256": "9c7a72381ba659dc957fdc6af10c88ab7bd04e92c0dd48b9246fb4044bb2ddb6",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0128",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0128.png",
+          "sha256": "a3058bd1da5d852dde0b05593c691a1e179ce5abdbb7ba00e6092ea6678ca869",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0129",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0129.png",
+          "sha256": "0f5e5c553616ed4bc66cb4e1dd85a582ab519f44068d20df21fb6e63ede60a75",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0130",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0130.png",
+          "sha256": "97c541683350dc00cf053a142caddb9c49dffe16b1f09a6a80b54ffbf5147902",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0131",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0131.png",
+          "sha256": "27394b0c857a304fc49e9ad2c978ef1d9b91e25ac124d4eca5541482a6ef819a",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0132",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0132.png",
+          "sha256": "05b594ae8796964ce0868c5ef4b89e3581a26f89924d9f7a535f819d88e5a5cb",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0133",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0133.png",
+          "sha256": "543d440e21049178bc9d8eb98d169588c9b5b4c97b97cdcc2fe84ac0ad2f2a27",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0134",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0134.png",
+          "sha256": "a41ca78a04c87856e916e4ba876a90eedd1a994f53d8379accf0a5f7c9e316d6",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0135",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0135.png",
+          "sha256": "82f07371ea95c29feeeed8c2b4c3d2756f10ec597718e0270daefa87e662c97c",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0136",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0136.png",
+          "sha256": "8c887f8a70a6f32167677323a3c2174905077b292338cb5d4a2f3ba318dce3cc",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0137",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0137.png",
+          "sha256": "211c799e9e51659580e5720d0981d4a2c5e29ba41a025242effeb4bb097a2faa",
+          "width": 256,
+          "height": 144
+        }
+      ],
+      "response": "{ \"selected_positions\": [2, 10, 4, 5, 7, 8],\"description\":\"大白兔站在树下，棕色飞鼠展开身体起跳。\"}",
+      "metrics": {
+        "prompt_eval_count": 1331,
+        "eval_count": 45,
+        "total_duration": 3409415750
+      },
+      "order_correction": {
+        "prompt": "你选出的镜头编号是[2, 10, 4, 5, 7, 8]。保留这些编号，一个不增一个不减。请按数字从小到大排序，让故事按源时间发生。只返回selected_positions整数数组的JSON。",
+        "response": "{\n  \"selected_positions\": [2, 4, 5, 7, 8, 10]\n}",
+        "metrics": {
+          "prompt_eval_count": 81,
+          "eval_count": 27,
+          "total_duration": 2133862625
+        }
+      }
+    },
+    {
+      "act": {
+        "id": "journey",
+        "start": 414,
+        "end": 459,
+        "count": 8,
+        "required_ids": [
+          "shot-0141",
+          "shot-0142",
+          "shot-0150"
+        ],
+        "instruction": "这是中段。飞鼠在空中滑翔，一个橙色果实落向地面的尖桩，飞鼠在树枝与尖桩之间闪躲。必须选择shot-0141（果实下落）、shot-0142（地面尖桩）、shot-0150（飞鼠在尖桩上方）；另五个由你选择，保留躲避障碍的过程。旁白约八十汉字。"
+      },
+      "request_prompt": "你是剪辑师。图中每格标有大号编号和源时间。这是中段。飞鼠在空中滑翔，一个橙色果实落向地面的尖桩，飞鼠在树枝与尖桩之间闪躲。必须选择编号4（果实下落）、编号5（地面尖桩）、编号13（飞鼠在尖桩上方）；另五个由你选择，保留躲避障碍的过程。旁白约八十汉字。\n从这15个镜头里选恰好8个，删除重复视角，保留关键动作，按时间从早到晚排序。返回selected_positions整数数组，再用一句中文在description概括所选镜头中的动作。必须看清谁抓住谁，不能颠倒角色。不要虚构追逐，不要写创作说明。selected_positions只写图中所选镜头编号，必须从小到大严格升序，不要把必选镜头放在数组最前面。不能把全部候选照抄。忽略之前旁白字数要求，只返回一句概括。",
+      "model_plan": {
+        "selected_positions": [
+          4,
+          5,
+          13,
+          14,
+          15,
+          1,
+          2,
+          3
+        ],
+        "description": "飞鼠在空中滑翔，避开地面尖桩，最终抓住果实。"
+      },
+      "image_slots": [
+        {
+          "sha256": "2368814220b135bab530187c685c8283605ac7add5f76dbd6004be4f48aad654",
+          "position_to_shot_id": {
+            "1": "shot-0138",
+            "2": "shot-0139",
+            "3": "shot-0140",
+            "4": "shot-0141",
+            "5": "shot-0142",
+            "6": "shot-0143",
+            "7": "shot-0144",
+            "8": "shot-0145",
+            "9": "shot-0146",
+            "10": "shot-0147",
+            "11": "shot-0148",
+            "12": "shot-0149",
+            "13": "shot-0150",
+            "14": "shot-0151",
+            "15": "shot-0152"
+          }
+        }
+      ],
+      "keyframes": [
+        {
+          "shot_id": "shot-0138",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0138.png",
+          "sha256": "6539530a1e09e2b64f18d9ca8b5d1ec797e26678d509b2b637de66d2ab555820",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0139",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0139.png",
+          "sha256": "6139f4b8e5e5736c8c576e76e4be5a3de96521e546c68882342bc607f8f0717e",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0140",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0140.png",
+          "sha256": "6c04e29c7e93d13a2234beb8b16e1bb7921b239546ff28b592762a3d8625743b",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0141",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0141.png",
+          "sha256": "0b85dab77bc6eea1639a19be83962d5d5a4561eca8e9ee35dc5fd8082dcbe960",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0142",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0142.png",
+          "sha256": "f23caed90243da2c62a2114d12bd964090aadeefd94df0db07f80be1702af632",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0143",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0143.png",
+          "sha256": "8952103dc53bda24bd641facac9bf6bba2530e2303dfb5336f059cfc7a89b4a0",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0144",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0144.png",
+          "sha256": "2491d641d083fafa52b69e66d77d942d06acfe5597d527fb03aa7f207f5cd678",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0145",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0145.png",
+          "sha256": "f843901fed2c32acea429fad8065cc6d30cd94ec892f50c3ffbf97b8e6a4fae6",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0146",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0146.png",
+          "sha256": "79c6c5a94673637a55819a151f36f939b6518de04d49abbcd62a03389c47511b",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0147",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0147.png",
+          "sha256": "d01a385b04b267cc4056ab6603d890925a574a424f226ba2598f83f0d67bbf99",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0148",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0148.png",
+          "sha256": "eb652e386b19f984d25289b870e70136dcae7858e496e34245b0e64f14b6d796",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0149",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0149.png",
+          "sha256": "55ad0c82e5127ce8e5c22fbc1fee0df8c9111484a54972d7e21f346e20e6d328",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0150",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0150.png",
+          "sha256": "5dfb19fc82214d0114ec20dc646ebb358a67add140c0614397391b3a78030949",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0151",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0151.png",
+          "sha256": "6fb8aa0fbf80e3c3db3f2533f1294b7c1aa11f7ae9f9c3380f07623bc056000f",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0152",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0152.png",
+          "sha256": "3befccedd0a84ebd248c46cfc54a824afb20c21ba3f4028858fc2ad8f8968972",
+          "width": 256,
+          "height": 144
+        }
+      ],
+      "response": "{ \"selected_positions\": [4, 5, 13, 14, 15, 1, 2, 3],\"description\":\"飞鼠在空中滑翔，避开地面尖桩，最终抓住果实。\"}",
+      "metrics": {
+        "prompt_eval_count": 1660,
+        "eval_count": 54,
+        "total_duration": 5870923375
+      },
+      "order_correction": {
+        "prompt": "你选出的镜头编号是[4, 5, 13, 14, 15, 1, 2, 3]。保留这些编号，一个不增一个不减。请按数字从小到大排序，让故事按源时间发生。只返回selected_positions整数数组的JSON。",
+        "response": "{\n  \"selected_positions\": [1, 2, 3, 4, 5, 13, 14, 15]\n}",
+        "metrics": {
+          "prompt_eval_count": 89,
+          "eval_count": 35,
+          "total_duration": 1993211292
+        }
+      }
+    },
+    {
+      "act": {
+        "id": "close",
+        "start": 459,
+        "end": 493.5,
+        "count": 6,
+        "required_ids": [
+          "shot-0154",
+          "shot-0162",
+          "shot-0163",
+          "shot-0164"
+        ],
+        "instruction": "这是结尾。白色大兔子伸手抓住棕色小飞鼠；后来白兔身旁蝴蝶飞过，棕色飞鼠被线牵在空中，白兔在草地上牵线。必须选择shot-0154的抓住、shot-0162的飞鼠风筝、shot-0163的草地远景、shot-0164的兔子微笑；另外两个由你选择让收束完整。旁白约六十汉字。"
+      },
+      "request_prompt": "你是剪辑师。图中每格标有大号编号和源时间。这是结尾。白色大兔子伸手抓住棕色小飞鼠；后来白兔身旁蝴蝶飞过，棕色飞鼠被线牵在空中，白兔在草地上牵线。必须选择编号2的抓住、编号10的飞鼠风筝、编号11的草地远景、编号12的兔子微笑；另外两个由你选择让收束完整。旁白约六十汉字。\n从这12个镜头里选恰好6个，删除重复视角，保留关键动作，按时间从早到晚排序。返回selected_positions整数数组，再用一句中文在description概括所选镜头中的动作。必须看清谁抓住谁，不能颠倒角色。不要虚构追逐，不要写创作说明。selected_positions只写图中所选镜头编号，必须从小到大严格升序，不要把必选镜头放在数组最前面。不能把全部候选照抄。忽略之前旁白字数要求，只返回一句概括。",
+      "model_plan": {
+        "selected_positions": [
+          2,
+          10,
+          11,
+          12,
+          1,
+          3
+        ],
+        "description": "白兔抓住棕色小飞鼠，蝴蝶飞过，白兔在草地上牵线。"
+      },
+      "image_slots": [
+        {
+          "sha256": "c950435a6c05041461d5d91368cd1106bdde40930f7af2586b2eb17f287a30c4",
+          "position_to_shot_id": {
+            "1": "shot-0153",
+            "2": "shot-0154",
+            "3": "shot-0155",
+            "4": "shot-0156",
+            "5": "shot-0157",
+            "6": "shot-0158",
+            "7": "shot-0159",
+            "8": "shot-0160",
+            "9": "shot-0161",
+            "10": "shot-0162",
+            "11": "shot-0163",
+            "12": "shot-0164"
+          }
+        }
+      ],
+      "keyframes": [
+        {
+          "shot_id": "shot-0153",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0153.png",
+          "sha256": "f9a7bb46f491788942d6a80dbfaa9742cc84ab31e0cc12f79dd800ec04e702e2",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0154",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0154.png",
+          "sha256": "0724bf2e2ebf66fe966d6fbdd5b819583b02cff2df6e93e6029ec8de7cb6f827",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0155",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0155.png",
+          "sha256": "14f986d442e2a706f87bd92fe48b19c2f1c23fab81e5fa1f90d495941c2d8f86",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0156",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0156.png",
+          "sha256": "83f96addfc3fe4fc75ee8a7cb945ebb5d032bbcbb5986774399f3d2ab5fda056",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0157",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0157.png",
+          "sha256": "8d96d4ccb97b415297306477c380d076ee067a14375c737ac1d76402075165c0",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0158",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0158.png",
+          "sha256": "c654e6ee4f77fdf1e20d67eb2310bab15d93ff61f2bb710b5f1d76afdd42f967",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0159",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0159.png",
+          "sha256": "6b4e822750b0ea927f83dc729905c63400cbedfc96990de8053ac3dfd11207a5",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0160",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0160.png",
+          "sha256": "63734937a01596768fbe03226df996b6df8048237d9f1f79ed16638ae597558d",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0161",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0161.png",
+          "sha256": "fd00b9d3c47de20c116342f96ebaafad2e61eff1ca98ed5cedede6495e90f6f2",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0162",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0162.png",
+          "sha256": "5440005e937fcdd63fbc733a727b0da93f619764d85376667280f661999940ff",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0163",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0163.png",
+          "sha256": "acf0f5e689bdff3c14720bb480b51ff247dabe8f1a29bab0a7f1a1d960f6badf",
+          "width": 256,
+          "height": 144
+        },
+        {
+          "shot_id": "shot-0164",
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0164.png",
+          "sha256": "197ffc38eaee80c277dc44f68cfd4bb5e7f26ea6efdb6319ee5f733472565747",
+          "width": 256,
+          "height": 144
+        }
+      ],
+      "response": "{ \"selected_positions\": [2, 10, 11, 12, 1, 3],\"description\":\"白兔抓住棕色小飞鼠，蝴蝶飞过，白兔在草地上牵线。\"}",
+      "metrics": {
+        "prompt_eval_count": 1343,
+        "eval_count": 52,
+        "total_duration": 4930754791
+      },
+      "order_correction": {
+        "prompt": "你选出的镜头编号是[2, 10, 11, 12, 1, 3]。保留这些编号，一个不增一个不减。请按数字从小到大排序，让故事按源时间发生。只返回selected_positions整数数组的JSON。",
+        "response": "{\n  \"selected_positions\": [1, 2, 3, 10, 11, 12]\n}",
+        "metrics": {
+          "prompt_eval_count": 83,
+          "eval_count": 29,
+          "total_duration": 1886096666
+        }
+      }
+    }
+  ]
+}

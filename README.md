@@ -110,3 +110,10 @@ Every item records `provenance`, `asset_id`, `start`, `end`, and `license_note`,
 - rendered output is produced by FFmpeg and can be opened as an MP4.
 
 See `tests/` for deterministic checks covering core retrieval, ASR sidecars, Gradio edits, story planning, and caption timing.
+
+## Local Chinese narrated summaries
+
+The audited Chinese summary workflow is documented in [docs/chinese-summary.md](docs/chinese-summary.md).
+It rebuilds real keyframes, runs local Whisper and Qwen2.5-VL, synthesizes sentence-timed Mandarin speech,
+keeps the source soundtrack, and verifies decoded timestamps and source-audio retention. Qwen's raw
+selection and order corrections are saved; invalid plans are rejected instead of silently padded.

@@ -61,9 +61,16 @@ def parse_ppm(data: bytes) -> tuple[int, int, bytes]:
     if maxval > 255:
         raise ValueError("Unsupported 16-bit PPM")
     if data[:2] == b"P6":
-        while pos < len(data) and data[pos] in b" \t\r\n":
-            pos += 1
-        return width, height, data[pos:]
+        # P6 has one separator after maxval; subsequent bytes are pixels.
+        # A dark first pixel can itself be 0x09/0x0a/0x20. Skipping arbitrary
+        # whitespace here used to corrupt valid frames and create empty indexes.
+        if pos >= len(data) or data[pos] not in b" \t\r\n":
+            raise ValueError("Missing PPM raster separator")
+        pos += 1
+        pixels = data[pos:]
+        if len(pixels) != width * height * 3:
+            raise ValueError("Invalid PPM raster length")
+        return width, height, pixels
     values = bytes(int(x) for x in data[pos:].split())
     return width, height, values
 
