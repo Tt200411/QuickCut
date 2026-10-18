@@ -7,6 +7,7 @@ The adapter is deliberately small and can be replaced by a local Kokoro/Piper
 backend later without changing the Story/Timeline API.
 """
 
+import re
 import shutil
 import subprocess
 import tempfile
@@ -71,22 +72,56 @@ def synthesize_local_narration(text: str, output_path: str | Path, *, voice: str
     return output_path
 
 
+def _has_audio_stream(video: Path) -> bool:
+    ffmpeg = _require_binary("ffmpeg")
+    result = subprocess.run([ffmpeg, "-hide_banner", "-i", str(video)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return bool(re.search(r"Stream #\S+[^\n]*Audio:", result.stderr.decode("utf-8", errors="replace")))
+
+
 def _apply_captions(video: Path, timeline: Timeline, output: Path, srt: Path) -> None:
     ffmpeg = _require_binary("ffmpeg")
     subtitle_path = srt.as_posix().replace("'", "\\'")
-    subprocess.run([
+    command = [
         ffmpeg, "-hide_banner", "-loglevel", "error", "-i", str(video),
-        "-vf", f"subtitles='{subtitle_path}'", "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-an", str(output), "-y",
-    ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        "-map", "0:v:0", "-vf", f"subtitles='{subtitle_path}'",
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-pix_fmt", "yuv420p",
+    ]
+    if _has_audio_stream(video):
+        # Burning captions should not silently discard the source soundtrack.
+        command += ["-map", "0:a:0?", "-c:a", "copy"]
+    else:
+        command += ["-an"]
+    command += [str(output), "-y"]
+    subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
 def _mix_narration(video: Path, audio: Path, output: Path, duration: float) -> None:
     ffmpeg = _require_binary("ffmpeg")
-    subprocess.run([
-        ffmpeg, "-hide_banner", "-loglevel", "error", "-i", str(video), "-i", str(audio),
-        "-map", "0:v:0", "-map", "1:a:0", "-af", "apad", "-t", f"{duration:.3f}",
-        "-c:v", "copy", "-c:a", "aac", "-movflags", "+faststart", str(output), "-y",
-    ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    has_original_audio = _has_audio_stream(video)
+    if has_original_audio:
+        # Keep the camera/production track underneath local narration.  The
+        # narration is padded to the requested timeline duration while the
+        # original track remains the first mix input and therefore controls the
+        # output duration.
+        filter_complex = (
+            "[0:a:0]volume=0.55[orig];"
+            "[1:a:0]volume=1.0,apad[narr];"
+            "[orig][narr]amix=inputs=2:duration=first:dropout_transition=0:normalize=0[aout]"
+        )
+        command = [
+            ffmpeg, "-hide_banner", "-loglevel", "error", "-i", str(video), "-i", str(audio),
+            "-map", "0:v:0", "-map", "[aout]", "-filter_complex", filter_complex,
+            "-t", f"{duration:.3f}", "-c:v", "copy", "-c:a", "aac", "-b:a", "128k",
+            "-ar", "48000", "-ac", "2", "-movflags", "+faststart", str(output), "-y",
+        ]
+    else:
+        command = [
+            ffmpeg, "-hide_banner", "-loglevel", "error", "-i", str(video), "-i", str(audio),
+            "-map", "0:v:0", "-map", "1:a:0", "-af", "apad", "-t", f"{duration:.3f}",
+            "-c:v", "copy", "-c:a", "aac", "-b:a", "128k", "-ar", "48000", "-ac", "2",
+            "-movflags", "+faststart", str(output), "-y",
+        ]
+    subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
 def render_story_timeline(timeline: Timeline, output_path: str | Path, *, captions: bool = True, narration: bool = True, voice: str | None = None) -> Path:

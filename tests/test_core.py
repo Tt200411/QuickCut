@@ -4,7 +4,7 @@ import json
 import subprocess
 from pathlib import Path
 
-from quickcut.core import _require_binary, build_index, localize, render_timeline, update_timeline, validate_timeline
+from quickcut.core import _has_audio_stream, _require_binary, build_index, localize, render_timeline, update_timeline, validate_timeline
 
 
 def make_video(path: Path) -> None:
@@ -31,3 +31,24 @@ def test_index_localize_and_edit_round_trip(tmp_path: Path):
     assert edited.duration <= edited.duration_budget
     rendered = render_timeline(edited, tmp_path / "clip.mp4")
     assert rendered.exists() and rendered.stat().st_size > 0
+
+
+def test_render_keeps_source_audio_and_produces_decodable_h264(tmp_path: Path):
+    video = tmp_path / "av-sample.mp4"
+    subprocess.run([
+        _require_binary("ffmpeg"), "-hide_banner", "-loglevel", "error",
+        "-f", "lavfi", "-i", "color=c=skyblue:s=320x180:d=8",
+        "-f", "lavfi", "-i", "sine=frequency=440:duration=8",
+        "-map", "0:v:0", "-map", "1:a:0", "-c:v", "libx264", "-pix_fmt", "yuv420p",
+        "-c:a", "aac", "-ar", "48000", "-ac", "2", str(video), "-y",
+    ], check=True)
+    manifest = build_index(video, tmp_path / "cache", window=3, encoder_mode="fallback")
+    timeline = localize(manifest, "sky blue scenic 8 seconds", encoder_mode="fallback")
+    rendered = render_timeline(timeline, tmp_path / "av-clip.mp4")
+    assert _has_audio_stream(rendered)
+    # Decoding the complete output catches malformed concat/H.264 timestamps
+    # that may look like a corrupted image in hardware players.
+    subprocess.run([
+        _require_binary("ffmpeg"), "-hide_banner", "-loglevel", "error", "-i", str(rendered),
+        "-f", "null", "-",
+    ], check=True)

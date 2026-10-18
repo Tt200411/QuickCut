@@ -10,7 +10,7 @@ The first runnable stack is deliberately small and production-shaped:
 - optional local `faster-whisper` tiny/int8 ASR with cached transcript sidecars;
 - cached JSON index and validated Timeline JSON;
 - FastAPI/Uvicorn HTTP service and optional Gradio workbench;
-- FFmpeg rendering with `clean` and `warm` presets, captions, and local narration.
+- FFmpeg rendering with `clean` and `warm` presets, captions, local narration, and preserved source audio.
 
 The fallback encoder is useful for checking the entire pipeline on a fresh machine. For semantic retrieval, install the ML extra and set `QUICKCUT_ENCODER=openclip`; the backend reads `QUICKCUT_CLIP_MODEL` and `QUICKCUT_CLIP_PRETRAINED`, defaulting to the small MobileCLIP-S2 configuration exposed by OpenCLIP. For transcript retrieval, install the ASR extra and opt in with `--asr auto`; the default `tiny` model runs locally on CPU with int8 weights and writes `<index_id>.transcript.json` beside the index.
 
@@ -66,7 +66,7 @@ quickcut basic ./my-trip.mp4 'scenic shots and group moments' \
   --cache-dir cache --asr auto --duration 15 --render
 ```
 
-`quickcut basic` stores the story plan and captions in the Timeline JSON. `--render` burns captions and adds narration through the local macOS `say` voice (or `espeak` when available); no cloud TTS is used. Render a saved story timeline later with `quickcut render-story ...`. The story planner is a deterministic local baseline: it uses transcript evidence when present and falls back to prompt-grounded hook, journey, and atmospheric-close beats. A local Ollama/Qwen or other VLM planner can replace this function later without changing the timeline schema.
+`quickcut basic` stores the story plan and captions in the Timeline JSON. `--render` burns captions, keeps the source soundtrack, and mixes narration through the local macOS `say` voice (or `espeak` when available); no cloud TTS is used. Render a saved story timeline later with `quickcut render-story ...`. The story planner is a deterministic local baseline: it uses transcript evidence when present and falls back to prompt-grounded hook, journey, and atmospheric-close beats. A local Ollama/Qwen VLM planner can be selected without changing the timeline schema. Each cut is re-encoded with stable H.264/AAC parameters before joining so hardware players receive clean reference frames.
 
 For the Advanced direction, run a local Ollama server with a Qwen2.5-VL model and opt into its story planner:
 

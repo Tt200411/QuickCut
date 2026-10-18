@@ -335,6 +335,20 @@ def update_timeline(timeline: Timeline, edits: list[dict[str, Any]]) -> Timeline
     return timeline
 
 
+def _has_audio_stream(video_path: str | Path) -> bool:
+    """Return whether a media file has an audio stream.
+
+    ffprobe is optional in the MVP, so inspect bundled ffmpeg's stream listing
+    when ffprobe is unavailable.  The command intentionally allows ffmpeg to
+    exit non-zero because no output target is supplied.
+    """
+    result = subprocess.run(
+        [_ffmpeg_binary(), "-hide_banner", "-i", str(video_path)],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    )
+    return bool(re.search(r"Stream #\S+[^\n]*Audio:", result.stderr.decode("utf-8", errors="replace")))
+
+
 def render_timeline(timeline: Timeline, output_path: str | Path, *, preset: str | None = None) -> Path:
     validate_timeline(timeline)
     if timeline.coverage != "source" or not timeline.items:
@@ -344,6 +358,7 @@ def render_timeline(timeline: Timeline, output_path: str | Path, *, preset: str 
     ffmpeg = _require_binary("ffmpeg")
     source = Path(timeline.source_video)
     preset = preset or timeline.preset
+    has_audio = _has_audio_stream(source)
     with tempfile.TemporaryDirectory(prefix="quickcut-render-") as temp:
         temp_dir = Path(temp)
         clips: list[Path] = []
@@ -353,13 +368,34 @@ def render_timeline(timeline: Timeline, output_path: str | Path, *, preset: str 
             if preset == "warm":
                 filters.append("eq=saturation=1.08:contrast=1.03")
             vf = ",".join(filters) if filters else "null"
-            _run([
-                ffmpeg, "-hide_banner", "-loglevel", "error", "-ss", f"{item.start:.3f}", "-t", f"{item.duration:.3f}",
-                "-i", str(source), "-vf", vf, "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
-                "-an", "-movflags", "+faststart", str(clip), "-y"
-            ])
+            # Encode every segment with a stable stream layout before joining.  The
+            # previous implementation explicitly dropped audio and then stream-copied
+            # independently encoded clips into the final MP4.  That made every cut
+            # silent and could leave players with broken H.264 reference frames.
+            command = [
+                ffmpeg, "-hide_banner", "-loglevel", "error", "-ss", f"{item.start:.3f}",
+                "-t", f"{item.duration:.3f}", "-i", str(source), "-map", "0:v:0",
+                "-vf", vf, "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
+                "-pix_fmt", "yuv420p",
+            ]
+            if has_audio:
+                command += ["-map", "0:a:0?", "-c:a", "aac", "-b:a", "128k", "-ar", "48000", "-ac", "2"]
+            else:
+                command += ["-an"]
+            command += ["-movflags", "+faststart", str(clip), "-y"]
+            _run(command)
             clips.append(clip)
         concat = temp_dir / "concat.txt"
         concat.write_text("\n".join(f"file '{clip.as_posix()}'" for clip in clips), encoding="utf-8")
-        _run([ffmpeg, "-hide_banner", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(concat), "-c", "copy", "-movflags", "+faststart", str(output_path), "-y"])
+        join = [
+            ffmpeg, "-hide_banner", "-loglevel", "error", "-f", "concat", "-safe", "0",
+            "-i", str(concat), "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
+            "-pix_fmt", "yuv420p",
+        ]
+        if has_audio:
+            join += ["-c:a", "aac", "-b:a", "128k", "-ar", "48000", "-ac", "2"]
+        else:
+            join += ["-an"]
+        join += ["-movflags", "+faststart", str(output_path), "-y"]
+        _run(join)
     return output_path
