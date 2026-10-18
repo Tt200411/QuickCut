@@ -11,7 +11,15 @@ from pathlib import Path
 import os
 from typing import Any
 
-from .core import build_index, localize, render_timeline, update_timeline
+from .core import (
+    DEFAULT_TIMELINE_SECONDS,
+    MAX_TIMELINE_SECONDS,
+    MIN_TIMELINE_SECONDS,
+    build_index,
+    localize,
+    render_timeline,
+    update_timeline,
+)
 from .types import IndexManifest, Shot, Timeline, TimelineItem
 from .voice import render_story_timeline
 
@@ -210,7 +218,13 @@ def build_demo():
         with gr.Row():
             video = gr.Video(label="Source video")
             prompt = gr.Textbox(label="Prompt", value="scenic travel shots")
-            duration = gr.Slider(5, 15, value=8, step=1, label="Duration (seconds)")
+            duration = gr.Slider(
+                MIN_TIMELINE_SECONDS,
+                MAX_TIMELINE_SECONDS,
+                value=DEFAULT_TIMELINE_SECONDS,
+                step=1,
+                label="Story duration (seconds; max 60)",
+            )
         with gr.Row():
             encoder_mode = gr.Dropdown(["fallback", "auto", "openclip"], value=encoder_default, label="Visual encoder")
             asr_mode = gr.Dropdown(["none", "auto", "faster-whisper"], value=asr_default, label="Transcript / Whisper")

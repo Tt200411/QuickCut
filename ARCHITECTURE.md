@@ -1,6 +1,6 @@
 # QuickCut MVP architecture
 
-QuickCut is the local MVP for the EditForge proposal. It accepts one source video and one text prompt, caches a source index, returns a provenance-aware 5-15 second timeline, and renders an MP4. Timeline edits reuse the cached index.
+QuickCut is the local MVP for the EditForge proposal. It accepts one source video and one text prompt, caches a source index, returns a provenance-aware 5-60 second timeline, and renders an MP4. Basic Vlog defaults to a 30-second story and supports requests up to one minute so the hook, journey, and close can explain a complete event. Timeline edits reuse the cached index.
 
 ## Runtime
 
@@ -22,13 +22,13 @@ QuickCut is the local MVP for the EditForge proposal. It accepts one source vide
 
 ## Advanced extension path
 
-The schema supports `external` and `generated` provenance. A licensed B-roll resolver can fill illustrative gaps while concrete events stay source-grounded. The local Ollama/Qwen planner reads transcript, cached keyframes, and candidate shot metadata, then returns three story beats plus an explicit source-shot order. IDs are constrained to the candidate pool and invalid plans fall back to deterministic retrieval. Dense re-sampling or a short-window VLM can refine boundaries after coarse retrieval.
+The schema supports `external` and `generated` provenance. A licensed B-roll resolver can fill illustrative gaps while concrete events stay source-grounded. The local Ollama/Qwen planner reads transcript, cached keyframes, and candidate shot metadata, then returns three story beats plus an explicit source-shot order. IDs are constrained to the candidate pool and invalid plans fall back to deterministic retrieval. Longer requests expand the candidate pool and narration budget so all three beats have enough source coverage. Dense re-sampling or a short-window VLM can refine boundaries after coarse retrieval.
 
 CLIP is used as an image-text alignment model, not as a conversion between modalities: it is the efficient coarse retrieval signal. Running a VLM over every frame of a five-minute source would add latency and memory pressure. The intended path is fixed-window CLIP plus Whisper for the full index, then a local Qwen2.5-VL/Ollama call only on a small set of cached keyframes and transcript evidence to choose, order, and structure the montage. `--planner auto` implements that boundary and falls back cleanly when the local VLM is absent.
 
 ## Acceptance checks
 
-- Supported prompt: returns source items with total duration in the requested 5-15 second budget.
+- Supported prompt: returns source items with total duration in the requested 5-60 second budget.
 - Unsupported prompt: returns `coverage: "abstain"` with an actionable message.
 - ASR query: transcript terms affect ranking and survive cache reload.
 - Edit round trip: replace, trim, or reorder a Timeline and preserve the cached `index_id`.

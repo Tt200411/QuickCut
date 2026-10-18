@@ -23,6 +23,14 @@ from .encoder import make_encoder, ppm_to_png
 from .types import IndexManifest, Shot, Timeline, TimelineItem
 
 
+# Basic edits stay reviewable locally while leaving room for a complete
+# hook→journey→close story. Keep these in one place so the CLI,
+# API, Gradio UI, and timeline validator enforce the same contract.
+MIN_TIMELINE_SECONDS = 5.0
+MAX_TIMELINE_SECONDS = 60.0
+DEFAULT_TIMELINE_SECONDS = 30.0
+
+
 def _run(command: list[str], *, input_bytes: bytes | None = None) -> subprocess.CompletedProcess[bytes]:
     return subprocess.run(command, input=input_bytes, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
 
@@ -252,10 +260,13 @@ def _probable_credit_shot(manifest: IndexManifest, shot: Shot, query: str) -> bo
 
 
 def parse_prompt(prompt: str, duration: float | None = None) -> tuple[list[str], float]:
-    matches = re.findall(r"(?<!\d)(\d+(?:\.\d+)?)\s*(?:s|sec|secs|second|seconds)\b", prompt.lower())
+    # The explicit lookahead handles both ASCII words and Chinese ``秒`` while
+    # avoiding a partial match such as ``8 secondsLater``.
+    duration_pattern = r"(?<!\d)(\d+(?:\.\d+)?)\s*(?:s|sec|secs|second|seconds|秒钟?)(?=$|[^A-Za-z])"
+    matches = re.findall(duration_pattern, prompt.lower())
     budget = float(matches[0]) if matches else (duration or 8.0)
-    budget = min(15.0, max(5.0, budget))
-    clean = re.sub(r"\b\d+(?:\.\d+)?\s*(?:s|sec|secs|second|seconds)\b", "", prompt, flags=re.I)
+    budget = min(MAX_TIMELINE_SECONDS, max(MIN_TIMELINE_SECONDS, budget))
+    clean = re.sub(duration_pattern, "", prompt, flags=re.I)
     beats = [piece.strip() for piece in re.split(r"[,;]|\band\b|\u548c|\u4e0e", clean, flags=re.I) if piece.strip()]
     return beats or [clean.strip() or prompt.strip()], budget
 
@@ -319,12 +330,18 @@ def localize(manifest: IndexManifest, prompt: str, *, encoder_mode: str | None =
 
 
 def validate_timeline(timeline: Timeline) -> None:
-    if not 5.0 <= timeline.duration_budget <= 15.0:
-        raise ValueError("duration_budget must be between 5 and 15 seconds")
+    if not MIN_TIMELINE_SECONDS <= timeline.duration_budget <= MAX_TIMELINE_SECONDS:
+        raise ValueError(
+            f"duration_budget must be between {MIN_TIMELINE_SECONDS:g} and "
+            f"{MAX_TIMELINE_SECONDS:g} seconds"
+        )
     if timeline.coverage == "source" and not timeline.items:
         raise ValueError("source timeline must contain at least one item")
-    if timeline.coverage == "source" and timeline.duration < 5.0:
-        raise ValueError(f"source timeline duration {timeline.duration:.2f}s is shorter than the 5s minimum")
+    if timeline.coverage == "source" and timeline.duration < MIN_TIMELINE_SECONDS:
+        raise ValueError(
+            f"source timeline duration {timeline.duration:.2f}s is shorter than the "
+            f"{MIN_TIMELINE_SECONDS:g}s minimum"
+        )
     if timeline.duration > timeline.duration_budget + 0.05:
         raise ValueError(f"timeline duration {timeline.duration:.2f}s exceeds budget {timeline.duration_budget:.2f}s")
     for item in timeline.items:

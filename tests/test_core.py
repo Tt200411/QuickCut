@@ -4,8 +4,19 @@ import json
 import subprocess
 from pathlib import Path
 
-from quickcut.core import _has_audio_stream, _probable_credit_shot, _require_binary, build_index, localize, render_timeline, update_timeline, validate_timeline
-from quickcut.types import IndexManifest, Shot
+from quickcut.core import (
+    MAX_TIMELINE_SECONDS,
+    _has_audio_stream,
+    _probable_credit_shot,
+    _require_binary,
+    build_index,
+    localize,
+    parse_prompt,
+    render_timeline,
+    update_timeline,
+    validate_timeline,
+)
+from quickcut.types import IndexManifest, Shot, Timeline, TimelineItem
 
 
 def make_video(path: Path) -> None:
@@ -70,3 +81,31 @@ def test_localize_avoids_end_credit_roll_for_basic_montage():
     assert _probable_credit_shot(manifest, manifest.shots[0], "show the end credits") is False
     timeline = localize(manifest, "forest 8 seconds", encoder_mode="fallback", avoid_credits=True)
     assert all(item.asset_id != "shot-credit" for item in timeline.items)
+
+
+def test_story_duration_accepts_one_minute_and_clamps_longer_requests():
+    _, budget = parse_prompt("a complete story 60 seconds")
+    assert budget == MAX_TIMELINE_SECONDS
+    _, chinese_budget = parse_prompt("一个完整故事 60秒")
+    assert chinese_budget == MAX_TIMELINE_SECONDS
+    _, clamped = parse_prompt("a complete story 120 seconds")
+    assert clamped == MAX_TIMELINE_SECONDS
+
+    validate_timeline(Timeline(
+        version="1.0", source_video="source.mp4", query="story",
+        duration_budget=MAX_TIMELINE_SECONDS, index_id="long", coverage="source",
+        items=[TimelineItem(f"item-{idx:02d}", "source", f"shot-{idx:02d}", idx * 3, (idx + 1) * 3)
+               for idx in range(20)],
+    ))
+
+    too_long = Timeline(
+        version="1.0", source_video="source.mp4", query="story",
+        duration_budget=MAX_TIMELINE_SECONDS + 0.1, index_id="long", coverage="source",
+        items=[TimelineItem("item-00", "source", "shot-00", 0, 3)],
+    )
+    try:
+        validate_timeline(too_long)
+    except ValueError as exc:
+        assert "between 5 and 60 seconds" in str(exc)
+    else:  # pragma: no cover - assertion guard
+        raise AssertionError("durations above one minute must be rejected")

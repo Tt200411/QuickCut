@@ -4,7 +4,16 @@ import argparse
 import json
 from pathlib import Path
 
-from .core import build_index, find_manifest, localize, render_timeline, update_timeline
+from .core import (
+    DEFAULT_TIMELINE_SECONDS,
+    MAX_TIMELINE_SECONDS,
+    MIN_TIMELINE_SECONDS,
+    build_index,
+    find_manifest,
+    localize,
+    render_timeline,
+    update_timeline,
+)
 from .download import download_video
 from .story import build_basic_vlog
 from .voice import render_story_timeline
@@ -53,7 +62,8 @@ def main() -> None:
     basic.add_argument("video")
     basic.add_argument("prompt")
     basic.add_argument("--cache-dir", default="cache")
-    basic.add_argument("--duration", type=float, default=15.0)
+    basic.add_argument("--duration", type=float, default=DEFAULT_TIMELINE_SECONDS,
+                       help=f"Story duration in seconds ({MIN_TIMELINE_SECONDS:g}-{MAX_TIMELINE_SECONDS:g})")
     basic.add_argument("--encoder", choices=["fallback", "auto", "openclip", "mobileclip"], default=None)
     basic.add_argument("--asr", dest="asr_mode", choices=["none", "auto", "faster-whisper"], default=None)
     basic.add_argument("--planner", choices=["deterministic", "auto", "ollama", "qwen2.5-vl"], default="deterministic",

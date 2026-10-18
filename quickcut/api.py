@@ -6,7 +6,14 @@ import uuid
 from pathlib import Path
 from typing import Any
 
-from .core import build_index, find_manifest, localize, render_timeline, update_timeline
+from .core import (
+    DEFAULT_TIMELINE_SECONDS,
+    build_index,
+    find_manifest,
+    localize,
+    render_timeline,
+    update_timeline,
+)
 from .story import build_basic_vlog
 from .types import Timeline, TimelineItem
 from .voice import render_story_timeline
@@ -69,7 +76,7 @@ def create_app():
         return timeline.to_dict()
 
     @app.post("/basic")
-    def basic_route(index_id: str, prompt: str, duration: float = 15.0, encoder: str | None = None,
+    def basic_route(index_id: str, prompt: str, duration: float = DEFAULT_TIMELINE_SECONDS, encoder: str | None = None,
                     planner: str = "deterministic"):
         try:
             timeline = build_basic_vlog(find_manifest(cache_dir, index_id), prompt,

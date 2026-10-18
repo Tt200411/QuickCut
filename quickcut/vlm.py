@@ -15,6 +15,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
 from urllib.request import Request, ProxyHandler, build_opener, urlopen
 
+from .core import DEFAULT_TIMELINE_SECONDS, MAX_TIMELINE_SECONDS, MIN_TIMELINE_SECONDS
 from .types import IndexManifest
 
 
@@ -138,6 +139,7 @@ def plan_with_ollama(
     base_url: str | None = None,
     timeout: float = 30.0,
     candidate_shot_ids: set[str] | list[str] | None = None,
+    duration: float | None = None,
 ) -> dict:
     model = model or os.getenv("QUICKCUT_VLM_MODEL", "qwen2.5vl:3b")
     base_url = (base_url or os.getenv("QUICKCUT_OLLAMA_URL", "http://127.0.0.1:11434")).rstrip("/")
@@ -159,9 +161,28 @@ def plan_with_ollama(
         max_frames = 4
     candidates = available_shots[::max(1, len(available_shots) // max_frames)][:max_frames]
     candidate_ids = {shot.shot_id for shot in candidates}
-    # Bound long-video requests while retaining all sampled frames and a few
-    # transcript-bearing windows for grounding.
-    evidence = [shot for shot in evidence if shot["shot_id"] in candidate_ids or shot["transcript"]][: max_frames * 3]
+    # Keep the metadata for the complete candidate pool. Images are sampled
+    # separately above, but a one-minute story needs more than four legal IDs
+    # to cover its source windows without repeating the same shot. The cap is
+    # intentionally modest so the local model's context remains bounded.
+    try:
+        requested_duration = (
+            max(MIN_TIMELINE_SECONDS, min(MAX_TIMELINE_SECONDS, float(duration)))
+            if duration is not None else DEFAULT_TIMELINE_SECONDS
+        )
+    except (TypeError, ValueError):
+        requested_duration = DEFAULT_TIMELINE_SECONDS
+    typical_window = sorted(max(0.1, shot.duration) for shot in available_shots)[len(available_shots) // 2]
+    target_shots = max(3, min(len(available_shots), int((requested_duration + typical_window - 0.01) // typical_window)))
+    evidence_limit = max(max_frames * 3, target_shots)
+    # Keep every image-bearing sample in the legal evidence set even when the
+    # candidate pool is ordered by source time. A long-video pool may sample
+    # the last shot outside the first ``evidence_limit`` records; dropping it
+    # here would make its keyframe visible to Qwen but its ID illegal in the
+    # response schema.
+    visual_evidence = [entry for entry in evidence if entry["shot_id"] in candidate_ids]
+    metadata_evidence = [entry for entry in evidence if entry["shot_id"] not in candidate_ids]
+    evidence = (visual_evidence + metadata_evidence)[:evidence_limit]
     evidence_ids = {shot["shot_id"] for shot in evidence}
     images: list[str] = []
     image_slots: list[str] = []
@@ -178,21 +199,27 @@ def plan_with_ollama(
         "prompt": prompt,
         "shots": evidence,
         "image_slots": image_slots,
-        "task": "Act as the video editor. First choose 3-8 source shots and their montage order, then write exactly three beats in hook, journey, close order. You MUST copy exact shot_id strings from shots into shot_order and each beat's source_shot_ids. Every beat source_shot_id must also appear in shot_order. Do not leave these arrays empty. Use different shots when they show different moments. Never invent concrete events absent from the prompt, transcript, or images.",
+        "duration_seconds": requested_duration,
+        "target_shot_count": target_shots,
+        "task": f"Act as the video editor. Build a complete story for about {requested_duration:g} seconds. Choose enough distinct source shots to cover that duration (target {target_shots}) and put them in a purposeful montage order. Then write exactly three beats in hook, journey, close order. Write a coherent local voiceover with at least {max(24, min(110, int(requested_duration * 1.5)))} words, covering the hook, journey, and close instead of a single summary sentence. You MUST copy exact shot_id strings from shots into shot_order and each beat's source_shot_ids. Every beat source_shot_id must also appear in shot_order. Do not leave these arrays empty or repeat a shot. Use different shots when they show different moments. Never invent concrete events absent from the prompt, transcript, or images.",
         "schema": {"theme": "string", "narration": "string", "shot_order": ["shot-0000"], "beats": [{"id": "hook|journey|close", "label": "string", "text": "string", "source": "prompt|transcript|source", "source_shot_ids": ["shot-0000"]}]},
     }
     # Ollama accepts a JSON Schema in ``format``. Supplying the exact enum of
     # legal IDs makes source selection a constrained decoding task instead of
     # relying on the model to remember an opaque identifier convention.
     shot_id_schema = {"type": "string", "enum": sorted(evidence_ids)}
-    order_min = min(3, max(1, len(evidence_ids)))
-    order_max = min(8, max(order_min, len(evidence_ids)))
+    # Require enough IDs for the requested duration when the candidate pool
+    # contains them. This prevents a 60s request from silently collapsing to
+    # three short clips; the story builder still pads from retrieval if a
+    # small model returns fewer legal IDs than requested.
+    order_min = min(target_shots, max(1, len(evidence_ids)))
+    order_max = min(max(8, target_shots), max(order_min, len(evidence_ids)))
     response_schema = {
         "type": "object",
         "required": ["theme", "narration", "shot_order", "beats"],
         "properties": {
             "theme": {"type": "string"},
-            "narration": {"type": "string"},
+            "narration": {"type": "string", "minLength": max(24, min(110, int(requested_duration * 1.5)))},
             "shot_order": {"type": "array", "items": shot_id_schema, "minItems": order_min, "maxItems": order_max},
             "beats": {"type": "array", "minItems": 3, "maxItems": 3, "items": {
                 "type": "object",
@@ -206,9 +233,19 @@ def plan_with_ollama(
         },
     }
     try:
-        num_ctx = max(4096, int(os.getenv("QUICKCUT_VLM_NUM_CTX", "8192")))
+        default_num_ctx = 16384 if requested_duration >= 30.0 else 8192
+        num_ctx = max(4096, int(os.getenv("QUICKCUT_VLM_NUM_CTX", str(default_num_ctx))))
     except ValueError:
         num_ctx = 8192
+    try:
+        configured_timeout = float(os.getenv("QUICKCUT_VLM_TIMEOUT", ""))
+    except ValueError:
+        configured_timeout = 0.0
+    # CPU VLM generation for a 60-second plan can take longer than the old
+    # short-clip timeout. Keep short requests responsive while allowing long
+    # local planning to finish; callers can override this with an environment
+    # variable when running on slower hardware.
+    effective_timeout = configured_timeout if configured_timeout > 0 else max(timeout, 120.0 if requested_duration >= 30.0 else timeout)
     request = Request(
         f"{base_url}/api/generate",
         data=json.dumps({"model": model, "prompt": json.dumps(instruction, ensure_ascii=False),
@@ -221,7 +258,7 @@ def plan_with_ollama(
         headers={"Content-Type": "application/json"}, method="POST",
     )
     try:
-        with _open_ollama(request, timeout=timeout, base_url=base_url) as response:
+        with _open_ollama(request, timeout=effective_timeout, base_url=base_url) as response:
             payload = json.loads(response.read().decode("utf-8"))
     except HTTPError as exc:
         try:
@@ -260,11 +297,13 @@ def plan_story(
     *,
     mode: str = "deterministic",
     candidate_shot_ids: set[str] | list[str] | None = None,
+    duration: float | None = None,
 ) -> dict:
     mode = (mode or "deterministic").lower()
     if mode in {"ollama", "qwen", "qwen2.5-vl", "auto"}:
         try:
-            return plan_with_ollama(manifest, prompt, candidate_shot_ids=candidate_shot_ids)
+            return plan_with_ollama(manifest, prompt, candidate_shot_ids=candidate_shot_ids,
+                                    duration=duration)
         except (RuntimeError, ValueError):
             if mode != "auto":
                 raise

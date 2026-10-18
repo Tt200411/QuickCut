@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from quickcut.story import build_basic_vlog, write_story
+from quickcut.story import build_basic_vlog, write_story, _narration_word_count
 from quickcut.types import IndexManifest, Shot, Timeline, TimelineItem
 from quickcut.vlm import normalize_shot_plan, plan_story, plan_with_ollama
 
@@ -30,6 +30,22 @@ def test_basic_story_plan_uses_transcript_and_keeps_editable_timeline():
     assert 5 <= timeline.duration <= 12
     assert timeline.story["beats"]
     assert timeline.narration
+    assert len(timeline.captions) == len(timeline.items)
+
+
+def test_basic_story_can_fill_a_one_minute_budget_with_complete_beats():
+    manifest = IndexManifest(
+        index_id="long-story", source_video="source.mp4", source_size=1, source_mtime=1.0,
+        duration=600.0, window=3.0, stride=3.0, created_at="now", encoder="fallback",
+        shots=[Shot(f"shot-{idx:04d}", idx * 3, (idx + 1) * 3,
+                    transcript=f"story moment {idx}") for idx in range(20)],
+    )
+    timeline = build_basic_vlog(manifest, "a complete journey with a clear ending", duration=60,
+                                encoder_mode="fallback")
+    assert timeline.coverage == "source"
+    assert timeline.duration_budget == 60
+    assert timeline.duration == 60
+    assert [beat["id"] for beat in timeline.story["beats"]] == ["hook", "journey", "close"]
     assert len(timeline.captions) == len(timeline.items)
 
 
@@ -214,3 +230,96 @@ def test_auto_planner_falls_back_when_ollama_is_unavailable(monkeypatch):
 
     monkeypatch.setattr("quickcut.vlm.plan_with_ollama", fail)
     assert plan_story(make_manifest(), "a quiet journey", mode="auto") == {}
+
+
+def test_story_shape_fills_three_acts_for_a_long_request(monkeypatch):
+    """A short local-model response is expanded into a complete three-act plan."""
+    manifest = make_manifest()
+    monkeypatch.setattr(
+        "quickcut.story.plan_story",
+        lambda *args, **kwargs: {
+            "planner": "ollama:qwen2.5vl:3b",
+            "theme": "a road journey",
+            "narration": "The road opens, changes, and settles.",
+            "shot_selection": True,
+            "shot_order": ["shot-0002", "shot-0000", "shot-0001", "shot-0003"],
+            "beats": [{"id": "hook", "text": "Open on motion", "source_shot_ids": ["shot-0002"]}],
+        },
+    )
+    plan = write_story(
+        manifest, "a complete road journey", planner="ollama",
+        candidate_shot_ids=[shot.shot_id for shot in manifest.shots], duration=60,
+    )
+    assert plan["duration_seconds"] == 60
+    assert [beat["id"] for beat in plan["beats"]] == ["hook", "journey", "close"]
+    assert [shot_id for beat in plan["beats"] for shot_id in beat["source_shot_ids"]] == plan["shot_order"]
+    assert all(beat["text"] for beat in plan["beats"])
+
+
+def test_long_story_narration_covers_all_three_acts(monkeypatch):
+    manifest = make_manifest()
+    monkeypatch.setattr(
+        "quickcut.story.plan_story",
+        lambda *args, **kwargs: {
+            "planner": "ollama:qwen2.5vl:3b", "theme": "forest journey",
+            "narration": "A forest journey begins.", "shot_selection": True,
+            "shot_order": [shot.shot_id for shot in manifest.shots],
+            "beats": [
+                {"id": "hook", "text": "The path opens", "source_shot_ids": ["shot-0000"]},
+                {"id": "journey", "text": "Friends move onward", "source_shot_ids": ["shot-0001", "shot-0002"]},
+                {"id": "close", "text": "Sunset settles", "source_shot_ids": ["shot-0003"]},
+            ],
+        },
+    )
+    plan = write_story(manifest, "forest journey", planner="ollama", duration=60)
+    assert _narration_word_count(plan["narration"]) >= 90
+    narration = plan["narration"].lower()
+    assert "the path opens" in narration
+    assert "friends move onward" in narration
+    assert "sunset settles" in narration
+
+
+def test_ollama_duration_schema_scales_source_order(monkeypatch):
+    """The JSON schema asks Qwen for enough distinct windows for 60 seconds."""
+    captured: dict[str, object] = {}
+
+    class Response:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def read(self):
+            request = captured["request"]
+            payload = json.loads(request.data.decode("utf-8"))
+            captured["body"] = payload
+            ids = [f"shot-{idx:04d}" for idx in range(4)]
+            response = {
+                "theme": "a complete journey", "narration": "The scene opens, moves, and settles.",
+                "shot_order": ids,
+                "beats": [
+                    {"id": "hook", "label": "Hook", "text": "Open", "source": "source", "source_shot_ids": ids[:1]},
+                    {"id": "journey", "label": "Journey", "text": "Move", "source": "source", "source_shot_ids": ids[1:3]},
+                    {"id": "close", "label": "Close", "text": "Settle", "source": "source", "source_shot_ids": ids[3:]},
+                ],
+            }
+            return json.dumps({"response": json.dumps(response)}).encode("utf-8")
+
+    def capture(request, timeout, base_url):
+        captured["request"] = request
+        return Response()
+
+    monkeypatch.setattr("quickcut.vlm._open_ollama", capture)
+    manifest = IndexManifest(
+        index_id="long", source_video="source.mp4", source_size=1, source_mtime=1.0,
+        duration=60.0, window=3.0, stride=3.0, created_at="now", encoder="fallback",
+        shots=[Shot(f"shot-{idx:04d}", idx * 3, (idx + 1) * 3) for idx in range(20)],
+    )
+    plan_with_ollama(manifest, "a complete journey", candidate_shot_ids=[shot.shot_id for shot in manifest.shots], duration=60)
+    body = captured["body"]
+    schema = body["format"]
+    assert schema["properties"]["shot_order"]["minItems"] == 20
+    assert schema["properties"]["shot_order"]["maxItems"] == 20
+    instruction = json.loads(body["prompt"])
+    assert instruction["target_shot_count"] == 20
