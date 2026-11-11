@@ -1,0 +1,8 @@
+[
+  {"path": "../../inputs/short-01.mp4", "origin": "user", "source_key": "user-short-01", "provenance_note": "填写真实来源信息"},
+  {"path": "../../inputs/short-02.mp4", "origin": "user", "source_key": "user-short-02", "provenance_note": "填写真实来源信息"},
+  {"path": "../../inputs/short-03.mp4", "origin": "user", "source_key": "user-short-03", "provenance_note": "填写真实来源信息"},
+  {"path": "../../inputs/long-01.mp4", "origin": "user", "source_key": "user-long-01", "provenance_note": "填写真实来源信息"},
+  {"path": "../../inputs/broll-01.mp4", "origin": "external", "source_key": "library-broll-01", "provenance_note": "填写库条目、出处和已知使用范围"},
+  {"path": "../../inputs/broll-02.mp4", "origin": "external", "source_key": "library-broll-02", "provenance_note": "填写库条目、出处和已知使用范围"}
+]

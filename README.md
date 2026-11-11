@@ -13,6 +13,44 @@ It separates the current single-source MVP from the proposed multi-source and Ji
 - [可编辑流程图及 PNG](figures/README.md)
 - [完整 PDF 手册（含流程图、六人任务书与接口契约）](output/pdf/QuickCut_项目指导手册.pdf)
 
+## Multi-source ingestion / 多素材接入
+
+Import user videos and external B-roll into a project with `quickcut-ingest` or
+`python -m quickcut.ingest`. The output is an `AssetManifest` 0.1.0 with copied originals,
+keyframes, preview proxies, timestamp maps and optional transcripts.
+
+Requires Python 3.10+, FFmpeg and ffprobe on PATH, and `pip install -e '.[ingest]'`.
+You can also set `QUICKCUT_FFMPEG` and `QUICKCUT_FFPROBE` to the binary paths.
+FFmpeg needs libx264, PNG and `-fps_mode` support; the runtime extra does not include ffprobe.
+
+```bash
+# Generate test videos and check ingestion and cache reuse; no models required.
+python -m scripts.smoke_ingest
+
+# Import videos, keeping user and external sources separate.
+python -m quickcut.ingest inputs/short.mp4 inputs/long.mp4 \
+  --external inputs/forest.mp4 --project-root outputs/my-project
+
+# Batch input; paths are relative to sources.json.
+python -m quickcut.ingest --sources examples/ingest/sources.json \
+  --project-root outputs/my-project
+
+# Enable local speech recognition. Weights may be downloaded on the first run.
+pip install -e '.[asr]'
+python -m quickcut.ingest --project-root outputs/my-project \
+  --asr faster-whisper --asr-model tiny --asr-language zh
+```
+
+On Windows PowerShell, run each command on one line. For a virtual environment, use
+`py -m venv .venv`, then `.\.venv\Scripts\python.exe -m pip install -e '.[ingest,dev]'`.
+
+Exit codes are 0 for success, 2 for partial success and 1 for failure. Check the manifest's
+`processing` field for errors. Unchanged stages reuse cached outputs.
+
+The existing `quickcut index/search/basic`, API and UI still use the single-source format.
+See [接入模块说明](docs/ingestion.md) for fields, cache rules and limitations, and
+[输入样例](examples/ingest/README.md) for batch configuration.
+
 QuickCut is the local MVP for the EditForge proposal: a text prompt selects relevant moments from a source video, emits a provenance-aware 5–60 second timeline, and renders an edited clip. The index is built once and edit operations reuse it. Basic Vlog defaults to 30 seconds so the local planner has room to explain a complete hook→journey→close event; requests up to one minute are accepted.
 
 The first runnable stack is deliberately small and production-shaped:
