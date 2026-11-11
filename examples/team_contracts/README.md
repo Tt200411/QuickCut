@@ -60,4 +60,23 @@ python examples/team_contracts/validate.py outputs/d-demo/validated-bundle.json 
 - `retime` 把中段步行镜头先安排为 5.5 秒。第二句实测时长变为 8.8 秒后，编译器使用已批准源区间内剩余的 0.5 秒，保留下一段的开始位置。
 - `overlong` 和 `stale` 预期退出码为 1，分别输出带 `cue-02` 的 `VOICE_NEEDS_RETIME` 和 `STALE_INPUT_REVISION`。
 
-结果写入 `outputs/d-demo/`。成功案例用 D 实际生成的时间线替换样例时间线再通过团队校验器。联调可直接调用 `quickcut.timeline.compile_timeline`，传入上游 JSON 对象和输出规格。当前编译策略为 1 倍速硬切、每句一个可编辑字幕、每段尽量保留 0.2 秒起始停顿。媒体仍为占位引用，后续接入真实局部精剪、编辑后的失效传播和指定时间线的配音重合成。
+结果写入 `outputs/d-demo/`。对照 `normal.json` 和 `longer.json` 时，展开旁白轨和字幕轨中的 `cue-02`，检查它们的 `timeline_range_us.end` 是否从 `14400000` 变成 `15000000`。成功案例会用编译结果替换黄金样例中的时间线，再运行团队校验器。
+
+### 把时间线交给 E 和 F
+
+联调时把上游 JSON 读成字典，调用编译器。调用方传入输出画幅、帧率和采样率，以及要生成的时间线版本。
+
+```python
+from quickcut.timeline import compile_timeline
+
+timeline = compile_timeline(
+    brief, asset_manifest, story_plan, voice_package,
+    output=output_spec,
+    document_id="timeline-001",
+    revision=1,
+)
+```
+
+E 提供逐句 `cue_id`、音频时长和准确的 `StoryPlan` 引用。D 校验项目、文本和版本后安排成片位置，并在输出中记录使用的 `VoicePackage` 版本。若配音超预算或输入版本过期，演示会写出错误 JSON。F 可以用成功结果核对四轨顺序、素材引用，以及区分原素材位置和成片位置的 `source_range_us` 与 `timeline_range_us`。
+
+当前演示使用 1 倍速硬切，字幕覆盖整句旁白，素材是占位引用。真实媒体联调时还需映射 E 的局部字幕区间，并验证精剪、编辑后的失效传播、指定区间的配音重合成和导出。
