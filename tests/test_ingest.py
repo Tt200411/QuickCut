@@ -113,15 +113,16 @@ def test_asr_states_and_config_only_invalidates_asr(tmp_path, monkeypatch):
     assert silent["assets"][0]["transcript"]["status"] == "no_speech"
     assert all(s["cache_hit"] for s in stages(root) if s["stage"] != "asr")
 
+    # Keep non-ASCII transcript round-tripping covered.
     class SpeechASR(EmptyASR):
         def transcribe(self, path):
-            return [TranscriptSegment("mock-1", 0.1, 0.8, "测试语音")]
+            return [TranscriptSegment("mock-1", 0.1, 0.8, "\u6d4b\u8bd5\u8bed\u97f3")]
 
     monkeypatch.setattr(ingest, "FasterWhisperASR", SpeechASR)
     speech = ingest_assets(root, [], config=IngestConfig(asr="faster-whisper", asr_model="base"))
     assert speech["assets"][0]["transcript"]["status"] == "success"
     shot = next(s for s in speech["segments"] if s["granularity"] == "coarse_shot")
-    assert shot["transcript"]["text"] == "测试语音"
+    assert shot["transcript"]["text"] == "\u6d4b\u8bd5\u8bed\u97f3"
     assert shot["transcript"]["segments"][0]["source_range_us"] == {"begin": 100000, "end": 800000}
     assert all(s["cache_hit"] for s in stages(root) if s["stage"] != "asr")
 

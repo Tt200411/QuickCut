@@ -1,10 +1,10 @@
-# 多素材接入
+# A: Multi-source asset ingestion
 
-接入模块将本地视频导入项目，生成 `AssetManifest` 0.1.0。它负责媒体信息、源时间、分段、关键帧、代理和转录；检索排名、故事规划、成片时间线及工程导出由下游模块处理。
+Module A imports local videos into a project and produces an `AssetManifest` 0.1.0. It owns media metadata, source timestamps, initial segmentation, keyframes, preview proxies, and transcripts. Consumers are B for retrieval, D for timeline arrangement, and F for media resolution and export.
 
-## 运行
+## Run
 
-需要 Python 3.10+、FFmpeg、ffprobe 和 Pillow。安装依赖：
+Requires Python 3.10+, FFmpeg, ffprobe, and Pillow. Install the dependencies and run:
 
 ```bash
 python -m pip install -e '.[ingest,dev]'
@@ -12,82 +12,82 @@ python -m scripts.smoke_ingest
 python -m quickcut.ingest --sources examples/ingest/sources.json --project-root outputs/my-project
 ```
 
-FFmpeg 和 ffprobe 需在 PATH 上，也可分别通过 `QUICKCUT_FFMPEG`、`QUICKCUT_FFPROBE` 指定。FFmpeg 需支持 libx264、PNG 和 `-fps_mode`。
+FFmpeg and ffprobe must be on PATH, or set `QUICKCUT_FFMPEG` and `QUICKCUT_FFPROBE`. FFmpeg needs libx264, PNG, and `-fps_mode` support.
 
-已有项目可不传新文件，重新检查已注册的素材：
+To check an existing project without adding sources:
 
 ```bash
 python -m quickcut.ingest --project-root outputs/my-project
 ```
 
-该命令按当前配置复用缓存并重试失败阶段，不扫描外部源文件的变化。检查外部原片更新时，应重新传入文件或源列表。
+This reuses valid stage caches and retries failed stages using the current configuration. It does not rescan external source files for changes; pass the files or source list again to import updates.
 
-退出码：成功为 0，部分成功为 2，失败为 1。每个错误记录阶段、素材 ID、重试次数和 `retryable` 状态。单个文件或处理阶段失败不会清除其他成功结果。
+Exit codes are 0 for success, 2 for partial success, and 1 for failure. Errors include the stage, asset ID, attempt count, and `retryable` status. A failed file or stage does not discard other successful results.
 
-## 身份与文件存储
+## Asset identity and storage
 
-首次导入分配 `asset_id`，内容使用 SHA-256 校验。同一来源类别下的相同文件复用身份；用户素材和外部素材分别注册。
+The first import assigns an `asset_id` and calculates a SHA-256 content hash. Identical files within the same origin share an identity; user and external assets are registered separately.
 
-源路径或 `source_key` 作为导入别名。已知别名对应的内容变化时，素材 ID 保持不变，revision 递增。文件移动且内容不变时可通过哈希识别；位置和内容同时变化时，需使用稳定的 `source_key`。
+A source path or explicit `source_key` acts as an import alias. Changing the content behind a known alias retains its asset ID and increments its revision. A moved, unchanged file can be identified by hash. Use a stable `source_key` when changing both its location and content.
 
-原片复制到 `media/<origin>/<asset_id>/r<revision>.<ext>`，旧版文件保留。对外 URI 均相对于项目根目录，使用 `/`，项目整体移动后仍可解析。`.quickcut/registry.json` 中的外部源路径仅用于识别导入别名。
+Originals are copied to `media/<origin>/<asset_id>/r<revision>.<ext>`. Older revisions are retained. Public URIs use `/` and resolve relative to the project root, so the package can be moved. External paths in `.quickcut/registry.json` are only import aliases.
 
-显式重导入时发现文件缺失或损坏，会报告失败，不返回旧结果作为本轮成功结果。当前不提供资产删除和旧版本自动清理。
+An explicitly reimported missing or damaged file reports a failure rather than returning its old result as a current success. Asset deletion and automatic cleanup of old revisions are not implemented.
 
-## 输出字段
+## Manifest fields
 
-公共字段遵守 [团队契约](team/contracts.md)。清单内容改变时递增文档 revision，缓存命中信息单独保存在 `.quickcut/run-report.json`。
+The document envelope follows the [team contract](team/contracts.md). Document revisions increase when manifest content changes. Cache-hit details are stored separately in `.quickcut/run-report.json`.
 
-| 字段 | 含义 |
+| Field | Meaning |
 |---|---|
-| `assets[]` | 素材身份、revision、来源、URI、哈希、时长、视频和音轨参数 |
-| `segments[]` | `coarse_event` 粗窗口与 `coarse_shot` 镜头候选，通过 `parent_segment_id` 关联 |
-| `source_range_us` | 相对视频第一张解码画面的整数微秒区间，左闭右开 `[begin,end)` |
-| `keyframes[]` | PNG 路径与抽中画面的实际源时间 |
-| `quality` | `usable` 表示关键帧可读取；容器、无帧窗口及抽帧失败的候选均不可用 |
-| `transcript` | 识别状态、转录区间、配置和 sidecar 路径 |
-| `proxy_uri` / `proxy_mapping_uri` | 视频代理及逐帧源/代理 PTS 映射路径；代理失败时不发布路径 |
-| `source_pts_uri` | 原片逐帧 PTS 记录 |
-| `processing` | 整体状态与错误列表 |
-| `embedding_profile` | `status: not_indexed, owner: B`，向量由检索模块生成 |
+| `assets[]` | Identity, revision, origin, URI, hash, duration, video parameters, and audio parameters |
+| `segments[]` | `coarse_event` windows and `coarse_shot` candidates, linked through `parent_segment_id` |
+| `source_range_us` | Integer microseconds relative to the first decoded video frame; half-open `[begin,end)` intervals |
+| `keyframes[]` | PNG URI and the selected frame's source timestamp |
+| `quality` | `usable` means a keyframe is readable; containers, empty windows, and failed extractions are unusable |
+| `transcript` | Recognition status, timestamped text, configuration, and sidecar URI |
+| `proxy_uri` / `proxy_mapping_uri` | Video proxy and per-frame source/proxy PTS map; omitted when proxy generation fails |
+| `source_pts_uri` | Decoded source-frame PTS records |
+| `processing` | Overall status and errors |
+| `embedding_profile` | `status: not_indexed, owner: B`; the retrieval module produces embeddings |
 
-检索应使用 `granularity: coarse_shot` 且 `quality.usable: true` 的片段。粗窗口仅作为容器，`usable` 也不表示画面清晰度、构图或语义质量已经评估。
+Retrieval should consume `coarse_shot` segments with `quality.usable: true`. Coarse windows are containers. The usable flag does not assess sharpness, composition, or semantic relevance.
 
-这些状态及映射字段是对现有协议的扩展，需与 B/D/F 确认消费方式。新清单不能直接传给仍使用 `IndexManifest` 的旧 `quickcut search`、API 或 UI。
+Processing states and timestamp maps extend the current contract and need consumer confirmation with B/D/F. The new manifest cannot be passed directly to the existing single-source `quickcut search`, API, or UI, which still use `IndexManifest`.
 
-## 时间与代理
+## Source time and proxies
 
-源时间根据解码 PTS 计算：`(source_pts - source_origin_pts) × timebase`，转换为整数微秒。帧率保留分数，不用平均帧率反推变帧率视频的位置。
+Source time is calculated from decoded PTS as `(source_pts - source_origin_pts) × timebase`, then converted to integer microseconds. Frame rates remain rational values; average FPS is not used to infer positions in variable-frame-rate video.
 
-代理为等比例缩小的 H.264 视频，不含音轨；原声引用原始素材。代理使用 passthrough 帧时序，从零开始计时。生成后逐帧核对：帧数必须一致，源时间与代理时间误差不超过 2 微秒，否则返回代理阶段失败。导出时应使用原片。
+Proxies are scaled H.264 video without audio. Original sound remains a reference to the original asset. Proxy generation preserves frame timing with passthrough mode and rebases timestamps to zero. The frame counts must match, and each mapped timestamp must be within 2 microseconds of the source; otherwise the proxy stage fails. Final export should use the original media.
 
-ASR 从原片抽取单声道 16 kHz WAV，按视频起点处理音频偏移，使转录和画面使用同一源时间坐标。转录区间限制在素材时长内。
+ASR extracts a mono 16 kHz WAV and accounts for audio offsets relative to the video origin. Transcript intervals use the same source coordinate and are bounded by the media duration.
 
-## ASR 与缓存
+## ASR and caching
 
-ASR 默认禁用。启用时安装 `.[asr]`，传入 `--asr faster-whisper`。状态区分如下：
+ASR is disabled by default. Install `.[asr]` and pass `--asr faster-whisper` to enable it.
 
-| 状态 | 含义 |
+| Status | Meaning |
 |---|---|
-| `no_audio` | 素材无音轨 |
-| `disabled` | 有音轨，未启用识别 |
-| `no_speech` | 已运行识别，没有有效对白 |
-| `success` | 获得有效转录 |
-| `failed` | 依赖、权重、解码或推理失败 |
+| `no_audio` | No audio stream |
+| `disabled` | Audio exists, but recognition is disabled |
+| `no_speech` | Recognition ran and returned no usable speech |
+| `success` | A usable transcript was returned |
+| `failed` | Dependency, weight, decoding, or inference failure |
 
-模型参数可以是 `tiny` 等名称或本地 CTranslate2 权重目录。模型名称先解析为具体快照，计算权重文件哈希，再使用该目录推理。首次下载需要网络。`--asr-model-revision` 用于指定模型仓库 revision，需要 faster-whisper 版本支持；也可直接使用固定的本地权重目录。
+The model can be a supported name such as `tiny` or a local CTranslate2 weight directory. Named models resolve to a concrete snapshot. Its weight files are hashed, then the same directory is used for inference. Initial download requires network access. `--asr-model-revision` selects a model-repository revision when supported by the installed faster-whisper version; a fixed local weight directory is also supported.
 
-探测、抽帧、代理、ASR 分别缓存。指纹包括素材内容、处理参数、工具和库版本；ASR 额外包含实际权重哈希、语言、设备、计算类型及预处理配置。产物哈希和 PNG 解码检查用于发现缺失或损坏文件。识别配置变化只重算 ASR，新增素材复用旧素材的有效结果，失败结果不作为成功缓存使用。
+Probing, keyframes, proxies, and ASR have separate caches. Fingerprints include source content, processing parameters, tool versions, and library versions. ASR additionally records actual weight hashes, language, device, compute type, and preprocessing settings. Output hashes and PNG decoding detect missing or damaged cache files. Changing recognition settings invalidates ASR without rebuilding keyframes or proxies; adding assets reuses existing work. Failed results are not reused as successful cache entries.
 
-项目采用单写入者锁，并行处理请使用不同项目目录。进程异常退出后，确认没有任务运行，才可移除 `.quickcut/ingest.lock`。当前支持阶段缓存复用，尚未实现完整中断恢复。
+Projects use a single-writer lock. Parallel jobs must use separate project directories. After an interrupted process, confirm that no ingestion task is running before removing `.quickcut/ingest.lock`. Stage-cache reuse is supported; full interrupted-job recovery is not implemented.
 
-## 测试与限制
+## Tests and limitations
 
 ```bash
 python -m pytest tests/test_ingest.py tests/test_asr.py tests/test_encoder.py -q
 python -m scripts.smoke_ingest
 ```
 
-自动化测试覆盖身份、修订、路径重定位、缓存失效、部分失败、变帧率映射及非零源起点。ASR 测试使用 mock 验证状态和时间关联；smoke 使用测试图案、音调和静音，不验证语音识别准确率。
+Tests cover identity, revisions, project relocation, cache invalidation, partial failures, variable-frame-rate mapping, and nonzero source origins. ASR tests use mocks for status and timestamp handling. The smoke test uses generated patterns, tones, and silence; it does not measure recognition accuracy.
 
-真实中文识别、手机旋转/HDR 等复杂素材和 B/D/F 联调仍需验收。逐帧 PTS 列表的内存及 JSON 空间与帧数成正比，批次抽帧会重复解码，超长视频性能尚未优化。场景检测、停顿边界和画质评分未实现。
+Real Mandarin recognition, rotated/HDR phone footage, and integration with B/D/F still need validation. Per-frame PTS storage uses memory and JSON space proportional to frame count, and batched extraction decodes the source repeatedly. Long-video performance has not been optimized. Scene detection, speech-pause boundaries, and visual quality scoring are not implemented.
