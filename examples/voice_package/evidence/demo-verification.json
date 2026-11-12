@@ -1,0 +1,64 @@
+{
+  "initial": [
+    {
+      "cue_id": "cue-01",
+      "duration_us": 904021,
+      "fit_status": "fits",
+      "hash_verified": true
+    },
+    {
+      "cue_id": "cue-02",
+      "duration_us": 2862729,
+      "fit_status": "fits",
+      "hash_verified": true
+    },
+    {
+      "cue_id": "cue-03",
+      "duration_us": 11782479,
+      "fit_status": "needs_retime",
+      "hash_verified": true
+    }
+  ],
+  "updated": [
+    {
+      "cue_id": "cue-01",
+      "duration_us": 1249542,
+      "fit_status": "fits",
+      "hash_verified": true
+    },
+    {
+      "cue_id": "cue-02",
+      "duration_us": 2862729,
+      "fit_status": "fits",
+      "hash_verified": true
+    },
+    {
+      "cue_id": "cue-03",
+      "duration_us": 11782479,
+      "fit_status": "needs_retime",
+      "hash_verified": true
+    }
+  ],
+  "fitted": [
+    {
+      "cue_id": "cue-01",
+      "duration_us": 841667,
+      "fit_status": "fits",
+      "hash_verified": true
+    },
+    {
+      "cue_id": "cue-02",
+      "duration_us": 2862729,
+      "fit_status": "fits",
+      "hash_verified": true
+    },
+    {
+      "cue_id": "cue-03",
+      "duration_us": 11782479,
+      "fit_status": "needs_retime",
+      "hash_verified": true
+    }
+  ],
+  "revision_test": "only cue-01 changed; cue-02/cue-03 reused",
+  "failure_test": "TTS_FAILED returned"
+}

@@ -37,3 +37,6 @@ quickcut = "quickcut.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["quickcut*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
