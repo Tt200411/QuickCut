@@ -1,0 +1,278 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "StoryPlan",
+  "document_id": "story-001",
+  "project_id": "project-forest-vlog-001",
+  "revision": 1,
+  "fixtures_only": true,
+  "owner": "C",
+  "inputs": [
+    {
+      "kind": "Brief",
+      "document_id": "brief-001",
+      "revision": 1
+    },
+    {
+      "kind": "CandidateSet",
+      "document_id": "candidates-c-001",
+      "revision": 1
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-001",
+      "revision": 1
+    }
+  ],
+  "status": "ready_for_edit",
+  "theme": "从城市出发，在林间散步，最后坐下休息。",
+  "narration_language": "zh-CN",
+  "beats": [
+    {
+      "beat_id": "beat-open",
+      "order": 0,
+      "purpose": "建立出发情境",
+      "duration_budget_us": 6000000,
+      "support": "supported",
+      "shots": [
+        {
+          "candidate_id": "candidate-seg-packing",
+          "segment_id": "seg-packing",
+          "origin": "user",
+          "role": "primary",
+          "decided_by": "rule",
+          "suggested_duration_us": 6000000,
+          "evidence": [
+            "fixture_annotation"
+          ],
+          "transcript": "出发吧。",
+          "summary": {
+            "text": "收拾背包并准备出门",
+            "provider": "fixture_annotation"
+          },
+          "event_review": {
+            "candidate_id": "candidate-seg-packing",
+            "beat_id": "beat-open",
+            "asset_revision": 1,
+            "event": "从城市出发",
+            "source": "fixture_annotation"
+          }
+        }
+      ],
+      "alternative_candidate_ids": [
+        "candidate-seg-city"
+      ],
+      "cue_ids": [
+        "cue-01"
+      ]
+    },
+    {
+      "beat_id": "beat-middle",
+      "order": 1,
+      "purpose": "推进过程与环境过渡",
+      "duration_budget_us": 9000000,
+      "support": "supported",
+      "shots": [
+        {
+          "candidate_id": "candidate-seg-forest",
+          "segment_id": "seg-forest",
+          "origin": "external",
+          "role": "broll",
+          "decided_by": "rule",
+          "suggested_duration_us": 3000000,
+          "evidence": [
+            "fixture_annotation"
+          ],
+          "transcript": "",
+          "summary": {
+            "text": "树叶与林间光线",
+            "provider": "fixture_annotation"
+          }
+        },
+        {
+          "candidate_id": "candidate-seg-walk",
+          "segment_id": "seg-walk",
+          "origin": "user",
+          "role": "primary",
+          "decided_by": "rule",
+          "suggested_duration_us": 6000000,
+          "evidence": [
+            "fixture_annotation"
+          ],
+          "transcript": "这里很安静。",
+          "summary": {
+            "text": "人物沿林间小路步行",
+            "provider": "fixture_annotation"
+          },
+          "event_review": {
+            "candidate_id": "candidate-seg-walk",
+            "beat_id": "beat-middle",
+            "asset_revision": 1,
+            "event": "在林间散步",
+            "source": "fixture_annotation"
+          }
+        }
+      ],
+      "alternative_candidate_ids": [
+        "candidate-walk-alt"
+      ],
+      "cue_ids": [
+        "cue-02"
+      ]
+    },
+    {
+      "beat_id": "beat-close",
+      "order": 2,
+      "purpose": "完成情绪收束",
+      "duration_budget_us": 3000000,
+      "support": "supported",
+      "shots": [
+        {
+          "candidate_id": "candidate-seg-rest",
+          "segment_id": "seg-rest",
+          "origin": "user",
+          "role": "primary",
+          "decided_by": "rule",
+          "suggested_duration_us": 3000000,
+          "evidence": [
+            "fixture_annotation"
+          ],
+          "transcript": "",
+          "summary": {
+            "text": "人物坐下休息",
+            "provider": "fixture_annotation"
+          },
+          "event_review": {
+            "candidate_id": "candidate-seg-rest",
+            "beat_id": "beat-close",
+            "asset_revision": 1,
+            "event": "坐下休息",
+            "source": "fixture_annotation"
+          }
+        }
+      ],
+      "alternative_candidate_ids": [
+        "candidate-seg-stream"
+      ],
+      "cue_ids": [
+        "cue-03"
+      ]
+    }
+  ],
+  "narration_cues": [
+    {
+      "cue_id": "cue-01",
+      "beat_id": "beat-open",
+      "text": "收拾好背包，我们准备离开城市。",
+      "text_source": "human_editorial",
+      "approved": true,
+      "content_review": "human_editorial",
+      "duration_budget_us": 5800000,
+      "voice_style": "自然中文男声",
+      "expression": "与画面动作、角色和先后顺序对照检查后再批准",
+      "evidence_segment_ids": [
+        "seg-packing"
+      ],
+      "asserts_specific_user_event": true
+    },
+    {
+      "cue_id": "cue-02",
+      "beat_id": "beat-middle",
+      "text": "走进林间，脚步慢了下来，耳边只剩安静的风声。",
+      "text_source": "human_editorial",
+      "approved": true,
+      "content_review": "human_editorial",
+      "duration_budget_us": 8800000,
+      "voice_style": "自然中文男声",
+      "expression": "与画面动作、角色和先后顺序对照检查后再批准",
+      "evidence_segment_ids": [
+        "seg-walk"
+      ],
+      "asserts_specific_user_event": true
+    },
+    {
+      "cue_id": "cue-03",
+      "beat_id": "beat-close",
+      "text": "坐下来，歇一会儿。",
+      "text_source": "human_editorial",
+      "approved": true,
+      "content_review": "human_editorial",
+      "duration_budget_us": 2800000,
+      "voice_style": "自然中文男声",
+      "expression": "与画面动作、角色和先后顺序对照检查后再批准",
+      "evidence_segment_ids": [
+        "seg-rest"
+      ],
+      "asserts_specific_user_event": true
+    }
+  ],
+  "unresolved_gaps": [],
+  "pending_reviews": [],
+  "decision_provenance": {
+    "mode": "rule",
+    "model_call_ids": [],
+    "selected_segment_ids": [
+      "seg-forest",
+      "seg-packing",
+      "seg-rest",
+      "seg-walk"
+    ],
+    "evidence_reviews": [
+      {
+        "candidate_id": "candidate-seg-packing",
+        "beat_id": "beat-open",
+        "asset_revision": 1,
+        "event": "从城市出发",
+        "source": "fixture_annotation"
+      },
+      {
+        "candidate_id": "candidate-seg-city",
+        "beat_id": "beat-open",
+        "asset_revision": 1,
+        "event": "从城市出发",
+        "source": "fixture_annotation"
+      },
+      {
+        "candidate_id": "candidate-seg-walk",
+        "beat_id": "beat-middle",
+        "asset_revision": 1,
+        "event": "在林间散步",
+        "source": "fixture_annotation"
+      },
+      {
+        "candidate_id": "candidate-walk-alt",
+        "beat_id": "beat-middle",
+        "asset_revision": 1,
+        "event": "在林间散步",
+        "source": "fixture_annotation"
+      },
+      {
+        "candidate_id": "candidate-seg-rest",
+        "beat_id": "beat-close",
+        "asset_revision": 1,
+        "event": "坐下休息",
+        "source": "fixture_annotation"
+      }
+    ],
+    "reviewed_anchor_segment_ids": [],
+    "rule_adjustments": [],
+    "human_edits": [
+      "cue-01: 文案来自人工审阅，不记为模型输出",
+      "cue-02: 文案来自人工审阅，不记为模型输出",
+      "cue-03: 文案来自人工审阅，不记为模型输出"
+    ],
+    "iterations": [
+      {
+        "iteration": 1,
+        "request_revision": 1,
+        "candidate_set_revision": 1,
+        "reason": "首轮按三段叙事目的发出检索请求"
+      }
+    ],
+    "raw_response_count": 0,
+    "input_hashes": {
+      "Brief": "ff040171bbb08d81",
+      "AssetManifest": "6b59067a2620efd9",
+      "CandidateSet": "550a3abce390bad8"
+    }
+  }
+}

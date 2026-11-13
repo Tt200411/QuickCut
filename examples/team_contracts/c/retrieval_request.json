@@ -1,0 +1,94 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "RetrievalRequest",
+  "document_id": "request-001",
+  "project_id": "project-forest-vlog-001",
+  "revision": 1,
+  "fixtures_only": true,
+  "owner": "C",
+  "inputs": [
+    {
+      "kind": "Brief",
+      "document_id": "brief-001",
+      "revision": 1
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-001",
+      "revision": 1
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "query-open",
+      "beat_id": "beat-open",
+      "semantic_text": "从城市出发",
+      "role": "primary",
+      "allowed_origins": [
+        "user"
+      ],
+      "duration_budget_us": 6000000,
+      "top_k": 4,
+      "iteration": 1,
+      "beat_purpose": "建立出发情境"
+    },
+    {
+      "query_id": "query-middle",
+      "beat_id": "beat-middle",
+      "semantic_text": "在林间散步",
+      "role": "primary",
+      "allowed_origins": [
+        "user"
+      ],
+      "duration_budget_us": 9000000,
+      "top_k": 4,
+      "iteration": 1,
+      "beat_purpose": "推进过程与环境过渡"
+    },
+    {
+      "query_id": "query-close",
+      "beat_id": "beat-close",
+      "semantic_text": "坐下休息",
+      "role": "primary",
+      "allowed_origins": [
+        "user"
+      ],
+      "duration_budget_us": 3000000,
+      "top_k": 4,
+      "iteration": 1,
+      "beat_purpose": "完成情绪收束"
+    },
+    {
+      "query_id": "query-middle-establishing",
+      "beat_id": "beat-middle",
+      "semantic_text": "用于推进过程与环境过渡的环境或情绪画面",
+      "role": "establishing",
+      "allowed_origins": [
+        "external"
+      ],
+      "duration_budget_us": 3000000,
+      "top_k": 3,
+      "iteration": 1,
+      "beat_purpose": "推进过程与环境过渡"
+    },
+    {
+      "query_id": "query-close-atmosphere",
+      "beat_id": "beat-close",
+      "semantic_text": "用于完成情绪收束的环境或情绪画面",
+      "role": "atmosphere",
+      "allowed_origins": [
+        "external"
+      ],
+      "duration_budget_us": 3000000,
+      "top_k": 3,
+      "iteration": 1,
+      "beat_purpose": "完成情绪收束"
+    }
+  ],
+  "iteration": 1,
+  "max_iterations": 3,
+  "iteration_notes": [
+    "首轮按三段叙事目的发出检索请求"
+  ],
+  "status": "pending"
+}

@@ -1,0 +1,32 @@
+{
+  "project_id": "project-forest-vlog-001",
+  "stage": "C",
+  "revision": 1,
+  "selector": "rule",
+  "raw_responses": [],
+  "validation": {
+    "ok": true,
+    "status": "needs_input",
+    "errors": [],
+    "warnings": [],
+    "checks": [
+      "信封、精确依赖和候选源区间检查通过"
+    ],
+    "counts": {
+      "beats": 3,
+      "cues": 3,
+      "gaps": 1,
+      "pending_reviews": 1,
+      "selected_user_segments": 2,
+      "external_duration_us": 3000000
+    }
+  },
+  "human_edits": [
+    "cue-01: 文案来自人工审阅，不记为模型输出",
+    "cue-02: 文案来自人工审阅，不记为模型输出",
+    "cue-03: 人工文案未采用，该段没有事件证据，改为非事件性留白"
+  ],
+  "rule_adjustments": [
+    "beat-close: 把该段改为氛围描述，不叙述用户未拍到的具体事件"
+  ]
+}

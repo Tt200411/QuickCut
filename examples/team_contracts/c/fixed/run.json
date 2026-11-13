@@ -1,0 +1,189 @@
+{
+  "project_id": "project-forest-vlog-001",
+  "stage": "C",
+  "revision": 1,
+  "selector": "fixed_response",
+  "raw_responses": [
+    {
+      "beat_id": "beat-open",
+      "ordered_candidate_ids": [
+        "candidate-seg-packing"
+      ],
+      "reasons": {
+        "candidate-seg-packing": "用户素材里的出发动作，承担开场事件证据"
+      },
+      "source": "fixture:fixed_model_response",
+      "raw_response": {
+        "mode": "fixed_model_response",
+        "note": "人工固定的模型响应夹具，用来在接入本地 Qwen 之前测试校验器，不是一次真实推理记录。",
+        "beats": {
+          "beat-open": {
+            "shot_order": [
+              "candidate-seg-packing"
+            ],
+            "reasons": {
+              "candidate-seg-packing": "用户素材里的出发动作，承担开场事件证据"
+            },
+            "roles": {
+              "candidate-seg-packing": "primary"
+            }
+          },
+          "beat-middle": {
+            "shot_order": [
+              "candidate-seg-forest",
+              "candidate-seg-walk"
+            ],
+            "reasons": {
+              "candidate-seg-forest": "授权空镜建立林间环境，不声明为用户实际抵达的地点",
+              "candidate-seg-walk": "用户素材里的步行，承接环境并推动事件"
+            },
+            "roles": {
+              "candidate-seg-forest": "establishing",
+              "candidate-seg-walk": "primary"
+            }
+          },
+          "beat-close": {
+            "shot_order": [
+              "candidate-seg-rest"
+            ],
+            "reasons": {
+              "candidate-seg-rest": "用户素材里的休息动作，收束情绪"
+            },
+            "roles": {
+              "candidate-seg-rest": "primary"
+            }
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "beat-middle",
+      "ordered_candidate_ids": [
+        "candidate-seg-forest",
+        "candidate-seg-walk"
+      ],
+      "reasons": {
+        "candidate-seg-forest": "授权空镜建立林间环境，不声明为用户实际抵达的地点",
+        "candidate-seg-walk": "用户素材里的步行，承接环境并推动事件"
+      },
+      "source": "fixture:fixed_model_response",
+      "raw_response": {
+        "mode": "fixed_model_response",
+        "note": "人工固定的模型响应夹具，用来在接入本地 Qwen 之前测试校验器，不是一次真实推理记录。",
+        "beats": {
+          "beat-open": {
+            "shot_order": [
+              "candidate-seg-packing"
+            ],
+            "reasons": {
+              "candidate-seg-packing": "用户素材里的出发动作，承担开场事件证据"
+            },
+            "roles": {
+              "candidate-seg-packing": "primary"
+            }
+          },
+          "beat-middle": {
+            "shot_order": [
+              "candidate-seg-forest",
+              "candidate-seg-walk"
+            ],
+            "reasons": {
+              "candidate-seg-forest": "授权空镜建立林间环境，不声明为用户实际抵达的地点",
+              "candidate-seg-walk": "用户素材里的步行，承接环境并推动事件"
+            },
+            "roles": {
+              "candidate-seg-forest": "establishing",
+              "candidate-seg-walk": "primary"
+            }
+          },
+          "beat-close": {
+            "shot_order": [
+              "candidate-seg-rest"
+            ],
+            "reasons": {
+              "candidate-seg-rest": "用户素材里的休息动作，收束情绪"
+            },
+            "roles": {
+              "candidate-seg-rest": "primary"
+            }
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "beat-close",
+      "ordered_candidate_ids": [
+        "candidate-seg-rest"
+      ],
+      "reasons": {
+        "candidate-seg-rest": "用户素材里的休息动作，收束情绪"
+      },
+      "source": "fixture:fixed_model_response",
+      "raw_response": {
+        "mode": "fixed_model_response",
+        "note": "人工固定的模型响应夹具，用来在接入本地 Qwen 之前测试校验器，不是一次真实推理记录。",
+        "beats": {
+          "beat-open": {
+            "shot_order": [
+              "candidate-seg-packing"
+            ],
+            "reasons": {
+              "candidate-seg-packing": "用户素材里的出发动作，承担开场事件证据"
+            },
+            "roles": {
+              "candidate-seg-packing": "primary"
+            }
+          },
+          "beat-middle": {
+            "shot_order": [
+              "candidate-seg-forest",
+              "candidate-seg-walk"
+            ],
+            "reasons": {
+              "candidate-seg-forest": "授权空镜建立林间环境，不声明为用户实际抵达的地点",
+              "candidate-seg-walk": "用户素材里的步行，承接环境并推动事件"
+            },
+            "roles": {
+              "candidate-seg-forest": "establishing",
+              "candidate-seg-walk": "primary"
+            }
+          },
+          "beat-close": {
+            "shot_order": [
+              "candidate-seg-rest"
+            ],
+            "reasons": {
+              "candidate-seg-rest": "用户素材里的休息动作，收束情绪"
+            },
+            "roles": {
+              "candidate-seg-rest": "primary"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "validation": {
+    "ok": true,
+    "status": "ready_for_edit",
+    "errors": [],
+    "warnings": [],
+    "checks": [
+      "信封、精确依赖和候选源区间检查通过"
+    ],
+    "counts": {
+      "beats": 3,
+      "cues": 3,
+      "gaps": 0,
+      "pending_reviews": 0,
+      "selected_user_segments": 3,
+      "external_duration_us": 3000000
+    }
+  },
+  "human_edits": [
+    "cue-01: 文案来自人工审阅，不记为模型输出",
+    "cue-02: 文案来自人工审阅，不记为模型输出",
+    "cue-03: 文案来自人工审阅，不记为模型输出"
+  ],
+  "rule_adjustments": []
+}

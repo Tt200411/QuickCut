@@ -1,0 +1,42 @@
+name: C planning contracts
+
+on:
+  pull_request:
+    paths:
+      - "quickcut/planning/**"
+      - "tests/test_planning*.py"
+      - "examples/team_contracts/**"
+      - "pyproject.toml"
+      - ".github/workflows/c-planning.yml"
+  push:
+    branches: [main, "feat/c-story-planning"]
+    paths:
+      - "quickcut/planning/**"
+      - "tests/test_planning*.py"
+      - "examples/team_contracts/**"
+      - "pyproject.toml"
+      - ".github/workflows/c-planning.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  offline-contracts:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install offline test dependencies
+        run: python -m pip install -e '.[dev]' 'pillow>=10.0'
+      - name: Run planning regression tests
+        run: python -m pytest -q tests/test_planning.py tests/test_planning_contracts.py tests/test_planning_selection.py
+      - name: Check selector negative controls
+        run: python -m quickcut.planning selftest
+      - name: Check eight-document integration
+        run: python -m quickcut.planning inject --output outputs/c/injected_bundle.json
