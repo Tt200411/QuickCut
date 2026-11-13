@@ -1,0 +1,56 @@
+[
+  {
+    "beat_id": "beat-open",
+    "order": 0,
+    "purpose": "建立出发情境",
+    "wish": {
+      "event": "从城市出发",
+      "assertion": "user_wish",
+      "verified": false
+    },
+    "shot_needs": [
+      "primary"
+    ],
+    "broll_allowed": false,
+    "duration_budget_us": 6000000,
+    "narration_style": "自然中文男声",
+    "project_id": "project-forest-vlog-001"
+  },
+  {
+    "beat_id": "beat-middle",
+    "order": 1,
+    "purpose": "推进过程与环境过渡",
+    "wish": {
+      "event": "在林间散步",
+      "assertion": "user_wish",
+      "verified": false
+    },
+    "shot_needs": [
+      "primary",
+      "establishing",
+      "transition"
+    ],
+    "broll_allowed": true,
+    "duration_budget_us": 9000000,
+    "narration_style": "自然中文男声",
+    "project_id": "project-forest-vlog-001"
+  },
+  {
+    "beat_id": "beat-close",
+    "order": 2,
+    "purpose": "完成情绪收束",
+    "wish": {
+      "event": "坐下休息",
+      "assertion": "user_wish",
+      "verified": false
+    },
+    "shot_needs": [
+      "primary",
+      "atmosphere"
+    ],
+    "broll_allowed": true,
+    "duration_budget_us": 3000000,
+    "narration_style": "自然中文男声",
+    "project_id": "project-forest-vlog-001"
+  }
+]
