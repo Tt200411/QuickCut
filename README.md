@@ -68,6 +68,9 @@ Exit codes are 0 for success, 2 for partial success and 1 for failure. Check the
 `processing` field for errors. Unchanged stages reuse cached outputs.
 
 The existing `quickcut index/search/basic`, API and UI still use the single-source format.
+Ingestion also supports ASR thread/worker limits, vocabulary hints, word diagnostics, and
+review flags. Successful execution does not mark a transcript as reviewed. Use
+`python -m quickcut.asr_eval` to compare a sidecar with a human-verified reference.
 See [Ingestion reference](docs/ingestion.md) for fields, cache rules and limitations, and
 [Batch input example](examples/ingest/README.md) for batch configuration.
 
