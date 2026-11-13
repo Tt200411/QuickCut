@@ -1,15 +1,19 @@
 """CLI 输入解析、输出重验与错误信封回归，全部使用本地夹具。"""
 from __future__ import annotations
 
+import base64
 import copy
+import io
 import json
 import subprocess
 import sys
 from pathlib import Path
 
 import pytest
+from PIL import Image
 
 from quickcut.planning import cli
+from quickcut.planning.selection import RuleSelector
 from quickcut.planning.contracts import load_bundle, read_json, ref, write_json
 from quickcut.planning.planning import build_outline, build_retrieval_request
 
@@ -46,6 +50,118 @@ def custom_inputs(tmp_path):
     candidate_path = write_json(tmp_path / "candidates.json", candidates)
     request_path = write_json(tmp_path / "request.json", request)
     return raw, docs, candidates, request, bundle, candidate_path, request_path
+
+
+@pytest.mark.parametrize("explicit_root", [False, True])
+def test_run_parser_project_root(tmp_path, monkeypatch, explicit_root):
+    captured = []
+
+    def capture(args):
+        captured.append(args)
+        return 0
+
+    monkeypatch.setattr(cli, "command_run", capture)
+    options = ["--project-root", str(tmp_path)] if explicit_root else []
+    assert cli.main(["run", *options]) == 0
+    assert captured[0].project_root == str(tmp_path if explicit_root else cli.ROOT)
+
+
+@pytest.mark.parametrize("explicit_root", [False, True])
+def test_run_passes_resolved_project_root_to_ollama(tmp_path, monkeypatch, capsys, explicit_root):
+    project = tmp_path / "project"
+    project.mkdir()
+    (tmp_path / "project-link").symlink_to(project, target_is_directory=True)
+    monkeypatch.chdir(tmp_path)
+    constructed = []
+
+    def construct(**kwargs):
+        constructed.append(kwargs)
+        return RuleSelector()
+
+    monkeypatch.setattr(cli, "OllamaSelector", construct)
+    options = ["--project-root", "project-link"] if explicit_root else []
+    assert cli.main(["run", "--mode", "ollama", *options, "--out-dir", str(tmp_path / "run")]) == 0
+    assert constructed == [{"project_root": project.resolve() if explicit_root else cli.ROOT}]
+    assert json.loads(capsys.readouterr().out)["validation_ok"] is True
+
+
+@pytest.mark.parametrize("kind", [
+    "relative", "default", "absolute", "parent", "internal_parent",
+    "symlink", "directory_symlink", "internal_symlink",
+])
+def test_run_ollama_project_images_and_escape_guards(
+    tmp_path, custom_inputs, monkeypatch, capsys, kind,
+):
+    raw, docs, _, _, bundle, candidate_path, request_path = custom_inputs
+    project = tmp_path / "project"
+    project.mkdir()
+    assert not project.resolve().is_relative_to(cli.ROOT)
+    image = project / "frame.png"
+    Image.new("RGB", (2, 2), "green").save(image)
+    outside = tmp_path / "outside.png"
+    Image.new("RGB", (2, 2), "red").save(outside)
+    uri = image.name
+    if kind == "absolute":
+        uri = str(outside)
+    elif kind == "parent":
+        uri = "../outside.png"
+    elif kind == "internal_parent":
+        (project / "subdir").mkdir()
+        uri = "subdir/../frame.png"
+    elif kind == "symlink":
+        (project / "linked.png").symlink_to(outside)
+        uri = "linked.png"
+    elif kind == "directory_symlink":
+        (project / "linked").symlink_to(tmp_path, target_is_directory=True)
+        uri = "linked/outside.png"
+    elif kind == "internal_symlink":
+        (project / "linked.png").symlink_to(image)
+        uri = "linked.png"
+    for segment in docs["AssetManifest"]["segments"]:
+        for frame in segment["keyframes"]:
+            frame["uri"] = uri
+    write_json(bundle, raw)
+    requests = []
+
+    def respond(request, timeout):
+        payload = json.loads(request.data)
+        requests.append(payload)
+        prompt = json.loads(payload["prompt"])
+        chosen = next(c for c in prompt["candidates"] if c["origin"] == "user")
+        return io.BytesIO(json.dumps({"response": {
+            "shot_order": [chosen["candidate_id"]],
+            "reasons": {chosen["candidate_id"]: "用户事件证据"},
+            "roles": {chosen["candidate_id"]: "primary"},
+        }}).encode("utf-8"))
+
+    monkeypatch.setattr("urllib.request.urlopen", respond)
+    options = [] if kind == "default" else ["--project-root", str(project)]
+    assert cli.main([
+        "run", "--mode", "ollama", "--bundle", str(bundle),
+        "--candidate-set", str(candidate_path), "--retrieval-request", str(request_path),
+        *options, "--out-dir", str(tmp_path / "run"),
+    ]) == 0
+    assert json.loads(capsys.readouterr().out)["validation_ok"] is True
+    assert requests
+    accepted = kind in {"relative", "internal_symlink"}
+    for payload in requests:
+        prompt = json.loads(payload["prompt"])
+        assert all(c["visual_evidence"] is accepted for c in prompt["candidates"])
+        if accepted:
+            assert prompt["image_mapping"]
+            assert all(m["uri"] == uri for m in prompt["image_mapping"])
+            assert payload["images"] == [
+                base64.b64encode(image.read_bytes()).decode("ascii")
+            ] * len(prompt["image_mapping"])
+            for candidate in prompt["candidates"]:
+                assert candidate["image_indices"] == [
+                    m["image_index"] for m in prompt["image_mapping"]
+                    if m["candidate_id"] == candidate["candidate_id"]
+                ]
+        else:
+            assert "images" not in payload
+            assert prompt["image_mapping"] == []
+            assert all(c["image_indices"] == [] for c in prompt["candidates"])
 
 
 @pytest.mark.parametrize("case", ["complete", "insufficient"])

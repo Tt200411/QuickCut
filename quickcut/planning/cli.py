@@ -78,13 +78,13 @@ def _planning_docs(args: argparse.Namespace) -> tuple[dict[str, Any], dict[str, 
     return raw, docs, default_fixture
 
 
-def _selector(mode: str, fixed_path: Path | None) -> Selector:
+def _selector(mode: str, fixed_path: Path | None, project_root: Path = ROOT) -> Selector:
     if mode == "rule":
         return RuleSelector()
     if mode == "fixed":
         return FixedResponseSelector.from_path(fixed_path or DEFAULT_FIXED_RESPONSE)
     if mode == "ollama":
-        return OllamaSelector(project_root=ROOT)
+        return OllamaSelector(project_root=project_root)
     raise ValueError(f"unknown selector mode: {mode}")
 
 
@@ -134,7 +134,10 @@ def command_run(args: argparse.Namespace) -> int:
     result = plan(
         brief, manifest, candidate_set,
         retrieval_request=request,
-        selector=_selector(args.mode, Path(args.fixed_response) if args.fixed_response else None),
+        selector=_selector(
+            args.mode, Path(args.fixed_response) if args.fixed_response else None,
+            Path(args.project_root).resolve(),
+        ),
         approved_cues=approved,
         reviewed_evidence=read_json(args.reviewed_evidence) if args.reviewed_evidence else None,
         broll_queries=not args.no_broll_queries,
@@ -279,6 +282,7 @@ def main(argv: list[str] | None = None) -> int:
 
     run = sub.add_parser("run", help="生成 RetrievalRequest 与 StoryPlan")
     run.add_argument("--bundle", default=str(DEFAULT_BUNDLE))
+    run.add_argument("--project-root", default=str(ROOT), help="素材 URI 所属项目根目录，默认仓库根目录")
     run.add_argument("--candidate-set", default=None, help="覆盖 bundle 中的 CandidateSet")
     run.add_argument("--retrieval-request", default=None, help="覆盖 bundle 中的 RetrievalRequest")
     run.add_argument("--approved-cues", default=None)

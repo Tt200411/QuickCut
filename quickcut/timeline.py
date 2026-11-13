@@ -95,20 +95,26 @@ def compile_timeline(
     of a selected segment, within its beat budget and the overall brief.
     """
     project_id = brief["project_id"]
-    fixtures_only = brief["fixtures_only"]
-    _require(type(fixtures_only) is bool, "fixtures_only must be boolean")
+    fixtures_only = any(doc["fixtures_only"] for doc in (brief, manifest, story, voice))
     _positive_us(revision, "Timeline revision")
     _require(bool(document_id), "Timeline document ID is required")
     docs = dict(zip(("Brief", "AssetManifest", "StoryPlan", "VoicePackage"),
                     (brief, manifest, story, voice)))
     for kind, doc in docs.items():
         _require(doc["kind"] == kind and doc["schema_version"] == SCHEMA_VERSION
-                 and doc["project_id"] == project_id and doc["fixtures_only"] is fixtures_only,
+                 and doc["project_id"] == project_id and type(doc["fixtures_only"]) is bool,
                  f"{kind}: wrong kind, project, fixture flag, or schema version")
         _positive_us(doc["revision"], f"{kind} revision")
     _check_refs(docs)
-    _require(story["status"] == "ready_for_edit" and not story["unresolved_gaps"],
+    _require(not any(doc["fixtures_only"] for doc in (brief, manifest)) or story["fixtures_only"],
+             "StoryPlan must preserve upstream fixture provenance")
+    _require(not story["fixtures_only"] or voice["fixtures_only"],
+             "VoicePackage must preserve StoryPlan fixture provenance")
+    _require(story["status"] == "ready_for_edit" and not story["unresolved_gaps"]
+             and not story.get("pending_reviews"),
              "StoryPlan must be approved and have no unresolved gaps")
+    _require(voice.get("status") == "ready" and not voice.get("errors"),
+             "VoicePackage must be ready and have no unresolved errors")
     for key in ("width", "height", "sample_rate"):
         _positive_us(output[key], f"Output {key}")
     for key in ("numerator", "denominator"):
@@ -223,11 +229,15 @@ def compile_timeline(
             cue_id, duration = cue["cue_id"], cue["duration_us"]
             clip = _make_clip(f"clip-narration-{cue_id}", assets[cue["asset_id"]], 0, voice_cursor, duration)
             narration.append({**clip, "cue_id": cue_id, "gain": 1.0})
-            # Contract 0.1.0 exports one editable subtitle spanning each cue.
-            subtitles.append({
-                "subtitle_id": f"sub-{cue_id}", "cue_id": cue_id, "text": cue["text"],
-                "timeline_range_us": clip["timeline_range_us"], "editable": True,
-            })
+            # E 的字幕相对于句子音频起点；句尾静音不延长字幕。
+            for index, local in enumerate(cue["local_subtitles"], 1):
+                subtitles.append({
+                    "subtitle_id": f"sub-{cue_id}" if len(cue["local_subtitles"]) == 1 else f"sub-{cue_id}-{index}",
+                    "cue_id": cue_id, "text": local["text"],
+                    "timeline_range_us": _range(voice_cursor + local["range_us"]["begin"],
+                                                voice_cursor + local["range_us"]["end"]),
+                    "editable": True,
+                })
             voice_cursor += duration
 
     return {

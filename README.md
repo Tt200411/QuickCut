@@ -6,12 +6,32 @@ Start with the [Chinese project guide](docs/PROJECT_GUIDE.zh-CN.md) for the shar
 coarse-to-fine multi-source workflow, local model choices, and the six-person implementation plan.
 It separates the current single-source MVP from the proposed multi-source and Jianying draft workflow.
 
+- [全链路工程说明：入口、交接与已知限制](docs/team/PIPELINE_ENGINEERING.md)
+- [验收操作手册：命令、退出码、CI 与证据](docs/team/ACCEPTANCE_RUNBOOK.md)
 - [MVP capabilities and reuse map](docs/team/mvp-baseline.md)
 - [A-F workstreams, deliverables, and acceptance criteria](docs/team/workstreams.md)
 - [Module contracts and revision rules](docs/team/contracts.md)
 - [Contract fixtures and validator](examples/team_contracts/README.md)
 - [Editable workflow diagrams and PNGs](figures/README.md)
 - [Project handbook PDF](output/pdf/QuickCut_%E9%A1%B9%E7%9B%AE%E6%8C%87%E5%AF%BC%E6%89%8B%E5%86%8C.pdf)
+
+## 工程演示入口
+
+从仓库根执行；需要 Python 3.10+、FFmpeg/ffprobe 和已安装的 `.[dev,ingest,runtime]`。严格 doctor 另检查系统 TTS（macOS say 或 espeak-ng/espeak）。demo 项目根必须不存在或为空，不能是符号链接。
+
+```bash
+python scripts/doctor_pipeline.py --require-media
+python scripts/demo_pipeline.py --root outputs/pipeline-demo-10s \
+  --case supported --target-seconds 10
+python scripts/doctor_pipeline.py --require-media \
+  --project-root outputs/pipeline-demo-10s
+```
+
+从项目根 `run-report.json` 的 `render.files` 读取 timeline、manifest、voice_package，再调用 [preview 脚本](scripts/render_timeline_preview.py)；可直接运行的映射示例、四种用例和退出码见[验收手册](docs/team/ACCEPTANCE_RUNBOOK.md)。`--manifest` 使用 A 清单，不能传 assets_union。preview 必需 ffprobe，生成真实 MP4、独立可编辑 SRT 和报告，不是剪映工程。
+
+`--case` 支持 supported/unsupported/edit，`--target-seconds` 支持 5/10/15。10 秒 supported/edit 预期退出 0；unsupported 退出 2 并返回 needs_input；5 秒固定音调触发 needs_retime，顶层 failed、退出 2，不生成 Timeline。demo 使用合成媒体、人工候选、rule C、预设批准和 E 音调，不代表真实 B/Qwen/人审/自然语音、自动 fit 或剪映验收。C 的真实 Ollama 路径已支持 `python -m quickcut.planning run --project-root PROJECT_ROOT ...`。
+
+主代理已有全仓实测 **805 passed，33.55s（macOS / Python 3.13）**；新增媒体演示仍在运行，尚未取得结果的不记通过。CI 配置为 Ubuntu × Python 3.10/3.13，运行记录另验。proposal 第 1 页 BACKGROUND 的短片验收为约 5 分钟源 → **5–15 秒**；约 45 秒 opening 是愿景，下述旧 MVP 的 5–60 秒（Basic 默认 30 秒）与 18 秒协议 fixture 分别保留，不替代短片验收。
 
 ## A: Multi-source asset ingestion
 
