@@ -41,3 +41,42 @@ A 或 E 接入真实媒体后，应使用实际文件和哈希替换占位数据
 | F | `EditTimeline`、两个媒体清单 | 实际预览、工程包和真实导入结果 |
 
 不要把样例中的镜头选择、固定时长或声音指标直接当作业务规则。联调时可以换素材、故事和节奏，但必须保留协议所表达的来源、时序与版本关系。
+
+## D 的独立运行
+
+在仓库根目录执行，Python 3.10+ 即可。
+
+```powershell
+python -m examples.team_contracts.demo_d --bundle-output outputs/d-demo/validated-bundle.json
+python -m examples.team_contracts.demo_d --case longer --bundle-output outputs/d-demo/longer-bundle.json
+python -m examples.team_contracts.demo_d --case retime
+python -m examples.team_contracts.demo_d --case overlong
+python -m examples.team_contracts.demo_d --case stale
+python examples/team_contracts/validate.py outputs/d-demo/validated-bundle.json --self-test
+```
+
+- `normal` 从 Brief、AssetManifest、StoryPlan 和 VoicePackage 计算 18 秒四轨时间线。第二句旁白从 6.2 秒到 14.4 秒，跨过 9 秒的画面切点。
+- `longer` 使用同一份故事与素材，将第二句模拟配音从 8.2 秒延长到 8.8 秒。画面、原声和其他句子区间一致，只有第二句旁白和字幕延长到 15 秒。
+- `retime` 把中段步行镜头先安排为 5.5 秒。第二句实测时长变为 8.8 秒后，编译器使用已批准源区间内剩余的 0.5 秒，保留下一段的开始位置。
+- `overlong` 和 `stale` 预期退出码为 1，分别输出带 `cue-02` 的 `VOICE_NEEDS_RETIME` 和 `STALE_INPUT_REVISION`。
+
+结果写入 `outputs/d-demo/`。对照 `normal.json` 和 `longer.json` 时，展开旁白轨和字幕轨中的 `cue-02`，检查它们的 `timeline_range_us.end` 是否从 `14400000` 变成 `15000000`。成功案例会用编译结果替换黄金样例中的时间线，再运行团队校验器。
+
+### 把时间线交给 E 和 F
+
+联调时把上游 JSON 读成字典，调用编译器。调用方传入输出画幅、帧率和采样率，以及要生成的时间线版本。
+
+```python
+from quickcut.timeline import compile_timeline
+
+timeline = compile_timeline(
+    brief, asset_manifest, story_plan, voice_package,
+    output=output_spec,
+    document_id="timeline-001",
+    revision=1,
+)
+```
+
+E 提供逐句 `cue_id`、音频时长和准确的 `StoryPlan` 引用。D 校验项目、文本和版本后安排成片位置，并在输出中记录使用的 `VoicePackage` 版本。若配音超预算或输入版本过期，演示会写出错误 JSON。F 可以用成功结果核对四轨顺序、素材引用，以及区分原素材位置和成片位置的 `source_range_us` 与 `timeline_range_us`。
+
+当前演示使用 1 倍速硬切，字幕覆盖整句旁白，素材是占位引用。真实媒体联调时还需映射 E 的局部字幕区间，并验证精剪、编辑后的失效传播、指定区间的配音重合成和导出。
