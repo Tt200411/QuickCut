@@ -67,6 +67,20 @@ ASR extracts a mono 16 kHz WAV and accounts for audio offsets relative to the vi
 
 ASR is disabled by default. Install `.[asr]` and pass `--asr faster-whisper` to enable it.
 
+Ingestion defaults to beam size 5, two CPU threads, one worker, and no conditioning on previous text. The legacy single-source adapter retains its existing defaults. Configure ingestion explicitly when comparing runs:
+
+```bash
+python -m quickcut.ingest --project-root outputs/my-project --asr faster-whisper \
+  --asr-model small --asr-language zh --asr-beam-size 5 --asr-cpu-threads 2 \
+  --asr-num-workers 1 --no-asr-condition-on-previous-text
+```
+
+`--asr-initial-prompt` accepts a short language/style hint. `--asr-hotwords` accepts known vocabulary such as proper names. Do not pass the reference transcript as a prompt when measuring accuracy. `--no-asr-vad` disables speech filtering for comparison; an independent VAD pass still provides diagnostic speech ranges. Larger models require more memory, and limiting threads does not guarantee that a model will fit.
+
+Transcripts include `diagnostics` with the detected language, language probability, per-segment log probabilities, no-speech estimates, repetition/compression statistics, word times, and VAD speech ranges. Diagnostic timestamps use integer source microseconds. Missing VAD diagnostics are recorded as warnings without discarding recognized text.
+
+Execution `status` and `review.status` are separate. A successful unreviewed transcript remains `needs_review`; `disabled`/`no_audio` are `not_applicable`, and a failed run is `unavailable`. Low log probability, high no-speech estimates, unusual compression, and speech activity after the last transcript interval produce advisory flags. These thresholds are uncalibrated screening rules, not an accuracy score. A quiet trailing interval alone does not imply missing speech. Review flags never rewrite the text or certify its factual content.
+
 | Status | Meaning |
 |---|---|
 | `no_audio` | No audio stream |
@@ -90,4 +104,14 @@ python -m scripts.smoke_ingest
 
 Tests cover identity, revisions, project relocation, cache invalidation, partial failures, variable-frame-rate mapping, and nonzero source origins. ASR tests use mocks for status and timestamp handling. The smoke test uses generated patterns, tones, and silence; it does not measure recognition accuracy.
 
-Real Mandarin recognition, rotated/HDR phone footage, and integration with B/D/F still need validation. Per-frame PTS storage uses memory and JSON space proportional to frame count, and batched extraction decodes the source repeatedly. Long-video performance has not been optimized. Scene detection, speech-pause boundaries, and visual quality scoring are not implemented.
+Real Mandarin inference has been exercised locally, but broad recognition quality, rotated/HDR phone footage, and integration with B/D/F still need validation. Per-frame PTS storage uses memory and JSON space proportional to frame count, and batched extraction decodes the source repeatedly. Long-video performance has not been optimized. Scene detection, speech-pause boundaries, and visual quality scoring are not implemented.
+
+## Reference-based evaluation
+
+`python -m quickcut.asr_eval reference.json transcript.json --output evaluation.json` computes character error rate (CER). The reference must provide `reference_id`, `text`, and `verification: {"status": "human_verified", "reviewer": "reviewer ID"}`. Add `source_content_hash` and `source_range_us` to bind an interval to a particular source. Evaluation rejects mismatched or missing source hashes when a reference is hash-bound.
+
+The hypothesis is the transcript sidecar produced by ingestion. Interval selection uses word midpoints when complete word metadata is available and segment midpoints otherwise. Reports record the selection method. Verify interval boundaries when comparing these methods, and prefer a bounded clip or complete sentences.
+
+Normalization applies Unicode NFKC, case folding, and removal of punctuation/spacing. For Mandarin, install `.[asr-eval]` and add `--simplify-chinese` to normalize traditional and simplified forms with OpenCC. This affects scoring only and does not overwrite the transcript.
+
+CER is `(substitutions + deletions + insertions) / reference characters` and may exceed 1. `--allow-unverified-reference` permits a clearly labeled comparison with a published but unchecked script; it is not human-reference validation. Metrics describe only the referenced interval and must not be presented as overall model accuracy. A lower CER on a short sample does not approve the rest of the video.

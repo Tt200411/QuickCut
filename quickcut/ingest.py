@@ -13,6 +13,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from .asr import FasterWhisperASR
+from .asr_quality import source_diagnostics, transcript_review
 from .core import _ffmpeg_binary
 from .media import (MediaError, create_proxy, digest, extract_frames, ffprobe, fingerprint,
                     frame_timestamps, probe_media, read_json, resolve_uri, run_media,
@@ -37,12 +38,18 @@ class IngestConfig:
     asr_language: str | None = None
     asr_device: str = "cpu"
     asr_compute_type: str = "int8"
-    asr_beam_size: int = 1
+    asr_beam_size: int = 5
+    asr_cpu_threads: int = 2
+    asr_num_workers: int = 1
+    asr_vad: bool = True
+    asr_condition_on_previous_text: bool = False
+    asr_initial_prompt: str | None = None
+    asr_hotwords: str | None = None
     asr_model_revision: str | None = None
     max_attempts: int = 1
 
     def validate(self):
-        for name in ("window_us", "coarse_window_us", "proxy_width", "asr_beam_size", "max_attempts"):
+        for name in ("window_us", "coarse_window_us", "proxy_width", "asr_beam_size", "asr_cpu_threads", "asr_num_workers", "max_attempts"):
             value = getattr(self, name)
             if type(value) is not int or value <= 0:
                 raise ValueError(f"{name} must be a positive integer")
@@ -54,6 +61,13 @@ class IngestConfig:
             raise ValueError("asr must be none or faster-whisper (no silent auto fallback)")
         if not self.asr_model.strip():
             raise ValueError("asr_model must be nonempty")
+        for name in ("asr_vad", "asr_condition_on_previous_text"):
+            if type(getattr(self, name)) is not bool:
+                raise ValueError(f"{name} must be a boolean")
+        for name in ("asr_initial_prompt", "asr_hotwords"):
+            value = getattr(self, name)
+            if value is not None and not isinstance(value, str):
+                raise ValueError(f"{name} must be text or None")
         if self.max_attempts > 3:
             raise ValueError("max_attempts must be <= 3")
 
@@ -81,8 +95,9 @@ def _model_profile(config):
     profile = {key: value for key, value in asdict(config).items() if key.startswith("asr")}
     profile["packages"] = {name: _package_version(name) for name in (
         "faster-whisper", "ctranslate2", "av", "tokenizers", "onnxruntime", "huggingface-hub")}
-    profile["vad_filter"] = True
+    profile["vad_filter"] = config.asr_vad
     profile["audio_preprocessing"] = "video-origin-mono-16k-v1"
+    profile["diagnostics_version"] = 1
     return profile
 
 
@@ -258,6 +273,7 @@ def _process(root, record, config, tools, model_context, report):
         errors.append(_error(report.project_id, record["asset_id"], exc.stage, exc, exc.attempts))
 
     def asr_action(directory):
+        diagnostics = {}
         if not metadata["audio"]["present"]:
             status, transcript = "no_audio", []
         elif config.asr == "none":
@@ -265,7 +281,11 @@ def _process(root, record, config, tools, model_context, report):
         else:
             backend = FasterWhisperASR(model=str(model_context["path"]), device=config.asr_device,
                                       compute_type=config.asr_compute_type, language=config.asr_language or "",
-                                      beam_size=config.asr_beam_size, allow_missing_audio=False)
+                                      beam_size=config.asr_beam_size, allow_missing_audio=False,
+                                      cpu_threads=config.asr_cpu_threads, num_workers=config.asr_num_workers,
+                                      vad_filter=config.asr_vad, condition_on_previous_text=config.asr_condition_on_previous_text,
+                                      initial_prompt=config.asr_initial_prompt, hotwords=config.asr_hotwords,
+                                      word_timestamps=True, collect_diagnostics=True)
             # ASR decodes an extracted WAV starting at the video origin, so transcript times
             # share the exact normalized source coordinate even for offset audio streams.
             wav = directory / "asr.wav"
@@ -273,6 +293,7 @@ def _process(root, record, config, tools, model_context, report):
                        "-af", f"asetpts=PTS-({metadata['video']['source_origin_us']}/1000000)/TB,aresample=16000:async=1:first_pts=0",
                        "-t", str(metadata["duration_us"] / 1_000_000), "-ac", "1", "-c:a", "pcm_s16le", str(wav)])
             recognized = backend.transcribe(wav)
+            diagnostics = source_diagnostics(getattr(backend, "last_diagnostics", {}), metadata["duration_us"])
             transcript = []
             for item in recognized:
                 if not math.isfinite(item.start) or not math.isfinite(item.end):
@@ -281,7 +302,9 @@ def _process(root, record, config, tools, model_context, report):
                 if end > begin and item.text.strip():
                     transcript.append({"source_range_us": {"begin": begin, "end": end}, "text": item.text.strip()})
             status = "success" if transcript else "no_speech"
-        result = {"status": status, "profile": model_profile, "segments": transcript}
+        result = {"status": status, "profile": model_profile, "segments": transcript, "diagnostics": diagnostics,
+                  "source_content_hash": record["content_hash"],
+                  "review": transcript_review(status, transcript, diagnostics, metadata["duration_us"])}
         path = directory / "transcript.json"
         write_json(path, result)
         return {**result, "uri": path.relative_to(root).as_posix()}, [path]
@@ -305,13 +328,15 @@ def _process(root, record, config, tools, model_context, report):
                                 lambda x: x["status"] in {"no_audio", "disabled", "success", "no_speech"}, report, config)
     except StageFailure as exc:
         transcript = {"status": "failed", "profile": model_profile, "segments": []}
+        transcript["review"] = transcript_review("failed", [], {}, metadata["duration_us"])
         errors.append(_error(report.project_id, record["asset_id"], exc.stage, exc, exc.attempts))
     asset["transcript"] = transcript
     for segment in segments:
         lo, hi = segment["source_range_us"]["begin"], segment["source_range_us"]["end"]
         overlapping = [t for t in transcript["segments"] if t["source_range_us"]["begin"] < hi and t["source_range_us"]["end"] > lo]
         segment["transcript"] = {"status": transcript["status"], "text": " ".join(t["text"] for t in overlapping),
-                                 "segments": overlapping, "uri": transcript.get("uri")}
+                                 "segments": overlapping, "uri": transcript.get("uri"),
+                                 "review_status": transcript["review"]["status"]}
     asset["processing_status"] = "partial" if errors else "success"
     return asset, segments, errors
 
@@ -449,6 +474,13 @@ def main(argv=None) -> int:
     parser.add_argument("--asr-model-revision")
     parser.add_argument("--asr-device", default="cpu")
     parser.add_argument("--asr-compute-type", default="int8")
+    parser.add_argument("--asr-beam-size", type=int, default=5)
+    parser.add_argument("--asr-cpu-threads", type=int, default=2)
+    parser.add_argument("--asr-num-workers", type=int, default=1)
+    parser.add_argument("--asr-vad", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--asr-condition-on-previous-text", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--asr-initial-prompt")
+    parser.add_argument("--asr-hotwords")
     parser.add_argument("--max-attempts", type=int, default=1)
     args = parser.parse_args(argv)
     sources = [SourceSpec(p) for p in args.videos] + [SourceSpec(p, "external") for p in args.external]
@@ -466,6 +498,10 @@ def main(argv=None) -> int:
                               proxy_width=args.proxy_width, asr=args.asr, asr_model=args.asr_model,
                               asr_language=args.asr_language, asr_device=args.asr_device,
                               asr_compute_type=args.asr_compute_type, asr_model_revision=args.asr_model_revision,
+                              asr_beam_size=args.asr_beam_size, asr_cpu_threads=args.asr_cpu_threads,
+                              asr_num_workers=args.asr_num_workers, asr_vad=args.asr_vad,
+                              asr_condition_on_previous_text=args.asr_condition_on_previous_text,
+                              asr_initial_prompt=args.asr_initial_prompt, asr_hotwords=args.asr_hotwords,
                               max_attempts=args.max_attempts)
         result = ingest_assets(args.project_root, sources, config=config, project_id=args.project_id)
     except (ValueError, RuntimeError, OSError, TypeError, KeyError) as exc:
@@ -473,6 +509,7 @@ def main(argv=None) -> int:
         return 1
     print(json.dumps({"status": result["processing"]["status"], "revision": result["revision"],
                       "assets": len(result["assets"]), "segments": len(result["segments"]),
+                      "transcripts_needing_review": sum(a["transcript"]["review"]["status"] == "needs_review" for a in result["assets"]),
                       "manifest": str(Path(args.project_root) / "asset-manifest.json")}, ensure_ascii=False))
     return {"success": 0, "partial": 2, "failed": 1}[result["processing"]["status"]]
 
