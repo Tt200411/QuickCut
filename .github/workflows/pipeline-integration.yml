@@ -21,7 +21,7 @@ jobs:
       run:
         shell: bash
     env:
-      PIPELINE_OUTPUT: ${{ runner.temp }}/pipeline-integration
+      PIPELINE_OUTPUT: ${{ github.workspace }}/outputs/pipeline-integration-ci
       PYTHONDONTWRITEBYTECODE: "1"
       HF_HUB_OFFLINE: "1"
       TRANSFORMERS_OFFLINE: "1"
