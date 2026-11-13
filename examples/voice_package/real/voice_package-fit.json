@@ -1,0 +1,266 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "VoicePackage",
+  "document_id": "voice-story-e-demo",
+  "project_id": "project-e-voice-demo",
+  "revision": 3,
+  "fixtures_only": false,
+  "owner": "E",
+  "inputs": [
+    {
+      "kind": "StoryPlan",
+      "document_id": "story-e-demo",
+      "revision": 1
+    },
+    {
+      "kind": "EditTimeline",
+      "document_id": "edit-e-demo",
+      "revision": 4
+    }
+  ],
+  "status": "needs_retime",
+  "timing_authority": "D",
+  "mode": "fit",
+  "measurement_source": "measured_pcm_samples",
+  "synthesis_profile": {
+    "engine": "say",
+    "version": "15.7.9",
+    "voice": "Reed (中文（中国大陆）)",
+    "language": "zh-CN",
+    "rate": 145,
+    "local": true,
+    "emotion_supported": false
+  },
+  "assets": [
+    {
+      "asset_id": "generated-voice-adfb1514cfe72756280ed4682f65202c",
+      "revision": 1,
+      "media_kind": "audio",
+      "origin": "generated",
+      "uri": "audio/narration/75b6dc703d127e54ae8675199eafe2e476c289048871c5681cd8eefd6c49e71b.wav",
+      "content_hash": "sha256:42e15374ea9e81040a6182e759daa4a2b34b6d2cb3e02f2985117c5cd92aba12",
+      "duration_us": 841667,
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "pcm_s16le"
+      }
+    },
+    {
+      "asset_id": "generated-voice-f96f069f5acc27f77b58d8b92a8d09a1",
+      "revision": 1,
+      "media_kind": "audio",
+      "origin": "generated",
+      "uri": "audio/narration/43142680311ef9c6857b19fd62d26840565e028078a8b87941810ae6f2a7d928.wav",
+      "content_hash": "sha256:bcb86a1bda961637119a4a08a7d26f8b4267b8e3997541dd8d6b6e30038ac3ea",
+      "duration_us": 2862729,
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "pcm_s16le"
+      }
+    },
+    {
+      "asset_id": "generated-voice-66399f2c6bd4e8c8c839e4df4f389909",
+      "revision": 1,
+      "media_kind": "audio",
+      "origin": "generated",
+      "uri": "audio/narration/10f65b0234fa64f7d0ad4b473c9aacbac25bd8e4107d2019a148150fdf1baf44.wav",
+      "content_hash": "sha256:da1f00d4ca84680174cad16b9db0c4d7a2f21e7545bacce583cf83be06a6ed95",
+      "duration_us": 11782479,
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "pcm_s16le"
+      }
+    }
+  ],
+  "cues": [
+    {
+      "cue_id": "cue-01",
+      "beat_id": "beat-open",
+      "text": "出发了。",
+      "duration_budget_us": 850000,
+      "script_input": {
+        "kind": "StoryPlan",
+        "document_id": "story-e-demo",
+        "revision": 1
+      },
+      "synthesis_profile": {
+        "engine": "say",
+        "version": "15.7.9",
+        "voice": "Reed (中文（中国大陆）)",
+        "language": "zh-CN",
+        "rate": 145,
+        "local": true,
+        "emotion_supported": false
+      },
+      "cache_key": "29b12d124da66fa72d329f7305b58699ac9975e481fa1472ffea6a5912ecdcc3",
+      "requested_timeline_range_us": {
+        "begin": 0,
+        "end": 850000
+      },
+      "asset_id": "generated-voice-adfb1514cfe72756280ed4682f65202c",
+      "raw_duration_us": 724021,
+      "engine_duration_us": 1319792,
+      "duration_us": 841667,
+      "speech_end_us": 661667,
+      "sentence_pause_us": 180000,
+      "tempo_ratio": 1.0806283582089553,
+      "fit_status": "fits",
+      "needs_retime": false,
+      "cache_hit": true,
+      "srt_uri": "subtitles/75b6dc703d127e54ae8675199eafe2e476c289048871c5681cd8eefd6c49e71b.srt",
+      "quality": {
+        "peak_dbfs": -6.32,
+        "clipped_samples": 0,
+        "text_verification": "not_asr_verified",
+        "naturalness": "requires_listening"
+      },
+      "local_subtitles": [
+        {
+          "range_us": {
+            "begin": 0,
+            "end": 661667
+          },
+          "text": "出发了。"
+        }
+      ]
+    },
+    {
+      "cue_id": "cue-02",
+      "beat_id": "beat-middle",
+      "text": "走进林间，脚步慢了下来。",
+      "duration_budget_us": 7000000,
+      "script_input": {
+        "kind": "StoryPlan",
+        "document_id": "story-e-demo",
+        "revision": 1
+      },
+      "synthesis_profile": {
+        "engine": "say",
+        "version": "15.7.9",
+        "voice": "Reed (中文（中国大陆）)",
+        "language": "zh-CN",
+        "rate": 145,
+        "local": true,
+        "emotion_supported": false
+      },
+      "cache_key": "a821f0fc5a49f02c6bd7dcb2c25eb5bd9247551260291c8af27079a39ba42936",
+      "requested_timeline_range_us": null,
+      "asset_id": "generated-voice-f96f069f5acc27f77b58d8b92a8d09a1",
+      "raw_duration_us": 2682729,
+      "engine_duration_us": 3271625,
+      "duration_us": 2862729,
+      "speech_end_us": 2682729,
+      "sentence_pause_us": 180000,
+      "tempo_ratio": 1.0,
+      "fit_status": "fits",
+      "needs_retime": false,
+      "cache_hit": true,
+      "srt_uri": "subtitles/43142680311ef9c6857b19fd62d26840565e028078a8b87941810ae6f2a7d928.srt",
+      "quality": {
+        "peak_dbfs": -4.98,
+        "clipped_samples": 0,
+        "text_verification": "not_asr_verified",
+        "naturalness": "requires_listening"
+      },
+      "local_subtitles": [
+        {
+          "range_us": {
+            "begin": 0,
+            "end": 2682729
+          },
+          "text": "走进林间，脚步慢了下来。"
+        }
+      ]
+    },
+    {
+      "cue_id": "cue-03",
+      "beat_id": "beat-close",
+      "text": "我们沿着林间的小路慢慢向前走，停下来听风吹过树叶的声音，然后坐在路边休息，享受这一段安静的时光。",
+      "duration_budget_us": 1000000,
+      "script_input": {
+        "kind": "StoryPlan",
+        "document_id": "story-e-demo",
+        "revision": 1
+      },
+      "synthesis_profile": {
+        "engine": "say",
+        "version": "15.7.9",
+        "voice": "Reed (中文（中国大陆）)",
+        "language": "zh-CN",
+        "rate": 145,
+        "local": true,
+        "emotion_supported": false
+      },
+      "cache_key": "5511d26320f2d09c0008ea8964be975b5af3ec5013a0ec1aa65eaaf2383c30b2",
+      "requested_timeline_range_us": null,
+      "asset_id": "generated-voice-66399f2c6bd4e8c8c839e4df4f389909",
+      "raw_duration_us": 11602479,
+      "engine_duration_us": 12206354,
+      "duration_us": 11782479,
+      "speech_end_us": 11602479,
+      "sentence_pause_us": 180000,
+      "tempo_ratio": 1.0,
+      "fit_status": "needs_retime",
+      "needs_retime": true,
+      "cache_hit": true,
+      "srt_uri": "subtitles/10f65b0234fa64f7d0ad4b473c9aacbac25bd8e4107d2019a148150fdf1baf44.srt",
+      "quality": {
+        "peak_dbfs": -4.18,
+        "clipped_samples": 0,
+        "text_verification": "not_asr_verified",
+        "naturalness": "requires_listening"
+      },
+      "local_subtitles": [
+        {
+          "range_us": {
+            "begin": 0,
+            "end": 11602479
+          },
+          "text": "我们沿着林间的小路慢慢向前走，停下来听风吹过树叶的声音，然后坐在路边休息，享受这一段安静的时光。"
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "status": "failed",
+      "code": "VOICE_NEEDS_RETIME",
+      "stage": "voice",
+      "project_id": "project-e-voice-demo",
+      "message": "Measured audio exceeds budget; D retime or C shorten text",
+      "retryable": false,
+      "affected_ids": [
+        "cue-03"
+      ],
+      "action_owner": "D"
+    }
+  ],
+  "request": {
+    "project_id": "project-e-voice-demo",
+    "story_plan": {
+      "kind": "StoryPlan",
+      "document_id": "story-e-demo",
+      "revision": 1
+    },
+    "timeline": {
+      "kind": "EditTimeline",
+      "document_id": "edit-e-demo",
+      "revision": 4
+    },
+    "iteration": 1,
+    "cue_ranges": {
+      "cue-01": {
+        "begin": 0,
+        "end": 850000
+      }
+    }
+  },
+  "invalidated_cue_ids": [],
+  "alignment_invalidated": false
+}

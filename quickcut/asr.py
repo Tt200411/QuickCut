@@ -45,6 +45,7 @@ class FasterWhisperASR:
         compute_type: str | None = None,
         language: str | None = None,
         beam_size: int | None = None,
+        allow_missing_audio: bool = True,
     ) -> None:
         try:
             import faster_whisper  # type: ignore
@@ -57,6 +58,7 @@ class FasterWhisperASR:
         self.language = language if language is not None else os.getenv("QUICKCUT_ASR_LANGUAGE")
         self.beam_size = beam_size or int(os.getenv("QUICKCUT_ASR_BEAM_SIZE", "1"))
         self._model = None
+        self.allow_missing_audio = allow_missing_audio
 
     def _load_model(self):
         if self._model is None:
@@ -90,6 +92,8 @@ class FasterWhisperASR:
         try:
             segments, _info = self._load_model().transcribe(str(video_path), **kwargs)
         except IndexError:
+            if not self.allow_missing_audio:
+                raise
             # A perfectly valid video-only source has no audio stream. Treat it
             # as an empty transcript so visual indexing still succeeds.
             return []

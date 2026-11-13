@@ -1,0 +1,38 @@
+[
+  {
+    "path": "../../inputs/short-01.mp4",
+    "origin": "user",
+    "source_key": "user-short-01",
+    "provenance_note": "Replace with source details"
+  },
+  {
+    "path": "../../inputs/short-02.mp4",
+    "origin": "user",
+    "source_key": "user-short-02",
+    "provenance_note": "Replace with source details"
+  },
+  {
+    "path": "../../inputs/short-03.mp4",
+    "origin": "user",
+    "source_key": "user-short-03",
+    "provenance_note": "Replace with source details"
+  },
+  {
+    "path": "../../inputs/long-01.mp4",
+    "origin": "user",
+    "source_key": "user-long-01",
+    "provenance_note": "Replace with source details"
+  },
+  {
+    "path": "../../inputs/broll-01.mp4",
+    "origin": "external",
+    "source_key": "library-broll-01",
+    "provenance_note": "Replace with library entry, source, and known usage terms"
+  },
+  {
+    "path": "../../inputs/broll-02.mp4",
+    "origin": "external",
+    "source_key": "library-broll-02",
+    "provenance_note": "Replace with library entry, source, and known usage terms"
+  }
+]

@@ -1,0 +1,113 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "StoryPlan",
+  "document_id": "story-e-demo",
+  "project_id": "project-e-voice-demo",
+  "revision": 1,
+  "fixtures_only": false,
+  "owner": "C",
+  "inputs": [],
+  "status": "ready_for_edit",
+  "theme": "From the city into the forest",
+  "narration_language": "zh-CN",
+  "beats": [
+    {
+      "beat_id": "beat-open",
+      "order": 0,
+      "purpose": "Establish the departure",
+      "duration_budget_us": 6000000,
+      "shots": [
+        {
+          "segment_id": "seg-packing",
+          "candidate_id": "candidate-seg-packing",
+          "role": "primary",
+          "evidence": "Departure action in user footage",
+          "suggested_duration_us": 6000000
+        }
+      ],
+      "cue_ids": [
+        "cue-01"
+      ]
+    },
+    {
+      "beat_id": "beat-middle",
+      "order": 1,
+      "purpose": "Transition from the environment to the person walking",
+      "duration_budget_us": 9000000,
+      "shots": [
+        {
+          "segment_id": "seg-forest",
+          "candidate_id": "candidate-seg-forest",
+          "role": "broll",
+          "evidence": "External scenery establishes atmosphere; it is not asserted to be the user filming location",
+          "suggested_duration_us": 3000000
+        },
+        {
+          "segment_id": "seg-walk",
+          "candidate_id": "candidate-seg-walk",
+          "role": "primary",
+          "evidence": "Forest walking in user footage",
+          "suggested_duration_us": 6000000
+        }
+      ],
+      "cue_ids": [
+        "cue-02"
+      ]
+    },
+    {
+      "beat_id": "beat-close",
+      "order": 2,
+      "purpose": "Sit down to rest and close the story",
+      "duration_budget_us": 3000000,
+      "shots": [
+        {
+          "segment_id": "seg-rest",
+          "candidate_id": "candidate-seg-rest",
+          "role": "primary",
+          "evidence": "Resting action in user footage",
+          "suggested_duration_us": 3000000
+        }
+      ],
+      "cue_ids": [
+        "cue-03"
+      ]
+    }
+  ],
+  "narration_cues": [
+    {
+      "cue_id": "cue-01",
+      "beat_id": "beat-open",
+      "text": "出发了。",
+      "duration_budget_us": 3000000,
+      "voice_style": "Natural Mandarin male voice",
+      "evidence_segment_ids": [
+        "seg-packing"
+      ]
+    },
+    {
+      "cue_id": "cue-02",
+      "beat_id": "beat-middle",
+      "text": "走进林间，脚步慢了下来。",
+      "duration_budget_us": 7000000,
+      "voice_style": "Natural Mandarin male voice",
+      "evidence_segment_ids": [
+        "seg-walk"
+      ]
+    },
+    {
+      "cue_id": "cue-03",
+      "beat_id": "beat-close",
+      "text": "我们沿着林间的小路慢慢向前走，停下来听风吹过树叶的声音，然后坐在路边休息，享受这一段安静的时光。",
+      "duration_budget_us": 1000000,
+      "voice_style": "Natural Mandarin male voice",
+      "evidence_segment_ids": [
+        "seg-rest"
+      ]
+    }
+  ],
+  "unresolved_gaps": [],
+  "decision_provenance": {
+    "mode": "handwritten_voice_test",
+    "evidence_scope": "TTS-only; no claim of video events"
+  }
+}
