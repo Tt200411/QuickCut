@@ -91,7 +91,9 @@ def test_images_refuse_path_escape(tmp_path, kind):
         uri = "linked/outside.png"
     selector = OllamaSelector(project_root=root)
     mapping = []
-    assert selector._images([candidate(keyframe_uris=[uri])], image_mapping=mapping) == []
+    assert selector._images([candidate(
+        keyframe_uris=[uri], keyframes=[{"uri": uri, "source_time_us": 2_000_000}],
+    )], image_mapping=mapping) == []
     assert mapping == []
 
 
@@ -102,7 +104,9 @@ def test_images_require_decodable_image_and_keep_internal_symlink(tmp_path):
     (tmp_path / "truncated.png").write_bytes(image.read_bytes()[:40])
     (tmp_path / "link.png").symlink_to(image)
     uris = ["missing.png", "fake.png", "truncated.png", "link.png"]
-    images = OllamaSelector(project_root=tmp_path)._images([candidate(keyframe_uris=uris)])
+    images = OllamaSelector(project_root=tmp_path)._images([candidate(
+        keyframe_uris=uris, keyframes=[{"uri": uri, "source_time_us": 2_000_000} for uri in uris],
+    )])
     assert images == [base64.b64encode(image.read_bytes()).decode("ascii")]
 
 
@@ -123,16 +127,143 @@ def test_partial_missing_images_have_correct_candidate_and_time_mapping(tmp_path
     payload = requests[0]
     prompt = json.loads(payload["prompt"])
     evidence = prompt["candidates"]
-    assert [c["visual_evidence"] for c in evidence] == [False, True, True]
-    assert [c["image_indices"] for c in evidence] == [[], [0], [1]]
+    assert [c["visual_evidence"] for c in evidence] == [False, True, False]
+    assert [c["image_indices"] for c in evidence] == [[], [0], []]
     assert prompt["beat"]["wish"] == beat["wish"]
     assert prompt["image_mapping"] == [
         {"image_index": 0, "candidate_id": "user-2", "uri": "first.png",
          "source_time_us": 4_000_000, "source_range_us": candidates[1]["source_range_us"]},
-        {"image_index": 1, "candidate_id": "user-3", "uri": "last.png",
-         "source_time_us": None, "source_range_us": candidates[2]["source_range_us"]},
     ]
-    assert len(payload["images"]) == 2
+    assert payload["images"] == [base64.b64encode((tmp_path / "first.png").read_bytes()).decode("ascii")]
+
+
+@pytest.mark.parametrize("begin,end", [(0, 10), (2_000_000, 12_000_000)])
+@pytest.mark.parametrize("frame_time,accepted", [
+    ({}, False),
+    ({"source_time_us": None}, False),
+    ({"source_time_us": -1}, False),
+    ({"source_time_us": False}, False),
+    ({"source_time_us": True}, False),
+    ({"source_time_us": 3.0}, False),
+    ({"source_time_us": "3"}, False),
+    ({"source_time_us": "before"}, False),
+    ({"source_time_us": "begin"}, True),
+    ({"source_time_us": "last"}, True),
+    ({"source_time_us": "end"}, False),
+    ({"source_time_us": "after"}, False),
+])
+def test_ollama_request_requires_frame_time_in_half_open_range(
+    tmp_path, monkeypatch, beat, begin, end, frame_time, accepted,
+):
+    image = tmp_path / "frame.png"
+    Image.new("RGB", (2, 2), "green").save(image)
+    frame = {"uri": image.name, **frame_time}
+    boundaries = {"before": begin - 1, "begin": begin, "last": end - 1,
+                  "end": end, "after": end + 1}
+    if isinstance(frame.get("source_time_us"), str) and frame["source_time_us"] in boundaries:
+        frame["source_time_us"] = boundaries[frame["source_time_us"]]
+    item = candidate(source_range_us={"begin": begin, "end": end},
+                     keyframes=[frame], keyframe_uris=[image.name])
+    requests = mock_ollama(monkeypatch, {"response": valid_entry()})
+    OllamaSelector(project_root=tmp_path).select(beat=beat, candidates=[item], context={})
+    assert len(requests) == 1
+    payload = requests[0]
+    prompt = json.loads(payload["prompt"])
+    assert prompt["candidates"][0]["visual_evidence"] is accepted
+    assert prompt["candidates"][0]["image_indices"] == ([0] if accepted else [])
+    if accepted:
+        assert payload["images"] == [base64.b64encode(image.read_bytes()).decode("ascii")]
+        assert prompt["image_mapping"] == [{
+            "image_index": 0, "candidate_id": item["candidate_id"], "uri": image.name,
+            "source_time_us": frame["source_time_us"], "source_range_us": item["source_range_us"],
+        }]
+    else:
+        assert "images" not in payload
+        assert prompt["image_mapping"] == []
+
+
+@pytest.mark.parametrize("source_range", [
+    None, {}, [], {"begin": False, "end": 10}, {"begin": 0, "end": True},
+    {"begin": 0.0, "end": 10}, {"begin": 0, "end": "10"},
+    {"begin": -1, "end": 10}, {"begin": 5, "end": 5}, {"begin": 10, "end": 5},
+])
+def test_images_do_not_downgrade_invalid_range_to_legacy(tmp_path, source_range):
+    Image.new("RGB", (2, 2)).save(tmp_path / "frame.png")
+    mapping = []
+    item = candidate(source_range_us=source_range, keyframe_uris=["frame.png"],
+                     keyframes=[{"uri": "frame.png", "source_time_us": 0}])
+    assert OllamaSelector(project_root=tmp_path)._images([item], image_mapping=mapping) == []
+    assert mapping == []
+
+
+@pytest.mark.parametrize("layout", ["keyframes", "keyframe_uris", "both", "empty_uris"])
+@pytest.mark.parametrize("frame_time,accepted", [
+    ({}, True), ({"source_time_us": 0}, True), ({"source_time_us": 4_000_000}, True),
+    ({"source_time_us": None}, False), ({"source_time_us": -1}, False),
+    ({"source_time_us": True}, False), ({"source_time_us": False}, False),
+    ({"source_time_us": 1.5}, False), ({"source_time_us": "100"}, False),
+])
+def test_legacy_images_without_range_keep_known_or_unknown_time(
+    tmp_path, monkeypatch, beat, layout, frame_time, accepted,
+):
+    image = tmp_path / "legacy.png"
+    Image.new("RGB", (2, 2), "blue").save(image)
+    item = candidate()
+    del item["source_range_us"]
+    if layout == "keyframes":
+        del item["keyframe_uris"]
+    else:
+        item["keyframe_uris"] = [] if layout == "empty_uris" else [image.name]
+    if layout != "keyframe_uris":
+        item["keyframes"] = [{"uri": image.name, **frame_time}]
+    accepted = layout != "empty_uris" and (layout == "keyframe_uris" or accepted)
+    requests = mock_ollama(monkeypatch, {"response": valid_entry()})
+    OllamaSelector(project_root=tmp_path).select(beat=beat, candidates=[item], context={})
+    payload = requests[0]
+    prompt = json.loads(payload["prompt"])
+    assert prompt["candidates"][0]["visual_evidence"] is accepted
+    assert prompt["candidates"][0]["image_indices"] == ([0] if accepted else [])
+    if accepted:
+        assert payload["images"] == [base64.b64encode(image.read_bytes()).decode("ascii")]
+        assert prompt["image_mapping"] == [{
+            "image_index": 0, "candidate_id": item["candidate_id"], "uri": image.name,
+            "source_time_us": None if layout == "keyframe_uris" else frame_time.get("source_time_us"),
+            "source_range_us": None,
+        }]
+    else:
+        assert "images" not in payload
+        assert prompt["image_mapping"] == []
+
+
+@pytest.mark.parametrize("layout", ["keyframes", "both"])
+def test_ollama_mapping_skips_invalid_frames_and_keeps_image_order(tmp_path, monkeypatch, beat, layout):
+    frames = []
+    for index, time in enumerate([-1, 2_000_000, True, 11_999_999, 12_000_000, None]):
+        uri = f"frame-{index}.png"
+        Image.new("RGB", (2, 2), (index * 30, 0, 0)).save(tmp_path / uri)
+        frames.append({"uri": uri, "source_time_us": time})
+    item = candidate(keyframes=frames)
+    if layout == "keyframes":
+        del item["keyframe_uris"]
+        valid_frames = [frames[1], frames[3]]
+    else:
+        item["keyframe_uris"] = [frame["uri"] for frame in reversed(frames)]
+        valid_frames = [frames[3], frames[1]]
+    requests = mock_ollama(monkeypatch, {"response": valid_entry()})
+    OllamaSelector(project_root=tmp_path).select(beat=beat, candidates=[item], context={})
+    payload = requests[0]
+    prompt = json.loads(payload["prompt"])
+    assert prompt["candidates"][0]["visual_evidence"] is True
+    assert prompt["candidates"][0]["image_indices"] == [0, 1]
+    assert payload["images"] == [
+        base64.b64encode((tmp_path / frame["uri"]).read_bytes()).decode("ascii")
+        for frame in valid_frames
+    ]
+    assert prompt["image_mapping"] == [
+        {"image_index": index, "candidate_id": item["candidate_id"], "uri": frame["uri"],
+         "source_time_us": frame["source_time_us"], "source_range_us": item["source_range_us"]}
+        for index, frame in enumerate(valid_frames)
+    ]
 
 
 def test_without_root_or_valid_images_no_visual_evidence(monkeypatch, beat):
@@ -264,6 +395,43 @@ def test_invalid_broll_ratio_is_rejected(beat, ratio):
     assert_invalid(exc, beat, None)
 
 
+@pytest.mark.parametrize("durations,expected", [
+    ([1_000_000, 10_000_000], [1_000_000, 9_000_000]),
+    ([1_000_000, 4_000_000, 10_000_000], [1_000_000, 4_000_000, 5_000_000]),
+    ([4_000_000, 10_000_000, 1_000_000], [4_000_000, 5_000_000, 1_000_000]),
+    ([1_000_000, 2_000_000], [1_000_000, 2_000_000]),
+    ([10_000_000, 10_000_000, 10_000_000], [3_333_334, 3_333_333, 3_333_333]),
+])
+def test_remaining_budget_fills_all_user_capacity_in_selection_order(beat, durations, expected):
+    items = [candidate(f"user-{index}", duration_us=duration) for index, duration in enumerate(durations)]
+    selection = Selection(beat["beat_id"], [item["candidate_id"] for item in items])
+    records, corrections = validate_selection(selection, beat=beat, candidates=list(reversed(items)))
+    assert [record["candidate_id"] for record in records] == selection.ordered_candidate_ids
+    assert [record["suggested_duration_us"] for record in records] == expected
+    assert sum(expected) == min(beat["duration_budget_us"], sum(durations))
+    assert all(0 < record["suggested_duration_us"] <= record["candidate_duration_us"] for record in records)
+    assert corrections == []
+
+
+@pytest.mark.parametrize("origin", ["external", "generated"])
+@pytest.mark.parametrize("durations,expected", [
+    ([1_000_000, 10_000_000], [1_000_000, 500_000, 8_500_000]),
+    ([1_000_000, 2_000_000], [1_000_000, 500_000, 2_000_000]),
+    ([10_000_000, 10_000_000], [6_000_000, 500_000, 3_500_000]),
+])
+def test_remaining_budget_never_extends_broll(beat, origin, durations, expected):
+    items = [candidate(duration_us=durations[0]), candidate("other", origin, duration_us=500_000),
+             candidate("user-2", duration_us=durations[1])]
+    selection = Selection(beat["beat_id"], [item["candidate_id"] for item in items],
+                          role_overrides={"other": "atmosphere"})
+    records, _ = validate_selection(selection, beat=beat, candidates=items)
+    assert [record["suggested_duration_us"] for record in records] == expected
+    assert [record["role"] for record in records] == ["primary", "atmosphere", "primary"]
+    assert records[1]["suggested_duration_us"] <= beat["duration_budget_us"] * 0.4
+    assert sum(expected) <= beat["duration_budget_us"]
+    assert all(0 < record["suggested_duration_us"] <= record["candidate_duration_us"] for record in records)
+
+
 @pytest.mark.parametrize("origin", ["external", "generated"])
 def test_non_user_broll_stays_non_factual_and_respects_budget(beat, origin):
     selection = Selection(beat["beat_id"], ["other", "user-1"],
@@ -276,9 +444,52 @@ def test_non_user_broll_stays_non_factual_and_respects_budget(beat, origin):
     assert sum(r["suggested_duration_us"] for r in records) <= beat["duration_budget_us"]
 
 
+@pytest.mark.parametrize("need", ["establishing", "transition", "atmosphere", "detail", "broll", "primary"])
+def test_rule_selector_selects_broll_for_requested_shot_need(beat, need):
+    beat["shot_needs"] = ["primary", need]
+    items = [candidate(), candidate("other", "external")]
+    selection = RuleSelector().select(beat=beat, candidates=items, context={"broll_enabled": True})
+    expected = (["other", "user-1"] if need == "establishing" else
+                ["user-1"] if need == "primary" else ["user-1", "other"])
+    assert selection.ordered_candidate_ids == expected
+    assert selection.source == "rule"
+    assert set(selection.reasons) == set(expected)
+    records, corrections = validate_selection(selection, beat=beat, candidates=items)
+    assert [record["candidate_id"] for record in records] == expected
+    assert next(record for record in records if record["origin"] == "user")["role"] == "primary"
+    if need != "primary":
+        broll = next(record for record in records if record["origin"] == "external")
+        assert broll["role"] == "broll"
+        assert 0 < broll["suggested_duration_us"] <= beat["duration_budget_us"] * 0.4
+    assert sum(record["suggested_duration_us"] for record in records) <= beat["duration_budget_us"]
+    assert corrections == []
+
+
+@pytest.mark.parametrize("role", ["establishing", "transition", "atmosphere", "detail", "broll"])
+def test_rule_selector_preserves_legal_external_candidate_role(beat, role):
+    beat["shot_needs"] = ["primary", "establishing", "transition", "atmosphere", "detail", "broll"]
+    items = [candidate(suggested_role="detail"), candidate("other", "external", suggested_role=role)]
+    selection = RuleSelector().select(beat=beat, candidates=items, context={"broll_enabled": True})
+    assert selection.role_overrides == {"user-1": "primary", "other": role}
+    records, corrections = validate_selection(selection, beat=beat, candidates=items)
+    assert {r["candidate_id"]: r["role"] for r in records} == {"user-1": "primary", "other": role}
+    assert corrections == []
+
+
+@pytest.mark.parametrize("role", [None, "", "unknown", "primary"])
+def test_rule_selector_defaults_invalid_external_role_to_broll(beat, role):
+    items = [candidate(), candidate("other", "external", suggested_role=role)]
+    selection = RuleSelector().select(beat=beat, candidates=items, context={"broll_enabled": True})
+    assert selection.role_overrides["other"] == "broll"
+    records, _ = validate_selection(selection, beat=beat, candidates=items)
+    assert next(r for r in records if r["origin"] == "external")["role"] == "broll"
+
+
+@pytest.mark.parametrize("need", ["atmosphere", "detail"])
 @pytest.mark.parametrize("policy", ["enabled", "context_allowed", "beat_allowed"])
 @pytest.mark.parametrize("backend", ["rule", "fixed", "ollama"])
-def test_selectors_enforce_disabled_broll(monkeypatch, beat, policy, backend):
+def test_selectors_enforce_disabled_broll(monkeypatch, beat, need, policy, backend):
+    beat["shot_needs"] = ["primary", need]
     context = {"project_id": beat["project_id"], "broll_enabled": True}
     if policy == "enabled":
         context["broll_enabled"] = False

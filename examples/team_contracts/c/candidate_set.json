@@ -91,6 +91,12 @@
       ]
     },
     {
+      "query_id": "query-middle-transition",
+      "status": "empty",
+      "reason": "当前人工候选夹具未提供独立的过渡空镜证据，不复用建立环境候选或编造素材。",
+      "candidates": []
+    },
+    {
       "query_id": "query-close",
       "status": "ok",
       "candidates": [

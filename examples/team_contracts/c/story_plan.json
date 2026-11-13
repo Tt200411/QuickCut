@@ -76,7 +76,7 @@
           "candidate_id": "candidate-seg-forest",
           "segment_id": "seg-forest",
           "origin": "external",
-          "role": "broll",
+          "role": "establishing",
           "decided_by": "rule",
           "suggested_duration_us": 3000000,
           "evidence": [
@@ -132,7 +132,7 @@
           "origin": "user",
           "role": "primary",
           "decided_by": "rule",
-          "suggested_duration_us": 3000000,
+          "suggested_duration_us": 1800000,
           "evidence": [
             "fixture_annotation"
           ],
@@ -148,11 +148,25 @@
             "event": "坐下休息",
             "source": "fixture_annotation"
           }
+        },
+        {
+          "candidate_id": "candidate-seg-stream",
+          "segment_id": "seg-stream",
+          "origin": "external",
+          "role": "atmosphere",
+          "decided_by": "rule",
+          "suggested_duration_us": 1200000,
+          "evidence": [
+            "fixture_annotation"
+          ],
+          "transcript": "",
+          "summary": {
+            "text": "溪水流动",
+            "provider": "fixture_annotation"
+          }
         }
       ],
-      "alternative_candidate_ids": [
-        "candidate-seg-stream"
-      ],
+      "alternative_candidate_ids": [],
       "cue_ids": [
         "cue-03"
       ]
@@ -214,6 +228,7 @@
       "seg-forest",
       "seg-packing",
       "seg-rest",
+      "seg-stream",
       "seg-walk"
     ],
     "evidence_reviews": [

@@ -6,7 +6,7 @@ C 是「故事与视听规划」。这里放的是离线夹具、可复现命令
 
 | 文件 | 来源 | 用途 |
 |---|---|---|
-| `candidate_set.json` | 人工整理 | 五条检索请求对应的候选，覆盖主内容、环境交代、情绪留白 |
+| `candidate_set.json` | 人工整理 | 六条检索请求对应的结果，覆盖主内容、环境、转场和情绪；独立转场结果显式为空 |
 | `approved_cues.json` | 人工审阅 | 三句已批准中文旁白，与黄金 StoryPlan 文案一致 |
 | `fixed_model_response.json` | 人工固定 | 接入本地 Qwen 前测试校验器用的响应夹具 |
 | `outline.json` | 本次运行 | Brief 拆出的三段初始结构，愿望与事实分开 |
@@ -30,7 +30,7 @@ python -m venv .venv
 .venv/bin/python -m quickcut.planning run --case insufficient --out-dir examples/team_contracts/c/insufficient
 .venv/bin/python -m quickcut.planning selftest
 .venv/bin/python -m quickcut.planning inject --output outputs/c/injected_bundle.json
-.venv/bin/python -m pytest -q tests/test_planning.py tests/test_planning_contracts.py tests/test_planning_selection.py
+.venv/bin/python scripts/review_c_planning.py
 .venv/bin/python examples/team_contracts/validate.py --self-test
 ```
 

@@ -72,6 +72,19 @@
       "beat_purpose": "推进过程与环境过渡"
     },
     {
+      "query_id": "query-middle-transition",
+      "beat_id": "beat-middle",
+      "semantic_text": "用于推进过程与环境过渡的环境或情绪画面",
+      "role": "transition",
+      "allowed_origins": [
+        "external"
+      ],
+      "duration_budget_us": 3000000,
+      "top_k": 3,
+      "iteration": 1,
+      "beat_purpose": "推进过程与环境过渡"
+    },
+    {
       "query_id": "query-close-atmosphere",
       "beat_id": "beat-close",
       "semantic_text": "用于完成情绪收束的环境或情绪画面",

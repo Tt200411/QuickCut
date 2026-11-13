@@ -18,7 +18,8 @@
       "gaps": 1,
       "pending_reviews": 1,
       "selected_user_segments": 2,
-      "external_duration_us": 3000000
+      "external_duration_us": 4200000,
+      "nonuser_duration_us": 4200000
     }
   },
   "human_edits": [

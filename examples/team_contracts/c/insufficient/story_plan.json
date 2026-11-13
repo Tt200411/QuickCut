@@ -76,7 +76,7 @@
           "candidate_id": "candidate-seg-forest",
           "segment_id": "seg-forest",
           "origin": "external",
-          "role": "broll",
+          "role": "establishing",
           "decided_by": "rule",
           "suggested_duration_us": 3000000,
           "evidence": [
@@ -125,7 +125,24 @@
       "purpose": "完成情绪收束",
       "duration_budget_us": 3000000,
       "support": "partially_supported",
-      "shots": [],
+      "shots": [
+        {
+          "candidate_id": "candidate-seg-stream",
+          "segment_id": "seg-stream",
+          "origin": "external",
+          "role": "atmosphere",
+          "suggested_duration_us": 1200000,
+          "decided_by": "rule:gap_policy",
+          "evidence": [
+            "fixture_annotation"
+          ],
+          "transcript": "",
+          "summary": {
+            "text": "溪水流动",
+            "provider": "fixture_annotation"
+          }
+        }
+      ],
       "alternative_candidate_ids": [
         "candidate-seg-stream"
       ],

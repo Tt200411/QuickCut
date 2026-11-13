@@ -30,6 +30,12 @@ from .selection import RuleSelector, Selector, validate_selection
 BEAT_SUFFIXES = ("open", "middle", "close")
 # 2:3:1 对应黄金样例的 6/9/3 秒，且对任意总时长都只用整数微秒运算。
 BUDGET_WEIGHTS = [2.0, 3.0, 1.0]
+BROLL_ROLE_BEATS = {
+    "establishing": "middle",
+    "transition": "middle",
+    "detail": "middle",
+    "atmosphere": "close",
+}
 SPLIT_RE = re.compile(r"[，,。；;、]|然后|接着|最后|再|到|并")
 
 
@@ -47,6 +53,21 @@ def _events(story: str) -> list[str]:
     return pieces or ["建立环境", "推进过程", "安静收束"]
 
 
+def _broll_roles(brief: dict[str, Any]) -> dict[str, list[str]]:
+    policy = (brief.get("requirements") or {}).get("broll_policy") or {}
+    roles = policy.get("roles") or []
+    if not isinstance(roles, list) or any(
+        not isinstance(role, str) or role not in BROLL_ROLE_BEATS for role in roles
+    ):
+        raise PlanningError(VLM_INVALID_PLAN, "broll_policy.roles 包含未知空镜角色", retryable=False)
+    by_beat: dict[str, list[str]] = {suffix: [] for suffix in BEAT_SUFFIXES}
+    if policy.get("enabled"):
+        for role, suffix in BROLL_ROLE_BEATS.items():
+            if role in roles:
+                by_beat[suffix].append(role)
+    return by_beat
+
+
 def build_outline(brief: dict[str, Any]) -> list[dict[str, Any]]:
     """把用户愿望拆成三段初始结构，愿望与已证实事实分开保存。"""
     check_envelope(brief, expected_kind="Brief", owner="C")
@@ -56,16 +77,12 @@ def build_outline(brief: dict[str, Any]) -> list[dict[str, Any]]:
     budgets = split_budget(total, BUDGET_WEIGHTS)
     if any(budget <= 0 for budget in budgets):
         raise PlanningError(VLM_INVALID_PLAN, "三段预算必须均为正整数微秒", retryable=False)
-    roles = set((requirements.get("broll_policy") or {}).get("roles", []))
+    broll_roles = _broll_roles(brief)
     narration = requirements.get("narration") or {}
     style = narration.get("style", "中性旁白")
 
     purposes = ["建立出发情境", "推进过程与环境过渡", "完成情绪收束"]
-    needs = [
-        ["primary"],
-        ["primary"] + (["establishing"] if "establishing" in roles or "transition" in roles else []),
-        ["primary"],
-    ]
+    needs = [["primary", *broll_roles[suffix]] for suffix in BEAT_SUFFIXES]
     outline: list[dict[str, Any]] = []
     for idx, suffix in enumerate(BEAT_SUFFIXES):
         if len(events) == 1:
@@ -81,9 +98,7 @@ def build_outline(brief: dict[str, Any]) -> list[dict[str, Any]]:
             # 这是用户想讲什么，不是素材里已经拍到的事实。
             "wish": {"event": event, "assertion": "user_wish", "verified": False},
             "shot_needs": needs[idx],
-            "broll_allowed": idx == 1 and bool(roles) and bool(
-                (requirements.get("broll_policy") or {}).get("enabled")
-            ),
+            "broll_allowed": bool(broll_roles[suffix]),
             "duration_budget_us": budgets[idx],
             "narration_style": style,
             "project_id": brief["project_id"],
@@ -106,8 +121,7 @@ def build_retrieval_request(
     check_envelope(brief, expected_kind="Brief", owner="C")
     check_envelope(manifest, expected_kind="AssetManifest", owner="A")
     project_id = check_project(brief, manifest)
-    broll_policy = (brief.get("requirements") or {}).get("broll_policy") or {}
-    roles = [r for r in broll_policy.get("roles", []) if r in {"establishing", "transition", "atmosphere", "detail"}]
+    broll_roles = _broll_roles(brief)
     queries: list[dict[str, Any]] = []
     for beat in outline:
         suffix = beat["beat_id"].removeprefix("beat-")
@@ -122,10 +136,10 @@ def build_retrieval_request(
             "iteration": iteration,
             "beat_purpose": beat["purpose"],
         })
-    if broll_queries and broll_policy.get("enabled") and roles:
-        for suffix, role in (("middle", "establishing"), ("close", "atmosphere")):
-            if role not in roles:
-                continue
+    if broll_queries:
+        for suffix, role in (
+            (suffix, role) for suffix in BEAT_SUFFIXES for role in broll_roles[suffix]
+        ):
             beat = next(b for b in outline if b["beat_id"] == f"beat-{suffix}")
             queries.append({
                 "query_id": f"query-{suffix}-{role}",
@@ -206,6 +220,25 @@ def _index_manifest(manifest: dict[str, Any]) -> tuple[dict[str, Any], dict[str,
     return assets, segments
 
 
+def _usable_evidence(*items: dict[str, Any]) -> bool:
+    for item in items:
+        quality = item.get("quality")
+        if quality is None:
+            quality = {}
+        if not isinstance(quality, dict):
+            raise PlanningError(VLM_INVALID_PLAN, "quality 必须是对象或 null", retryable=False)
+        for flags in (item.get("flags"), quality.get("flags")):
+            if flags is None:
+                continue
+            if not isinstance(flags, list) or any(not isinstance(flag, str) for flag in flags):
+                raise PlanningError(VLM_INVALID_PLAN, "flags 必须是字符串列表或 null", retryable=False)
+            if "bad_evidence" in flags:
+                return False
+        if quality.get("usable") is False:
+            return False
+    return True
+
+
 def candidates_for_beat(
     beat: dict[str, Any],
     request: dict[str, Any],
@@ -265,7 +298,7 @@ def candidates_for_beat(
                 raise PlanningError(VLM_INVALID_PLAN, "素材源区间必须满足 begin < end <= duration_us", retryable=False)
             if asset.get("origin") not in ORIGINS or asset["origin"] not in query.get("allowed_origins", []):
                 raise PlanningError(VLM_INVALID_PLAN, "候选违反 allowed_origins 来源限制", retryable=False)
-            if any("bad_evidence" in item.get("flags", []) for item in (candidate, segment, asset)):
+            if not _usable_evidence(candidate, segment, asset):
                 continue
             collected[candidate["candidate_id"]] = {
                 "candidate_id": candidate["candidate_id"],
@@ -277,7 +310,7 @@ def candidates_for_beat(
                 "suggested_role": candidate.get("suggested_role", query["role"]),
                 "ranking_score": candidate.get("ranking_score", 0.0),
                 "score_profile": candidate.get("score_profile", ""),
-                "flags": list(candidate.get("flags", [])),
+                "flags": list(candidate.get("flags") or []),
                 "source_range_us": source_range,
                 "duration_us": end - begin,
                 "asset_revision": asset["revision"],
@@ -469,6 +502,7 @@ def plan(
 
     for beat in outline:
         candidates = candidates_for_beat(beat, request, candidate_set, manifest)
+        beat_pending_reviews: list[dict[str, Any]] = []
         for candidate in candidates:
             if candidate["origin"] != "user":
                 continue
@@ -477,13 +511,15 @@ def plan(
                 candidate["event_review"] = review
                 reviews.append(review)
             else:
-                pending_reviews.append({
+                beat_pending_reviews.append({
                     "type": "event_evidence", "candidate_id": candidate["candidate_id"],
                     "beat_id": beat["beat_id"], "event": beat["wish"]["event"],
                     "asset_revision": candidate["asset_revision"],
                 })
         support = classify_beat(beat, candidates)
         alignment_rows.append(support)
+        if support["support"] != "supported":
+            pending_reviews.extend(beat_pending_reviews)
         if support["support"] == "unsupported":
             gaps.append(_gap(beat, support, iteration, max_iter))
             beats.append({

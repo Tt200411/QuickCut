@@ -57,12 +57,12 @@ def test_outline_splits_wish_from_fact_and_keeps_integer_microseconds(docs):
 
 def test_retrieval_request_has_roles_origins_and_finite_loop(request_doc):
     roles = {q["role"] for q in request_doc["queries"]}
-    assert {"primary", "establishing", "atmosphere"} <= roles
+    assert roles == {"primary", "establishing", "transition", "atmosphere"}
     for query in request_doc["queries"]:
         assert {"query_id", "beat_id", "semantic_text", "role", "allowed_origins",
                 "duration_budget_us", "top_k"} <= set(query)
         assert type(query["duration_budget_us"]) is int
-        if query["role"] in {"establishing", "atmosphere"}:
+        if query["role"] in {"establishing", "transition", "atmosphere"}:
             assert query["allowed_origins"] == ["external"]
     assert request_doc["iteration"] == 1 and request_doc["max_iterations"] == 3
 
@@ -82,8 +82,38 @@ def test_complete_story_passes_c_validator(docs, request_doc):
     assert story["decision_provenance"]["mode"] == "rule"
     assert story["decision_provenance"]["human_edits"], "人工文案必须留痕，不能记成模型输出"
     assert [b["beat_id"] for b in story["beats"]] == ["beat-open", "beat-middle", "beat-close"]
-    assert sum(len(b["shots"]) for b in story["beats"]) == 4
+    assert sum(len(b["shots"]) for b in story["beats"]) == 5
     assert all(c["text_source"] == "human_editorial" for c in story["narration_cues"])
+
+
+def test_detail_only_policy_selects_external_broll_in_actual_plan(docs):
+    docs["Brief"]["requirements"]["broll_policy"]["roles"] = ["detail"]
+    outline = build_outline(docs["Brief"])
+    request = build_retrieval_request(docs["Brief"], docs["AssetManifest"], outline)
+    assert outline[1]["shot_needs"] == ["primary", "detail"]
+    assert [q["role"] for q in request["queries"] if q["role"] != "primary"] == ["detail"]
+    candidate_set = copy.deepcopy(docs["CandidateSet"])
+    candidate_set["results"] = [r for r in candidate_set["results"]
+                                if r["query_id"] not in {"query-close-atmosphere", "query-middle-transition"}]
+    detail = next(r for r in candidate_set["results"] if r["query_id"] == "query-middle-establishing")
+    detail["query_id"] = "query-middle-detail"
+    detail["candidates"][0]["suggested_role"] = "detail"
+    story = plan(docs["Brief"], docs["AssetManifest"], candidate_set,
+                 retrieval_request=request, approved_cues=read_json(C_CUES)).story_plan
+    middle = story["beats"][1]
+    assert story["status"] == "ready_for_edit"
+    assert [s["candidate_id"] for s in middle["shots"]] == ["candidate-seg-walk", "candidate-seg-forest"]
+    user, broll = middle["shots"]
+    assert user["origin"] == "user" and user["role"] == "primary"
+    assert broll["origin"] == "external" and broll["role"] == "detail"
+    assert broll["decided_by"] == "rule" and "event_review" not in broll
+    assert 0 < broll["suggested_duration_us"] <= middle["duration_budget_us"] * 0.4
+    cue = next(c for c in story["narration_cues"] if c["beat_id"] == "beat-middle")
+    assert cue["evidence_segment_ids"] == [user["segment_id"]]
+    report = validate_story_plan(story, brief=docs["Brief"], manifest=docs["AssetManifest"],
+                                 candidate_set=candidate_set,
+                                 upstream={**docs, "CandidateSet": candidate_set, "RetrievalRequest": request})
+    assert report["ok"], report["errors"]
 
 
 def test_every_selected_shot_and_cue_is_traceable(docs, request_doc):
@@ -192,9 +222,19 @@ def test_insufficient_case_reports_gap_without_inventing_events(docs, request_do
     assert story["status"] == "needs_input"
     assert len(story["unresolved_gaps"]) == 1
     gap = story["unresolved_gaps"][0]
-    assert gap["type"] in {"UNSUPPORTED_STORY_BEAT", "PARTIAL_EVENT_EVIDENCE"}
+    assert gap["type"] == "PARTIAL_EVENT_EVIDENCE"
+    assert gap["beat_id"] == "beat-close"
     assert gap["suggestions"] and gap["must_not_assert_user_events"] is True
-    assert story["beats"][-1]["shots"] == []
+    close = story["beats"][-1]
+    assert close["support"] == "partially_supported"
+    assert len(close["shots"]) == 1
+    shot = close["shots"][0]
+    assert shot["candidate_id"] == "candidate-seg-stream"
+    assert shot["origin"] == "external" and shot["role"] == "atmosphere"
+    assert shot["decided_by"] == "rule:gap_policy"
+    assert 0 < shot["suggested_duration_us"] <= close["duration_budget_us"] * 0.4
+    assert "event_review" not in shot
+    assert shot["segment_id"] not in story["decision_provenance"]["selected_segment_ids"]
     close_cues = [c for c in story["narration_cues"] if c["beat_id"] == "beat-close"]
     assert len(close_cues) == 1
     assert close_cues[0]["asserts_specific_user_event"] is False

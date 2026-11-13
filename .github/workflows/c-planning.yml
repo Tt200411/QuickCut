@@ -5,6 +5,7 @@ on:
     paths:
       - "quickcut/planning/**"
       - "tests/test_planning*.py"
+      - "scripts/review_c_planning.py"
       - "examples/team_contracts/**"
       - "pyproject.toml"
       - ".github/workflows/c-planning.yml"
@@ -13,6 +14,7 @@ on:
     paths:
       - "quickcut/planning/**"
       - "tests/test_planning*.py"
+      - "scripts/review_c_planning.py"
       - "examples/team_contracts/**"
       - "pyproject.toml"
       - ".github/workflows/c-planning.yml"
@@ -34,9 +36,5 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install offline test dependencies
         run: python -m pip install -e '.[dev]' 'pillow>=10.0'
-      - name: Run planning regression tests
-        run: python -m pytest -q tests/test_planning.py tests/test_planning_contracts.py tests/test_planning_selection.py
-      - name: Check selector negative controls
-        run: python -m quickcut.planning selftest
-      - name: Check eight-document integration
-        run: python -m quickcut.planning inject --output outputs/c/injected_bundle.json
+      - name: Review C regression, CLI round trips and eight-document integration
+        run: python scripts/review_c_planning.py

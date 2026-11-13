@@ -19,6 +19,7 @@ from .contracts import (
     PlanningError,
     STALE_INPUT_REVISION,
     VLM_INVALID_PLAN,
+    check_envelope,
     check_inputs,
     load_bundle,
     read_json,
@@ -42,6 +43,39 @@ def _docs(bundle_path: Path, candidate_path: Path | None = None) -> dict[str, di
     if candidate_path:
         docs["CandidateSet"] = read_json(candidate_path)
     return docs
+
+
+def _planning_docs(args: argparse.Namespace) -> tuple[dict[str, Any], dict[str, dict[str, Any]], bool]:
+    raw, docs = load_bundle(Path(args.bundle))
+    default_fixture = (
+        Path(args.bundle).resolve() == DEFAULT_BUNDLE.resolve()
+        and not args.candidate_set and not args.retrieval_request
+        and all(d.get("fixtures_only") is True for d in docs.values())
+    )
+    if args.candidate_set:
+        docs["CandidateSet"] = read_json(args.candidate_set)
+    elif default_fixture:
+        docs["CandidateSet"] = read_json(DEFAULT_C_CANDIDATES)
+    if args.retrieval_request:
+        docs["RetrievalRequest"] = read_json(args.retrieval_request)
+    default_fixture = default_fixture and all(
+        isinstance(d, dict) and d.get("fixtures_only") is True for d in docs.values()
+    )
+    for kind, owner in (("Brief", "C"), ("AssetManifest", "A"),
+                        ("CandidateSet", "B"), ("RetrievalRequest", "C")):
+        check_envelope(docs[kind], expected_kind=kind, owner=owner)
+    if not isinstance(docs["Brief"].get("requirements"), dict):
+        raise PlanningError(VLM_INVALID_PLAN, "Brief.requirements 必须是对象", retryable=False)
+    if default_fixture:
+        request = docs["RetrievalRequest"]
+        docs["RetrievalRequest"] = build_retrieval_request(
+            docs["Brief"], docs["AssetManifest"], build_outline(docs["Brief"]),
+            broll_queries=not getattr(args, "no_broll_queries", False),
+            document_id=request["document_id"], revision=request["revision"],
+        )
+    check_inputs(docs["RetrievalRequest"], docs)
+    check_inputs(docs["CandidateSet"], docs)
+    return raw, docs, default_fixture
 
 
 def _selector(mode: str, fixed_path: Path | None) -> Selector:
@@ -78,27 +112,21 @@ def _save(result: PlanResult, out_dir: Path) -> None:
 
 
 def command_run(args: argparse.Namespace) -> int:
-    default_fixture = Path(args.bundle).resolve() == DEFAULT_BUNDLE.resolve() and not args.candidate_set
-    docs = _docs(Path(args.bundle), Path(args.candidate_set) if args.candidate_set else (DEFAULT_C_CANDIDATES if default_fixture else None))
+    raw, docs, default_fixture = _planning_docs(args)
     brief, manifest = docs["Brief"], docs["AssetManifest"]
     candidate_set = copy.deepcopy(docs["CandidateSet"])
-    default_fixture = default_fixture and all(d.get("fixtures_only") is True for d in docs.values())
     approved = read_json(args.approved_cues) if args.approved_cues else (
         read_json(DEFAULT_APPROVED_CUES) if default_fixture and DEFAULT_APPROVED_CUES.is_file() else None
     )
-    outline = build_outline(brief)
-    request_link = next(
-        (link for link in candidate_set.get("inputs", []) if link.get("kind") == "RetrievalRequest"),
-        {"document_id": "request-001", "revision": 1},
-    )
-    request = build_retrieval_request(
-        brief, manifest, outline,
-        broll_queries=not args.no_broll_queries,
-        document_id=request_link["document_id"],
-        revision=request_link["revision"],
-    ) if default_fixture else docs["RetrievalRequest"]
-    if args.no_broll_queries and not default_fixture:
-        raise PlanningError(VLM_INVALID_PLAN, "自定义 bundle 应显式提供与候选匹配的 RetrievalRequest", retryable=False)
+    request = docs["RetrievalRequest"]
+    if args.no_broll_queries and not default_fixture and any(
+        query.get("role") != "primary" for query in request["queries"]
+    ):
+        raise PlanningError(
+            VLM_INVALID_PLAN,
+            "--no-broll-queries 要求显式提供仅含 primary 查询且与候选匹配的 RetrievalRequest",
+            retryable=False,
+        )
     if args.case == "insufficient":
         if not all(d.get("fixtures_only") is True for d in (brief, manifest, request, candidate_set)):
             raise PlanningError(VLM_INVALID_PLAN, "insufficient 仅允许 fixtures_only 输入", retryable=False)
@@ -118,7 +146,11 @@ def command_run(args: argparse.Namespace) -> int:
         upstream={"Brief": brief, "CandidateSet": candidate_set, "AssetManifest": manifest, "RetrievalRequest": result.retrieval_request},
     )
     result.run["validation"] = report
-    _save(result, Path(args.out_dir))
+    out_dir = Path(args.out_dir)
+    _save(result, out_dir)
+    docs.update(CandidateSet=candidate_set, RetrievalRequest=result.retrieval_request,
+                StoryPlan=result.story_plan)
+    bundle_path = write_json(out_dir / "bundle.json", {**raw, "documents": list(docs.values())})
     print(json.dumps({
         "mode": args.mode,
         "case": args.case,
@@ -128,7 +160,8 @@ def command_run(args: argparse.Namespace) -> int:
         "gaps": len(result.story_plan["unresolved_gaps"]),
         "validation_ok": report["ok"],
         "errors": report["errors"],
-        "out_dir": str(Path(args.out_dir).resolve()),
+        "out_dir": str(out_dir.resolve()),
+        "bundle": str(bundle_path.resolve()),
     }, ensure_ascii=False, indent=2))
     return 0 if report["ok"] else 1
 
@@ -179,7 +212,7 @@ def command_inject(args: argparse.Namespace) -> int:
 
 
 def command_validate(args: argparse.Namespace) -> int:
-    docs = _docs(Path(args.bundle), Path(args.candidate_set) if args.candidate_set else None)
+    _raw, docs, _default_fixture = _planning_docs(args)
     plan_doc = read_json(args.plan)
     report = validate_story_plan(
         plan_doc, brief=docs["Brief"], candidate_set=docs["CandidateSet"],
@@ -247,6 +280,7 @@ def main(argv: list[str] | None = None) -> int:
     run = sub.add_parser("run", help="生成 RetrievalRequest 与 StoryPlan")
     run.add_argument("--bundle", default=str(DEFAULT_BUNDLE))
     run.add_argument("--candidate-set", default=None, help="覆盖 bundle 中的 CandidateSet")
+    run.add_argument("--retrieval-request", default=None, help="覆盖 bundle 中的 RetrievalRequest")
     run.add_argument("--approved-cues", default=None)
     run.add_argument("--reviewed-evidence", default=None)
     run.add_argument("--mode", choices=["rule", "fixed", "ollama"], default="rule")
@@ -269,6 +303,7 @@ def main(argv: list[str] | None = None) -> int:
     validate.add_argument("plan")
     validate.add_argument("--bundle", default=str(DEFAULT_BUNDLE))
     validate.add_argument("--candidate-set", default=None)
+    validate.add_argument("--retrieval-request", default=None, help="覆盖 bundle 中的 RetrievalRequest")
     validate.set_defaults(func=command_validate)
 
     compare = sub.add_parser("compare", help="比较两个故事方案")
@@ -285,7 +320,7 @@ def main(argv: list[str] | None = None) -> int:
     except PlanningError as exc:
         print(json.dumps(exc.to_envelope(), ensure_ascii=False, indent=2), file=sys.stderr)
         return 2
-    except (KeyError, ValueError, TypeError) as exc:
+    except (AttributeError, KeyError, ValueError, TypeError) as exc:
         print(json.dumps({"status": "failed", "code": VLM_INVALID_PLAN, "message": str(exc)},
                          ensure_ascii=False, indent=2), file=sys.stderr)
         return 2

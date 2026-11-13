@@ -62,8 +62,11 @@ def production(docs):
         doc["fixtures_only"] = False
 
 
+@pytest.mark.parametrize("with_reviewed_alternative", [True, False])
 @pytest.mark.parametrize("mutation", ["segment", "asset", "range"])
-def test_review_is_bound_to_exact_source_identity(docs, mutation):
+def test_review_is_bound_to_exact_source_identity(docs, mutation, with_reviewed_alternative):
+    from quickcut.planning.selection import FixedResponseSelector
+
     production(docs)
     reviews = reviews_for(docs)
     review = reviews["candidate-seg-packing"]
@@ -73,15 +76,43 @@ def test_review_is_bound_to_exact_source_identity(docs, mutation):
         review["asset_id"] = "another-asset"
     else:
         review["source_range_us"]["begin"] += 1
+    if not with_reviewed_alternative:
+        del reviews["candidate-seg-city"]
     story = generate(docs, approved_cues=approved(), reviewed_evidence=reviews)
-    assert story["status"] == "needs_input"
     assert "candidate-seg-packing" not in {
         shot["candidate_id"] for beat in story["beats"] for shot in beat["shots"]
     }
+    assert not any(r["candidate_id"] == "candidate-seg-packing"
+                   for r in story["decision_provenance"]["evidence_reviews"])
+    first = story["beats"][0]
+    cue = next(c for c in story["narration_cues"] if c["beat_id"] == "beat-open")
+    if with_reviewed_alternative:
+        assert story["status"] == "ready_for_edit"
+        assert not story["unresolved_gaps"] and not story["pending_reviews"]
+        assert first["support"] == "supported"
+        assert [s["candidate_id"] for s in first["shots"]] == ["candidate-seg-city"]
+        assert first["shots"][0]["event_review"]["source"] == "human_review"
+        assert cue["evidence_segment_ids"] == ["seg-city"]
+        assert cue["asserts_specific_user_event"] is True
+        payload = {"beats": {"beat-open": {"shot_order": ["candidate-seg-packing"]}}}
+        with pytest.raises(PlanningError) as error:
+            generate(docs, reviewed_evidence=reviews, selector=FixedResponseSelector(payload))
+        assert error.value.code == "VLM_INVALID_PLAN"
+        assert error.value.detail["raw_response"] == payload
+        assert "非法候选 ID：candidate-seg-packing" in error.value.detail["problems"]
+    else:
+        assert story["status"] == "needs_input"
+        assert first["support"] == "partially_supported" and first["shots"] == []
+        assert [g["beat_id"] for g in story["unresolved_gaps"]] == ["beat-open"]
+        assert cue["evidence_segment_ids"] == []
+        assert cue["asserts_specific_user_event"] is False and cue["approved"] is False
+        assert any(p["type"] == "event_evidence" and p["candidate_id"] == "candidate-seg-packing"
+                   for p in story["pending_reviews"])
     assert validate(story, docs)["ok"]
 
 
-def test_replacing_candidate_segment_invalidates_old_review(docs):
+@pytest.mark.parametrize("with_reviewed_alternative", [True, False])
+def test_replacing_candidate_segment_invalidates_old_review(docs, with_reviewed_alternative):
     production(docs)
     reviews = reviews_for(docs)
     for result in docs["CandidateSet"]["results"]:
@@ -89,11 +120,26 @@ def test_replacing_candidate_segment_invalidates_old_review(docs):
             if candidate["candidate_id"] == "candidate-seg-packing":
                 candidate["segment_id"] = "seg-rest"
     docs["CandidateSet"]["revision"] += 1
+    if not with_reviewed_alternative:
+        del reviews["candidate-seg-city"]
     story = generate(docs, approved_cues=approved(), reviewed_evidence=reviews)
-    assert story["status"] == "needs_input"
     assert "candidate-seg-packing" not in {
         shot["candidate_id"] for beat in story["beats"] for shot in beat["shots"]
     }
+    assert not any(r["candidate_id"] == "candidate-seg-packing"
+                   for r in story["decision_provenance"]["evidence_reviews"])
+    cue = next(c for c in story["narration_cues"] if c["beat_id"] == "beat-open")
+    if with_reviewed_alternative:
+        assert story["status"] == "ready_for_edit"
+        assert not story["unresolved_gaps"] and not story["pending_reviews"]
+        assert [s["candidate_id"] for s in story["beats"][0]["shots"]] == ["candidate-seg-city"]
+        assert cue["evidence_segment_ids"] == ["seg-city"]
+    else:
+        assert story["status"] == "needs_input"
+        assert story["beats"][0]["shots"] == []
+        assert [g["beat_id"] for g in story["unresolved_gaps"]] == ["beat-open"]
+        assert cue["evidence_segment_ids"] == []
+        assert cue["asserts_specific_user_event"] is False and cue["approved"] is False
     assert validate(story, docs)["ok"]
 
 
@@ -412,6 +458,30 @@ def test_validator_rechecks_event_and_fixture_provenance(docs):
     story = generate(docs, approved_cues=approved())
     story["fixtures_only"] = False
     assert not validate(story, docs)["ok"]
+
+
+@pytest.mark.parametrize("mutation", [
+    "missing_transition", "unknown_result", "duplicate_result", "duplicate_query", "duplicate_candidate",
+])
+def test_planner_requires_exact_query_results_and_unique_ids(docs, mutation):
+    results = docs["CandidateSet"]["results"]
+    transition = next(r for r in results if r["query_id"] == "query-middle-transition")
+    if mutation == "missing_transition":
+        results.remove(transition)
+    elif mutation == "unknown_result":
+        transition["query_id"] = "query-unknown"
+    elif mutation == "duplicate_result":
+        results.append(copy.deepcopy(transition))
+    elif mutation == "duplicate_query":
+        queries = docs["RetrievalRequest"]["queries"]
+        queries.append(copy.deepcopy(queries[-1]))
+    else:
+        results[0]["candidates"].append(copy.deepcopy(results[0]["candidates"][0]))
+    with pytest.raises(PlanningError) as exc:
+        generate(docs)
+    assert exc.value.code == "VLM_INVALID_PLAN"
+    assert exc.value.message == "检索结果必须逐一对应查询且候选 ID 唯一"
+    assert exc.value.retryable is False
 
 
 def test_empty_explicit_request_is_not_ignored(docs):

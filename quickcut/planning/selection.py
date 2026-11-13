@@ -121,7 +121,7 @@ class RuleSelector:
         if user:
             chosen.append(user[0])
             reasons[user[0]["candidate_id"]] = "用户素材中排名最高的主镜头，作为该段事件证据"
-        if external and _broll_allowed(beat, context) and context.get("broll_enabled") and needs & {"establishing", "transition", "atmosphere", "broll"}:
+        if external and _broll_allowed(beat, context) and context.get("broll_enabled") and needs & {"establishing", "transition", "atmosphere", "detail", "broll"}:
             if external[0]["candidate_id"] not in {c["candidate_id"] for c in chosen}:
                 chosen.append(external[0])
                 reasons[external[0]["candidate_id"]] = "授权空镜承担环境或情绪职责，不声明为用户实际经历"
@@ -137,7 +137,13 @@ class RuleSelector:
             reasons=reasons,
             source="rule",
             role_overrides={
-                c["candidate_id"]: ("primary" if c["origin"] == "user" else "broll") for c in chosen
+                c["candidate_id"]: (
+                    "primary" if c["origin"] == "user" else
+                    c["suggested_role"] if c.get("suggested_role") in {
+                        "establishing", "transition", "atmosphere", "detail", "broll",
+                    } else "broll"
+                )
+                for c in chosen
             },
         )
 
@@ -220,8 +226,26 @@ class OllamaSelector:
         root = self.project_root.resolve()
         for candidate in candidates:
             frames = {frame["uri"]: frame for frame in candidate.get("keyframes", [])}
-            for uri in candidate.get("keyframe_uris", []):
+            source_range = candidate.get("source_range_us")
+            if "source_range_us" in candidate and (
+                not isinstance(source_range, dict)
+                or type(source_range.get("begin")) is not int
+                or type(source_range.get("end")) is not int
+                or not 0 <= source_range["begin"] < source_range["end"]
+            ):
+                continue
+            # 显式 URI 列表决定附图顺序；旧调用也可只提供 keyframes。
+            for uri in candidate.get("keyframe_uris", list(frames)):
                 if not isinstance(uri, str):
+                    continue
+                frame = frames.get(uri, {})
+                source_time = frame.get("source_time_us")
+                if "source_time_us" in frame and (type(source_time) is not int or source_time < 0):
+                    continue
+                # 有区间时必须能定位到区间内；无区间的旧调用保留未知时间 null。
+                if source_range is not None and (
+                    source_time is None or not source_range["begin"] <= source_time < source_range["end"]
+                ):
                     continue
                 relative = Path(uri)
                 if relative.is_absolute() or ".." in relative.parts:
@@ -242,8 +266,8 @@ class OllamaSelector:
                         "image_index": len(images),
                         "candidate_id": candidate["candidate_id"],
                         "uri": uri,
-                        "source_time_us": frames.get(uri, {}).get("source_time_us"),
-                        "source_range_us": candidate.get("source_range_us"),
+                        "source_time_us": source_time,
+                        "source_range_us": source_range,
                     })
                 images.append(base64.b64encode(data).decode("ascii"))
         return images
@@ -437,14 +461,16 @@ def validate_selection(
         pool, count = (primary_total, primary_count) if record["origin"] == "user" else (external_total, external_count)
         suggested = min(record["candidate_duration_us"], pool // count) if count else 0
         record["suggested_duration_us"] = int(suggested)
-    # 剩余预算在素材时长允许时补给第一个主镜头。
-    assigned = sum(r["suggested_duration_us"] for r in records)
-    if assigned < budget:
-        for record in records:
-            if record["origin"] == "user":
-                headroom = max(0, record["candidate_duration_us"] - record["suggested_duration_us"])
-                record["suggested_duration_us"] += min(budget - assigned, headroom)
-                break
+    # 按选镜顺序补给主镜头，直到预算耗尽或所有用户素材容量用完。
+    remaining = budget - sum(r["suggested_duration_us"] for r in records)
+    for record in records:
+        if remaining <= 0:
+            break
+        if record["origin"] == "user":
+            headroom = max(0, record["candidate_duration_us"] - record["suggested_duration_us"])
+            added = min(remaining, headroom)
+            record["suggested_duration_us"] += added
+            remaining -= added
     if (any(r["suggested_duration_us"] <= 0 for r in records)
             or sum(r["suggested_duration_us"] for r in records) > budget):
         raise _invalid_plan("镜头建议时长必须为正整数且总和不得超过段落预算", beat=beat,
