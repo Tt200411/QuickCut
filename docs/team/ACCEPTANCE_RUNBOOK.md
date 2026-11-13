@@ -1,6 +1,6 @@
 # QuickCut 验收操作手册
 
-本手册用于复现模块、执行真实链路和记录交付证据；架构及失效规则见 [PIPELINE_ENGINEERING.md](PIPELINE_ENGINEERING.md)。所有命令从 repo 根目录执行，输出目录使用新的 run 标识，避免覆盖既有证据。**主代理已完成全仓回归：805 passed，33.55s，macOS / Python 3.13**；这是已有实测结果，不是本文编辑期间重新运行的结果。新增媒体演示仍在运行，尚无结果的 demo、preview 和远端 CI 只列命令及预期，不记为已通过。软件回归与真实产品质量、剪映实机验收分别记录。
+本手册用于复现模块、执行真实链路和记录交付证据；架构及失效规则见 [PIPELINE_ENGINEERING.md](PIPELINE_ENGINEERING.md)。所有命令从 repo 根目录执行，输出目录使用新的 run 标识，避免覆盖既有证据。**最终本地全量回归：812 passed in 35.50s，无 skip，macOS / Python 3.13.12。**最终证据位于仓库外 `../outputs/QuickCut-engineering-final-20261113/`，四个 demo 与 supported 10 秒预览的实测索引见[第 5.4 节](#54-最终本地证据索引2026-11-13)。旧 A 环境的 805 项结果仅作历史记录。远端 CI 尚未运行，已配置矩阵不记为通过。软件回归、合成媒体工程路径、真实产品质量和剪映实机验收分别记录。
 
 ## 1. 开始前先确认验收层级
 
@@ -25,7 +25,8 @@
 ```bash
 git status --short
 git rev-parse HEAD
-git rev-parse origin/pr-4 origin/pr-2 origin/pr-1 HEAD
+git rev-parse origin/pr-4-latest origin/pr-4 origin/pr-2 origin/pr-1
+git rev-parse 620b24f277754d948ed69a8aba01d381a044e9f8
 python --version
 python -m pip freeze
 ffmpeg -version
@@ -34,7 +35,7 @@ ffmpeg -hide_banner -encoders
 ffmpeg -hide_banner -filters
 ```
 
-以下 SHA 来自本地 PR 基线解析（A=`origin/pr-4`、D=`origin/pr-2`、E=`origin/pr-1`，C 为核对时 HEAD），并非用户本轮指定的 SHA。本次文档核对得到 A `3c6d4e99f9df6ffe87a1efb2808f66728d807ea3`、D `38dcb8b16ea5e0089da5a94142a171e32ff8abba`、E `d1c6c95105fe33432735a34071e5312b604eb63c`、C `620b24f277754d948ed69a8aba01d381a044e9f8`。今后远端 ref 若变化，保留本次与实际值，说明被测范围，不直接沿用旧结论。
+最终本地验收的集成 HEAD 为 `4785e16be89068591973f2d2b6f3cb2df1fa86d2`；各 demo 报告记录当时 `.github/workflows/pipeline-integration.yml` 的未提交差异和关键源码哈希。已集成 A PR #4 `cf988d0a0e65dbd63c4174fae83bda77acf86723`（`origin/pr-4-latest`）、D #2 `38dcb8b16ea5e0089da5a94142a171e32ff8abba`、E #1 `d1c6c95105fe33432735a34071e5312b604eb63c`、C #5 `620b24f277754d948ed69a8aba01d381a044e9f8`。旧 `origin/pr-4` 的 A `3c6d4e99f9df6ffe87a1efb2808f66728d807ea3` 仅保留追溯，不能当作最终 A。C 模块提交不等于集成 HEAD。复跑时记录实际 HEAD、差异、模块 refs 与哈希；ref 变化后不能直接沿用旧结论。
 
 运行目录建议为 `outputs/acceptance/<run-id>/`；项目媒体根单独固定，所有模块交接沿用同一根。该目录是操作建议，不表示已有自动证据收集器。运行清单可手工维护，先记录命令、stdout/stderr、退出码、输入输出 refs，再做人工判定。
 
@@ -227,7 +228,7 @@ python -m pytest tests/test_ingest.py tests/test_asr.py tests/test_encoder.py -q
 python -m pytest tests/test_timeline.py tests/test_voice_package.py tests/test_integration.py -q
 ```
 
-C 测试文件名先在 `tests/` 确认，再选 planning 相关测试或运行全量 `python -m pytest -q`。模型 mock 测试不计真实模型验收；环境缺失导致 skip/失败需原样记录。已有主代理的全仓结果为 805 passed、33.55s（macOS / Python 3.13），按来源留档；后续复跑记录自己的命令、代码状态和实际统计，不覆盖或冒用该结果。
+C 测试文件名先在 `tests/` 确认，再选 planning 相关测试或运行全量 `python -m pytest -q`。模型 mock 测试不计真实模型验收；环境缺失导致 skip/失败需原样记录。最终本地全量结果为 812 passed in 35.50s、无 skip（macOS / Python 3.13.12），原始文本与 JUnit 见第 5.4 节；旧 A 环境的 805 passed、33.55s 仅是历史结果。后续复跑记录实际命令、代码状态和统计，保留每次证据。
 
 ## 5. 生成媒体与旧单源回归
 
@@ -261,7 +262,7 @@ quickcut search INDEX_ID '适合开头的环境画面' \
 
 ### 5.3 统一工程 demo → 新 IR preview
 
-先执行第 2.3 节预检。四个 demo 使用各自不存在或为空的 root，不能是符号链接；目标参数只允许 5、10、15 秒，默认 10。以下是入口与预期，新增媒体演示运行结果仍待取得；在 `set -e` 环境下，两个预期退出 2 的命令应分别捕获退出码并核对报告，不用 `|| true` 吞掉任意错误。
+先执行第 2.3 节预检。四个 demo 使用各自不存在或为空的 root，不能是符号链接；目标参数只允许 5、10、15 秒，默认 10。以下四个用例已在本地执行并符合预期，原始证据见第 5.4 节；复现时，在 `set -e` 环境下，两个预期退出 2 的命令应分别捕获退出码并核对报告，不用 `|| true` 吞掉任意错误。
 
 ```bash
 python scripts/demo_pipeline.py --root outputs/acceptance/pipeline-10s \
@@ -314,6 +315,22 @@ PY
 `files.assets_union` 是 A+E 检查用合集，不是 A Manifest，不能用于 `--manifest`。preview 必需 ffmpeg 和 **ffprobe**，通过 PATH 或 `QUICKCUT_FFMPEG/QUICKCUT_FFPROBE` 指定；成功退出 0，读取/校验/媒体运行失败退出 1，argparse 参数错误退出 2。省略 `--srt/--report` 时默认 MP4 同名 `.srt/.preview.json`。已处理非零源 PTS 与原声对齐，并按全局时间线边界向上量化视频帧，避免逐片段取整漂移；字幕全局化后向下量化到毫秒，独立保存、不烧录。
 
 核对 preview 报告 `status=preview_rendered`、`duration_validation=ffprobe`、`expected_duration_us/measured_duration_us/measured_stream_durations_us/duration_tolerance_us`、`video_frame_quantization=ceil_global_timeline_boundaries`、`video_frame_ranges/measured_video_frames` 和 `full_decode_verified=true`。10 秒、30 fps 的该 demo 预期 300 帧；真实输入依其输出规格核验，不固定套用。输入精确 refs、路径、资产 union/哈希、源范围、输入输出全量解码均须通过。报告 `files.preview/subtitles/report` 指向实际三项输出；`subtitles_editable=true/subtitles_burned=false` 仅说明独立 SRT，`editor_project_exported/editor_import_verified/f_acceptance_completed` 均为 false。MP4 内原声与旁白已混合，不是剪映可编辑工程。preview 另写报告，不会把原 demo 的 `render.executed=false` 改成 true。
+
+### 5.4 最终本地证据索引（2026-11-13）
+
+原始证据位于仓库外 `../outputs/QuickCut-engineering-final-20261113/`，未随 Git 提交；GitHub 阅读者需按第 5.3 节复现，或查看远端 Actions artifact。以下为已保存的本地结果，代码基线 `4785e16`，不表示最新远端 CI 已通过。
+
+| 目录 / 文件 | 实际结果 |
+| --- | --- |
+| `pytest.txt`、`pytest.xml` | 812 passed in 35.50s，无 skip |
+| `supported-10s/run-report.json` | ready_for_render；A/E/D=1/1/1 |
+| `supported-10s/preview.preview.json` | 10 秒、300 帧、全量解码通过 |
+| `supported-15s/run-report.json`、`preview.preview.json` | ready_for_render；15 秒、450 帧、全量解码通过 |
+| `edit-10s/run-report.json`、`preview.preview.json` | r2 为 10 秒、300 帧、全量解码通过；仅 cue-02 cache miss，A 未重接入，Manifest hash 不变 |
+| `unsupported-10s/run-report.json` | needs_input；A/E/D=1/0/0，缺口按预期阻断 |
+| `needs-retime-5s/run-report.json`、`feedback.json` | failed；VOICE_NEEDS_RETIME、owner D、cue-03；A/E/D=1/1/0 |
+
+三份预览均有独立 SRT、未烧字幕；`editor_project_exported/editor_import_verified/f_acceptance_completed=false`。这些是合成媒体工程结果，真实语义、听审与剪映仍待验收。给 A 的人工素材交接见 [C_A_HANDOFF.md](C_A_HANDOFF.md)。
 
 ## 6. 三种演示的操作与证据
 
@@ -565,7 +582,7 @@ ffmpeg -v error -i /path/to/preview.mp4 -f null -
 | 缓存与成本 | 阶段/句子命中、失效理由、冷/热耗时、实际资源 |
 | 结论 | 通过/失败/阻塞/未执行，已知限制，下一owner与复测条件 |
 
-当前已知回归证据为主代理全仓 805 passed、33.55s（macOS / Python 3.13）；来源是用户提供的已完成实测，不能冒记为文档编辑者复跑或远端 CI 结果。新增媒体演示仍在运行，未取得报告前 demo/preview 不填通过。真实检索、Qwen、真人证据审核、自然语音、自动 fit 和剪映编辑仍按各自实验结果填写。历史 E 音频、中文样例或旧日志作为参考附件时注明原配置。
+当前已保存的全量回归为 812 passed in 35.50s（macOS / Python 3.13.12）；合成 demo 和 10/15 秒及 edit r2 预览结果见第 5.4 节。旧 805 项结果仅作历史记录，不代替最终证据或远端 CI。真实检索、Qwen、真人证据审核、自然语音、自动 fit 和剪映编辑仍按各自实验结果填写。历史 E 音频、中文样例或旧日志作为参考附件时注明原配置。
 
 ## 10. 交付门禁与 CI
 
@@ -589,14 +606,14 @@ P0/P1/P2 的 owner、依赖和验收条件以工程说明第13节为准。P0 阻
 
 始终上传 `pipeline-integration-ubuntu-python-${{ matrix.python-version }}`，内容为 `$PIPELINE_OUTPUT/` 全目录、含隐藏文件，保留 7 天；包括 doctor JSON、pytest 文本/JUnit、每个 demo 的 stdout/stderr、项目媒体与阶段/根报告、preview MP4/SRT/报告。失败时也上传已有证据；产物缺失仍需查看失败步骤，不能把上传成功当验收成功。
 
-以上是已读 CI 配置的行为与预期，**不是远端 workflow 已通过的运行结论**。取得真实 run 后另记 run ID、commit/工作树身份、矩阵结果和 artifact 位置；macOS 的 805 项回归不能替代 Ubuntu 两个矩阵的证据。
+以上是已读 CI 配置的行为与预期，**不是远端 workflow 已通过的运行结论**。取得真实 run 后另记 run ID、commit/工作树身份、矩阵结果和 artifact 位置；macOS 的 812 项回归不能替代 Ubuntu 两个矩阵的证据。
 
 ### 10.2 当前入口与剩余门禁
 
 | 范围 | 当前入口 / 状态 | 尚需证据 |
 | --- | --- | --- |
 | 环境与项目预检 | doctor 已有，第 2.3 节 | 实际机器报告，不以版本检查代替模型/媒体验收 |
-| 工程编排与改单句缓存 | demo 已有，第 5.3 节 | 新演示报告待取得；真实 B/Qwen/人审/自然声音和镜头编辑另验 |
+| 工程编排与改单句缓存 | demo 已有，第 5.3 节 | 合成演示报告已保存，见第 5.4 节；真实 B/Qwen/人审/自然声音和镜头编辑另验 |
 | 新 IR 媒体执行 | preview 已有，第 5.3/7.6 节 | 新媒体实测与完整看片听审，不等于工程交付 |
 | 自动 fit 与剪映 | 自动 fit 调度、剪映可编辑工程仍未验收 | 有界请求/旧回复拒绝；指定软件版本打开、编辑、保存、重开、搬迁、导出 |
 

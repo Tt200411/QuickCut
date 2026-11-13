@@ -6,6 +6,7 @@ Start with the [Chinese project guide](docs/PROJECT_GUIDE.zh-CN.md) for the shar
 coarse-to-fine multi-source workflow, local model choices, and the six-person implementation plan.
 It separates the current single-source MVP from the proposed multi-source and Jianying draft workflow.
 
+- [C → A 素材协作：需求卡、缺口诊断与交接清单](docs/team/C_A_HANDOFF.md)
 - [全链路工程说明：入口、交接与已知限制](docs/team/PIPELINE_ENGINEERING.md)
 - [验收操作手册：命令、退出码、CI 与证据](docs/team/ACCEPTANCE_RUNBOOK.md)
 - [MVP capabilities and reuse map](docs/team/mvp-baseline.md)
@@ -31,7 +32,9 @@ python scripts/doctor_pipeline.py --require-media \
 
 `--case` 支持 supported/unsupported/edit，`--target-seconds` 支持 5/10/15。10 秒 supported/edit 预期退出 0；unsupported 退出 2 并返回 needs_input；5 秒固定音调触发 needs_retime，顶层 failed、退出 2，不生成 Timeline。demo 使用合成媒体、人工候选、rule C、预设批准和 E 音调，不代表真实 B/Qwen/人审/自然语音、自动 fit 或剪映验收。C 的真实 Ollama 路径已支持 `python -m quickcut.planning run --project-root PROJECT_ROOT ...`。
 
-主代理已有全仓实测 **805 passed，33.55s（macOS / Python 3.13）**；新增媒体演示仍在运行，尚未取得结果的不记通过。CI 配置为 Ubuntu × Python 3.10/3.13，运行记录另验。proposal 第 1 页 BACKGROUND 的短片验收为约 5 分钟源 → **5–15 秒**；约 45 秒 opening 是愿景，下述旧 MVP 的 5–60 秒（Basic 默认 30 秒）与 18 秒协议 fixture 分别保留，不替代短片验收。
+当前集成包含 A PR #4 `cf988d0a0e65dbd63c4174fae83bda77acf86723`、D #2 `38dcb8b`、E #1 `d1c6c95` 和 C #5 `620b24f`。最终本地全量回归为 **812 passed in 35.50s，无 skip（macOS / Python 3.13.12）**；旧 A 环境的 805 项结果仅作历史记录。原始证据保存在仓库外 `../outputs/QuickCut-engineering-final-20261113/`（未随 Git 提交）：supported/edit 10 秒成功，unsupported 10 秒退出 2、`needs_input`（A/E/D=1/0/0）；5 秒退出 2，`VOICE_NEEDS_RETIME` 指向 cue-03、owner D（A/E/D=1/1/0）。supported 预览实测 **10 秒、300 帧、全量解码通过**，输出 MP4 和独立 SRT，未烧字幕。详细报告索引见[验收手册](docs/team/ACCEPTANCE_RUNBOOK.md#54-最终本地证据索引2026-11-13)。远端 CI 尚未运行；Ubuntu × Python 3.10/3.13 仅为已配置矩阵。
+
+proposal 第 1 页 BACKGROUND 的短片验收为约 5 分钟源 → **5–15 秒**；约 45 秒 opening 是愿景，下述旧 MVP 的 5–60 秒（Basic 默认 30 秒）与 18 秒协议 fixture 分别保留，不替代短片验收。
 
 ## A: Multi-source asset ingestion
 
@@ -69,7 +72,7 @@ Exit codes are 0 for success, 2 for partial success and 1 for failure. Check the
 
 The existing `quickcut index/search/basic`, API and UI still use the single-source format.
 Ingestion also supports ASR thread/worker limits, vocabulary hints, word diagnostics, and
-review flags. Successful execution does not mark a transcript as reviewed. Use
+review flags. ASR `status: success` 仅表示执行成功；`review.status: needs_review` 保留人工复核要求，启发式无标记也不等于准确率获批。范围与质量证据见 [A ASR 质量说明](docs/team/A-asr-quality.md)。Use
 `python -m quickcut.asr_eval` to compare a sidecar with a human-verified reference.
 See [Ingestion reference](docs/ingestion.md) for fields, cache rules and limitations, and
 [Batch input example](examples/ingest/README.md) for batch configuration.

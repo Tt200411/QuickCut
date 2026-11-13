@@ -4,16 +4,16 @@
 
 ## 1. 基线、证据和当前完成边界
 
-本文基于本次工作树阅读编写。工作树中已有其他集成改动，模块提交只是追溯起点，不表示当前树等同于任何单个提交。交付时还需记录实际集成 HEAD 和未提交差异。
+最终本地验收对应集成 HEAD `4785e16be89068591973f2d2b6f3cb2df1fa86d2`，包含已提交的初编桥接、工程脚本、预览和最新 A。报告同时记录 `.github/workflows/pipeline-integration.yml` 的未提交差异及关键源码哈希；复现时须一并核对，不能只凭分支名认定代码一致。
 
-| 模块 | 追溯基线 | 核对方式 |
+| 模块 | 集成提交 / 追溯基线 | 核对依据 |
 | --- | --- | --- |
-| A | `3c6d4e99f9df6ffe87a1efb2808f66728d807ea3` | 解析 PR 基线 `origin/pr-4`；阅读 `docs/ingestion.md` 与公开入口 |
-| B | 本轮未指定冻结提交 | 联合检索接口按协议说明；不能把旧单源检索视为新接口已经贯通 |
-| C | `620b24f277754d948ed69a8aba01d381a044e9f8` | 解析当前 HEAD；阅读 `quickcut/planning/` 与交付说明 |
-| D | `38dcb8b16ea5e0089da5a94142a171e32ff8abba` | 解析 PR 基线 `origin/pr-2`；阅读 `quickcut/timeline.py` |
-| E | `d1c6c95105fe33432735a34071e5312b604eb63c` | 本轮执行 `git rev-parse origin/pr-1`；阅读 `quickcut/voice_package.py` |
-| F | 本轮未指定冻结提交 | 工程导出能力须以目标版本实机记录为准 |
+| A PR #4 | `cf988d0a0e65dbd63c4174fae83bda77acf86723` | `origin/pr-4-latest`；含 ASR 诊断、复核状态与参考评估；旧 `origin/pr-4` 的 `3c6d4e99f9df6ffe87a1efb2808f66728d807ea3` 仅作追溯 |
+| B | 未指定冻结提交 | demo 使用人工候选；不能把旧单源检索视为新接口已经贯通 |
+| C PR #5 | `620b24f277754d948ed69a8aba01d381a044e9f8` | `quickcut/planning/` 与交付说明；不是当前集成 HEAD |
+| D PR #2 | `38dcb8b16ea5e0089da5a94142a171e32ff8abba` | `origin/pr-2`；集成后的 `quickcut/timeline.py` 另有字幕及门槛修复 |
+| E PR #1 | `d1c6c95105fe33432735a34071e5312b604eb63c` | `origin/pr-1`；`quickcut/voice_package.py` |
+| F | 未指定冻结提交 | 工程导出能力须以目标版本实机记录为准 |
 
 全文使用以下标签：
 
@@ -21,17 +21,19 @@
 - **本轮待验证**：存在实现或已有历史样例，但本轮尚无对应命令输出、真实媒体检查或人审证据。
 - **计划**：需要新增实现、联调或产品决策；列入后文 P0/P1/P2，不承诺已有入口。
 
-**已有主代理全仓实测：805 passed，33.55s，macOS / Python 3.13。**这是用户提供的本次集成回归证据，不是文档编辑期间重新运行的结果，也不能外推为其他工作树或远端 CI 已通过。新增媒体演示仍在运行，未取得结果前保持待验证。回归通过证明被测软件检查通过；真实 B 检索、Qwen 语义、真人看片与听审、自然语音、自动 fit 和剪映工程质量仍须分别验收。历史交付的声音时长和试听结论保留原来源，不复制为当前产品结论。
+**最终本地全量回归：812 passed in 35.50s，无 skip，macOS / Python 3.13.12。**证据根为仓库外的 [QuickCut-engineering-final-20261113](../../../outputs/QuickCut-engineering-final-20261113/)，包含 pytest 文本/JUnit、四个 demo 项目和 supported 预览报告；逐项索引见[验收手册第 5.4 节](ACCEPTANCE_RUNBOOK.md#54-最终本地证据索引2026-11-13)。旧 A 环境的 805 passed、33.55s 仅作历史记录。supported/edit 10 秒初编与改单句缓存通过；unsupported 10 秒和 5 秒超预算按预期停止；supported 预览为 10 秒、300 帧，输入输出全量解码通过，生成 MP4 与独立 SRT、未烧字幕。远端 CI 尚未运行，Ubuntu 矩阵只有配置。
+
+以上是合成媒体工程证据：B 为人工候选，C 为 rule 与预设审核/批准夹具，E 为固定 tone。真实 B 检索、Qwen 语义、真人看片与听审、真实语音、自动 fit 和剪映工程仍须分别验收。历史声音时长和试听结论保留原配置，不复制为当前产品结论。
 
 | 能力 | 已实现范围 | 本轮待验证 / 计划边界 |
 | --- | --- | --- |
 | 单源 MVP | 一次索引、prompt 检索、顺序剪辑项编辑、FFmpeg MP4 渲染；有 CLI/API/UI | 真实语义质量和编辑后故事/字幕一致性待验证；不等同新多源链路 |
-| A 多源接入 | 资产身份与 revision、原片复制、PTS、代理映射、关键帧、分阶段缓存、可选 ASR、部分失败 | 普通话实测、手机旋转/HDR、长片性能、B/D/F 消费扩展字段待验证 |
+| A 多源接入 | 资产身份与 revision、原片复制、PTS、代理映射、关键帧、分阶段缓存、可选 ASR、诊断与复核状态、参考评估、部分失败 | 普通话仅有局部已核对样本，见 [ASR 质量说明](A-asr-quality.md)；整片/泛化准确率、手机旋转/HDR、长片性能及下游 range/review 保留待验证 |
 | C 规划 | 三段大纲、分角色请求、候选白名单、事件证据审核、旁白审批、有限再检索请求、rule/fixed/Ollama selector | 真实 Qwen 语义与真实 B 多轮交接待验证；CLI 单次 run 不自行执行完整 B 循环 |
 | E 声音 | 逐句 WAV、PCM 实测、局部字幕、缓存、measure/fit、系统 TTS 和可选 IndexTTS2 adapter | 当前机器声音能力、自然度与 D/F 实际混音待验证 |
 | D 时间线 | `compile_timeline`；资产 union、硬切、1×、四轨、选中片段尾部余量扩展、逐条局部字幕偏移 | 已有全仓回归证据；真实字幕目检及自动 E–D 请求循环仍需独立验收 |
 | C→E→D 初编桥接 | `quickcut.integration.build_from_plan/compile_from_voice`；C 校验、初测包门槛、独立版本号、资产 union；demo 负责 JSON 留档 | API 本身不保存聚合 JSON、不导出、不自动 fit；真实语义及完整编辑链路待验证 |
-| 新 IR 预览 | `scripts/render_timeline_preview.py` 生成真实 MP4、独立全局 SRT 和报告；必需 ffprobe，含非零 PTS 对齐与全局帧量化修复 | 新媒体演示结果待取得；混合 MP4 与可编辑 SRT 不等于剪映工程 |
+| 新 IR 预览 | `scripts/render_timeline_preview.py` 生成真实 MP4、独立全局 SRT 和报告；必需 ffprobe，含非零 PTS 对齐与全局帧量化修复；supported 10 秒实测 300 帧、全量解码通过 | 真实素材的音画/字幕仍需目检与听审；混合 MP4 与可编辑 SRT 不等于剪映工程 |
 | F 交付 | 旧单源渲染可复用；新 IR 已有预览；黄金 ExportManifest 是协议示例 | 可编辑剪映包、实际导入与编辑保存重开仍需独立证据；不能依据 fixture 宣布成功 |
 
 ## 2. 两条 pipeline 的入口和数据结构
@@ -163,7 +165,7 @@ rule 是确定性选镜；fixed 是固定响应；二者不能标为真实 Qwen 
 
 ### 6.1 尚未解决的 A/C 风险
 
-- **ASR 跨窗口信息丢失**：A 将所有重叠 ASR spans 附到 shot，跨窗口句子可能重复；C 候选视图仅取 transcript 的扁平 `text`，未保留 status、span/range。shot 中出现某句话不证明整句都在该源区间内；真实检索与事实审阅需回看原声和时间范围。
+- **ASR range/review 信息保留未完成**：A 将所有重叠 ASR spans 附到 shot，跨窗口句子可能重复；C 候选视图仅取 transcript 的扁平 `text`，未保留 status、span/range 与 review 语义。A 的 `status: success` 仅表示识别执行成功，`review.status: needs_review` 仍要求人工复核；启发式无标记不等于准确率获批，见 [A-asr-quality.md](A-asr-quality.md)。shot 中出现某句话不证明整句都在该源区间内；B/C 仍需保留范围与复核状态，事实审阅须回看原声。
 - **默认窗口与 beat 容量**：A 默认 shot 为 3 秒，C rule 每 beat 只选一个 user 镜头（可另配 external），更长 beat 可能缺乏合法画面容量。demo 按最大 beat 预算主动扩大窗口，仅解决该合成用例的输入条件，不代表默认 A/C 容量问题已修复。
 - **结构校验不重读媒体**：C `validate_story_plan` 核验传入 JSON 的 refs、候选、区间、预算、证据 provenance 和批准；不接受媒体根、不打开真实媒体或关键帧、不重算哈希。结构通过不能证明文件存在、片段可解码或具体事件真实；需 A/preview 媒体检查与真人看片补足。
 
@@ -278,7 +280,7 @@ Qwen/Ollama、ASR、OpenCLIP 与 IndexTTS2 都是可选能力。基础 fixture �
 | [demo_pipeline.py](../../scripts/demo_pipeline.py) | 合成媒体 A→人工候选→rule C→E 音调→D JSON；supported/unsupported/edit，目标 5/10/15 秒 |
 | [render_timeline_preview.py](../../scripts/render_timeline_preview.py)、[timeline_preview.py](../../quickcut/timeline_preview.py) | 新 IR 媒体执行，MP4 + 独立 SRT + 报告；不是剪映 exporter |
 | [pipeline-integration.yml](../../.github/workflows/pipeline-integration.yml)、[c-planning.yml](../../.github/workflows/c-planning.yml) | Ubuntu / Python 3.10、3.13；具体检查与产物见验收手册第 10.1 节 |
-| `tests/` | 已有主代理 805 项全仓回归证据；真实模型与质量验收另记 |
+| `tests/` | 最终本地全仓 812 passed、35.50s、无 skip（macOS / Python 3.13.12）；真实模型与质量验收另记 |
 | `docs/PROJECT_GUIDE.zh-CN.md`、`docs/team/` | 设计、职责、契约、模块交付与本文 |
 | `output/` 与运行时 `outputs/` | repo 已有产物与各脚本默认输出可能不同；不要靠目录名判断有效版本 |
 
@@ -292,7 +294,7 @@ Qwen/Ollama、ASR、OpenCLIP 与 IndexTTS2 都是可选能力。基础 fixture �
 
 ### 11.2 已有工程脚本与报告交接
 
-从 repo 根运行；demo root 必须不存在或为空，且不能是符号链接。以下列出命令和预期，新增媒体演示尚未取得结果：
+从 repo 根运行；demo root 必须不存在或为空，且不能是符号链接。最终本地四用例结果已留档，见[验收手册第 5.4 节](ACCEPTANCE_RUNBOOK.md#54-最终本地证据索引2026-11-13)；以下使用新的示例目录复现，不覆盖最终证据：
 
 ```bash
 python scripts/doctor_pipeline.py
@@ -305,7 +307,7 @@ python scripts/doctor_pipeline.py --require-media \
 
 doctor 默认即使 `status=degraded` 也退出 0；严格模式必需项失败退出 2。它只检查工具版本、默认系统 TTS 可执行文件、安装元数据和可选 A Manifest，不下载、不推理、不试听、不全量解码。未传项目根时不要求已有媒体；缺少可选模型包不单独使严格检查失败。
 
-demo 仅 `ready_for_render` 退出 0；unsupported 的 `needs_input`、5 秒固定音调的重定时和其他失败均退出 2。10 秒 supported 预期调用 A1/E1/D1；10 秒 edit 预期 A1/E2/D2，仅 cue-02 缓存失效，cue-01/03 命中；unsupported 预期 A1/E0/D0。5 秒 supported 顶层为 `failed`，反馈 `VOICE_NEEDS_RETIME/needs_retime`、owner D、cue-03，A1/E1/D0；保留声音包但不生成时间线，不自动 fit。`fixturesOnly=true` 必须保留；A 的 `manifestFixturesOnly=false` 只表示处理了真实编码文件，不表示实拍、真实 B、Qwen、语音或人审。
+demo 仅 `ready_for_render` 退出 0；unsupported 的 `needs_input`、5 秒固定音调的重定时和其他失败均退出 2。最终本地 10 秒 supported 为退出 0、A1/E1/D1；10 秒 edit 为退出 0、A1/E2/D2，仅 cue-02 缓存失效，cue-01/03 命中，Manifest 哈希不变；10 秒 unsupported 为退出 2、`needs_input`、A1/E0/D0。5 秒 supported 为退出 2、顶层 `failed`，反馈 `VOICE_NEEDS_RETIME/needs_retime`、owner D、cue-03，A1/E1/D0；保留声音包但不生成时间线，不自动 fit。后两项符合负例预期，不是成片成功。`fixturesOnly=true` 必须保留；A 的 `manifestFixturesOnly=false` 只表示处理了真实编码文件，不表示实拍、真实 B、Qwen、语音或人审。
 
 成功后从根目录 `run-report.json["render"]["files"]` 读取 `timeline/manifest/voice_package/assets_union`，各 URI 相对该项目根。`--manifest` 必须使用其中的 A Manifest，不能传 `assets_union`；edit 的映射会指向 r2，不猜 r1 或“最新文件”。preview 的可执行映射示例见验收手册第 5.3 节。
 
@@ -350,13 +352,13 @@ proposal 第 2 页 **EVALUATION PROTOCOL** 指定源时间线 **R@1 at tIoU 0.5/
 | P0 公共消费与资产解析 | C/D/E 部分已实现；全链路待验证 | D，A/B/C/E/F 配合 | 0.1.0、同一项目根 | 正确资产 union；重复 ID、旧 revision、越界 URI、缺文件均阻断 |
 | P0 真实检索与证据审核 | C 门槛已实现；B/C 实测待验证 | B/C | A 的可用 coarse_shot、模型配置 | 中英文/ASR/空镜请求有相关集合；事实人审与文案审批独立留证 |
 | P0 有界声音与时间编排 | C→E→D 初编 API 已有；自动 fit 循环仍待集成/验证 | D/E，C 改词 | 批准脚本、实测 WAV、精确请求 | measure+2 fit 上限、旧回复拒绝、超时完整保留、末句不截断 |
-| P0 多源媒体执行 | 新 IR preview 已实现；新增媒体演示结果待取得 | F/D | 冻结四轨与资产 union | 多源全量解码通过，原声与旁白独立；预览与工程同一 Timeline ref |
+| P0 多源媒体执行 | 新 IR preview 已实现；合成 supported 10 秒、300 帧、全量解码通过，真实多源仍待验证 | F/D | 冻结四轨与资产 union | 真实多源全量解码通过，工程保留独立原声/旁白轨；预览与工程同一 Timeline ref |
 | P0 最小剪映工程 | 计划 / 实机待验证 | F | 两视频、文字、独立音轨、目标版本 | 打开、分别编辑、保存、重开、搬迁重定位、再导出；证据附版本 |
 | P0 真实短片与 heldout | 本轮待验证 | 全组，D 汇总 | 上述链路、冻结数据集 | 5–10 视频和30–50请求计划执行；真实5/10/15秒；阻断项不被平均分掩盖 |
-| P0 编辑不重建索引 | A/E 缓存已有；团队闭环待验证 | D，各模块配合 | revision 与失效图 | 替换镜头/改单句前后对照；索引哈希不变、仅相关音频变化、新导出引用一致 |
+| P0 编辑不重建索引 | 合成 edit 已验证 A 不重接入、仅 cue-02 重合成；真实镜头编辑与团队闭环待验证 | D，各模块配合 | revision 与失效图 | 替换镜头/改单句前后对照；索引哈希不变、仅相关音频变化、新导出引用一致 |
 | P1 字幕同步与可编辑交付 | D 逐条偏移与独立 SRT 已实现，已有全仓回归；真实目检/工程实机待验证 | D/E/F | local subtitles、音频偏移、目标工程适配 | 多段偏移与间隙正确；标准 E padding 不进入字幕；真实片逐句目检、工程可编辑、末句不出界 |
 | P1 真实媒体覆盖 | 本轮待验证 | A/F | VFR、非零起点、横竖屏、普通话、HDR | 源/代理/导出逐帧定位与画面声音检查，标注不支持格式 |
-| P1 统一运行与观测 | doctor/demo/preview 与 CI 已有；真实 A–F 统一调度待集成 | D | 错误信封、阶段日志 | 一个 run ID 追溯全部 refs、失效原因、时延、缓存、资源和重试 |
+| P1 统一运行与观测 | doctor/demo/preview 本地证据已有；CI 已配置但远端未运行；真实 A–F 统一调度待集成 | D | 错误信封、阶段日志 | 一个 run ID 追溯全部 refs、失效原因、时延、缓存、资源和重试 |
 | P1 模型与声音对照 | adapters 已有；质量待验收 | B/C/E | 冻结权重、设备和授权参考 | rule/fixed/真实模型分栏；同文系统TTS与IndexTTS试听、成本及失败可复现 |
 | P2 场景与局部边界优化 | 计划 | A/D | 标注和基线指标 | 相比固定窗口改善边界完整性，同时记录额外成本 |
 | P2 产品级调度与扩展 | 计划 | D/F，相关模块配合 | 单机闭环稳定 | 容量、取消、中断恢复、隔离及更多目标编辑器有各自验收；不提前拆微服务 |

@@ -132,7 +132,11 @@ jobs:
                   assert feedback["affected_ids"] == ["cue-03"] and feedback["action_owner"] == "D"
                   assert read(root / "feedback.json") == feedback
                   voice = read(root / "voice-package-r1.json")
-                  assert voice["status"] == "needs_retime" and not voice["errors"], voice
+                  assert voice["status"] == "needs_retime", voice
+                  assert len(voice["errors"]) == 1, voice
+                  error = voice["errors"][0]
+                  assert error["code"] == "VOICE_NEEDS_RETIME" and error["action_owner"] == "D", error
+                  assert error["affected_ids"] == ["cue-03"], error
                   assert voice["measurement_source"] == "fixture_tone"
                   assert [c["cue_id"] for c in voice["cues"] if c["needs_retime"]] == ["cue-03"]
                   assert report["render"] is None and not list(root.glob("timeline-*.json"))
