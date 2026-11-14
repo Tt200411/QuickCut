@@ -1,0 +1,16 @@
+{
+  "reference_id": "mandarin-opening-full-original",
+  "source_content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+  "source_range_us": {
+    "begin": 4500000,
+    "end": 12400000
+  },
+  "text": "我们现在这里，是冷水坑上方的观景台，这里同时也是冷水坑附近最好的眺望点。",
+  "verification": {
+    "status": "human_verified",
+    "reviewer": "user",
+    "date": "2026-11-12",
+    "method": "Manual listening check confirmed by the contributor."
+  },
+  "binding_note": "Same previously user-confirmed speech, bound here to the full original recording. Interval boundaries remain approximate; the user verified words, not exact timestamps."
+}
