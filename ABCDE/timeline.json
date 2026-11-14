@@ -1,0 +1,281 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "EditTimeline",
+  "document_id": "timeline-countryside",
+  "project_id": "project-countryside",
+  "revision": 1,
+  "fixtures_only": false,
+  "owner": "D",
+  "inputs": [
+    {
+      "kind": "StoryPlan",
+      "document_id": "story-countryside",
+      "revision": 1
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-1aebcf579acf476087b5110924b0862e",
+      "revision": 1
+    },
+    {
+      "kind": "VoicePackage",
+      "document_id": "voice-story-countryside",
+      "revision": 1
+    },
+    {
+      "kind": "Brief",
+      "document_id": "brief-countryside",
+      "revision": 1
+    }
+  ],
+  "status": "ready_for_export",
+  "duration_us": 30000000,
+  "output": {
+    "width": 1280,
+    "height": 720,
+    "fps": {
+      "numerator": 30,
+      "denominator": 1
+    },
+    "sample_rate": 48000
+  },
+  "tracks": [
+    {
+      "track_id": "track-picture",
+      "kind": "video",
+      "clips": [
+        {
+          "clip_id": "clip-video-1",
+          "asset_id": "asset-806103fd984c4670ba62f904a034f231",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 10000000
+          },
+          "timeline_range_us": {
+            "begin": 0,
+            "end": 10000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "segment_id": "asset-806103fd984c4670ba62f904a034f231-r1-shot-0-15000000",
+          "beat_id": "beat-open",
+          "role": "establishing",
+          "audio_policy": "separate_track"
+        },
+        {
+          "clip_id": "clip-video-2",
+          "asset_id": "asset-577def926287491bb985d17196918ee6",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "timeline_range_us": {
+            "begin": 10000000,
+            "end": 25000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "segment_id": "asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+          "beat_id": "beat-middle",
+          "role": "detail",
+          "audio_policy": "separate_track"
+        },
+        {
+          "clip_id": "clip-video-3",
+          "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 5000000
+          },
+          "timeline_range_us": {
+            "begin": 25000000,
+            "end": 30000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-0-15000000",
+          "beat_id": "beat-close",
+          "role": "atmosphere",
+          "audio_policy": "separate_track"
+        }
+      ]
+    },
+    {
+      "track_id": "track-original",
+      "kind": "source_audio",
+      "clips": [
+        {
+          "clip_id": "clip-original-1",
+          "asset_id": "asset-806103fd984c4670ba62f904a034f231",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 10000000
+          },
+          "timeline_range_us": {
+            "begin": 0,
+            "end": 10000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "linked_video_clip_id": "clip-video-1",
+          "gain": 0.3
+        },
+        {
+          "clip_id": "clip-original-2",
+          "asset_id": "asset-577def926287491bb985d17196918ee6",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "timeline_range_us": {
+            "begin": 10000000,
+            "end": 25000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "linked_video_clip_id": "clip-video-2",
+          "gain": 0.3
+        },
+        {
+          "clip_id": "clip-original-3",
+          "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 5000000
+          },
+          "timeline_range_us": {
+            "begin": 25000000,
+            "end": 30000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "linked_video_clip_id": "clip-video-3",
+          "gain": 0.3
+        }
+      ]
+    },
+    {
+      "track_id": "track-narration",
+      "kind": "narration",
+      "clips": [
+        {
+          "clip_id": "clip-narration-cue-01",
+          "asset_id": "generated-voice-da9bf397eec736862feb7554316f21a3",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 3460625
+          },
+          "timeline_range_us": {
+            "begin": 200000,
+            "end": 3660625
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "cue_id": "cue-01",
+          "gain": 1.0
+        },
+        {
+          "clip_id": "clip-narration-cue-02",
+          "asset_id": "generated-voice-fb19890df45295d522a0a57df214d553",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 3659104
+          },
+          "timeline_range_us": {
+            "begin": 10200000,
+            "end": 13859104
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "cue_id": "cue-02",
+          "gain": 1.0
+        },
+        {
+          "clip_id": "clip-narration-cue-03",
+          "asset_id": "generated-voice-413949fa77c039a432acee2d76f378bb",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 3487833
+          },
+          "timeline_range_us": {
+            "begin": 25200000,
+            "end": 28687833
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "cue_id": "cue-03",
+          "gain": 1.0
+        }
+      ]
+    },
+    {
+      "track_id": "track-subtitles",
+      "kind": "subtitle",
+      "cues": [
+        {
+          "subtitle_id": "sub-cue-01",
+          "cue_id": "cue-01",
+          "text": "沿着郊外的小路，看看路边的风景。",
+          "timeline_range_us": {
+            "begin": 200000,
+            "end": 3480625
+          },
+          "editable": true
+        },
+        {
+          "subtitle_id": "sub-cue-02",
+          "cue_id": "cue-02",
+          "text": "放慢脚步，留一点时间给身边的自然。",
+          "timeline_range_us": {
+            "begin": 10200000,
+            "end": 13679104
+          },
+          "editable": true
+        },
+        {
+          "subtitle_id": "sub-cue-03",
+          "cue_id": "cue-03",
+          "text": "让这段散步，在柔和的光线里收尾。",
+          "timeline_range_us": {
+            "begin": 25200000,
+            "end": 28507833
+          },
+          "editable": true
+        }
+      ]
+    }
+  ],
+  "render_policy": {
+    "preview_burn_subtitles": true,
+    "editable_export_burn_subtitles": false,
+    "retain_separate_audio_tracks": true,
+    "unsupported_effect_policy": "error"
+  }
+}

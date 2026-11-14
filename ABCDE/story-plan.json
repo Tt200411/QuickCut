@@ -1,0 +1,200 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "StoryPlan",
+  "document_id": "story-countryside",
+  "project_id": "project-countryside",
+  "revision": 1,
+  "fixtures_only": false,
+  "owner": "C",
+  "inputs": [
+    {
+      "kind": "Brief",
+      "document_id": "brief-countryside",
+      "revision": 1
+    },
+    {
+      "kind": "CandidateSet",
+      "document_id": "candidates-countryside",
+      "revision": 1
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-1aebcf579acf476087b5110924b0862e",
+      "revision": 1
+    }
+  ],
+  "status": "ready_for_edit",
+  "theme": "沿着郊外的小路看看路边的风景，放慢脚步留一点时间给身边的自然，让这段散步在柔和的光线里收尾。",
+  "narration_language": "zh-CN",
+  "beats": [
+    {
+      "beat_id": "beat-open",
+      "order": 0,
+      "purpose": "建立出发情境",
+      "duration_budget_us": 10000000,
+      "support": "supported",
+      "shots": [
+        {
+          "candidate_id": "candidate-query-open-asset-806103fd984c4670ba62f904a034f231-r1-shot-0-15000000",
+          "segment_id": "asset-806103fd984c4670ba62f904a034f231-r1-shot-0-15000000",
+          "origin": "external",
+          "role": "establishing",
+          "suggested_duration_us": 10000000,
+          "decided_by": "rule:authorized_external_montage",
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "transcript": "",
+          "summary": ""
+        }
+      ],
+      "alternative_candidate_ids": [
+        "candidate-query-open-asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+        "candidate-query-open-asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+        "candidate-query-open-asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000"
+      ],
+      "cue_ids": [
+        "cue-01"
+      ]
+    },
+    {
+      "beat_id": "beat-middle",
+      "order": 1,
+      "purpose": "推进过程与环境过渡",
+      "duration_budget_us": 15000000,
+      "support": "supported",
+      "shots": [
+        {
+          "candidate_id": "candidate-query-middle-asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+          "segment_id": "asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+          "origin": "external",
+          "role": "detail",
+          "suggested_duration_us": 15000000,
+          "decided_by": "rule:authorized_external_montage",
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "transcript": "",
+          "summary": ""
+        }
+      ],
+      "alternative_candidate_ids": [
+        "candidate-query-middle-establishing-asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000",
+        "candidate-query-middle-asset-806103fd984c4670ba62f904a034f231-r1-shot-0-15000000",
+        "candidate-query-middle-establishing-asset-98a4a373272648ae9d94162489ec315a-r1-shot-0-15000000",
+        "candidate-query-middle-asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+        "candidate-query-middle-establishing-asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+        "candidate-query-middle-asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000"
+      ],
+      "cue_ids": [
+        "cue-02"
+      ]
+    },
+    {
+      "beat_id": "beat-close",
+      "order": 2,
+      "purpose": "完成情绪收束",
+      "duration_budget_us": 5000000,
+      "support": "supported",
+      "shots": [
+        {
+          "candidate_id": "candidate-query-close-asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-0-15000000",
+          "segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-0-15000000",
+          "origin": "external",
+          "role": "atmosphere",
+          "suggested_duration_us": 5000000,
+          "decided_by": "rule:authorized_external_montage",
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "transcript": "",
+          "summary": ""
+        }
+      ],
+      "alternative_candidate_ids": [
+        "candidate-query-close-atmosphere-asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-0-15000000"
+      ],
+      "cue_ids": [
+        "cue-03"
+      ]
+    }
+  ],
+  "narration_cues": [
+    {
+      "cue_id": "cue-01",
+      "beat_id": "beat-open",
+      "text": "沿着郊外的小路，看看路边的风景。",
+      "text_source": "human_editorial",
+      "approved": true,
+      "content_review": "human_editorial",
+      "duration_budget_us": 9800000,
+      "voice_style": "轻松中文旁白",
+      "expression": "公开素材蒙太奇旁白，不声称这是用户本人的经历",
+      "evidence_segment_ids": [],
+      "asserts_specific_user_event": false
+    },
+    {
+      "cue_id": "cue-02",
+      "beat_id": "beat-middle",
+      "text": "放慢脚步，留一点时间给身边的自然。",
+      "text_source": "human_editorial",
+      "approved": true,
+      "content_review": "human_editorial",
+      "duration_budget_us": 14800000,
+      "voice_style": "轻松中文旁白",
+      "expression": "公开素材蒙太奇旁白，不声称这是用户本人的经历",
+      "evidence_segment_ids": [],
+      "asserts_specific_user_event": false
+    },
+    {
+      "cue_id": "cue-03",
+      "beat_id": "beat-close",
+      "text": "让这段散步，在柔和的光线里收尾。",
+      "text_source": "human_editorial",
+      "approved": true,
+      "content_review": "human_editorial",
+      "duration_budget_us": 4800000,
+      "voice_style": "轻松中文旁白",
+      "expression": "公开素材蒙太奇旁白，不声称这是用户本人的经历",
+      "evidence_segment_ids": [],
+      "asserts_specific_user_event": false
+    }
+  ],
+  "unresolved_gaps": [],
+  "pending_reviews": [],
+  "decision_provenance": {
+    "mode": "rule",
+    "model_call_ids": [],
+    "selected_segment_ids": [
+      "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-0-15000000",
+      "asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+      "asset-806103fd984c4670ba62f904a034f231-r1-shot-0-15000000"
+    ],
+    "evidence_reviews": [],
+    "reviewed_anchor_segment_ids": [],
+    "rule_adjustments": [
+      "beat-open: 使用已授权的公开素材作画面，不把它当成用户事件证据",
+      "beat-middle: 使用已授权的公开素材作画面，不把它当成用户事件证据",
+      "beat-close: 使用已授权的公开素材作画面，不把它当成用户事件证据"
+    ],
+    "human_edits": [
+      "cue-01: 文案来自已批准的蒙太奇旁白，不记为用户事件",
+      "cue-02: 文案来自已批准的蒙太奇旁白，不记为用户事件",
+      "cue-03: 文案来自已批准的蒙太奇旁白，不记为用户事件"
+    ],
+    "iterations": [
+      {
+        "iteration": 1,
+        "request_revision": 1,
+        "candidate_set_revision": 1,
+        "reason": "查询文本来自 retrieval-expectations.json。"
+      }
+    ],
+    "raw_response_count": 0,
+    "input_hashes": {
+      "Brief": "dd07bab3c58ce2c6",
+      "AssetManifest": "ab2eab76c98c1318",
+      "CandidateSet": "df12c7379921ccff"
+    }
+  }
+}

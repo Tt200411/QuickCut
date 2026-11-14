@@ -1,0 +1,50 @@
+{
+  "iteration": 1,
+  "max_iterations": 3,
+  "rows": [
+    {
+      "beat_id": "beat-open",
+      "primary_candidate_ids": [],
+      "external_candidate_ids": [
+        "candidate-query-open-asset-806103fd984c4670ba62f904a034f231-r1-shot-0-15000000",
+        "candidate-query-open-asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+        "candidate-query-open-asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+        "candidate-query-open-asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000"
+      ],
+      "broll_only": true,
+      "support": "partially_supported",
+      "reason": "只有外部空镜，可承担环境或情绪，不能证明具体人物行为",
+      "expression_rewrite": "把该段改为氛围描述，不叙述用户未拍到的具体事件"
+    },
+    {
+      "beat_id": "beat-middle",
+      "primary_candidate_ids": [],
+      "external_candidate_ids": [
+        "candidate-query-middle-establishing-asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000",
+        "candidate-query-middle-asset-806103fd984c4670ba62f904a034f231-r1-shot-0-15000000",
+        "candidate-query-middle-establishing-asset-98a4a373272648ae9d94162489ec315a-r1-shot-0-15000000",
+        "candidate-query-middle-asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+        "candidate-query-middle-asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+        "candidate-query-middle-establishing-asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+        "candidate-query-middle-asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000"
+      ],
+      "broll_only": true,
+      "support": "partially_supported",
+      "reason": "只有外部空镜，可承担环境或情绪，不能证明具体人物行为",
+      "expression_rewrite": "把该段改为氛围描述，不叙述用户未拍到的具体事件"
+    },
+    {
+      "beat_id": "beat-close",
+      "primary_candidate_ids": [],
+      "external_candidate_ids": [
+        "candidate-query-close-asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-0-15000000",
+        "candidate-query-close-atmosphere-asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-0-15000000"
+      ],
+      "broll_only": true,
+      "support": "partially_supported",
+      "reason": "只有外部空镜，可承担环境或情绪，不能证明具体人物行为",
+      "expression_rewrite": "把该段改为氛围描述，不叙述用户未拍到的具体事件"
+    }
+  ],
+  "next_request": null
+}

@@ -48,6 +48,15 @@ _ROLE_ORIGIN_DEFAULTS: dict[str, tuple[str, ...]] = {
     "broll": ("external",),
 }
 
+# Closed label set for external B-roll. The chosen label is a zero-shot
+# prediction, not a human annotation, and the method is stored with the score.
+TAG_LABELS = {
+    "scene": ("小路", "树林", "田野", "夕阳风景", "室内"),
+    "emotion": ("平静", "温暖", "紧张"),
+    "light": ("日光", "暖色光线", "阴天"),
+    "motion": ("人物步行", "航拍", "固定镜头"),
+}
+
 _TOKEN_RE = re.compile(r"[A-Za-z0-9_]+", re.UNICODE)
 _CJK_RE = re.compile(r"[一-鿿]", re.UNICODE)
 
@@ -68,6 +77,10 @@ class RetrievalConfig:
     transcript_weight: float = 0.35
     description_weight: float = 0.65
     low_confidence_threshold: float = 0.22
+    # Scores below this are treated as no match. 0 keeps the old rule of only
+    # dropping a ranking of zero. OpenCLIP cosine on a miss is a small positive
+    # number, so a real visual run sets a floor above that noise.
+    minimum_ranking_score: float = 0.0
     dedup_by_content_hash: bool = True
 
 
@@ -109,6 +122,32 @@ def _usable(segment: dict[str, Any]) -> bool:
 def _segment_duration_us(segment: dict[str, Any]) -> int:
     rng = segment.get("source_range_us") or {}
     return int(rng.get("end", 0)) - int(rng.get("begin", 0))
+
+
+def _hard_constraint_failure(segment: dict[str, Any], asset: dict[str, Any], query: dict[str, Any]) -> str | None:
+    """Return why a segment fails an explicit hard constraint.
+
+    ``duration_budget_us`` is the beat's planning budget. It is not a clip
+    length limit; D trims inside the chosen segment later.
+    """
+    spec = query.get("aspect_ratio")
+    if isinstance(spec, dict) and spec.get("width") and spec.get("height"):
+        video = asset.get("video") or {}
+        width, height = video.get("width"), video.get("height")
+        if not (isinstance(width, int) and isinstance(height, int) and width > 0 and height > 0):
+            return "asset has no pixel dimensions for the requested aspect"
+        actual = width / height
+        target = spec["width"] / spec["height"]
+        if abs(actual - target) / target > 0.03:
+            return f"aspect {width}x{height} does not match {spec['width']}:{spec['height']}"
+    duration = _segment_duration_us(segment)
+    minimum = query.get("min_duration_us")
+    maximum = query.get("max_duration_us")
+    if isinstance(minimum, int) and duration < minimum:
+        return f"duration {duration}us is below min_duration_us {minimum}"
+    if isinstance(maximum, int) and duration > maximum:
+        return f"duration {duration}us is above max_duration_us {maximum}"
+    return None
 
 
 def _load_keyframe_bytes(uri: str, project_root: Path | None) -> bytes | None:
@@ -162,6 +201,7 @@ class Retriever:
     def __init__(self, config: RetrievalConfig | None = None) -> None:
         self.config = config or RetrievalConfig()
         self._encoder = None
+        self._image_cache: dict[str, list[float]] = {}
 
     # ---- scoring ----------------------------------------------------------
 
@@ -170,20 +210,57 @@ class Retriever:
             self._encoder = make_encoder(self.config.encoder_mode)
         return self._encoder
 
-    def _visual_score(self, query_text: str, segment: dict[str, Any],
-                      project_root: Path | None) -> float:
+    def _image_embedding(self, segment: dict[str, Any], project_root: Path | None) -> list[float] | None:
         for kf in segment.get("keyframes") or []:
-            ppm = _load_keyframe_bytes(kf.get("uri", ""), project_root)
+            uri = kf.get("uri", "")
+            if uri in self._image_cache:
+                return self._image_cache[uri]
+            ppm = _load_keyframe_bytes(uri, project_root)
             if ppm is None:
                 continue
             try:
                 embedding = self._encoder_lazy().encode_image(ppm)
-                return float(max(0.0, self._encoder_lazy().score_text_image(query_text, embedding)))
             except Exception:
-                # A bad keyframe should not crash the whole retrieval; move on
-                # and let the description/transcript signals cover the segment.
                 continue
-        return 0.0
+            self._image_cache[uri] = embedding
+            return embedding
+        return None
+
+    def _visual_score(self, query_text: str, segment: dict[str, Any],
+                      project_root: Path | None) -> float:
+        embedding = self._image_embedding(segment, project_root)
+        if embedding is None:
+            return 0.0
+        try:
+            return float(max(0.0, self._encoder_lazy().score_text_image(query_text, embedding)))
+        except Exception:
+            return 0.0
+
+    def _broll_tags(self, segment: dict[str, Any], asset: dict[str, Any],
+                    project_root: Path | None) -> dict[str, Any]:
+        if asset.get("origin") != "external":
+            return {"status": "not_applicable", "reason": "tags are recorded for external b-roll"}
+        if self._encoder_lazy().name != "openclip":
+            return {"status": "not_predicted", "method": "unavailable",
+                    "reason": "fallback encoder has no semantic label head"}
+        embedding = self._image_embedding(segment, project_root)
+        if embedding is None:
+            return {"status": "not_predicted", "method": "openclip-zero-shot",
+                    "reason": "no readable keyframe"}
+        info = self._encoder_lazy().profile()
+        predicted = {}
+        for group, labels in TAG_LABELS.items():
+            score, label = max(
+                (self._encoder_lazy().score_text_image(text, embedding), text) for text in labels
+            )
+            predicted[group] = {"label": label, "score": round(float(score), 4)}
+        return {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": info.get("model"),
+            "pretrained": info.get("pretrained"),
+            **predicted,
+        }
 
     def _text_score(self, query_text: str, segment: dict[str, Any]) -> tuple[float, float]:
         q = _tokens(query_text)
@@ -213,11 +290,16 @@ class Retriever:
         assets_by_id = {a["asset_id"]: a for a in manifest.get("assets", [])}
         segments = manifest.get("segments", [])
 
-        encoder_name = self._encoder_lazy().name
+        encoder = self._encoder_lazy()
+        encoder_name = encoder.name
+        info = encoder.profile() if hasattr(encoder, "profile") else {"encoder": encoder_name}
         score_profile = (
-            f"encoder={encoder_name}; transcript_weight={self.config.transcript_weight}; "
+            f"encoder={info.get('encoder', encoder_name)}; model={info.get('model')}; "
+            f"pretrained={info.get('pretrained')}; dimension={info.get('dimension')}; "
+            f"visual={info.get('visual_score')}; "
+            f"transcript_weight={self.config.transcript_weight}; "
             f"description_weight={self.config.description_weight}; "
-            "scores are per-signal max, not calibrated across models"
+            "ranking_score is the max of separate signals, not a calibrated probability"
         )
 
         results: list[dict[str, Any]] = []
@@ -244,8 +326,11 @@ class Retriever:
             "results": results,
             "retrieval_profile": {
                 "score_profile": score_profile,
-                "encoder": encoder_name,
+                "encoder": info,
                 "dedup_by_content_hash": self.config.dedup_by_content_hash,
+                "duration_budget_us_applied_as_filter": False,
+                "tag_labels": TAG_LABELS if encoder_name == "openclip" else None,
+                "tag_method": "openclip-zero-shot" if encoder_name == "openclip" else "unavailable",
             },
         }
 
@@ -266,6 +351,7 @@ class Retriever:
         pool: list[tuple[float, dict[str, Any], dict[str, Any], dict[str, float]]] = []
         seen_hashes: set[str] = set()
         reasons_dropped: list[str] = []
+        constraint_rejected = 0
         eligible = 0
 
         for segment in segments:
@@ -277,6 +363,11 @@ class Retriever:
                 continue
             if not _usable(segment):
                 reasons_dropped.append(f"segment {segment['segment_id']} marked unusable")
+                continue
+            failure = _hard_constraint_failure(segment, asset, query)
+            if failure:
+                constraint_rejected += 1
+                reasons_dropped.append(f"segment {segment['segment_id']} {failure}")
                 continue
             if self.config.dedup_by_content_hash:
                 content_hash = asset.get("content_hash")
@@ -296,8 +387,10 @@ class Retriever:
             )
             ranking = max(visual, weighted_text)
             # A zero score means the query shares nothing with this segment.
-            # Leave the slot empty instead of padding top_k with it.
-            if ranking <= 0:
+            # Leave the slot empty instead of padding top_k with it. A positive
+            # floor does the same for weak OpenCLIP cosine that is not a match.
+            floor = self.config.minimum_ranking_score
+            if ranking <= 0 or (floor > 0 and ranking < floor):
                 continue
 
             components = {
@@ -336,11 +429,22 @@ class Retriever:
                 "evidence": _evidence_tags(segment, components),
                 "provenance_note": asset.get("provenance_note", ""),
                 "flags": flags,
+                "unmet_conditions": [],
+                "tags": self._broll_tags(segment, asset, project_root),
             })
 
+        constraints = {
+            "aspect_ratio": query.get("aspect_ratio"),
+            "min_duration_us": query.get("min_duration_us"),
+            "max_duration_us": query.get("max_duration_us"),
+            "duration_budget_us_applied_as_filter": False,
+            "rejected": constraint_rejected,
+        }
         if not candidates:
             if eligible:
                 reason = "No segment had a positive match for the query"
+            elif constraint_rejected:
+                reason = "No segment satisfied aspect or duration constraints"
             else:
                 reason = _empty_reason(allowed_origins, reasons_dropped)
             return {
@@ -348,6 +452,7 @@ class Retriever:
                 "status": "empty",
                 "reason": reason,
                 "allowed_origins": list(allowed_origins),
+                "constraints": constraints,
                 "candidates": [],
             }
 
@@ -356,6 +461,7 @@ class Retriever:
             "status": "ok",
             "reason": "" if flags_any_above_threshold else "all candidates below low_confidence_threshold",
             "allowed_origins": list(allowed_origins),
+            "constraints": constraints,
             "candidates": candidates,
         }
 

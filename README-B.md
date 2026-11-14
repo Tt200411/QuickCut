@@ -14,7 +14,7 @@ RetrievalRequest（C）
 CandidateSet（交给 C）
 ```
 
-一条查询如果没有任何正分候选，返回 `status: "empty"` 和原因，不用零分片段凑满 `top_k`。有字面重合但低于 0.22 的片段仍会返回，并标上 `low_confidence`。`duration_budget_us` 是这一段故事的时长预算，不用来删除更长的原片。
+一条查询如果没有任何正分候选，返回 `status: "empty"` 和原因，不用零分片段凑满 `top_k`。有字面重合但低于 0.22 的片段仍会返回，并标上 `low_confidence`。`duration_budget_us` 是这一段故事的时长预算，不用来删除更长的原片。画面比例，以及查询里单独写出的 `min_duration_us` / `max_duration_us`，会在打分前剔除不符合的片段。
 
 ## 每个文件做什么
 
@@ -37,9 +37,9 @@ CandidateSet（交给 C）
 
 `RetrievalRequest` 来自 C。每条查询包含 `query_id`、`semantic_text`、镜头职责 `role`、允许的来源 `allowed_origins` 和 `top_k`。
 
-`CandidateSet` 交给 C。每条查询都有一条结果。候选带回 `candidate_id`、`segment_id`、`asset_id`、`origin`、源时间、视觉分、文字分、`ranking_score`、`score_profile`、证据和 `flags`。
+`CandidateSet` 交给 C。每条查询都有一条结果。候选带回 `candidate_id`、`segment_id`、`asset_id`、`origin`、源时间、视觉分、文字分、`ranking_score`、`score_profile`、证据和 `flags`。外部空镜在使用 OpenCLIP 时带场景、情绪、光线和运镜标签，方法记为 `openclip-zero-shot`。颜色直方图没有语义标签，这些候选的标签状态是 `not_predicted`。
 
-打分取几路信号里的最大值：磁盘上有关键帧时比较画面和查询文字；同时比较查询与字幕、查询与描述的字面重合。`score_profile` 写明使用的编码器。颜色直方图和 CLIP 的分数不能直接互相比较。
+打分取几路信号里的最大值：磁盘上有关键帧时比较画面和查询文字；同时比较查询与字幕、查询与描述的字面重合。`score_profile` 写明编码器、模型、权重和向量维度，并说明分数没有校准。颜色直方图和 CLIP 的分数不能直接互相比较。
 
 ## 如何测试
 
@@ -85,6 +85,8 @@ python3 -m quickcut.cli retrieve outputs/manifest.json outputs/request.json --ou
 ## 交付给 C 
 
 交给 C 的是 `outputs/candidates.json`。当前这份由样例输入生成，只能用来核对格式和召回行为。正式交接要换成 A 的真实 `AssetManifest` 和 C 的真实 `RetrievalRequest`，再重新运行 `retrieve`。
+
+`scripts/demo_pipeline.py` 已经把 B 接进演示链路：A 生成清单后，C 写出 `RetrievalRequest`，B 的 `retrieve()` 返回 `CandidateSet`，再交给 C 的 `plan()` 和 `build_from_plan()`。合成测试画面没有对白，演示会先给每个窗口写上对应故事句，检索才能命中。
 
 交给组长的 B 管线文件是：
 

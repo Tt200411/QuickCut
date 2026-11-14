@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from quickcut.b_report import recall_against_expectations
 from quickcut.retrieval import (
     BRollLibrary,
     RetrievalConfig,
@@ -234,6 +235,108 @@ def test_query_with_no_overlap_is_empty(manifest):
     assert result["candidates"] == []
     assert "positive match" in result["reason"]
     assert out["status"] == "empty"
+
+
+def _tiny_manifest():
+    def asset(asset_id, origin, width, height, duration):
+        return {
+            "asset_id": asset_id, "revision": 1, "origin": origin,
+            "content_hash": f"sha256:{asset_id}", "duration_us": duration,
+            "video": {"width": width, "height": height},
+        }
+
+    def segment(asset_id, duration, text):
+        return {
+            "segment_id": f"seg-{asset_id}", "asset_id": asset_id, "asset_revision": 1,
+            "source_range_us": {"begin": 0, "end": duration},
+            "granularity": "coarse_shot", "quality": {"usable": True, "flags": []},
+            "description": {"text": text, "provider": "test"},
+            "transcript": {"text": ""},
+        }
+
+    document = {
+        "schema_version": "0.1.0", "kind": "AssetManifest", "document_id": "manifest-filter",
+        "project_id": "project-filter", "revision": 1, "fixtures_only": True, "owner": "A",
+        "inputs": [],
+        "assets": [
+            asset("wide", "external", 1920, 1080, 10_000_000),
+            asset("tall", "external", 1080, 1920, 10_000_000),
+            asset("short", "external", 1920, 1080, 2_000_000),
+        ],
+        "segments": [
+            segment("wide", 10_000_000, "小路行走"),
+            segment("tall", 10_000_000, "小路行走"),
+            segment("short", 2_000_000, "小路行走"),
+        ],
+    }
+    return document
+
+
+def _filter_request(**query_fields):
+    query = {
+        "query_id": "q-filter", "beat_id": "beat", "semantic_text": "小路行走",
+        "role": "broll", "allowed_origins": ["external"], "top_k": 4,
+        "duration_budget_us": 1_000_000,
+    }
+    query.update(query_fields)
+    return {
+        "schema_version": "0.1.0", "kind": "RetrievalRequest", "document_id": "request-filter",
+        "project_id": "project-filter", "revision": 1, "fixtures_only": True,
+        "queries": [query],
+    }
+
+
+def test_aspect_and_explicit_duration_are_hard_constraints():
+    manifest = _tiny_manifest()
+    landscape = retrieve(manifest, _filter_request(aspect_ratio={"width": 16, "height": 9}))
+    ids = [item["asset_id"] for item in _result(landscape, "q-filter")["candidates"]]
+    assert "wide" in ids and "short" in ids and "tall" not in ids
+    capped = retrieve(manifest, _filter_request(max_duration_us=3_000_000))
+    capped_ids = [item["asset_id"] for item in _result(capped, "q-filter")["candidates"]]
+    assert capped_ids == ["short"]
+    budget_only = retrieve(manifest, _filter_request())
+    budget_ids = [item["asset_id"] for item in _result(budget_only, "q-filter")["candidates"]]
+    assert "wide" in budget_ids
+    assert budget_only["retrieval_profile"]["duration_budget_us_applied_as_filter"] is False
+
+
+def test_score_profile_names_the_encoder_and_external_tags_stay_unpredicted():
+    out = retrieve(_tiny_manifest(), _filter_request())
+    profile = out["results"][0]["candidates"][0]["score_profile"]
+    assert "model=fallback-color-histogram" in profile
+    assert "dimension=72" in profile
+    assert "not a calibrated probability" in profile
+    assert out["results"][0]["candidates"][0]["tags"]["status"] == "not_predicted"
+
+
+def test_recall_report_records_hits_misses_and_an_empty_gap():
+    manifest = _tiny_manifest()
+    request = _filter_request()
+    request["queries"].append({
+        "query_id": "q-gap", "beat_id": "beat", "semantic_text": "组员登顶后坐下休息",
+        "role": "broll", "allowed_origins": ["external"], "top_k": 4,
+    })
+    candidates = retrieve(manifest, request)
+    expectations = {"cases": [
+        {"query": "小路行走", "expected_paths": ["media/wide.mp4", "media/missing.mp4"]},
+        {"query": "组员登顶后坐下休息", "expected_result": "evidence_gap", "reason": "absent"},
+    ]}
+    report = recall_against_expectations(
+        request, candidates, manifest, expectations,
+        lambda asset: {"wide": "media/wide.mp4", "tall": "media/tall.mp4", "short": "media/short.mp4"}.get(asset.get("asset_id")),
+    )
+    walking = report["cases"][0]
+    assert walking["status"] == "partial"
+    assert walking["missed_paths"] == ["media/missing.mp4"]
+    assert "media/wide.mp4" in walking["recalled_paths"]
+    assert report["cases"][1]["status"] == "gap_confirmed"
+
+
+def test_minimum_ranking_score_drops_weak_matches(manifest, request_doc):
+    found = retrieve(manifest, request_doc)
+    assert _result(found, "query-open")["candidates"]
+    hidden = retrieve(manifest, request_doc, config=RetrievalConfig(minimum_ranking_score=0.99))
+    assert all(result["status"] == "empty" and result["candidates"] == [] for result in hidden["results"])
 
 
 # --------------------------------------------------------------------------

@@ -1,8 +1,9 @@
-"""真实 A → 人工候选夹具 → C → E 测试音调 → D JSON；不执行渲染。"""
+"""真实 A → B 检索 → C → E 测试音调 → D JSON；不执行渲染。"""
 from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager
+import copy
 from dataclasses import asdict
 import functools
 import json
@@ -22,14 +23,15 @@ from quickcut.ingest import IngestConfig, SourceSpec, ingest_assets, validate_as
 from quickcut.media import digest, ffprobe, resolve_uri, write_json
 from quickcut.planning import build_outline, build_retrieval_request, plan
 from quickcut.planning.contracts import envelope, ref
+from quickcut.retrieval import retrieve
 
 OUTPUT = {"width": 320, "height": 180, "fps": {"numerator": 30, "denominator": 1},
           "sample_rate": 48000}
 APPROVED = {"beat-open": "第一段测试画面。", "beat-middle": "第二段测试画面。",
             "beat-close": "第三段测试画面。"}
 LIMITATIONS = [
-    "CandidateSet 是人工 fixture；未执行 B 检索、embedding 或语义识别。",
-    "approved_cues 是预设批准夹具；不代表真人听审或内容审批。",
+    "合成测试画面没有对白。演示给每个窗口写上对应故事句，B 再按字面重合检索。",
+    "候选审阅和 approved_cues 是预设夹具；不代表真人看片或听审。",
     "E fixture_tone 是固定一秒测试音调，不是真实语音；5 秒目标的收尾预算不足时停止 D。",
     "仅生成 D 多轨 JSON；未渲染、未导出编辑器工程、未验证编辑器导入。",
 ]
@@ -79,7 +81,7 @@ def capabilities():
     tools = {name: {"version": run_command([binary, "-version"]).splitlines()[0], "binary": binary}
              for name, binary in (("ffmpeg", _ffmpeg_binary()), ("ffprobe", ffprobe()))}
     return {"tools": tools, "A": {"ingest": True, "asr": "none"},
-            "B": {"executed": False, "candidate_source": "manual_fixture"},
+            "B": {"executed": True, "candidate_source": "retrieve"},
             "C": {"selector": "rule", "vlm_executed": False},
             "E": {"mode": "fixture_tone", "speech": False},
             "D": {"multitrack_json": True}, "render": {"executed": False}}
@@ -92,8 +94,9 @@ def git_state():
         if result.returncode:
             raise DemoError("GIT_METADATA_FAILED", result.stderr.strip())
         return result.stdout.strip()
-    modules = ["quickcut/ingest.py", "quickcut/planning/planning.py", "quickcut/voice_package.py",
-               "quickcut/timeline.py", "quickcut/integration.py", "scripts/demo_pipeline.py"]
+    modules = ["quickcut/ingest.py", "quickcut/retrieval.py", "quickcut/planning/planning.py",
+               "quickcut/voice_package.py", "quickcut/timeline.py", "quickcut/integration.py",
+               "scripts/demo_pipeline.py"]
     return {"head": git("rev-parse", "HEAD"), "branch": git("rev-parse", "--abbrev-ref", "HEAD"),
             "refs": git("show-ref").splitlines(), "status": git("status", "--porcelain").splitlines(),
             "source_hashes": {name: digest(REPO / name) for name in modules}}
@@ -125,33 +128,62 @@ def synthesize_video(root, window_us):
     return target
 
 
-def manual_candidates(manifest, request, *, unsupported=False):
-    shots = sorted((s for s in manifest["segments"] if s["granularity"] == "coarse_shot"
-                    and s["quality"]["usable"]), key=lambda s: s["source_range_us"]["begin"])
-    if len(shots) < len(request["queries"]):
+def label_shot_descriptions(manifest, outline):
+    """给合成窗口写上对应故事句，让没有对白的测试画面能被 B 的文字检索命中。"""
+    labeled = copy.deepcopy(manifest)
+    events = {beat["beat_id"]: beat["wish"]["event"] for beat in outline}
+    shots = sorted((s for s in labeled["segments"] if s.get("granularity") == "coarse_shot"
+                    and (s.get("quality") or {}).get("usable", True)),
+                   key=lambda s: s["source_range_us"]["begin"])
+    beat_ids = [beat["beat_id"] for beat in outline]
+    if len(shots) < len(beat_ids):
         raise DemoError("INSUFFICIENT_MEDIA", "A 未提供三个可用测试窗口")
-    result = envelope("CandidateSet", "manual-fixture-candidates", manifest["project_id"], 1,
-                      fixtures_only=True, owner="B", inputs=[ref(manifest), ref(request)])
-    result.update(status="ok", provenance={"source": "manual_fixture", "retrieval_executed": False,
-                  "owner_note": "owner=B 仅为契约字段；未运行 B 检索"},
-                  notes=["人工映射实际合成测试窗口；fixture_annotation 不证明真实人物事件。"], results=[])
-    for index, query in enumerate(request["queries"]):
-        shot = shots[index]
+    for shot, beat_id in zip(shots, beat_ids):
         bounds = shot["source_range_us"]
-        if bounds["end"] - bounds["begin"] < query["duration_budget_us"]:
-            raise DemoError("INSUFFICIENT_MEDIA", f"{query['beat_id']} 的实际源窗口容量不足")
-        missing = unsupported and query["beat_id"] == "beat-middle"
-        row = {"query_id": query["query_id"], "status": "empty" if missing else "ok", "candidates": []}
-        if missing:
-            row["reason"] = "manual fixture 故意移除中段候选，验证 C 缺口阻断"
-        else:
-            row["candidates"] = [{"candidate_id": f"manual-{index + 1}",
-                "segment_id": shot["segment_id"], "asset_revision": shot["asset_revision"],
-                "visual_score": 1.0, "transcript_score": 0.0, "ranking_score": 1.0,
-                "score_profile": "manual_fixture; not computed or calibrated",
-                "suggested_role": "primary", "evidence": ["fixture_annotation"], "flags": []}]
-        result["results"].append(row)
-    return result
+        shot["description"] = {"text": events[beat_id], "provider": "demo_window_label"}
+        shot["_demo_beat_id"] = beat_id
+        if bounds["end"] - bounds["begin"] <= 0:
+            raise DemoError("INSUFFICIENT_MEDIA", f"{beat_id} 的实际源窗口容量不足")
+    return labeled
+
+
+def preset_reviews(candidates, manifest, request, outline):
+    """把 B 实际返回的候选绑定成演示用审阅，不改检索分数。"""
+    segments = {segment["segment_id"]: segment for segment in manifest["segments"]}
+    queries = {query["query_id"]: query for query in request["queries"]}
+    beats = {beat["beat_id"]: beat for beat in outline}
+    reviews = {}
+    for row in candidates["results"]:
+        beat = beats[queries[row["query_id"]]["beat_id"]]
+        for candidate in row["candidates"]:
+            segment = segments[candidate["segment_id"]]
+            reviews[candidate["candidate_id"]] = {
+                "beat_id": beat["beat_id"],
+                "event": beat["wish"]["event"],
+                "asset_revision": segment["asset_revision"],
+                "asset_id": segment["asset_id"],
+                "segment_id": segment["segment_id"],
+                "source_range_us": segment["source_range_us"],
+                "reviewer": "demo_preset",
+                "note": "合成演示的预设审阅，只用于让 C 接受 B 返回的候选。",
+            }
+    return reviews
+
+
+def retrieve_candidates(manifest, request, outline, root, *, unsupported=False):
+    labeled = label_shot_descriptions(manifest, outline)
+    candidates = retrieve(labeled, request, project_root=root, document_id="candidates-demo")
+    if unsupported:
+        queries = {query["query_id"]: query for query in request["queries"]}
+        for row in candidates["results"]:
+            if queries[row["query_id"]]["beat_id"] != "beat-middle":
+                continue
+            row["status"] = "empty"
+            row["reason"] = "演示用例清空中段候选，验证 C 在 B 没有返回该段时停止"
+            row["candidates"] = []
+        if not any(row["candidates"] for row in candidates["results"]):
+            candidates["status"] = "empty"
+    return labeled, candidates
 
 
 def validate_media(root, manifest, assets, voice=None):
@@ -265,7 +297,7 @@ def run_demo(root, case="supported", target_seconds=10):
     started = perf_counter()
     report = {"schema_version": "0.1.0", "project_id": "project-pipeline-demo", "case": case,
               "target_seconds": target_seconds, "fixturesOnly": True, "status": "running",
-              "stages": [], "calls": {"A": 0, "E": 0, "D": 0}, "files": {},
+              "stages": [], "calls": {"A": 0, "B": 0, "E": 0, "D": 0}, "files": {},
               "render": None, "limitations": LIMITATIONS}
     try:
         with stage(report, "setup"):
@@ -292,9 +324,12 @@ def run_demo(root, case="supported", target_seconds=10):
         with stage(report, "A-validate"):
             report["media_validation"] = validate_media(root, manifest, manifest["assets"])
             report["manifestFixturesOnly"] = manifest["fixtures_only"]
-        with stage(report, "manual-fixture"):
+        with stage(report, "B-retrieve"):
+            report["calls"]["B"] += 1
             request = build_retrieval_request(brief, manifest, outline, broll_queries=False)
-            candidates = manual_candidates(manifest, request, unsupported=case == "unsupported")
+            labeled, candidates = retrieve_candidates(
+                manifest, request, outline, root, unsupported=case == "unsupported")
+            reviews = preset_reviews(candidates, labeled, request, outline)
             write_json(root / "candidate-set.json", candidates)
             write_json(root / "approved-cues-r1.json", {"fixtures_only": True,
                        "approval_source": "preset_fixture_only", "approved_cues": APPROVED})
@@ -307,8 +342,9 @@ def run_demo(root, case="supported", target_seconds=10):
                 write_json(root / "approved-cues-r2.json", {"fixtures_only": True,
                            "approval_source": "preset_fixture_only", "approved_cues": approved})
             with stage(report, f"C-r{revision}"):
-                result = plan(brief, manifest, candidates, retrieval_request=request,
-                              approved_cues=approved, broll_queries=False, plan_revision=revision)
+                result = plan(brief, labeled, candidates, retrieval_request=request,
+                              approved_cues=approved, reviewed_evidence=reviews,
+                              broll_queries=False, plan_revision=revision)
                 save_plan(root, result, revision)
                 report["files"]["story_plan"] = f"story-plan-r{revision}.json"
             if case == "unsupported":
@@ -318,12 +354,12 @@ def run_demo(root, case="supported", target_seconds=10):
                     "status": "needs_input", "code": "UNSUPPORTED_STORY_BEAT", "stage": "C",
                     "project_id": report["project_id"], "action_owner": "C", "retryable": False,
                     "affected_ids": [g["beat_id"] for g in result.story_plan["unresolved_gaps"]],
-                    "message": "人工 fixture 中段缺失；未调用 E/D"})
+                    "message": "B 的中段候选被演示用例清空；未调用 E/D"})
                 break
             with stage(report, f"integration-r{revision}"):
                 with observe_bridge(report, root, revision):
                     built = integration.build_from_plan(
-                        result, brief=brief, manifest=manifest, candidate_set=candidates, root=root,
+                        result, brief=brief, manifest=labeled, candidate_set=candidates, root=root,
                         output=OUTPUT, fixture=True, previous=previous, voice_revision=revision,
                         expected_story_revision=revision, timeline_revision=revision)
             with stage(report, f"media-validation-r{revision}"):

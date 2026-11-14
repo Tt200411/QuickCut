@@ -1,0 +1,2176 @@
+{
+  "method": "decoded_frame_pts",
+  "tolerance_us": 2,
+  "audio": "original_asset_only",
+  "proxy_time_base": "1/1000000",
+  "frames": [
+    {
+      "source_pts": 0,
+      "source_time_us": 0,
+      "proxy_pts": 0,
+      "proxy_time_us": 0
+    },
+    {
+      "source_pts": 1001,
+      "source_time_us": 41708,
+      "proxy_pts": 41708,
+      "proxy_time_us": 41708
+    },
+    {
+      "source_pts": 2002,
+      "source_time_us": 83417,
+      "proxy_pts": 83417,
+      "proxy_time_us": 83417
+    },
+    {
+      "source_pts": 3003,
+      "source_time_us": 125125,
+      "proxy_pts": 125125,
+      "proxy_time_us": 125125
+    },
+    {
+      "source_pts": 4004,
+      "source_time_us": 166833,
+      "proxy_pts": 166833,
+      "proxy_time_us": 166833
+    },
+    {
+      "source_pts": 5005,
+      "source_time_us": 208542,
+      "proxy_pts": 208542,
+      "proxy_time_us": 208542
+    },
+    {
+      "source_pts": 6006,
+      "source_time_us": 250250,
+      "proxy_pts": 250250,
+      "proxy_time_us": 250250
+    },
+    {
+      "source_pts": 7007,
+      "source_time_us": 291958,
+      "proxy_pts": 291958,
+      "proxy_time_us": 291958
+    },
+    {
+      "source_pts": 8008,
+      "source_time_us": 333667,
+      "proxy_pts": 333667,
+      "proxy_time_us": 333667
+    },
+    {
+      "source_pts": 9009,
+      "source_time_us": 375375,
+      "proxy_pts": 375375,
+      "proxy_time_us": 375375
+    },
+    {
+      "source_pts": 10010,
+      "source_time_us": 417083,
+      "proxy_pts": 417083,
+      "proxy_time_us": 417083
+    },
+    {
+      "source_pts": 11011,
+      "source_time_us": 458792,
+      "proxy_pts": 458792,
+      "proxy_time_us": 458792
+    },
+    {
+      "source_pts": 12012,
+      "source_time_us": 500500,
+      "proxy_pts": 500500,
+      "proxy_time_us": 500500
+    },
+    {
+      "source_pts": 13013,
+      "source_time_us": 542208,
+      "proxy_pts": 542208,
+      "proxy_time_us": 542208
+    },
+    {
+      "source_pts": 14014,
+      "source_time_us": 583917,
+      "proxy_pts": 583917,
+      "proxy_time_us": 583917
+    },
+    {
+      "source_pts": 15015,
+      "source_time_us": 625625,
+      "proxy_pts": 625625,
+      "proxy_time_us": 625625
+    },
+    {
+      "source_pts": 16016,
+      "source_time_us": 667333,
+      "proxy_pts": 667333,
+      "proxy_time_us": 667333
+    },
+    {
+      "source_pts": 17017,
+      "source_time_us": 709042,
+      "proxy_pts": 709042,
+      "proxy_time_us": 709042
+    },
+    {
+      "source_pts": 18018,
+      "source_time_us": 750750,
+      "proxy_pts": 750750,
+      "proxy_time_us": 750750
+    },
+    {
+      "source_pts": 19019,
+      "source_time_us": 792458,
+      "proxy_pts": 792458,
+      "proxy_time_us": 792458
+    },
+    {
+      "source_pts": 20020,
+      "source_time_us": 834167,
+      "proxy_pts": 834167,
+      "proxy_time_us": 834167
+    },
+    {
+      "source_pts": 21021,
+      "source_time_us": 875875,
+      "proxy_pts": 875875,
+      "proxy_time_us": 875875
+    },
+    {
+      "source_pts": 22022,
+      "source_time_us": 917583,
+      "proxy_pts": 917583,
+      "proxy_time_us": 917583
+    },
+    {
+      "source_pts": 23023,
+      "source_time_us": 959292,
+      "proxy_pts": 959292,
+      "proxy_time_us": 959292
+    },
+    {
+      "source_pts": 24024,
+      "source_time_us": 1001000,
+      "proxy_pts": 1001000,
+      "proxy_time_us": 1001000
+    },
+    {
+      "source_pts": 25025,
+      "source_time_us": 1042708,
+      "proxy_pts": 1042708,
+      "proxy_time_us": 1042708
+    },
+    {
+      "source_pts": 26026,
+      "source_time_us": 1084417,
+      "proxy_pts": 1084417,
+      "proxy_time_us": 1084417
+    },
+    {
+      "source_pts": 27027,
+      "source_time_us": 1126125,
+      "proxy_pts": 1126125,
+      "proxy_time_us": 1126125
+    },
+    {
+      "source_pts": 28028,
+      "source_time_us": 1167833,
+      "proxy_pts": 1167833,
+      "proxy_time_us": 1167833
+    },
+    {
+      "source_pts": 29029,
+      "source_time_us": 1209542,
+      "proxy_pts": 1209542,
+      "proxy_time_us": 1209542
+    },
+    {
+      "source_pts": 30030,
+      "source_time_us": 1251250,
+      "proxy_pts": 1251250,
+      "proxy_time_us": 1251250
+    },
+    {
+      "source_pts": 31031,
+      "source_time_us": 1292958,
+      "proxy_pts": 1292958,
+      "proxy_time_us": 1292958
+    },
+    {
+      "source_pts": 32032,
+      "source_time_us": 1334667,
+      "proxy_pts": 1334667,
+      "proxy_time_us": 1334667
+    },
+    {
+      "source_pts": 33033,
+      "source_time_us": 1376375,
+      "proxy_pts": 1376375,
+      "proxy_time_us": 1376375
+    },
+    {
+      "source_pts": 34034,
+      "source_time_us": 1418083,
+      "proxy_pts": 1418083,
+      "proxy_time_us": 1418083
+    },
+    {
+      "source_pts": 35035,
+      "source_time_us": 1459792,
+      "proxy_pts": 1459792,
+      "proxy_time_us": 1459792
+    },
+    {
+      "source_pts": 36036,
+      "source_time_us": 1501500,
+      "proxy_pts": 1501500,
+      "proxy_time_us": 1501500
+    },
+    {
+      "source_pts": 37037,
+      "source_time_us": 1543208,
+      "proxy_pts": 1543208,
+      "proxy_time_us": 1543208
+    },
+    {
+      "source_pts": 38038,
+      "source_time_us": 1584917,
+      "proxy_pts": 1584917,
+      "proxy_time_us": 1584917
+    },
+    {
+      "source_pts": 39039,
+      "source_time_us": 1626625,
+      "proxy_pts": 1626625,
+      "proxy_time_us": 1626625
+    },
+    {
+      "source_pts": 40040,
+      "source_time_us": 1668333,
+      "proxy_pts": 1668333,
+      "proxy_time_us": 1668333
+    },
+    {
+      "source_pts": 41041,
+      "source_time_us": 1710042,
+      "proxy_pts": 1710042,
+      "proxy_time_us": 1710042
+    },
+    {
+      "source_pts": 42042,
+      "source_time_us": 1751750,
+      "proxy_pts": 1751750,
+      "proxy_time_us": 1751750
+    },
+    {
+      "source_pts": 43043,
+      "source_time_us": 1793458,
+      "proxy_pts": 1793458,
+      "proxy_time_us": 1793458
+    },
+    {
+      "source_pts": 44044,
+      "source_time_us": 1835167,
+      "proxy_pts": 1835167,
+      "proxy_time_us": 1835167
+    },
+    {
+      "source_pts": 45045,
+      "source_time_us": 1876875,
+      "proxy_pts": 1876875,
+      "proxy_time_us": 1876875
+    },
+    {
+      "source_pts": 46046,
+      "source_time_us": 1918583,
+      "proxy_pts": 1918583,
+      "proxy_time_us": 1918583
+    },
+    {
+      "source_pts": 47047,
+      "source_time_us": 1960292,
+      "proxy_pts": 1960292,
+      "proxy_time_us": 1960292
+    },
+    {
+      "source_pts": 48048,
+      "source_time_us": 2002000,
+      "proxy_pts": 2002000,
+      "proxy_time_us": 2002000
+    },
+    {
+      "source_pts": 49049,
+      "source_time_us": 2043708,
+      "proxy_pts": 2043708,
+      "proxy_time_us": 2043708
+    },
+    {
+      "source_pts": 50050,
+      "source_time_us": 2085417,
+      "proxy_pts": 2085417,
+      "proxy_time_us": 2085417
+    },
+    {
+      "source_pts": 51051,
+      "source_time_us": 2127125,
+      "proxy_pts": 2127125,
+      "proxy_time_us": 2127125
+    },
+    {
+      "source_pts": 52052,
+      "source_time_us": 2168833,
+      "proxy_pts": 2168833,
+      "proxy_time_us": 2168833
+    },
+    {
+      "source_pts": 53053,
+      "source_time_us": 2210542,
+      "proxy_pts": 2210542,
+      "proxy_time_us": 2210542
+    },
+    {
+      "source_pts": 54054,
+      "source_time_us": 2252250,
+      "proxy_pts": 2252250,
+      "proxy_time_us": 2252250
+    },
+    {
+      "source_pts": 55055,
+      "source_time_us": 2293958,
+      "proxy_pts": 2293958,
+      "proxy_time_us": 2293958
+    },
+    {
+      "source_pts": 56056,
+      "source_time_us": 2335667,
+      "proxy_pts": 2335667,
+      "proxy_time_us": 2335667
+    },
+    {
+      "source_pts": 57057,
+      "source_time_us": 2377375,
+      "proxy_pts": 2377375,
+      "proxy_time_us": 2377375
+    },
+    {
+      "source_pts": 58058,
+      "source_time_us": 2419083,
+      "proxy_pts": 2419083,
+      "proxy_time_us": 2419083
+    },
+    {
+      "source_pts": 59059,
+      "source_time_us": 2460792,
+      "proxy_pts": 2460792,
+      "proxy_time_us": 2460792
+    },
+    {
+      "source_pts": 60060,
+      "source_time_us": 2502500,
+      "proxy_pts": 2502500,
+      "proxy_time_us": 2502500
+    },
+    {
+      "source_pts": 61061,
+      "source_time_us": 2544208,
+      "proxy_pts": 2544208,
+      "proxy_time_us": 2544208
+    },
+    {
+      "source_pts": 62062,
+      "source_time_us": 2585917,
+      "proxy_pts": 2585917,
+      "proxy_time_us": 2585917
+    },
+    {
+      "source_pts": 63063,
+      "source_time_us": 2627625,
+      "proxy_pts": 2627625,
+      "proxy_time_us": 2627625
+    },
+    {
+      "source_pts": 64064,
+      "source_time_us": 2669333,
+      "proxy_pts": 2669333,
+      "proxy_time_us": 2669333
+    },
+    {
+      "source_pts": 65065,
+      "source_time_us": 2711042,
+      "proxy_pts": 2711042,
+      "proxy_time_us": 2711042
+    },
+    {
+      "source_pts": 66066,
+      "source_time_us": 2752750,
+      "proxy_pts": 2752750,
+      "proxy_time_us": 2752750
+    },
+    {
+      "source_pts": 67067,
+      "source_time_us": 2794458,
+      "proxy_pts": 2794458,
+      "proxy_time_us": 2794458
+    },
+    {
+      "source_pts": 68068,
+      "source_time_us": 2836167,
+      "proxy_pts": 2836167,
+      "proxy_time_us": 2836167
+    },
+    {
+      "source_pts": 69069,
+      "source_time_us": 2877875,
+      "proxy_pts": 2877875,
+      "proxy_time_us": 2877875
+    },
+    {
+      "source_pts": 70070,
+      "source_time_us": 2919583,
+      "proxy_pts": 2919583,
+      "proxy_time_us": 2919583
+    },
+    {
+      "source_pts": 71071,
+      "source_time_us": 2961292,
+      "proxy_pts": 2961292,
+      "proxy_time_us": 2961292
+    },
+    {
+      "source_pts": 72072,
+      "source_time_us": 3003000,
+      "proxy_pts": 3003000,
+      "proxy_time_us": 3003000
+    },
+    {
+      "source_pts": 73073,
+      "source_time_us": 3044708,
+      "proxy_pts": 3044708,
+      "proxy_time_us": 3044708
+    },
+    {
+      "source_pts": 74074,
+      "source_time_us": 3086417,
+      "proxy_pts": 3086417,
+      "proxy_time_us": 3086417
+    },
+    {
+      "source_pts": 75075,
+      "source_time_us": 3128125,
+      "proxy_pts": 3128125,
+      "proxy_time_us": 3128125
+    },
+    {
+      "source_pts": 76076,
+      "source_time_us": 3169833,
+      "proxy_pts": 3169833,
+      "proxy_time_us": 3169833
+    },
+    {
+      "source_pts": 77077,
+      "source_time_us": 3211542,
+      "proxy_pts": 3211542,
+      "proxy_time_us": 3211542
+    },
+    {
+      "source_pts": 78078,
+      "source_time_us": 3253250,
+      "proxy_pts": 3253250,
+      "proxy_time_us": 3253250
+    },
+    {
+      "source_pts": 79079,
+      "source_time_us": 3294958,
+      "proxy_pts": 3294958,
+      "proxy_time_us": 3294958
+    },
+    {
+      "source_pts": 80080,
+      "source_time_us": 3336667,
+      "proxy_pts": 3336667,
+      "proxy_time_us": 3336667
+    },
+    {
+      "source_pts": 81081,
+      "source_time_us": 3378375,
+      "proxy_pts": 3378375,
+      "proxy_time_us": 3378375
+    },
+    {
+      "source_pts": 82082,
+      "source_time_us": 3420083,
+      "proxy_pts": 3420083,
+      "proxy_time_us": 3420083
+    },
+    {
+      "source_pts": 83083,
+      "source_time_us": 3461792,
+      "proxy_pts": 3461792,
+      "proxy_time_us": 3461792
+    },
+    {
+      "source_pts": 84084,
+      "source_time_us": 3503500,
+      "proxy_pts": 3503500,
+      "proxy_time_us": 3503500
+    },
+    {
+      "source_pts": 85085,
+      "source_time_us": 3545208,
+      "proxy_pts": 3545208,
+      "proxy_time_us": 3545208
+    },
+    {
+      "source_pts": 86086,
+      "source_time_us": 3586917,
+      "proxy_pts": 3586917,
+      "proxy_time_us": 3586917
+    },
+    {
+      "source_pts": 87087,
+      "source_time_us": 3628625,
+      "proxy_pts": 3628625,
+      "proxy_time_us": 3628625
+    },
+    {
+      "source_pts": 88088,
+      "source_time_us": 3670333,
+      "proxy_pts": 3670333,
+      "proxy_time_us": 3670333
+    },
+    {
+      "source_pts": 89089,
+      "source_time_us": 3712042,
+      "proxy_pts": 3712042,
+      "proxy_time_us": 3712042
+    },
+    {
+      "source_pts": 90090,
+      "source_time_us": 3753750,
+      "proxy_pts": 3753750,
+      "proxy_time_us": 3753750
+    },
+    {
+      "source_pts": 91091,
+      "source_time_us": 3795458,
+      "proxy_pts": 3795458,
+      "proxy_time_us": 3795458
+    },
+    {
+      "source_pts": 92092,
+      "source_time_us": 3837167,
+      "proxy_pts": 3837167,
+      "proxy_time_us": 3837167
+    },
+    {
+      "source_pts": 93093,
+      "source_time_us": 3878875,
+      "proxy_pts": 3878875,
+      "proxy_time_us": 3878875
+    },
+    {
+      "source_pts": 94094,
+      "source_time_us": 3920583,
+      "proxy_pts": 3920583,
+      "proxy_time_us": 3920583
+    },
+    {
+      "source_pts": 95095,
+      "source_time_us": 3962292,
+      "proxy_pts": 3962292,
+      "proxy_time_us": 3962292
+    },
+    {
+      "source_pts": 96096,
+      "source_time_us": 4004000,
+      "proxy_pts": 4004000,
+      "proxy_time_us": 4004000
+    },
+    {
+      "source_pts": 97097,
+      "source_time_us": 4045708,
+      "proxy_pts": 4045708,
+      "proxy_time_us": 4045708
+    },
+    {
+      "source_pts": 98098,
+      "source_time_us": 4087417,
+      "proxy_pts": 4087417,
+      "proxy_time_us": 4087417
+    },
+    {
+      "source_pts": 99099,
+      "source_time_us": 4129125,
+      "proxy_pts": 4129125,
+      "proxy_time_us": 4129125
+    },
+    {
+      "source_pts": 100100,
+      "source_time_us": 4170833,
+      "proxy_pts": 4170833,
+      "proxy_time_us": 4170833
+    },
+    {
+      "source_pts": 101101,
+      "source_time_us": 4212542,
+      "proxy_pts": 4212542,
+      "proxy_time_us": 4212542
+    },
+    {
+      "source_pts": 102102,
+      "source_time_us": 4254250,
+      "proxy_pts": 4254250,
+      "proxy_time_us": 4254250
+    },
+    {
+      "source_pts": 103103,
+      "source_time_us": 4295958,
+      "proxy_pts": 4295958,
+      "proxy_time_us": 4295958
+    },
+    {
+      "source_pts": 104104,
+      "source_time_us": 4337667,
+      "proxy_pts": 4337667,
+      "proxy_time_us": 4337667
+    },
+    {
+      "source_pts": 105105,
+      "source_time_us": 4379375,
+      "proxy_pts": 4379375,
+      "proxy_time_us": 4379375
+    },
+    {
+      "source_pts": 106106,
+      "source_time_us": 4421083,
+      "proxy_pts": 4421083,
+      "proxy_time_us": 4421083
+    },
+    {
+      "source_pts": 107107,
+      "source_time_us": 4462792,
+      "proxy_pts": 4462792,
+      "proxy_time_us": 4462792
+    },
+    {
+      "source_pts": 108108,
+      "source_time_us": 4504500,
+      "proxy_pts": 4504500,
+      "proxy_time_us": 4504500
+    },
+    {
+      "source_pts": 109109,
+      "source_time_us": 4546208,
+      "proxy_pts": 4546208,
+      "proxy_time_us": 4546208
+    },
+    {
+      "source_pts": 110110,
+      "source_time_us": 4587917,
+      "proxy_pts": 4587917,
+      "proxy_time_us": 4587917
+    },
+    {
+      "source_pts": 111111,
+      "source_time_us": 4629625,
+      "proxy_pts": 4629625,
+      "proxy_time_us": 4629625
+    },
+    {
+      "source_pts": 112112,
+      "source_time_us": 4671333,
+      "proxy_pts": 4671333,
+      "proxy_time_us": 4671333
+    },
+    {
+      "source_pts": 113113,
+      "source_time_us": 4713042,
+      "proxy_pts": 4713042,
+      "proxy_time_us": 4713042
+    },
+    {
+      "source_pts": 114114,
+      "source_time_us": 4754750,
+      "proxy_pts": 4754750,
+      "proxy_time_us": 4754750
+    },
+    {
+      "source_pts": 115115,
+      "source_time_us": 4796458,
+      "proxy_pts": 4796458,
+      "proxy_time_us": 4796458
+    },
+    {
+      "source_pts": 116116,
+      "source_time_us": 4838167,
+      "proxy_pts": 4838167,
+      "proxy_time_us": 4838167
+    },
+    {
+      "source_pts": 117117,
+      "source_time_us": 4879875,
+      "proxy_pts": 4879875,
+      "proxy_time_us": 4879875
+    },
+    {
+      "source_pts": 118118,
+      "source_time_us": 4921583,
+      "proxy_pts": 4921583,
+      "proxy_time_us": 4921583
+    },
+    {
+      "source_pts": 119119,
+      "source_time_us": 4963292,
+      "proxy_pts": 4963292,
+      "proxy_time_us": 4963292
+    },
+    {
+      "source_pts": 120120,
+      "source_time_us": 5005000,
+      "proxy_pts": 5005000,
+      "proxy_time_us": 5005000
+    },
+    {
+      "source_pts": 121121,
+      "source_time_us": 5046708,
+      "proxy_pts": 5046708,
+      "proxy_time_us": 5046708
+    },
+    {
+      "source_pts": 122122,
+      "source_time_us": 5088417,
+      "proxy_pts": 5088417,
+      "proxy_time_us": 5088417
+    },
+    {
+      "source_pts": 123123,
+      "source_time_us": 5130125,
+      "proxy_pts": 5130125,
+      "proxy_time_us": 5130125
+    },
+    {
+      "source_pts": 124124,
+      "source_time_us": 5171833,
+      "proxy_pts": 5171833,
+      "proxy_time_us": 5171833
+    },
+    {
+      "source_pts": 125125,
+      "source_time_us": 5213542,
+      "proxy_pts": 5213542,
+      "proxy_time_us": 5213542
+    },
+    {
+      "source_pts": 126126,
+      "source_time_us": 5255250,
+      "proxy_pts": 5255250,
+      "proxy_time_us": 5255250
+    },
+    {
+      "source_pts": 127127,
+      "source_time_us": 5296958,
+      "proxy_pts": 5296958,
+      "proxy_time_us": 5296958
+    },
+    {
+      "source_pts": 128128,
+      "source_time_us": 5338667,
+      "proxy_pts": 5338667,
+      "proxy_time_us": 5338667
+    },
+    {
+      "source_pts": 129129,
+      "source_time_us": 5380375,
+      "proxy_pts": 5380375,
+      "proxy_time_us": 5380375
+    },
+    {
+      "source_pts": 130130,
+      "source_time_us": 5422083,
+      "proxy_pts": 5422083,
+      "proxy_time_us": 5422083
+    },
+    {
+      "source_pts": 131131,
+      "source_time_us": 5463792,
+      "proxy_pts": 5463792,
+      "proxy_time_us": 5463792
+    },
+    {
+      "source_pts": 132132,
+      "source_time_us": 5505500,
+      "proxy_pts": 5505500,
+      "proxy_time_us": 5505500
+    },
+    {
+      "source_pts": 133133,
+      "source_time_us": 5547208,
+      "proxy_pts": 5547208,
+      "proxy_time_us": 5547208
+    },
+    {
+      "source_pts": 134134,
+      "source_time_us": 5588917,
+      "proxy_pts": 5588917,
+      "proxy_time_us": 5588917
+    },
+    {
+      "source_pts": 135135,
+      "source_time_us": 5630625,
+      "proxy_pts": 5630625,
+      "proxy_time_us": 5630625
+    },
+    {
+      "source_pts": 136136,
+      "source_time_us": 5672333,
+      "proxy_pts": 5672333,
+      "proxy_time_us": 5672333
+    },
+    {
+      "source_pts": 137137,
+      "source_time_us": 5714042,
+      "proxy_pts": 5714042,
+      "proxy_time_us": 5714042
+    },
+    {
+      "source_pts": 138138,
+      "source_time_us": 5755750,
+      "proxy_pts": 5755750,
+      "proxy_time_us": 5755750
+    },
+    {
+      "source_pts": 139139,
+      "source_time_us": 5797458,
+      "proxy_pts": 5797458,
+      "proxy_time_us": 5797458
+    },
+    {
+      "source_pts": 140140,
+      "source_time_us": 5839167,
+      "proxy_pts": 5839167,
+      "proxy_time_us": 5839167
+    },
+    {
+      "source_pts": 141141,
+      "source_time_us": 5880875,
+      "proxy_pts": 5880875,
+      "proxy_time_us": 5880875
+    },
+    {
+      "source_pts": 142142,
+      "source_time_us": 5922583,
+      "proxy_pts": 5922583,
+      "proxy_time_us": 5922583
+    },
+    {
+      "source_pts": 143143,
+      "source_time_us": 5964292,
+      "proxy_pts": 5964292,
+      "proxy_time_us": 5964292
+    },
+    {
+      "source_pts": 144144,
+      "source_time_us": 6006000,
+      "proxy_pts": 6006000,
+      "proxy_time_us": 6006000
+    },
+    {
+      "source_pts": 145145,
+      "source_time_us": 6047708,
+      "proxy_pts": 6047708,
+      "proxy_time_us": 6047708
+    },
+    {
+      "source_pts": 146146,
+      "source_time_us": 6089417,
+      "proxy_pts": 6089417,
+      "proxy_time_us": 6089417
+    },
+    {
+      "source_pts": 147147,
+      "source_time_us": 6131125,
+      "proxy_pts": 6131125,
+      "proxy_time_us": 6131125
+    },
+    {
+      "source_pts": 148148,
+      "source_time_us": 6172833,
+      "proxy_pts": 6172833,
+      "proxy_time_us": 6172833
+    },
+    {
+      "source_pts": 149149,
+      "source_time_us": 6214542,
+      "proxy_pts": 6214542,
+      "proxy_time_us": 6214542
+    },
+    {
+      "source_pts": 150150,
+      "source_time_us": 6256250,
+      "proxy_pts": 6256250,
+      "proxy_time_us": 6256250
+    },
+    {
+      "source_pts": 151151,
+      "source_time_us": 6297958,
+      "proxy_pts": 6297958,
+      "proxy_time_us": 6297958
+    },
+    {
+      "source_pts": 152152,
+      "source_time_us": 6339667,
+      "proxy_pts": 6339667,
+      "proxy_time_us": 6339667
+    },
+    {
+      "source_pts": 153153,
+      "source_time_us": 6381375,
+      "proxy_pts": 6381375,
+      "proxy_time_us": 6381375
+    },
+    {
+      "source_pts": 154154,
+      "source_time_us": 6423083,
+      "proxy_pts": 6423083,
+      "proxy_time_us": 6423083
+    },
+    {
+      "source_pts": 155155,
+      "source_time_us": 6464792,
+      "proxy_pts": 6464792,
+      "proxy_time_us": 6464792
+    },
+    {
+      "source_pts": 156156,
+      "source_time_us": 6506500,
+      "proxy_pts": 6506500,
+      "proxy_time_us": 6506500
+    },
+    {
+      "source_pts": 157157,
+      "source_time_us": 6548208,
+      "proxy_pts": 6548208,
+      "proxy_time_us": 6548208
+    },
+    {
+      "source_pts": 158158,
+      "source_time_us": 6589917,
+      "proxy_pts": 6589917,
+      "proxy_time_us": 6589917
+    },
+    {
+      "source_pts": 159159,
+      "source_time_us": 6631625,
+      "proxy_pts": 6631625,
+      "proxy_time_us": 6631625
+    },
+    {
+      "source_pts": 160160,
+      "source_time_us": 6673333,
+      "proxy_pts": 6673333,
+      "proxy_time_us": 6673333
+    },
+    {
+      "source_pts": 161161,
+      "source_time_us": 6715042,
+      "proxy_pts": 6715042,
+      "proxy_time_us": 6715042
+    },
+    {
+      "source_pts": 162162,
+      "source_time_us": 6756750,
+      "proxy_pts": 6756750,
+      "proxy_time_us": 6756750
+    },
+    {
+      "source_pts": 163163,
+      "source_time_us": 6798458,
+      "proxy_pts": 6798458,
+      "proxy_time_us": 6798458
+    },
+    {
+      "source_pts": 164164,
+      "source_time_us": 6840167,
+      "proxy_pts": 6840167,
+      "proxy_time_us": 6840167
+    },
+    {
+      "source_pts": 165165,
+      "source_time_us": 6881875,
+      "proxy_pts": 6881875,
+      "proxy_time_us": 6881875
+    },
+    {
+      "source_pts": 166166,
+      "source_time_us": 6923583,
+      "proxy_pts": 6923583,
+      "proxy_time_us": 6923583
+    },
+    {
+      "source_pts": 167167,
+      "source_time_us": 6965292,
+      "proxy_pts": 6965292,
+      "proxy_time_us": 6965292
+    },
+    {
+      "source_pts": 168168,
+      "source_time_us": 7007000,
+      "proxy_pts": 7007000,
+      "proxy_time_us": 7007000
+    },
+    {
+      "source_pts": 169169,
+      "source_time_us": 7048708,
+      "proxy_pts": 7048708,
+      "proxy_time_us": 7048708
+    },
+    {
+      "source_pts": 170170,
+      "source_time_us": 7090417,
+      "proxy_pts": 7090417,
+      "proxy_time_us": 7090417
+    },
+    {
+      "source_pts": 171171,
+      "source_time_us": 7132125,
+      "proxy_pts": 7132125,
+      "proxy_time_us": 7132125
+    },
+    {
+      "source_pts": 172172,
+      "source_time_us": 7173833,
+      "proxy_pts": 7173833,
+      "proxy_time_us": 7173833
+    },
+    {
+      "source_pts": 173173,
+      "source_time_us": 7215542,
+      "proxy_pts": 7215542,
+      "proxy_time_us": 7215542
+    },
+    {
+      "source_pts": 174174,
+      "source_time_us": 7257250,
+      "proxy_pts": 7257250,
+      "proxy_time_us": 7257250
+    },
+    {
+      "source_pts": 175175,
+      "source_time_us": 7298958,
+      "proxy_pts": 7298958,
+      "proxy_time_us": 7298958
+    },
+    {
+      "source_pts": 176176,
+      "source_time_us": 7340667,
+      "proxy_pts": 7340667,
+      "proxy_time_us": 7340667
+    },
+    {
+      "source_pts": 177177,
+      "source_time_us": 7382375,
+      "proxy_pts": 7382375,
+      "proxy_time_us": 7382375
+    },
+    {
+      "source_pts": 178178,
+      "source_time_us": 7424083,
+      "proxy_pts": 7424083,
+      "proxy_time_us": 7424083
+    },
+    {
+      "source_pts": 179179,
+      "source_time_us": 7465792,
+      "proxy_pts": 7465792,
+      "proxy_time_us": 7465792
+    },
+    {
+      "source_pts": 180180,
+      "source_time_us": 7507500,
+      "proxy_pts": 7507500,
+      "proxy_time_us": 7507500
+    },
+    {
+      "source_pts": 181181,
+      "source_time_us": 7549208,
+      "proxy_pts": 7549208,
+      "proxy_time_us": 7549208
+    },
+    {
+      "source_pts": 182182,
+      "source_time_us": 7590917,
+      "proxy_pts": 7590917,
+      "proxy_time_us": 7590917
+    },
+    {
+      "source_pts": 183183,
+      "source_time_us": 7632625,
+      "proxy_pts": 7632625,
+      "proxy_time_us": 7632625
+    },
+    {
+      "source_pts": 184184,
+      "source_time_us": 7674333,
+      "proxy_pts": 7674333,
+      "proxy_time_us": 7674333
+    },
+    {
+      "source_pts": 185185,
+      "source_time_us": 7716042,
+      "proxy_pts": 7716042,
+      "proxy_time_us": 7716042
+    },
+    {
+      "source_pts": 186186,
+      "source_time_us": 7757750,
+      "proxy_pts": 7757750,
+      "proxy_time_us": 7757750
+    },
+    {
+      "source_pts": 187187,
+      "source_time_us": 7799458,
+      "proxy_pts": 7799458,
+      "proxy_time_us": 7799458
+    },
+    {
+      "source_pts": 188188,
+      "source_time_us": 7841167,
+      "proxy_pts": 7841167,
+      "proxy_time_us": 7841167
+    },
+    {
+      "source_pts": 189189,
+      "source_time_us": 7882875,
+      "proxy_pts": 7882875,
+      "proxy_time_us": 7882875
+    },
+    {
+      "source_pts": 190190,
+      "source_time_us": 7924583,
+      "proxy_pts": 7924583,
+      "proxy_time_us": 7924583
+    },
+    {
+      "source_pts": 191191,
+      "source_time_us": 7966292,
+      "proxy_pts": 7966292,
+      "proxy_time_us": 7966292
+    },
+    {
+      "source_pts": 192192,
+      "source_time_us": 8008000,
+      "proxy_pts": 8008000,
+      "proxy_time_us": 8008000
+    },
+    {
+      "source_pts": 193193,
+      "source_time_us": 8049708,
+      "proxy_pts": 8049708,
+      "proxy_time_us": 8049708
+    },
+    {
+      "source_pts": 194194,
+      "source_time_us": 8091417,
+      "proxy_pts": 8091417,
+      "proxy_time_us": 8091417
+    },
+    {
+      "source_pts": 195195,
+      "source_time_us": 8133125,
+      "proxy_pts": 8133125,
+      "proxy_time_us": 8133125
+    },
+    {
+      "source_pts": 196196,
+      "source_time_us": 8174833,
+      "proxy_pts": 8174833,
+      "proxy_time_us": 8174833
+    },
+    {
+      "source_pts": 197197,
+      "source_time_us": 8216542,
+      "proxy_pts": 8216542,
+      "proxy_time_us": 8216542
+    },
+    {
+      "source_pts": 198198,
+      "source_time_us": 8258250,
+      "proxy_pts": 8258250,
+      "proxy_time_us": 8258250
+    },
+    {
+      "source_pts": 199199,
+      "source_time_us": 8299958,
+      "proxy_pts": 8299958,
+      "proxy_time_us": 8299958
+    },
+    {
+      "source_pts": 200200,
+      "source_time_us": 8341667,
+      "proxy_pts": 8341667,
+      "proxy_time_us": 8341667
+    },
+    {
+      "source_pts": 201201,
+      "source_time_us": 8383375,
+      "proxy_pts": 8383375,
+      "proxy_time_us": 8383375
+    },
+    {
+      "source_pts": 202202,
+      "source_time_us": 8425083,
+      "proxy_pts": 8425083,
+      "proxy_time_us": 8425083
+    },
+    {
+      "source_pts": 203203,
+      "source_time_us": 8466792,
+      "proxy_pts": 8466792,
+      "proxy_time_us": 8466792
+    },
+    {
+      "source_pts": 204204,
+      "source_time_us": 8508500,
+      "proxy_pts": 8508500,
+      "proxy_time_us": 8508500
+    },
+    {
+      "source_pts": 205205,
+      "source_time_us": 8550208,
+      "proxy_pts": 8550208,
+      "proxy_time_us": 8550208
+    },
+    {
+      "source_pts": 206206,
+      "source_time_us": 8591917,
+      "proxy_pts": 8591917,
+      "proxy_time_us": 8591917
+    },
+    {
+      "source_pts": 207207,
+      "source_time_us": 8633625,
+      "proxy_pts": 8633625,
+      "proxy_time_us": 8633625
+    },
+    {
+      "source_pts": 208208,
+      "source_time_us": 8675333,
+      "proxy_pts": 8675333,
+      "proxy_time_us": 8675333
+    },
+    {
+      "source_pts": 209209,
+      "source_time_us": 8717042,
+      "proxy_pts": 8717042,
+      "proxy_time_us": 8717042
+    },
+    {
+      "source_pts": 210210,
+      "source_time_us": 8758750,
+      "proxy_pts": 8758750,
+      "proxy_time_us": 8758750
+    },
+    {
+      "source_pts": 211211,
+      "source_time_us": 8800458,
+      "proxy_pts": 8800458,
+      "proxy_time_us": 8800458
+    },
+    {
+      "source_pts": 212212,
+      "source_time_us": 8842167,
+      "proxy_pts": 8842167,
+      "proxy_time_us": 8842167
+    },
+    {
+      "source_pts": 213213,
+      "source_time_us": 8883875,
+      "proxy_pts": 8883875,
+      "proxy_time_us": 8883875
+    },
+    {
+      "source_pts": 214214,
+      "source_time_us": 8925583,
+      "proxy_pts": 8925583,
+      "proxy_time_us": 8925583
+    },
+    {
+      "source_pts": 215215,
+      "source_time_us": 8967292,
+      "proxy_pts": 8967292,
+      "proxy_time_us": 8967292
+    },
+    {
+      "source_pts": 216216,
+      "source_time_us": 9009000,
+      "proxy_pts": 9009000,
+      "proxy_time_us": 9009000
+    },
+    {
+      "source_pts": 217217,
+      "source_time_us": 9050708,
+      "proxy_pts": 9050708,
+      "proxy_time_us": 9050708
+    },
+    {
+      "source_pts": 218218,
+      "source_time_us": 9092417,
+      "proxy_pts": 9092417,
+      "proxy_time_us": 9092417
+    },
+    {
+      "source_pts": 219219,
+      "source_time_us": 9134125,
+      "proxy_pts": 9134125,
+      "proxy_time_us": 9134125
+    },
+    {
+      "source_pts": 220220,
+      "source_time_us": 9175833,
+      "proxy_pts": 9175833,
+      "proxy_time_us": 9175833
+    },
+    {
+      "source_pts": 221221,
+      "source_time_us": 9217542,
+      "proxy_pts": 9217542,
+      "proxy_time_us": 9217542
+    },
+    {
+      "source_pts": 222222,
+      "source_time_us": 9259250,
+      "proxy_pts": 9259250,
+      "proxy_time_us": 9259250
+    },
+    {
+      "source_pts": 223223,
+      "source_time_us": 9300958,
+      "proxy_pts": 9300958,
+      "proxy_time_us": 9300958
+    },
+    {
+      "source_pts": 224224,
+      "source_time_us": 9342667,
+      "proxy_pts": 9342667,
+      "proxy_time_us": 9342667
+    },
+    {
+      "source_pts": 225225,
+      "source_time_us": 9384375,
+      "proxy_pts": 9384375,
+      "proxy_time_us": 9384375
+    },
+    {
+      "source_pts": 226226,
+      "source_time_us": 9426083,
+      "proxy_pts": 9426083,
+      "proxy_time_us": 9426083
+    },
+    {
+      "source_pts": 227227,
+      "source_time_us": 9467792,
+      "proxy_pts": 9467792,
+      "proxy_time_us": 9467792
+    },
+    {
+      "source_pts": 228228,
+      "source_time_us": 9509500,
+      "proxy_pts": 9509500,
+      "proxy_time_us": 9509500
+    },
+    {
+      "source_pts": 229229,
+      "source_time_us": 9551208,
+      "proxy_pts": 9551208,
+      "proxy_time_us": 9551208
+    },
+    {
+      "source_pts": 230230,
+      "source_time_us": 9592917,
+      "proxy_pts": 9592917,
+      "proxy_time_us": 9592917
+    },
+    {
+      "source_pts": 231231,
+      "source_time_us": 9634625,
+      "proxy_pts": 9634625,
+      "proxy_time_us": 9634625
+    },
+    {
+      "source_pts": 232232,
+      "source_time_us": 9676333,
+      "proxy_pts": 9676333,
+      "proxy_time_us": 9676333
+    },
+    {
+      "source_pts": 233233,
+      "source_time_us": 9718042,
+      "proxy_pts": 9718042,
+      "proxy_time_us": 9718042
+    },
+    {
+      "source_pts": 234234,
+      "source_time_us": 9759750,
+      "proxy_pts": 9759750,
+      "proxy_time_us": 9759750
+    },
+    {
+      "source_pts": 235235,
+      "source_time_us": 9801458,
+      "proxy_pts": 9801458,
+      "proxy_time_us": 9801458
+    },
+    {
+      "source_pts": 236236,
+      "source_time_us": 9843167,
+      "proxy_pts": 9843167,
+      "proxy_time_us": 9843167
+    },
+    {
+      "source_pts": 237237,
+      "source_time_us": 9884875,
+      "proxy_pts": 9884875,
+      "proxy_time_us": 9884875
+    },
+    {
+      "source_pts": 238238,
+      "source_time_us": 9926583,
+      "proxy_pts": 9926583,
+      "proxy_time_us": 9926583
+    },
+    {
+      "source_pts": 239239,
+      "source_time_us": 9968292,
+      "proxy_pts": 9968292,
+      "proxy_time_us": 9968292
+    },
+    {
+      "source_pts": 240240,
+      "source_time_us": 10010000,
+      "proxy_pts": 10010000,
+      "proxy_time_us": 10010000
+    },
+    {
+      "source_pts": 241241,
+      "source_time_us": 10051708,
+      "proxy_pts": 10051708,
+      "proxy_time_us": 10051708
+    },
+    {
+      "source_pts": 242242,
+      "source_time_us": 10093417,
+      "proxy_pts": 10093417,
+      "proxy_time_us": 10093417
+    },
+    {
+      "source_pts": 243243,
+      "source_time_us": 10135125,
+      "proxy_pts": 10135125,
+      "proxy_time_us": 10135125
+    },
+    {
+      "source_pts": 244244,
+      "source_time_us": 10176833,
+      "proxy_pts": 10176833,
+      "proxy_time_us": 10176833
+    },
+    {
+      "source_pts": 245245,
+      "source_time_us": 10218542,
+      "proxy_pts": 10218542,
+      "proxy_time_us": 10218542
+    },
+    {
+      "source_pts": 246246,
+      "source_time_us": 10260250,
+      "proxy_pts": 10260250,
+      "proxy_time_us": 10260250
+    },
+    {
+      "source_pts": 247247,
+      "source_time_us": 10301958,
+      "proxy_pts": 10301958,
+      "proxy_time_us": 10301958
+    },
+    {
+      "source_pts": 248248,
+      "source_time_us": 10343667,
+      "proxy_pts": 10343667,
+      "proxy_time_us": 10343667
+    },
+    {
+      "source_pts": 249249,
+      "source_time_us": 10385375,
+      "proxy_pts": 10385375,
+      "proxy_time_us": 10385375
+    },
+    {
+      "source_pts": 250250,
+      "source_time_us": 10427083,
+      "proxy_pts": 10427083,
+      "proxy_time_us": 10427083
+    },
+    {
+      "source_pts": 251251,
+      "source_time_us": 10468792,
+      "proxy_pts": 10468792,
+      "proxy_time_us": 10468792
+    },
+    {
+      "source_pts": 252252,
+      "source_time_us": 10510500,
+      "proxy_pts": 10510500,
+      "proxy_time_us": 10510500
+    },
+    {
+      "source_pts": 253253,
+      "source_time_us": 10552208,
+      "proxy_pts": 10552208,
+      "proxy_time_us": 10552208
+    },
+    {
+      "source_pts": 254254,
+      "source_time_us": 10593917,
+      "proxy_pts": 10593917,
+      "proxy_time_us": 10593917
+    },
+    {
+      "source_pts": 255255,
+      "source_time_us": 10635625,
+      "proxy_pts": 10635625,
+      "proxy_time_us": 10635625
+    },
+    {
+      "source_pts": 256256,
+      "source_time_us": 10677333,
+      "proxy_pts": 10677333,
+      "proxy_time_us": 10677333
+    },
+    {
+      "source_pts": 257257,
+      "source_time_us": 10719042,
+      "proxy_pts": 10719042,
+      "proxy_time_us": 10719042
+    },
+    {
+      "source_pts": 258258,
+      "source_time_us": 10760750,
+      "proxy_pts": 10760750,
+      "proxy_time_us": 10760750
+    },
+    {
+      "source_pts": 259259,
+      "source_time_us": 10802458,
+      "proxy_pts": 10802458,
+      "proxy_time_us": 10802458
+    },
+    {
+      "source_pts": 260260,
+      "source_time_us": 10844167,
+      "proxy_pts": 10844167,
+      "proxy_time_us": 10844167
+    },
+    {
+      "source_pts": 261261,
+      "source_time_us": 10885875,
+      "proxy_pts": 10885875,
+      "proxy_time_us": 10885875
+    },
+    {
+      "source_pts": 262262,
+      "source_time_us": 10927583,
+      "proxy_pts": 10927583,
+      "proxy_time_us": 10927583
+    },
+    {
+      "source_pts": 263263,
+      "source_time_us": 10969292,
+      "proxy_pts": 10969292,
+      "proxy_time_us": 10969292
+    },
+    {
+      "source_pts": 264264,
+      "source_time_us": 11011000,
+      "proxy_pts": 11011000,
+      "proxy_time_us": 11011000
+    },
+    {
+      "source_pts": 265265,
+      "source_time_us": 11052708,
+      "proxy_pts": 11052708,
+      "proxy_time_us": 11052708
+    },
+    {
+      "source_pts": 266266,
+      "source_time_us": 11094417,
+      "proxy_pts": 11094417,
+      "proxy_time_us": 11094417
+    },
+    {
+      "source_pts": 267267,
+      "source_time_us": 11136125,
+      "proxy_pts": 11136125,
+      "proxy_time_us": 11136125
+    },
+    {
+      "source_pts": 268268,
+      "source_time_us": 11177833,
+      "proxy_pts": 11177833,
+      "proxy_time_us": 11177833
+    },
+    {
+      "source_pts": 269269,
+      "source_time_us": 11219542,
+      "proxy_pts": 11219542,
+      "proxy_time_us": 11219542
+    },
+    {
+      "source_pts": 270270,
+      "source_time_us": 11261250,
+      "proxy_pts": 11261250,
+      "proxy_time_us": 11261250
+    },
+    {
+      "source_pts": 271271,
+      "source_time_us": 11302958,
+      "proxy_pts": 11302958,
+      "proxy_time_us": 11302958
+    },
+    {
+      "source_pts": 272272,
+      "source_time_us": 11344667,
+      "proxy_pts": 11344667,
+      "proxy_time_us": 11344667
+    },
+    {
+      "source_pts": 273273,
+      "source_time_us": 11386375,
+      "proxy_pts": 11386375,
+      "proxy_time_us": 11386375
+    },
+    {
+      "source_pts": 274274,
+      "source_time_us": 11428083,
+      "proxy_pts": 11428083,
+      "proxy_time_us": 11428083
+    },
+    {
+      "source_pts": 275275,
+      "source_time_us": 11469792,
+      "proxy_pts": 11469792,
+      "proxy_time_us": 11469792
+    },
+    {
+      "source_pts": 276276,
+      "source_time_us": 11511500,
+      "proxy_pts": 11511500,
+      "proxy_time_us": 11511500
+    },
+    {
+      "source_pts": 277277,
+      "source_time_us": 11553208,
+      "proxy_pts": 11553208,
+      "proxy_time_us": 11553208
+    },
+    {
+      "source_pts": 278278,
+      "source_time_us": 11594917,
+      "proxy_pts": 11594917,
+      "proxy_time_us": 11594917
+    },
+    {
+      "source_pts": 279279,
+      "source_time_us": 11636625,
+      "proxy_pts": 11636625,
+      "proxy_time_us": 11636625
+    },
+    {
+      "source_pts": 280280,
+      "source_time_us": 11678333,
+      "proxy_pts": 11678333,
+      "proxy_time_us": 11678333
+    },
+    {
+      "source_pts": 281281,
+      "source_time_us": 11720042,
+      "proxy_pts": 11720042,
+      "proxy_time_us": 11720042
+    },
+    {
+      "source_pts": 282282,
+      "source_time_us": 11761750,
+      "proxy_pts": 11761750,
+      "proxy_time_us": 11761750
+    },
+    {
+      "source_pts": 283283,
+      "source_time_us": 11803458,
+      "proxy_pts": 11803458,
+      "proxy_time_us": 11803458
+    },
+    {
+      "source_pts": 284284,
+      "source_time_us": 11845167,
+      "proxy_pts": 11845167,
+      "proxy_time_us": 11845167
+    },
+    {
+      "source_pts": 285285,
+      "source_time_us": 11886875,
+      "proxy_pts": 11886875,
+      "proxy_time_us": 11886875
+    },
+    {
+      "source_pts": 286286,
+      "source_time_us": 11928583,
+      "proxy_pts": 11928583,
+      "proxy_time_us": 11928583
+    },
+    {
+      "source_pts": 287287,
+      "source_time_us": 11970292,
+      "proxy_pts": 11970292,
+      "proxy_time_us": 11970292
+    },
+    {
+      "source_pts": 288288,
+      "source_time_us": 12012000,
+      "proxy_pts": 12012000,
+      "proxy_time_us": 12012000
+    },
+    {
+      "source_pts": 289289,
+      "source_time_us": 12053708,
+      "proxy_pts": 12053708,
+      "proxy_time_us": 12053708
+    },
+    {
+      "source_pts": 290290,
+      "source_time_us": 12095417,
+      "proxy_pts": 12095417,
+      "proxy_time_us": 12095417
+    },
+    {
+      "source_pts": 291291,
+      "source_time_us": 12137125,
+      "proxy_pts": 12137125,
+      "proxy_time_us": 12137125
+    },
+    {
+      "source_pts": 292292,
+      "source_time_us": 12178833,
+      "proxy_pts": 12178833,
+      "proxy_time_us": 12178833
+    },
+    {
+      "source_pts": 293293,
+      "source_time_us": 12220542,
+      "proxy_pts": 12220542,
+      "proxy_time_us": 12220542
+    },
+    {
+      "source_pts": 294294,
+      "source_time_us": 12262250,
+      "proxy_pts": 12262250,
+      "proxy_time_us": 12262250
+    },
+    {
+      "source_pts": 295295,
+      "source_time_us": 12303958,
+      "proxy_pts": 12303958,
+      "proxy_time_us": 12303958
+    },
+    {
+      "source_pts": 296296,
+      "source_time_us": 12345667,
+      "proxy_pts": 12345667,
+      "proxy_time_us": 12345667
+    },
+    {
+      "source_pts": 297297,
+      "source_time_us": 12387375,
+      "proxy_pts": 12387375,
+      "proxy_time_us": 12387375
+    },
+    {
+      "source_pts": 298298,
+      "source_time_us": 12429083,
+      "proxy_pts": 12429083,
+      "proxy_time_us": 12429083
+    },
+    {
+      "source_pts": 299299,
+      "source_time_us": 12470792,
+      "proxy_pts": 12470792,
+      "proxy_time_us": 12470792
+    },
+    {
+      "source_pts": 300300,
+      "source_time_us": 12512500,
+      "proxy_pts": 12512500,
+      "proxy_time_us": 12512500
+    },
+    {
+      "source_pts": 301301,
+      "source_time_us": 12554208,
+      "proxy_pts": 12554208,
+      "proxy_time_us": 12554208
+    },
+    {
+      "source_pts": 302302,
+      "source_time_us": 12595917,
+      "proxy_pts": 12595917,
+      "proxy_time_us": 12595917
+    },
+    {
+      "source_pts": 303303,
+      "source_time_us": 12637625,
+      "proxy_pts": 12637625,
+      "proxy_time_us": 12637625
+    },
+    {
+      "source_pts": 304304,
+      "source_time_us": 12679333,
+      "proxy_pts": 12679333,
+      "proxy_time_us": 12679333
+    },
+    {
+      "source_pts": 305305,
+      "source_time_us": 12721042,
+      "proxy_pts": 12721042,
+      "proxy_time_us": 12721042
+    },
+    {
+      "source_pts": 306306,
+      "source_time_us": 12762750,
+      "proxy_pts": 12762750,
+      "proxy_time_us": 12762750
+    },
+    {
+      "source_pts": 307307,
+      "source_time_us": 12804458,
+      "proxy_pts": 12804458,
+      "proxy_time_us": 12804458
+    },
+    {
+      "source_pts": 308308,
+      "source_time_us": 12846167,
+      "proxy_pts": 12846167,
+      "proxy_time_us": 12846167
+    },
+    {
+      "source_pts": 309309,
+      "source_time_us": 12887875,
+      "proxy_pts": 12887875,
+      "proxy_time_us": 12887875
+    },
+    {
+      "source_pts": 310310,
+      "source_time_us": 12929583,
+      "proxy_pts": 12929583,
+      "proxy_time_us": 12929583
+    },
+    {
+      "source_pts": 311311,
+      "source_time_us": 12971292,
+      "proxy_pts": 12971292,
+      "proxy_time_us": 12971292
+    },
+    {
+      "source_pts": 312312,
+      "source_time_us": 13013000,
+      "proxy_pts": 13013000,
+      "proxy_time_us": 13013000
+    },
+    {
+      "source_pts": 313313,
+      "source_time_us": 13054708,
+      "proxy_pts": 13054708,
+      "proxy_time_us": 13054708
+    },
+    {
+      "source_pts": 314314,
+      "source_time_us": 13096417,
+      "proxy_pts": 13096417,
+      "proxy_time_us": 13096417
+    },
+    {
+      "source_pts": 315315,
+      "source_time_us": 13138125,
+      "proxy_pts": 13138125,
+      "proxy_time_us": 13138125
+    },
+    {
+      "source_pts": 316316,
+      "source_time_us": 13179833,
+      "proxy_pts": 13179833,
+      "proxy_time_us": 13179833
+    },
+    {
+      "source_pts": 317317,
+      "source_time_us": 13221542,
+      "proxy_pts": 13221542,
+      "proxy_time_us": 13221542
+    },
+    {
+      "source_pts": 318318,
+      "source_time_us": 13263250,
+      "proxy_pts": 13263250,
+      "proxy_time_us": 13263250
+    },
+    {
+      "source_pts": 319319,
+      "source_time_us": 13304958,
+      "proxy_pts": 13304958,
+      "proxy_time_us": 13304958
+    },
+    {
+      "source_pts": 320320,
+      "source_time_us": 13346667,
+      "proxy_pts": 13346667,
+      "proxy_time_us": 13346667
+    },
+    {
+      "source_pts": 321321,
+      "source_time_us": 13388375,
+      "proxy_pts": 13388375,
+      "proxy_time_us": 13388375
+    },
+    {
+      "source_pts": 322322,
+      "source_time_us": 13430083,
+      "proxy_pts": 13430083,
+      "proxy_time_us": 13430083
+    },
+    {
+      "source_pts": 323323,
+      "source_time_us": 13471792,
+      "proxy_pts": 13471792,
+      "proxy_time_us": 13471792
+    },
+    {
+      "source_pts": 324324,
+      "source_time_us": 13513500,
+      "proxy_pts": 13513500,
+      "proxy_time_us": 13513500
+    },
+    {
+      "source_pts": 325325,
+      "source_time_us": 13555208,
+      "proxy_pts": 13555208,
+      "proxy_time_us": 13555208
+    },
+    {
+      "source_pts": 326326,
+      "source_time_us": 13596917,
+      "proxy_pts": 13596917,
+      "proxy_time_us": 13596917
+    },
+    {
+      "source_pts": 327327,
+      "source_time_us": 13638625,
+      "proxy_pts": 13638625,
+      "proxy_time_us": 13638625
+    },
+    {
+      "source_pts": 328328,
+      "source_time_us": 13680333,
+      "proxy_pts": 13680333,
+      "proxy_time_us": 13680333
+    },
+    {
+      "source_pts": 329329,
+      "source_time_us": 13722042,
+      "proxy_pts": 13722042,
+      "proxy_time_us": 13722042
+    },
+    {
+      "source_pts": 330330,
+      "source_time_us": 13763750,
+      "proxy_pts": 13763750,
+      "proxy_time_us": 13763750
+    },
+    {
+      "source_pts": 331331,
+      "source_time_us": 13805458,
+      "proxy_pts": 13805458,
+      "proxy_time_us": 13805458
+    },
+    {
+      "source_pts": 332332,
+      "source_time_us": 13847167,
+      "proxy_pts": 13847167,
+      "proxy_time_us": 13847167
+    },
+    {
+      "source_pts": 333333,
+      "source_time_us": 13888875,
+      "proxy_pts": 13888875,
+      "proxy_time_us": 13888875
+    },
+    {
+      "source_pts": 334334,
+      "source_time_us": 13930583,
+      "proxy_pts": 13930583,
+      "proxy_time_us": 13930583
+    },
+    {
+      "source_pts": 335335,
+      "source_time_us": 13972292,
+      "proxy_pts": 13972292,
+      "proxy_time_us": 13972292
+    },
+    {
+      "source_pts": 336336,
+      "source_time_us": 14014000,
+      "proxy_pts": 14014000,
+      "proxy_time_us": 14014000
+    },
+    {
+      "source_pts": 337337,
+      "source_time_us": 14055708,
+      "proxy_pts": 14055708,
+      "proxy_time_us": 14055708
+    },
+    {
+      "source_pts": 338338,
+      "source_time_us": 14097417,
+      "proxy_pts": 14097417,
+      "proxy_time_us": 14097417
+    },
+    {
+      "source_pts": 339339,
+      "source_time_us": 14139125,
+      "proxy_pts": 14139125,
+      "proxy_time_us": 14139125
+    },
+    {
+      "source_pts": 340340,
+      "source_time_us": 14180833,
+      "proxy_pts": 14180833,
+      "proxy_time_us": 14180833
+    },
+    {
+      "source_pts": 341341,
+      "source_time_us": 14222542,
+      "proxy_pts": 14222542,
+      "proxy_time_us": 14222542
+    },
+    {
+      "source_pts": 342342,
+      "source_time_us": 14264250,
+      "proxy_pts": 14264250,
+      "proxy_time_us": 14264250
+    },
+    {
+      "source_pts": 343343,
+      "source_time_us": 14305958,
+      "proxy_pts": 14305958,
+      "proxy_time_us": 14305958
+    },
+    {
+      "source_pts": 344344,
+      "source_time_us": 14347667,
+      "proxy_pts": 14347667,
+      "proxy_time_us": 14347667
+    },
+    {
+      "source_pts": 345345,
+      "source_time_us": 14389375,
+      "proxy_pts": 14389375,
+      "proxy_time_us": 14389375
+    },
+    {
+      "source_pts": 346346,
+      "source_time_us": 14431083,
+      "proxy_pts": 14431083,
+      "proxy_time_us": 14431083
+    },
+    {
+      "source_pts": 347347,
+      "source_time_us": 14472792,
+      "proxy_pts": 14472792,
+      "proxy_time_us": 14472792
+    },
+    {
+      "source_pts": 348348,
+      "source_time_us": 14514500,
+      "proxy_pts": 14514500,
+      "proxy_time_us": 14514500
+    },
+    {
+      "source_pts": 349349,
+      "source_time_us": 14556208,
+      "proxy_pts": 14556208,
+      "proxy_time_us": 14556208
+    },
+    {
+      "source_pts": 350350,
+      "source_time_us": 14597917,
+      "proxy_pts": 14597917,
+      "proxy_time_us": 14597917
+    },
+    {
+      "source_pts": 351351,
+      "source_time_us": 14639625,
+      "proxy_pts": 14639625,
+      "proxy_time_us": 14639625
+    },
+    {
+      "source_pts": 352352,
+      "source_time_us": 14681333,
+      "proxy_pts": 14681333,
+      "proxy_time_us": 14681333
+    },
+    {
+      "source_pts": 353353,
+      "source_time_us": 14723042,
+      "proxy_pts": 14723042,
+      "proxy_time_us": 14723042
+    },
+    {
+      "source_pts": 354354,
+      "source_time_us": 14764750,
+      "proxy_pts": 14764750,
+      "proxy_time_us": 14764750
+    },
+    {
+      "source_pts": 355355,
+      "source_time_us": 14806458,
+      "proxy_pts": 14806458,
+      "proxy_time_us": 14806458
+    },
+    {
+      "source_pts": 356356,
+      "source_time_us": 14848167,
+      "proxy_pts": 14848167,
+      "proxy_time_us": 14848167
+    },
+    {
+      "source_pts": 357357,
+      "source_time_us": 14889875,
+      "proxy_pts": 14889875,
+      "proxy_time_us": 14889875
+    },
+    {
+      "source_pts": 358358,
+      "source_time_us": 14931583,
+      "proxy_pts": 14931583,
+      "proxy_time_us": 14931583
+    },
+    {
+      "source_pts": 359359,
+      "source_time_us": 14973292,
+      "proxy_pts": 14973292,
+      "proxy_time_us": 14973292
+    },
+    {
+      "source_pts": 360360,
+      "source_time_us": 15015000,
+      "proxy_pts": 15015000,
+      "proxy_time_us": 15015000
+    }
+  ],
+  "source_time_base": "1/24000",
+  "source_origin_pts": 0
+}

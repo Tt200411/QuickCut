@@ -1,0 +1,1376 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "AssetManifest",
+  "document_id": "manifest-1aebcf579acf476087b5110924b0862e",
+  "project_id": "project-countryside",
+  "revision": 1,
+  "fixtures_only": false,
+  "owner": "A",
+  "inputs": [],
+  "assets": [
+    {
+      "asset_id": "asset-806103fd984c4670ba62f904a034f231",
+      "revision": 1,
+      "origin": "external",
+      "uri": "media/external/asset-806103fd984c4670ba62f904a034f231/r1.mp4",
+      "content_hash": "sha256:b11de2acb26d6de3d3985ae5ae95d56051b08e993cfe28c6be31f9004a5f4a86",
+      "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461943/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved.",
+      "media_kind": "video",
+      "duration_us": 28611916,
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "fps": {
+          "numerator": 24000,
+          "denominator": 1001
+        },
+        "time_base": "1/24000",
+        "start_time_us": 0,
+        "codec": "h264",
+        "stream_index": 0,
+        "source_origin_pts": 0,
+        "source_origin_us": 0,
+        "variable_frame_rate": false
+      },
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 2,
+        "codec": "aac",
+        "start_time_us": 0
+      },
+      "source_pts_uri": "derived/asset-806103fd984c4670ba62f904a034f231/r1/probe-88b5053fc47dcdc3d912b535/source-pts.json",
+      "proxy_uri": "derived/asset-806103fd984c4670ba62f904a034f231/r1/proxy-74cd6d2d749735ac0670468b/proxy.mp4",
+      "proxy_mapping_uri": "derived/asset-806103fd984c4670ba62f904a034f231/r1/proxy-74cd6d2d749735ac0670468b/proxy-map.json",
+      "proxy_status": "success",
+      "transcript": {
+        "status": "disabled",
+        "profile": {
+          "asr": "none",
+          "asr_model": "tiny",
+          "asr_language": null,
+          "asr_device": "cpu",
+          "asr_compute_type": "int8",
+          "asr_beam_size": 5,
+          "asr_cpu_threads": 2,
+          "asr_num_workers": 1,
+          "asr_vad": true,
+          "asr_condition_on_previous_text": false,
+          "asr_initial_prompt": null,
+          "asr_hotwords": null,
+          "asr_model_revision": null,
+          "packages": {
+            "faster-whisper": "unavailable",
+            "ctranslate2": "unavailable",
+            "av": "unavailable",
+            "tokenizers": "0.23.3",
+            "onnxruntime": "unavailable",
+            "huggingface-hub": "2.4.0"
+          },
+          "vad_filter": true,
+          "audio_preprocessing": "video-origin-mono-16k-v1",
+          "diagnostics_version": 1
+        },
+        "segments": [],
+        "diagnostics": {},
+        "source_content_hash": "sha256:b11de2acb26d6de3d3985ae5ae95d56051b08e993cfe28c6be31f9004a5f4a86",
+        "review": {
+          "status": "not_applicable",
+          "reasons": [],
+          "policy": {
+            "version": 1,
+            "calibrated": false,
+            "min_avg_logprob": -1.0,
+            "max_no_speech_prob": 0.6,
+            "max_compression_ratio": 2.4,
+            "tail_tolerance_us": 500000
+          }
+        },
+        "uri": "derived/asset-806103fd984c4670ba62f904a034f231/r1/asr-54f4baa98db5f7f9ace27936/transcript.json"
+      },
+      "processing_status": "success"
+    },
+    {
+      "asset_id": "asset-98a4a373272648ae9d94162489ec315a",
+      "revision": 1,
+      "origin": "external",
+      "uri": "media/external/asset-98a4a373272648ae9d94162489ec315a/r1.mp4",
+      "content_hash": "sha256:29c32a7a411b06e64c4a0f640c0227656aecbc6d757e9522838da20337d28fb6",
+      "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461945/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved.",
+      "media_kind": "video",
+      "duration_us": 19602916,
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "fps": {
+          "numerator": 24000,
+          "denominator": 1001
+        },
+        "time_base": "1/24000",
+        "start_time_us": 0,
+        "codec": "h264",
+        "stream_index": 0,
+        "source_origin_pts": 0,
+        "source_origin_us": 0,
+        "variable_frame_rate": false
+      },
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 2,
+        "codec": "aac",
+        "start_time_us": 0
+      },
+      "source_pts_uri": "derived/asset-98a4a373272648ae9d94162489ec315a/r1/probe-1e07dba3ddb7d1dbd4ddb260/source-pts.json",
+      "proxy_uri": "derived/asset-98a4a373272648ae9d94162489ec315a/r1/proxy-f323849bfaecfdf88c1a3fc6/proxy.mp4",
+      "proxy_mapping_uri": "derived/asset-98a4a373272648ae9d94162489ec315a/r1/proxy-f323849bfaecfdf88c1a3fc6/proxy-map.json",
+      "proxy_status": "success",
+      "transcript": {
+        "status": "disabled",
+        "profile": {
+          "asr": "none",
+          "asr_model": "tiny",
+          "asr_language": null,
+          "asr_device": "cpu",
+          "asr_compute_type": "int8",
+          "asr_beam_size": 5,
+          "asr_cpu_threads": 2,
+          "asr_num_workers": 1,
+          "asr_vad": true,
+          "asr_condition_on_previous_text": false,
+          "asr_initial_prompt": null,
+          "asr_hotwords": null,
+          "asr_model_revision": null,
+          "packages": {
+            "faster-whisper": "unavailable",
+            "ctranslate2": "unavailable",
+            "av": "unavailable",
+            "tokenizers": "0.23.3",
+            "onnxruntime": "unavailable",
+            "huggingface-hub": "2.4.0"
+          },
+          "vad_filter": true,
+          "audio_preprocessing": "video-origin-mono-16k-v1",
+          "diagnostics_version": 1
+        },
+        "segments": [],
+        "diagnostics": {},
+        "source_content_hash": "sha256:29c32a7a411b06e64c4a0f640c0227656aecbc6d757e9522838da20337d28fb6",
+        "review": {
+          "status": "not_applicable",
+          "reasons": [],
+          "policy": {
+            "version": 1,
+            "calibrated": false,
+            "min_avg_logprob": -1.0,
+            "max_no_speech_prob": 0.6,
+            "max_compression_ratio": 2.4,
+            "tail_tolerance_us": 500000
+          }
+        },
+        "uri": "derived/asset-98a4a373272648ae9d94162489ec315a/r1/asr-80b2622f2f094848cd2b00b3/transcript.json"
+      },
+      "processing_status": "success"
+    },
+    {
+      "asset_id": "asset-577def926287491bb985d17196918ee6",
+      "revision": 1,
+      "origin": "external",
+      "uri": "media/external/asset-577def926287491bb985d17196918ee6/r1.mp4",
+      "content_hash": "sha256:70ec7d3ae6f75792291a2e612c1c066e436d993992c3128af80a94e16be9fca2",
+      "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461949/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved.",
+      "media_kind": "video",
+      "duration_us": 15056708,
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "fps": {
+          "numerator": 24000,
+          "denominator": 1001
+        },
+        "time_base": "1/24000",
+        "start_time_us": 0,
+        "codec": "h264",
+        "stream_index": 0,
+        "source_origin_pts": 0,
+        "source_origin_us": 0,
+        "variable_frame_rate": false
+      },
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 2,
+        "codec": "aac",
+        "start_time_us": 0
+      },
+      "source_pts_uri": "derived/asset-577def926287491bb985d17196918ee6/r1/probe-8f822f62fe9142cb09fc3468/source-pts.json",
+      "proxy_uri": "derived/asset-577def926287491bb985d17196918ee6/r1/proxy-c4edc0065e62ef9be9650c4e/proxy.mp4",
+      "proxy_mapping_uri": "derived/asset-577def926287491bb985d17196918ee6/r1/proxy-c4edc0065e62ef9be9650c4e/proxy-map.json",
+      "proxy_status": "success",
+      "transcript": {
+        "status": "disabled",
+        "profile": {
+          "asr": "none",
+          "asr_model": "tiny",
+          "asr_language": null,
+          "asr_device": "cpu",
+          "asr_compute_type": "int8",
+          "asr_beam_size": 5,
+          "asr_cpu_threads": 2,
+          "asr_num_workers": 1,
+          "asr_vad": true,
+          "asr_condition_on_previous_text": false,
+          "asr_initial_prompt": null,
+          "asr_hotwords": null,
+          "asr_model_revision": null,
+          "packages": {
+            "faster-whisper": "unavailable",
+            "ctranslate2": "unavailable",
+            "av": "unavailable",
+            "tokenizers": "0.23.3",
+            "onnxruntime": "unavailable",
+            "huggingface-hub": "2.4.0"
+          },
+          "vad_filter": true,
+          "audio_preprocessing": "video-origin-mono-16k-v1",
+          "diagnostics_version": 1
+        },
+        "segments": [],
+        "diagnostics": {},
+        "source_content_hash": "sha256:70ec7d3ae6f75792291a2e612c1c066e436d993992c3128af80a94e16be9fca2",
+        "review": {
+          "status": "not_applicable",
+          "reasons": [],
+          "policy": {
+            "version": 1,
+            "calibrated": false,
+            "min_avg_logprob": -1.0,
+            "max_no_speech_prob": 0.6,
+            "max_compression_ratio": 2.4,
+            "tail_tolerance_us": 500000
+          }
+        },
+        "uri": "derived/asset-577def926287491bb985d17196918ee6/r1/asr-3bdd956716ca028c2653c71e/transcript.json"
+      },
+      "processing_status": "success"
+    },
+    {
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "revision": 1,
+      "origin": "external",
+      "uri": "media/external/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1.mp4",
+      "content_hash": "sha256:191bcc5a37350b6550e869ba4cbc9fb9893a62a9a88eb02f3b52649e4d9786e9",
+      "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/a-beautiful-sunset-in-the-countryside-12444624/; Pexels License; https://www.pexels.com/license/; Complete source downscaled from 3840x2160 to 1920x1080 for repository delivery; H.264, preset fast, CRF 29; AAC 96k. No trimming or narration added. Downloaded 4K original retained locally.",
+      "media_kind": "video",
+      "duration_us": 77327250,
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "fps": {
+          "numerator": 24000,
+          "denominator": 1001
+        },
+        "time_base": "1/24000",
+        "start_time_us": 0,
+        "codec": "h264",
+        "stream_index": 0,
+        "source_origin_pts": 0,
+        "source_origin_us": 0,
+        "variable_frame_rate": false
+      },
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 2,
+        "codec": "aac",
+        "start_time_us": 0
+      },
+      "source_pts_uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/probe-211a15ce3d09e66d71520499/source-pts.json",
+      "proxy_uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/proxy-c01fd4b24b7688bd659ae174/proxy.mp4",
+      "proxy_mapping_uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/proxy-c01fd4b24b7688bd659ae174/proxy-map.json",
+      "proxy_status": "success",
+      "transcript": {
+        "status": "disabled",
+        "profile": {
+          "asr": "none",
+          "asr_model": "tiny",
+          "asr_language": null,
+          "asr_device": "cpu",
+          "asr_compute_type": "int8",
+          "asr_beam_size": 5,
+          "asr_cpu_threads": 2,
+          "asr_num_workers": 1,
+          "asr_vad": true,
+          "asr_condition_on_previous_text": false,
+          "asr_initial_prompt": null,
+          "asr_hotwords": null,
+          "asr_model_revision": null,
+          "packages": {
+            "faster-whisper": "unavailable",
+            "ctranslate2": "unavailable",
+            "av": "unavailable",
+            "tokenizers": "0.23.3",
+            "onnxruntime": "unavailable",
+            "huggingface-hub": "2.4.0"
+          },
+          "vad_filter": true,
+          "audio_preprocessing": "video-origin-mono-16k-v1",
+          "diagnostics_version": 1
+        },
+        "segments": [],
+        "diagnostics": {},
+        "source_content_hash": "sha256:191bcc5a37350b6550e869ba4cbc9fb9893a62a9a88eb02f3b52649e4d9786e9",
+        "review": {
+          "status": "not_applicable",
+          "reasons": [],
+          "policy": {
+            "version": 1,
+            "calibrated": false,
+            "min_avg_logprob": -1.0,
+            "max_no_speech_prob": 0.6,
+            "max_compression_ratio": 2.4,
+            "tail_tolerance_us": 500000
+          }
+        },
+        "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/asr-9ac262d79ab7b67176724825/transcript.json"
+      },
+      "processing_status": "success"
+    },
+    {
+      "asset_id": "asset-eb5f269a198c438d84286d2dd103c583",
+      "revision": 1,
+      "origin": "external",
+      "uri": "media/external/asset-eb5f269a198c438d84286d2dd103c583/r1.mp4",
+      "content_hash": "sha256:c74037e683729ed6f28b4ae6033f51ce6606a2914c495afe9a599124e648ae32",
+      "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461947/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved.",
+      "media_kind": "video",
+      "duration_us": 36953583,
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "fps": {
+          "numerator": 24000,
+          "denominator": 1001
+        },
+        "time_base": "1/24000",
+        "start_time_us": 0,
+        "codec": "h264",
+        "stream_index": 0,
+        "source_origin_pts": 0,
+        "source_origin_us": 0,
+        "variable_frame_rate": false
+      },
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 2,
+        "codec": "aac",
+        "start_time_us": 0
+      },
+      "source_pts_uri": "derived/asset-eb5f269a198c438d84286d2dd103c583/r1/probe-b947948a589a928b6bad9aa8/source-pts.json",
+      "proxy_uri": "derived/asset-eb5f269a198c438d84286d2dd103c583/r1/proxy-e57490ed9e216575c25d455e/proxy.mp4",
+      "proxy_mapping_uri": "derived/asset-eb5f269a198c438d84286d2dd103c583/r1/proxy-e57490ed9e216575c25d455e/proxy-map.json",
+      "proxy_status": "success",
+      "transcript": {
+        "status": "disabled",
+        "profile": {
+          "asr": "none",
+          "asr_model": "tiny",
+          "asr_language": null,
+          "asr_device": "cpu",
+          "asr_compute_type": "int8",
+          "asr_beam_size": 5,
+          "asr_cpu_threads": 2,
+          "asr_num_workers": 1,
+          "asr_vad": true,
+          "asr_condition_on_previous_text": false,
+          "asr_initial_prompt": null,
+          "asr_hotwords": null,
+          "asr_model_revision": null,
+          "packages": {
+            "faster-whisper": "unavailable",
+            "ctranslate2": "unavailable",
+            "av": "unavailable",
+            "tokenizers": "0.23.3",
+            "onnxruntime": "unavailable",
+            "huggingface-hub": "2.4.0"
+          },
+          "vad_filter": true,
+          "audio_preprocessing": "video-origin-mono-16k-v1",
+          "diagnostics_version": 1
+        },
+        "segments": [],
+        "diagnostics": {},
+        "source_content_hash": "sha256:c74037e683729ed6f28b4ae6033f51ce6606a2914c495afe9a599124e648ae32",
+        "review": {
+          "status": "not_applicable",
+          "reasons": [],
+          "policy": {
+            "version": 1,
+            "calibrated": false,
+            "min_avg_logprob": -1.0,
+            "max_no_speech_prob": 0.6,
+            "max_compression_ratio": 2.4,
+            "tail_tolerance_us": 500000
+          }
+        },
+        "uri": "derived/asset-eb5f269a198c438d84286d2dd103c583/r1/asr-afa1aee05baccef88903cfcf/transcript.json"
+      },
+      "processing_status": "success"
+    },
+    {
+      "asset_id": "asset-6d256d1f58e04593a704f8066f04739c",
+      "revision": 1,
+      "origin": "external",
+      "uri": "media/external/asset-6d256d1f58e04593a704f8066f04739c/r1.mp4",
+      "content_hash": "sha256:eee44a1c75707e2559110ed328d193323bf4b7e596a6e0b72112876aefb51040",
+      "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461936/; Pexels License; https://www.pexels.com/license/; Removed audio stream; scaled to 1280x720; converted to constant 30 FPS; encoded H.264 CRF 20. Original preserved.",
+      "media_kind": "video",
+      "duration_us": 44466666,
+      "video": {
+        "width": 1280,
+        "height": 720,
+        "fps": {
+          "numerator": 30,
+          "denominator": 1
+        },
+        "time_base": "1/15360",
+        "start_time_us": 0,
+        "codec": "h264",
+        "stream_index": 0,
+        "source_origin_pts": 0,
+        "source_origin_us": 0,
+        "variable_frame_rate": false
+      },
+      "audio": {
+        "present": false
+      },
+      "source_pts_uri": "derived/asset-6d256d1f58e04593a704f8066f04739c/r1/probe-16ef2a7564913aaabeee74e3/source-pts.json",
+      "proxy_uri": "derived/asset-6d256d1f58e04593a704f8066f04739c/r1/proxy-7963be3eb772349f1c6b794a/proxy.mp4",
+      "proxy_mapping_uri": "derived/asset-6d256d1f58e04593a704f8066f04739c/r1/proxy-7963be3eb772349f1c6b794a/proxy-map.json",
+      "proxy_status": "success",
+      "transcript": {
+        "status": "no_audio",
+        "profile": {
+          "asr": "none",
+          "asr_model": "tiny",
+          "asr_language": null,
+          "asr_device": "cpu",
+          "asr_compute_type": "int8",
+          "asr_beam_size": 5,
+          "asr_cpu_threads": 2,
+          "asr_num_workers": 1,
+          "asr_vad": true,
+          "asr_condition_on_previous_text": false,
+          "asr_initial_prompt": null,
+          "asr_hotwords": null,
+          "asr_model_revision": null,
+          "packages": {
+            "faster-whisper": "unavailable",
+            "ctranslate2": "unavailable",
+            "av": "unavailable",
+            "tokenizers": "0.23.3",
+            "onnxruntime": "unavailable",
+            "huggingface-hub": "2.4.0"
+          },
+          "vad_filter": true,
+          "audio_preprocessing": "video-origin-mono-16k-v1",
+          "diagnostics_version": 1
+        },
+        "segments": [],
+        "diagnostics": {},
+        "source_content_hash": "sha256:eee44a1c75707e2559110ed328d193323bf4b7e596a6e0b72112876aefb51040",
+        "review": {
+          "status": "not_applicable",
+          "reasons": [],
+          "policy": {
+            "version": 1,
+            "calibrated": false,
+            "min_avg_logprob": -1.0,
+            "max_no_speech_prob": 0.6,
+            "max_compression_ratio": 2.4,
+            "tail_tolerance_us": 500000
+          }
+        },
+        "uri": "derived/asset-6d256d1f58e04593a704f8066f04739c/r1/asr-b65781b9fb4258f956a64b1c/transcript.json"
+      },
+      "processing_status": "success"
+    }
+  ],
+  "segments": [
+    {
+      "segment_id": "asset-806103fd984c4670ba62f904a034f231-r1-coarse-0-28611916",
+      "asset_id": "asset-806103fd984c4670ba62f904a034f231",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 28611916
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-806103fd984c4670ba62f904a034f231/r1/asr-54f4baa98db5f7f9ace27936/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-806103fd984c4670ba62f904a034f231-r1-shot-0-15000000",
+      "asset_id": "asset-806103fd984c4670ba62f904a034f231",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 15000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-806103fd984c4670ba62f904a034f231-r1-coarse-0-28611916",
+      "keyframes": [
+        {
+          "source_time_us": 7507500,
+          "uri": "derived/asset-806103fd984c4670ba62f904a034f231/r1/keyframes-a420883b2fc8a96a6c3a25fe/00000000.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-806103fd984c4670ba62f904a034f231/r1/asr-54f4baa98db5f7f9ace27936/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-806103fd984c4670ba62f904a034f231-r1-shot-15000000-28611916",
+      "asset_id": "asset-806103fd984c4670ba62f904a034f231",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 15000000,
+        "end": 28611916
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-806103fd984c4670ba62f904a034f231-r1-coarse-0-28611916",
+      "keyframes": [
+        {
+          "source_time_us": 21813458,
+          "uri": "derived/asset-806103fd984c4670ba62f904a034f231/r1/keyframes-a420883b2fc8a96a6c3a25fe/00000001.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-806103fd984c4670ba62f904a034f231/r1/asr-54f4baa98db5f7f9ace27936/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-98a4a373272648ae9d94162489ec315a-r1-coarse-0-19602916",
+      "asset_id": "asset-98a4a373272648ae9d94162489ec315a",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 19602916
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-98a4a373272648ae9d94162489ec315a/r1/asr-80b2622f2f094848cd2b00b3/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-98a4a373272648ae9d94162489ec315a-r1-shot-0-15000000",
+      "asset_id": "asset-98a4a373272648ae9d94162489ec315a",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 15000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-98a4a373272648ae9d94162489ec315a-r1-coarse-0-19602916",
+      "keyframes": [
+        {
+          "source_time_us": 7507500,
+          "uri": "derived/asset-98a4a373272648ae9d94162489ec315a/r1/keyframes-04f947165750aaf00d388646/00000000.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-98a4a373272648ae9d94162489ec315a/r1/asr-80b2622f2f094848cd2b00b3/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-98a4a373272648ae9d94162489ec315a-r1-shot-15000000-19602916",
+      "asset_id": "asset-98a4a373272648ae9d94162489ec315a",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 15000000,
+        "end": 19602916
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-98a4a373272648ae9d94162489ec315a-r1-coarse-0-19602916",
+      "keyframes": [
+        {
+          "source_time_us": 17308958,
+          "uri": "derived/asset-98a4a373272648ae9d94162489ec315a/r1/keyframes-04f947165750aaf00d388646/00000001.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-98a4a373272648ae9d94162489ec315a/r1/asr-80b2622f2f094848cd2b00b3/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-577def926287491bb985d17196918ee6-r1-coarse-0-15056708",
+      "asset_id": "asset-577def926287491bb985d17196918ee6",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 15056708
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-577def926287491bb985d17196918ee6/r1/asr-3bdd956716ca028c2653c71e/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+      "asset_id": "asset-577def926287491bb985d17196918ee6",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 15000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-577def926287491bb985d17196918ee6-r1-coarse-0-15056708",
+      "keyframes": [
+        {
+          "source_time_us": 7507500,
+          "uri": "derived/asset-577def926287491bb985d17196918ee6/r1/keyframes-523d9bccf8eb9574800a7683/00000000.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-577def926287491bb985d17196918ee6/r1/asr-3bdd956716ca028c2653c71e/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-577def926287491bb985d17196918ee6-r1-shot-15000000-15056708",
+      "asset_id": "asset-577def926287491bb985d17196918ee6",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 15000000,
+        "end": 15056708
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-577def926287491bb985d17196918ee6-r1-coarse-0-15056708",
+      "keyframes": [
+        {
+          "source_time_us": 15015000,
+          "uri": "derived/asset-577def926287491bb985d17196918ee6/r1/keyframes-523d9bccf8eb9574800a7683/00000001.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-577def926287491bb985d17196918ee6/r1/asr-3bdd956716ca028c2653c71e/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-coarse-0-30000000",
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 30000000
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/asr-9ac262d79ab7b67176724825/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-coarse-30000000-60000000",
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 30000000,
+        "end": 60000000
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/asr-9ac262d79ab7b67176724825/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-coarse-60000000-77327250",
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 60000000,
+        "end": 77327250
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/asr-9ac262d79ab7b67176724825/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-0-15000000",
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 15000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-coarse-0-30000000",
+      "keyframes": [
+        {
+          "source_time_us": 7507500,
+          "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/keyframes-aa8366372f89b82797714691/00000000.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/asr-9ac262d79ab7b67176724825/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-15000000-30000000",
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 15000000,
+        "end": 30000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-coarse-0-30000000",
+      "keyframes": [
+        {
+          "source_time_us": 22522500,
+          "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/keyframes-aa8366372f89b82797714691/00000001.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/asr-9ac262d79ab7b67176724825/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-30000000-45000000",
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 30000000,
+        "end": 45000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-coarse-30000000-60000000",
+      "keyframes": [
+        {
+          "source_time_us": 37537500,
+          "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/keyframes-aa8366372f89b82797714691/00000002.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/asr-9ac262d79ab7b67176724825/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-45000000-60000000",
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 45000000,
+        "end": 60000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-coarse-30000000-60000000",
+      "keyframes": [
+        {
+          "source_time_us": 52510792,
+          "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/keyframes-aa8366372f89b82797714691/00000003.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/asr-9ac262d79ab7b67176724825/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-60000000-75000000",
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 60000000,
+        "end": 75000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-coarse-60000000-77327250",
+      "keyframes": [
+        {
+          "source_time_us": 67525792,
+          "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/keyframes-aa8366372f89b82797714691/00000004.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/asr-9ac262d79ab7b67176724825/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-75000000-77327250",
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 75000000,
+        "end": 77327250
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-coarse-60000000-77327250",
+      "keyframes": [
+        {
+          "source_time_us": 76201125,
+          "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/keyframes-aa8366372f89b82797714691/00000005.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1/asr-9ac262d79ab7b67176724825/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-eb5f269a198c438d84286d2dd103c583-r1-coarse-0-30000000",
+      "asset_id": "asset-eb5f269a198c438d84286d2dd103c583",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 30000000
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-eb5f269a198c438d84286d2dd103c583/r1/asr-afa1aee05baccef88903cfcf/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-eb5f269a198c438d84286d2dd103c583-r1-coarse-30000000-36953583",
+      "asset_id": "asset-eb5f269a198c438d84286d2dd103c583",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 30000000,
+        "end": 36953583
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-eb5f269a198c438d84286d2dd103c583/r1/asr-afa1aee05baccef88903cfcf/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+      "asset_id": "asset-eb5f269a198c438d84286d2dd103c583",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 15000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-eb5f269a198c438d84286d2dd103c583-r1-coarse-0-30000000",
+      "keyframes": [
+        {
+          "source_time_us": 7507500,
+          "uri": "derived/asset-eb5f269a198c438d84286d2dd103c583/r1/keyframes-5ded7993c7fb08c633cd1421/00000000.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-eb5f269a198c438d84286d2dd103c583/r1/asr-afa1aee05baccef88903cfcf/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-eb5f269a198c438d84286d2dd103c583-r1-shot-15000000-30000000",
+      "asset_id": "asset-eb5f269a198c438d84286d2dd103c583",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 15000000,
+        "end": 30000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-eb5f269a198c438d84286d2dd103c583-r1-coarse-0-30000000",
+      "keyframes": [
+        {
+          "source_time_us": 22522500,
+          "uri": "derived/asset-eb5f269a198c438d84286d2dd103c583/r1/keyframes-5ded7993c7fb08c633cd1421/00000001.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-eb5f269a198c438d84286d2dd103c583/r1/asr-afa1aee05baccef88903cfcf/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-eb5f269a198c438d84286d2dd103c583-r1-shot-30000000-36953583",
+      "asset_id": "asset-eb5f269a198c438d84286d2dd103c583",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 30000000,
+        "end": 36953583
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-eb5f269a198c438d84286d2dd103c583-r1-coarse-30000000-36953583",
+      "keyframes": [
+        {
+          "source_time_us": 33491792,
+          "uri": "derived/asset-eb5f269a198c438d84286d2dd103c583/r1/keyframes-5ded7993c7fb08c633cd1421/00000002.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-eb5f269a198c438d84286d2dd103c583/r1/asr-afa1aee05baccef88903cfcf/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-6d256d1f58e04593a704f8066f04739c-r1-coarse-0-30000000",
+      "asset_id": "asset-6d256d1f58e04593a704f8066f04739c",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 30000000
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "no_audio",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-6d256d1f58e04593a704f8066f04739c/r1/asr-b65781b9fb4258f956a64b1c/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-6d256d1f58e04593a704f8066f04739c-r1-coarse-30000000-44466666",
+      "asset_id": "asset-6d256d1f58e04593a704f8066f04739c",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 30000000,
+        "end": 44466666
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "no_audio",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-6d256d1f58e04593a704f8066f04739c/r1/asr-b65781b9fb4258f956a64b1c/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000",
+      "asset_id": "asset-6d256d1f58e04593a704f8066f04739c",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 15000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-6d256d1f58e04593a704f8066f04739c-r1-coarse-0-30000000",
+      "keyframes": [
+        {
+          "source_time_us": 7500000,
+          "uri": "derived/asset-6d256d1f58e04593a704f8066f04739c/r1/keyframes-492247db736c9dda47a5872e/00000000.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "no_audio",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-6d256d1f58e04593a704f8066f04739c/r1/asr-b65781b9fb4258f956a64b1c/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-6d256d1f58e04593a704f8066f04739c-r1-shot-15000000-30000000",
+      "asset_id": "asset-6d256d1f58e04593a704f8066f04739c",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 15000000,
+        "end": 30000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-6d256d1f58e04593a704f8066f04739c-r1-coarse-0-30000000",
+      "keyframes": [
+        {
+          "source_time_us": 22500000,
+          "uri": "derived/asset-6d256d1f58e04593a704f8066f04739c/r1/keyframes-492247db736c9dda47a5872e/00000001.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "no_audio",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-6d256d1f58e04593a704f8066f04739c/r1/asr-b65781b9fb4258f956a64b1c/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-6d256d1f58e04593a704f8066f04739c-r1-shot-30000000-44466666",
+      "asset_id": "asset-6d256d1f58e04593a704f8066f04739c",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 30000000,
+        "end": 44466666
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-6d256d1f58e04593a704f8066f04739c-r1-coarse-30000000-44466666",
+      "keyframes": [
+        {
+          "source_time_us": 37233333,
+          "uri": "derived/asset-6d256d1f58e04593a704f8066f04739c/r1/keyframes-492247db736c9dda47a5872e/00000002.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "no_audio",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-6d256d1f58e04593a704f8066f04739c/r1/asr-b65781b9fb4258f956a64b1c/transcript.json",
+        "review_status": "not_applicable"
+      }
+    }
+  ],
+  "embedding_profile": {
+    "status": "not_indexed",
+    "owner": "B"
+  },
+  "processing": {
+    "status": "success",
+    "errors": []
+  }
+}
