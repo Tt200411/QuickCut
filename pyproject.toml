@@ -14,8 +14,10 @@ dependencies = []
 server = ["fastapi>=0.115", "uvicorn[standard]>=0.30", "python-multipart>=0.0.9"]
 ui = ["gradio>=5.0"]
 runtime = ["imageio-ffmpeg>=0.5"]
-ml = ["open_clip_torch>=2.30", "torch>=2.4", "torchvision>=0.19", "pillow>=10.0"]
+ingest = ["pillow>=10.0"]
+ml = ["open_clip_torch>=2.30", "torch>=2.4", "torchvision>=0.19", "pillow>=10.0", "transformers>=4.46"]
 asr = ["faster-whisper>=1.0"]
+asr-eval = ["opencc-python-reimplemented>=0.1.7"]
 download = ["yt-dlp>=2025.1"]
 dev = ["pytest>=8.0", "httpx>=0.27"]
 all = [
@@ -28,12 +30,18 @@ all = [
   "torch>=2.4",
   "torchvision>=0.19",
   "pillow>=10.0",
+  "transformers>=4.46",
   "faster-whisper>=1.0",
+  "opencc-python-reimplemented>=0.1.7",
   "yt-dlp>=2025.1",
 ]
 
 [project.scripts]
 quickcut = "quickcut.cli:main"
+quickcut-ingest = "quickcut.ingest:main"
 
 [tool.setuptools.packages.find]
 include = ["quickcut*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

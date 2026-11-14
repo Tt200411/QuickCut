@@ -1,0 +1,13 @@
+python -m pytest -q
+# 100 passed; see pytest.txt
+python examples/team_contracts/validate.py --self-test
+# PASS: 8 documents and 5 rejected negative controls
+python scripts/demo_voice_package.py --fixture --root outputs/e-fixture
+python scripts/demo_voice_package.py --root outputs/e-real
+# Both PASS: three cues, bounded fit, revision reuse, full failure, media hashes and local subtitle timing
+python scripts/verify_voice_package.py --story examples/voice_package/story.json --package examples/voice_package/real/voice_package.json --root examples/voice_package/real
+python scripts/verify_voice_package.py --story examples/voice_package/story.json --package examples/voice_package/real/voice_package-fit.json --root examples/voice_package/real
+# Both media_validation: passed (third cue remains needs_retime)
+python scripts/check_voice_package_asr.py --model base --root examples/voice_package/real --package examples/voice_package/real/voice_package.json --report examples/voice_package/evidence/asr.json
+python scripts/check_voice_package_asr.py --model small --root examples/voice_package/real --package examples/voice_package/real/voice_package.json --report examples/voice_package/evidence/asr-small.json
+# Raw hypotheses saved; not an all-cues ASR pass or a listening approval.

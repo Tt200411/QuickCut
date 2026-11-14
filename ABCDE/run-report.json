@@ -1,0 +1,237 @@
+{
+  "project_id": "project-countryside",
+  "materials": "materials/A-countryside/story-sources.json",
+  "excluded": [
+    "media/long-01-mandarin-park-guide.webm",
+    "media/broll-02-countryside-aerial.mp4"
+  ],
+  "asr": "none",
+  "clip_model": "nllb-clip-base",
+  "clip_pretrained": "v1",
+  "visual_floor": 0.18,
+  "summary": {
+    "asset_count": 6,
+    "segment_count": 28,
+    "processing": "success",
+    "encoder": {
+      "encoder": "openclip",
+      "model": "nllb-clip-base",
+      "pretrained": "v1",
+      "dimension": 512,
+      "visual_score": "cosine",
+      "calibrated": false
+    },
+    "candidate_status": "ok",
+    "queries": [
+      {
+        "query_id": "query-open",
+        "status": "ok",
+        "reason": "",
+        "candidate_count": 5,
+        "candidates": [
+          {
+            "candidate_id": "candidate-query-open-asset-806103fd984c4670ba62f904a034f231-r1-shot-0-15000000",
+            "uri": "media/external/asset-806103fd984c4670ba62f904a034f231/r1.mp4",
+            "ranking_score": 0.2859,
+            "visual_score": 0.2859,
+            "origin": "external"
+          },
+          {
+            "candidate_id": "candidate-query-open-asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+            "uri": "media/external/asset-577def926287491bb985d17196918ee6/r1.mp4",
+            "ranking_score": 0.2339,
+            "visual_score": 0.2339,
+            "origin": "external"
+          },
+          {
+            "candidate_id": "candidate-query-open-asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+            "uri": "media/external/asset-eb5f269a198c438d84286d2dd103c583/r1.mp4",
+            "ranking_score": 0.2237,
+            "visual_score": 0.2237,
+            "origin": "external"
+          },
+          {
+            "candidate_id": "candidate-query-open-asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000",
+            "uri": "media/external/asset-6d256d1f58e04593a704f8066f04739c/r1.mp4",
+            "ranking_score": 0.2116,
+            "visual_score": 0.2116,
+            "origin": "external"
+          },
+          {
+            "candidate_id": "candidate-query-open-asset-98a4a373272648ae9d94162489ec315a-r1-shot-0-15000000",
+            "uri": "media/external/asset-98a4a373272648ae9d94162489ec315a/r1.mp4",
+            "ranking_score": 0.1919,
+            "visual_score": 0.1919,
+            "origin": "external"
+          }
+        ]
+      },
+      {
+        "query_id": "query-middle",
+        "status": "ok",
+        "reason": "",
+        "candidate_count": 5,
+        "candidates": [
+          {
+            "candidate_id": "candidate-query-middle-asset-806103fd984c4670ba62f904a034f231-r1-shot-0-15000000",
+            "uri": "media/external/asset-806103fd984c4670ba62f904a034f231/r1.mp4",
+            "ranking_score": 0.2859,
+            "visual_score": 0.2859,
+            "origin": "external"
+          },
+          {
+            "candidate_id": "candidate-query-middle-asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+            "uri": "media/external/asset-577def926287491bb985d17196918ee6/r1.mp4",
+            "ranking_score": 0.2339,
+            "visual_score": 0.2339,
+            "origin": "external"
+          },
+          {
+            "candidate_id": "candidate-query-middle-asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+            "uri": "media/external/asset-eb5f269a198c438d84286d2dd103c583/r1.mp4",
+            "ranking_score": 0.2237,
+            "visual_score": 0.2237,
+            "origin": "external"
+          },
+          {
+            "candidate_id": "candidate-query-middle-asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000",
+            "uri": "media/external/asset-6d256d1f58e04593a704f8066f04739c/r1.mp4",
+            "ranking_score": 0.2116,
+            "visual_score": 0.2116,
+            "origin": "external"
+          },
+          {
+            "candidate_id": "candidate-query-middle-asset-98a4a373272648ae9d94162489ec315a-r1-shot-0-15000000",
+            "uri": "media/external/asset-98a4a373272648ae9d94162489ec315a/r1.mp4",
+            "ranking_score": 0.1919,
+            "visual_score": 0.1919,
+            "origin": "external"
+          }
+        ]
+      },
+      {
+        "query_id": "query-close",
+        "status": "ok",
+        "reason": "",
+        "candidate_count": 1,
+        "candidates": [
+          {
+            "candidate_id": "candidate-query-close-asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-0-15000000",
+            "uri": "media/external/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1.mp4",
+            "ranking_score": 0.2513,
+            "visual_score": 0.2513,
+            "origin": "external"
+          }
+        ]
+      },
+      {
+        "query_id": "query-middle-establishing",
+        "status": "ok",
+        "reason": "",
+        "candidate_count": 4,
+        "candidates": [
+          {
+            "candidate_id": "candidate-query-middle-establishing-asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000",
+            "uri": "media/external/asset-6d256d1f58e04593a704f8066f04739c/r1.mp4",
+            "ranking_score": 0.2972,
+            "visual_score": 0.2972,
+            "origin": "external"
+          },
+          {
+            "candidate_id": "candidate-query-middle-establishing-asset-98a4a373272648ae9d94162489ec315a-r1-shot-0-15000000",
+            "uri": "media/external/asset-98a4a373272648ae9d94162489ec315a/r1.mp4",
+            "ranking_score": 0.2513,
+            "visual_score": 0.2513,
+            "origin": "external"
+          },
+          {
+            "candidate_id": "candidate-query-middle-establishing-asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+            "uri": "media/external/asset-eb5f269a198c438d84286d2dd103c583/r1.mp4",
+            "ranking_score": 0.2171,
+            "visual_score": 0.2171,
+            "origin": "external"
+          },
+          {
+            "candidate_id": "candidate-query-middle-establishing-asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+            "uri": "media/external/asset-577def926287491bb985d17196918ee6/r1.mp4",
+            "ranking_score": 0.2107,
+            "visual_score": 0.2107,
+            "origin": "external"
+          }
+        ]
+      },
+      {
+        "query_id": "query-close-atmosphere",
+        "status": "ok",
+        "reason": "",
+        "candidate_count": 1,
+        "candidates": [
+          {
+            "candidate_id": "candidate-query-close-atmosphere-asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-0-15000000",
+            "uri": "media/external/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1.mp4",
+            "ranking_score": 0.2513,
+            "visual_score": 0.2513,
+            "origin": "external"
+          }
+        ]
+      },
+      {
+        "query_id": "query-evidence-gap",
+        "status": "empty",
+        "reason": "No segment had a positive match for the query",
+        "candidate_count": 0,
+        "candidates": []
+      }
+    ],
+    "story_status": "ready_for_edit",
+    "gap_ids": [],
+    "pending_reviews": [],
+    "shots": [
+      {
+        "beat_id": "beat-open",
+        "role": "establishing",
+        "origin": "external",
+        "uri": "media/external/asset-806103fd984c4670ba62f904a034f231/r1.mp4",
+        "summary": ""
+      },
+      {
+        "beat_id": "beat-middle",
+        "role": "detail",
+        "origin": "external",
+        "uri": "media/external/asset-577def926287491bb985d17196918ee6/r1.mp4",
+        "summary": ""
+      },
+      {
+        "beat_id": "beat-close",
+        "role": "atmosphere",
+        "origin": "external",
+        "uri": "media/external/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1.mp4",
+        "summary": ""
+      }
+    ]
+  },
+  "f_inputs": {
+    "project_root": "/Users/buluu/Documents/cv/QuickCut-B/ABCDE",
+    "ready_for_f": true,
+    "required": {
+      "EditTimeline": "timeline.json",
+      "VoicePackage": "voice-package.json",
+      "AssetManifest": "asset-manifest.json"
+    },
+    "also_written": [
+      "brief.json",
+      "approved-cues.json",
+      "retrieval-request.json",
+      "candidate-set.json",
+      "b-recall-report.json",
+      "story-plan.json",
+      "alignment.json"
+    ],
+    "blocked_by": null,
+    "why": "F 读取冻结 EditTimeline、VoicePackage，以及能解析到文件的素材引用。"
+  },
+  "recall": {
+    "status": "partial",
+    "file": "b-recall-report.json"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "engine": "indextts2",
+  "model_dir": "outputs/indextts2-runtime/checkpoints",
+  "model_revision": "740dcaf",
+  "reference_audio": "inputs/indextts2-reference.wav",
+  "device": "mps",
+  "seed": 42,
+  "sentence_pause_us": 180000,
+  "max_tempo": 1.15
+}

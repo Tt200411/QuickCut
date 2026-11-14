@@ -1,0 +1,929 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "CandidateSet",
+  "document_id": "candidates-countryside",
+  "project_id": "project-countryside",
+  "revision": 1,
+  "fixtures_only": false,
+  "owner": "B",
+  "inputs": [
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-1aebcf579acf476087b5110924b0862e",
+      "revision": 1
+    },
+    {
+      "kind": "RetrievalRequest",
+      "document_id": "request-countryside",
+      "revision": 1
+    }
+  ],
+  "status": "ok",
+  "results": [
+    {
+      "query_id": "query-open",
+      "status": "ok",
+      "reason": "",
+      "allowed_origins": [
+        "external"
+      ],
+      "constraints": {
+        "aspect_ratio": {
+          "width": 16,
+          "height": 9
+        },
+        "min_duration_us": null,
+        "max_duration_us": null,
+        "duration_budget_us_applied_as_filter": false,
+        "rejected": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "candidate-query-open-asset-806103fd984c4670ba62f904a034f231-r1-shot-0-15000000",
+          "segment_id": "asset-806103fd984c4670ba62f904a034f231-r1-shot-0-15000000",
+          "asset_id": "asset-806103fd984c4670ba62f904a034f231",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2859,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.2859,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461943/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved.",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "小路",
+              "score": 0.2307
+            },
+            "emotion": {
+              "label": "温暖",
+              "score": 0.045
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.1426
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.1763
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-open-asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+          "segment_id": "asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+          "asset_id": "asset-577def926287491bb985d17196918ee6",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2339,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.2339,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461949/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved.",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "小路",
+              "score": 0.195
+            },
+            "emotion": {
+              "label": "温暖",
+              "score": 0.0085
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.1223
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.1094
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-open-asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+          "segment_id": "asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+          "asset_id": "asset-eb5f269a198c438d84286d2dd103c583",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2237,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.2237,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461947/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved.",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "夕阳风景",
+              "score": 0.2695
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.0497
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.1483
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.0769
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-open-asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000",
+          "segment_id": "asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000",
+          "asset_id": "asset-6d256d1f58e04593a704f8066f04739c",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2116,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.2116,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461936/; Pexels License; https://www.pexels.com/license/; Removed audio stream; scaled to 1280x720; converted to constant 30 FPS; encoded H.264 CRF 20. Original preserved.",
+          "flags": [
+            "low_confidence"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "树林",
+              "score": 0.2411
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.0422
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.111
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.0692
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-open-asset-98a4a373272648ae9d94162489ec315a-r1-shot-0-15000000",
+          "segment_id": "asset-98a4a373272648ae9d94162489ec315a-r1-shot-0-15000000",
+          "asset_id": "asset-98a4a373272648ae9d94162489ec315a",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.1919,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.1919,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461945/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved.",
+          "flags": [
+            "low_confidence"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "树林",
+              "score": 0.2551
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.0585
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.1359
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.1127
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query_id": "query-middle",
+      "status": "ok",
+      "reason": "",
+      "allowed_origins": [
+        "external"
+      ],
+      "constraints": {
+        "aspect_ratio": {
+          "width": 16,
+          "height": 9
+        },
+        "min_duration_us": null,
+        "max_duration_us": null,
+        "duration_budget_us_applied_as_filter": false,
+        "rejected": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "candidate-query-middle-asset-806103fd984c4670ba62f904a034f231-r1-shot-0-15000000",
+          "segment_id": "asset-806103fd984c4670ba62f904a034f231-r1-shot-0-15000000",
+          "asset_id": "asset-806103fd984c4670ba62f904a034f231",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2859,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.2859,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461943/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved.",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "小路",
+              "score": 0.2307
+            },
+            "emotion": {
+              "label": "温暖",
+              "score": 0.045
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.1426
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.1763
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-middle-asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+          "segment_id": "asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+          "asset_id": "asset-577def926287491bb985d17196918ee6",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2339,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.2339,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461949/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved.",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "小路",
+              "score": 0.195
+            },
+            "emotion": {
+              "label": "温暖",
+              "score": 0.0085
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.1223
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.1094
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-middle-asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+          "segment_id": "asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+          "asset_id": "asset-eb5f269a198c438d84286d2dd103c583",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2237,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.2237,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461947/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved.",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "夕阳风景",
+              "score": 0.2695
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.0497
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.1483
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.0769
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-middle-asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000",
+          "segment_id": "asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000",
+          "asset_id": "asset-6d256d1f58e04593a704f8066f04739c",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2116,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.2116,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461936/; Pexels License; https://www.pexels.com/license/; Removed audio stream; scaled to 1280x720; converted to constant 30 FPS; encoded H.264 CRF 20. Original preserved.",
+          "flags": [
+            "low_confidence"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "树林",
+              "score": 0.2411
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.0422
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.111
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.0692
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-middle-asset-98a4a373272648ae9d94162489ec315a-r1-shot-0-15000000",
+          "segment_id": "asset-98a4a373272648ae9d94162489ec315a-r1-shot-0-15000000",
+          "asset_id": "asset-98a4a373272648ae9d94162489ec315a",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.1919,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.1919,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461945/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved.",
+          "flags": [
+            "low_confidence"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "树林",
+              "score": 0.2551
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.0585
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.1359
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.1127
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query_id": "query-close",
+      "status": "ok",
+      "reason": "",
+      "allowed_origins": [
+        "external"
+      ],
+      "constraints": {
+        "aspect_ratio": {
+          "width": 16,
+          "height": 9
+        },
+        "min_duration_us": null,
+        "max_duration_us": null,
+        "duration_budget_us_applied_as_filter": false,
+        "rejected": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "candidate-query-close-asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-0-15000000",
+          "segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-0-15000000",
+          "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2513,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.2513,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/a-beautiful-sunset-in-the-countryside-12444624/; Pexels License; https://www.pexels.com/license/; Complete source downscaled from 3840x2160 to 1920x1080 for repository delivery; H.264, preset fast, CRF 29; AAC 96k. No trimming or narration added. Downloaded 4K original retained locally.",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "夕阳风景",
+              "score": 0.3114
+            },
+            "emotion": {
+              "label": "温暖",
+              "score": 0.0697
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.1422
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.0545
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query_id": "query-middle-establishing",
+      "status": "ok",
+      "reason": "",
+      "allowed_origins": [
+        "external"
+      ],
+      "constraints": {
+        "aspect_ratio": {
+          "width": 16,
+          "height": 9
+        },
+        "min_duration_us": null,
+        "max_duration_us": null,
+        "duration_budget_us_applied_as_filter": false,
+        "rejected": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "candidate-query-middle-establishing-asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000",
+          "segment_id": "asset-6d256d1f58e04593a704f8066f04739c-r1-shot-0-15000000",
+          "asset_id": "asset-6d256d1f58e04593a704f8066f04739c",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2972,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.2972,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "establishing",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461936/; Pexels License; https://www.pexels.com/license/; Removed audio stream; scaled to 1280x720; converted to constant 30 FPS; encoded H.264 CRF 20. Original preserved.",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "树林",
+              "score": 0.2411
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.0422
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.111
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.0692
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-middle-establishing-asset-98a4a373272648ae9d94162489ec315a-r1-shot-0-15000000",
+          "segment_id": "asset-98a4a373272648ae9d94162489ec315a-r1-shot-0-15000000",
+          "asset_id": "asset-98a4a373272648ae9d94162489ec315a",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2513,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.2513,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "establishing",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461945/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved.",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "树林",
+              "score": 0.2551
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.0585
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.1359
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.1127
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-middle-establishing-asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+          "segment_id": "asset-eb5f269a198c438d84286d2dd103c583-r1-shot-0-15000000",
+          "asset_id": "asset-eb5f269a198c438d84286d2dd103c583",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2171,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.2171,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "establishing",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461947/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved.",
+          "flags": [
+            "low_confidence"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "夕阳风景",
+              "score": 0.2695
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.0497
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.1483
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.0769
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-middle-establishing-asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+          "segment_id": "asset-577def926287491bb985d17196918ee6-r1-shot-0-15000000",
+          "asset_id": "asset-577def926287491bb985d17196918ee6",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2107,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.2107,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "establishing",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461949/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved.",
+          "flags": [
+            "low_confidence"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "小路",
+              "score": 0.195
+            },
+            "emotion": {
+              "label": "温暖",
+              "score": 0.0085
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.1223
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.1094
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query_id": "query-close-atmosphere",
+      "status": "ok",
+      "reason": "",
+      "allowed_origins": [
+        "external"
+      ],
+      "constraints": {
+        "aspect_ratio": {
+          "width": 16,
+          "height": 9
+        },
+        "min_duration_us": null,
+        "max_duration_us": null,
+        "duration_budget_us_applied_as_filter": false,
+        "rejected": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "candidate-query-close-atmosphere-asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-0-15000000",
+          "segment_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1-r1-shot-0-15000000",
+          "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2513,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "ranking_score": 0.2513,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "atmosphere",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/a-beautiful-sunset-in-the-countryside-12444624/; Pexels License; https://www.pexels.com/license/; Complete source downscaled from 3840x2160 to 1920x1080 for repository delivery; H.264, preset fast, CRF 29; AAC 96k. No trimming or narration added. Downloaded 4K original retained locally.",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "v1",
+            "scene": {
+              "label": "夕阳风景",
+              "score": 0.3114
+            },
+            "emotion": {
+              "label": "温暖",
+              "score": 0.0697
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.1422
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.0545
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query_id": "query-evidence-gap",
+      "status": "empty",
+      "reason": "No segment had a positive match for the query",
+      "allowed_origins": [
+        "external"
+      ],
+      "constraints": {
+        "aspect_ratio": {
+          "width": 16,
+          "height": 9
+        },
+        "min_duration_us": null,
+        "max_duration_us": null,
+        "duration_budget_us_applied_as_filter": false,
+        "rejected": 0
+      },
+      "candidates": []
+    }
+  ],
+  "retrieval_profile": {
+    "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+    "encoder": {
+      "encoder": "openclip",
+      "model": "nllb-clip-base",
+      "pretrained": "v1",
+      "dimension": 512,
+      "visual_score": "cosine",
+      "calibrated": false
+    },
+    "dedup_by_content_hash": true,
+    "duration_budget_us_applied_as_filter": false,
+    "tag_labels": {
+      "scene": [
+        "小路",
+        "树林",
+        "田野",
+        "夕阳风景",
+        "室内"
+      ],
+      "emotion": [
+        "平静",
+        "温暖",
+        "紧张"
+      ],
+      "light": [
+        "日光",
+        "暖色光线",
+        "阴天"
+      ],
+      "motion": [
+        "人物步行",
+        "航拍",
+        "固定镜头"
+      ]
+    },
+    "tag_method": "openclip-zero-shot"
+  }
+}

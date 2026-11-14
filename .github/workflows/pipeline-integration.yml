@@ -1,0 +1,218 @@
+name: Pipeline integration
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    name: Python ${{ matrix.python-version }} / Ubuntu
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.13"]
+    defaults:
+      run:
+        shell: bash
+    env:
+      PIPELINE_OUTPUT: ${{ github.workspace }}/outputs/pipeline-integration-ci
+      PYTHONDONTWRITEBYTECODE: "1"
+      HF_HUB_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
+      QUICKCUT_ASR: none
+      QUICKCUT_ENCODER: fallback
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: 安装媒体工具和离线测试依赖
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          # ffmpeg 包同时提供 ffprobe；doctor 必需检查系统 TTS。
+          sudo apt-get install --no-install-recommends -y ffmpeg espeak-ng fonts-noto-cjk
+          python -m pip install -e '.[dev,ingest,runtime]'
+          ffmpeg -version
+          ffprobe -version
+          mkdir -p "$PIPELINE_OUTPUT"
+
+      - name: 严格预检媒体环境
+        run: |
+          set -euo pipefail
+          python scripts/doctor_pipeline.py --require-media > "$PIPELINE_OUTPUT/doctor-environment.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          report = json.loads((Path(os.environ["PIPELINE_OUTPUT"]) / "doctor-environment.json").read_text())
+          assert report["status"] == "ok", report
+          assert report["exit_code"] == 0 and report["require_media"] is True, report
+          assert report["required"]["enforced"] is True, report
+          assert all(check["status"] == "ok" for check in report["required"]["checks"]), report
+          assert report["evidence"]["real_inference"] == "not_run", report
+          PY
+
+      - name: 全量 pytest
+        run: |
+          set -euo pipefail
+          python -m pytest -q -ra --junitxml="$PIPELINE_OUTPUT/pytest.xml" | tee "$PIPELINE_OUTPUT/pytest.txt"
+
+      - name: 真实合成媒体用例和十秒预览
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import subprocess
+          import sys
+
+          output = Path(os.environ["PIPELINE_OUTPUT"])
+
+          def read(path):
+              return json.loads(path.read_text(encoding="utf-8"))
+
+          def run(label, arguments, expected=0):
+              command = [sys.executable, *map(str, arguments)]
+              print("执行:", command, flush=True)
+              result = subprocess.run(command, capture_output=True, text=True, timeout=300)
+              (output / f"{label}.stdout.txt").write_text(result.stdout, encoding="utf-8")
+              (output / f"{label}.stderr.txt").write_text(result.stderr, encoding="utf-8")
+              print(result.stdout, end="", flush=True)
+              print(result.stderr, end="", file=sys.stderr, flush=True)
+              # 只接受精确退出码；超时、启动失败和 JSON/断言异常直接使步骤失败。
+              assert result.returncode == expected, (label, result.returncode, expected)
+              return result
+
+          cases = (
+              ("supported-10s", "supported", 10, 0, "ready_for_render", {"A": 1, "E": 1, "D": 1}),
+              ("edit-10s", "edit", 10, 0, "ready_for_render", {"A": 1, "E": 2, "D": 2}),
+              ("unsupported-10s", "unsupported", 10, 2, "needs_input", {"A": 1, "E": 0, "D": 0}),
+              ("needs-retime-5s", "supported", 5, 2, "failed", {"A": 1, "E": 1, "D": 0}),
+          )
+          for label, case, seconds, expected, status, calls in cases:
+              root = output / label
+              result = run(label, ["scripts/demo_pipeline.py", "--root", root,
+                                  "--case", case, "--target-seconds", seconds], expected=expected)
+              report = read(root / "run-report.json")
+              assert json.loads(result.stdout if expected == 0 else result.stderr) == report
+              assert report["status"] == status and report["calls"] == calls, report
+              assert report["case"] == case and report["target_seconds"] == seconds, report
+              assert report["fixturesOnly"] is True and report["manifestFixturesOnly"] is False
+              assert report["ingest_config"]["asr"] == "none"
+              assert report["capabilities"]["B"]["executed"] is False
+              assert report["capabilities"]["C"]["vlm_executed"] is False
+              assert report["capabilities"]["E"]["mode"] == "fixture_tone"
+              assert report["media_validation"]["status"] == "passed", report
+              assert report["media_validation"]["decoded_video_files"] >= 2, report
+              manifest = read(root / "asset-manifest.json")
+              assert manifest["processing"]["status"] == "success" and not manifest["processing"]["errors"]
+              assert manifest["fixtures_only"] is False and manifest["assets"]
+              failed_stages = [s["stage"] for s in report["stages"] if s["status"] == "failed"]
+              assert all(s["status"] in {"completed", "failed"} for s in report["stages"]), report
+
+              if label == "needs-retime-5s":
+                  # demo 顶层为 failed；只有指定的 VOICE_NEEDS_RETIME 可作为预期负例。
+                  assert failed_stages == ["integration-r1"], report
+                  feedback = report["feedback"]
+                  assert feedback["code"] == "VOICE_NEEDS_RETIME", report
+                  assert feedback["status"] == "needs_retime" and feedback["stage"] == "integration"
+                  assert feedback["affected_ids"] == ["cue-03"] and feedback["action_owner"] == "D"
+                  assert read(root / "feedback.json") == feedback
+                  voice = read(root / "voice-package-r1.json")
+                  assert voice["status"] == "needs_retime", voice
+                  assert len(voice["errors"]) == 1, voice
+                  error = voice["errors"][0]
+                  assert error["code"] == "VOICE_NEEDS_RETIME" and error["action_owner"] == "D", error
+                  assert error["affected_ids"] == ["cue-03"], error
+                  assert voice["measurement_source"] == "fixture_tone"
+                  assert [c["cue_id"] for c in voice["cues"] if c["needs_retime"]] == ["cue-03"]
+                  assert report["render"] is None and not list(root.glob("timeline-*.json"))
+                  continue
+
+              assert not failed_stages, report
+              assert report["manifest_unchanged"] is True
+              assert report["manifest_hash_before"] == report["manifest_hash_after"]
+              if case == "unsupported":
+                  assert report["expected_stop"] is True and report["render"] is None
+                  assert report["feedback"]["code"] == "UNSUPPORTED_STORY_BEAT", report
+                  assert report["feedback"]["affected_ids"] == ["beat-middle"]
+                  assert read(root / "feedback.json") == report["feedback"]
+                  assert read(root / report["files"]["story_plan"])["status"] == "needs_input"
+                  assert not list(root.glob("voice-package-*.json"))
+                  assert not list(root.glob("timeline-*.json"))
+                  continue
+
+              assert "feedback" not in report, report
+              files = report["render"]["files"]
+              assert all((root / uri).is_file() for uri in files.values())
+              timeline = read(root / files["timeline"])
+              voice = read(root / files["voice_package"])
+              assert timeline["duration_us"] == seconds * 1_000_000
+              assert timeline["status"] == "ready_for_export" and not timeline.get("errors")
+              assert {t["kind"] for t in timeline["tracks"]} == {"video", "source_audio", "narration", "subtitle"}
+              assert voice["status"] == "ready" and not voice["errors"]
+              assert voice["measurement_source"] == "fixture_tone"
+              assert read(root / files["assets_union"])["assets"] == manifest["assets"] + voice["assets"]
+              if case == "edit":
+                  assert report["edit"]["changed_cue_ids"] == ["cue-02"]
+                  assert report["edit"]["cache_misses"] == ["cue-02"]
+                  assert report["edit"]["cache_hits"] == ["cue-01", "cue-03"]
+                  assert report["edit"]["A_reingested"] is False
+                  assert voice["invalidated_cue_ids"] == ["cue-02"]
+                  assert [c["cue_id"] for c in voice["cues"] if not c["cache_hit"]] == ["cue-02"]
+                  assert timeline["revision"] == voice["revision"] == 2
+
+          root = output / "supported-10s"
+          doctor = run("doctor-project", ["scripts/doctor_pipeline.py", "--require-media", "--project-root", root])
+          doctor_report = json.loads(doctor.stdout)
+          assert doctor_report["status"] == "ok" and doctor_report["exit_code"] == 0, doctor_report
+          assert all(c["status"] == "ok" for c in doctor_report["required"]["checks"]), doctor_report
+          manifest_check = next(c for c in doctor_report["required"]["checks"] if c["name"] == "A.asset_manifest")
+          assert manifest_check["path_safety"] == "ok" and manifest_check["validation"] == "ok"
+          assert manifest_check["fixtures_only"] is False and manifest_check["assets"] > 0
+          (output / "doctor-project.json").write_text(doctor.stdout, encoding="utf-8")
+
+          # 消费 demo 报告的真实文件映射，不推测产物名称或传入 assets union 代替 A 清单。
+          files = read(root / "run-report.json")["render"]["files"]
+          rendered = run("preview-supported-10s", [
+              "scripts/render_timeline_preview.py", "--timeline", root / files["timeline"],
+              "--manifest", root / files["manifest"], "--voice-package", root / files["voice_package"],
+              "--project-root", root, "--output", root / "preview.mp4",
+              "--srt", root / "preview.srt", "--report", root / "preview.preview.json",
+          ])
+          preview = read(root / "preview.preview.json")
+          assert json.loads(rendered.stdout) == preview
+          assert preview["status"] == "preview_rendered" and preview["full_decode_verified"] is True, preview
+          assert preview["expected_duration_us"] == 10_000_000
+          assert abs(preview["measured_duration_us"] - 10_000_000) <= preview["duration_tolerance_us"]
+          assert abs(preview["measured_stream_durations_us"]["video"] - 10_000_000) <= preview["duration_tolerance_us"]
+          assert abs(preview["measured_stream_durations_us"]["audio"] - 10_000_000) <= 2000
+          assert preview["measured_video_frames"] == 300 and preview["duration_validation"] == "ffprobe"
+          assert preview["fixtures_only"] is True and preview["subtitles_editable"] is True
+          assert preview["subtitles_burned"] is False and preview["editor_project_exported"] is False
+          assert all(Path(uri).is_file() and Path(uri).stat().st_size > 0 for uri in preview["files"].values())
+          assert "-->" in (root / "preview.srt").read_text(encoding="utf-8")
+          PY
+
+      - name: 保存预览、媒体证据和测试报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-integration-ubuntu-python-${{ matrix.python-version }}
+          path: ${{ env.PIPELINE_OUTPUT }}/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7

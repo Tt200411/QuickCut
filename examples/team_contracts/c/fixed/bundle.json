@@ -1,0 +1,1427 @@
+{
+  "schema_version": "0.1.0",
+  "fixtures_only": true,
+  "project_root_convention": "all uris resolve within one project package root; media absent in this fixture",
+  "documents": [
+    {
+      "schema_version": "0.1.0",
+      "kind": "Brief",
+      "document_id": "brief-001",
+      "project_id": "project-forest-vlog-001",
+      "revision": 1,
+      "fixtures_only": true,
+      "owner": "C",
+      "inputs": [],
+      "requirements": {
+        "story": "从城市出发，在林间散步，最后坐下休息。",
+        "format": "vlog",
+        "language": "zh-CN",
+        "target_duration_us": 18000000,
+        "aspect_ratio": {
+          "width": 16,
+          "height": 9
+        },
+        "tone": "自然、轻松",
+        "narration": {
+          "enabled": true,
+          "style": "自然中文男声"
+        },
+        "broll_policy": {
+          "enabled": true,
+          "roles": [
+            "establishing",
+            "transition",
+            "atmosphere"
+          ],
+          "must_not_assert_user_events": true
+        },
+        "target_editor": "剪映，版本待导出验证"
+      },
+      "constraints": {
+        "local_inference_only": true,
+        "preserve_source_audio": true,
+        "editable_tracks_required": true
+      }
+    },
+    {
+      "schema_version": "0.1.0",
+      "kind": "AssetManifest",
+      "document_id": "manifest-001",
+      "project_id": "project-forest-vlog-001",
+      "revision": 1,
+      "fixtures_only": true,
+      "owner": "A",
+      "inputs": [],
+      "assets": [
+        {
+          "asset_id": "asset-short-01",
+          "revision": 1,
+          "media_kind": "video",
+          "origin": "user",
+          "uri": "media/user/packing.mp4",
+          "content_hash": "fixture:asset-short-01",
+          "duration_us": 12000000,
+          "video": {
+            "width": 1920,
+            "height": 1080,
+            "fps": {
+              "numerator": 30,
+              "denominator": 1
+            }
+          },
+          "audio": {
+            "present": true,
+            "sample_rate": 48000,
+            "channels": 2
+          },
+          "proxy_uri": "proxies/asset-short-01.mp4",
+          "provenance_note": "占位用户素材"
+        },
+        {
+          "asset_id": "asset-short-02",
+          "revision": 1,
+          "media_kind": "video",
+          "origin": "user",
+          "uri": "media/user/city.mp4",
+          "content_hash": "fixture:asset-short-02",
+          "duration_us": 9000000,
+          "video": {
+            "width": 1920,
+            "height": 1080,
+            "fps": {
+              "numerator": 30,
+              "denominator": 1
+            }
+          },
+          "audio": {
+            "present": true,
+            "sample_rate": 48000,
+            "channels": 2
+          },
+          "proxy_uri": "proxies/asset-short-02.mp4",
+          "provenance_note": "占位用户素材"
+        },
+        {
+          "asset_id": "asset-short-03",
+          "revision": 1,
+          "media_kind": "video",
+          "origin": "user",
+          "uri": "media/user/rest.mp4",
+          "content_hash": "fixture:asset-short-03",
+          "duration_us": 8000000,
+          "video": {
+            "width": 1920,
+            "height": 1080,
+            "fps": {
+              "numerator": 30,
+              "denominator": 1
+            }
+          },
+          "audio": {
+            "present": true,
+            "sample_rate": 48000,
+            "channels": 2
+          },
+          "proxy_uri": "proxies/asset-short-03.mp4",
+          "provenance_note": "占位用户素材"
+        },
+        {
+          "asset_id": "asset-long-01",
+          "revision": 1,
+          "media_kind": "video",
+          "origin": "user",
+          "uri": "media/user/walk.mp4",
+          "content_hash": "fixture:asset-long-01",
+          "duration_us": 120000000,
+          "video": {
+            "width": 1920,
+            "height": 1080,
+            "fps": {
+              "numerator": 30,
+              "denominator": 1
+            }
+          },
+          "audio": {
+            "present": true,
+            "sample_rate": 48000,
+            "channels": 2
+          },
+          "proxy_uri": "proxies/asset-long-01.mp4",
+          "provenance_note": "占位用户素材"
+        },
+        {
+          "asset_id": "asset-broll-01",
+          "revision": 1,
+          "media_kind": "video",
+          "origin": "external",
+          "uri": "media/library/forest.mp4",
+          "content_hash": "fixture:asset-broll-01",
+          "duration_us": 12000000,
+          "video": {
+            "width": 1920,
+            "height": 1080,
+            "fps": {
+              "numerator": 30,
+              "denominator": 1
+            }
+          },
+          "audio": {
+            "present": false,
+            "sample_rate": null,
+            "channels": 0
+          },
+          "proxy_uri": "proxies/asset-broll-01.mp4",
+          "provenance_note": "占位素材；外部库条目须保留真实来源信息"
+        },
+        {
+          "asset_id": "asset-broll-02",
+          "revision": 1,
+          "media_kind": "video",
+          "origin": "external",
+          "uri": "media/library/stream.mp4",
+          "content_hash": "fixture:asset-broll-02",
+          "duration_us": 15000000,
+          "video": {
+            "width": 1920,
+            "height": 1080,
+            "fps": {
+              "numerator": 30,
+              "denominator": 1
+            }
+          },
+          "audio": {
+            "present": true,
+            "sample_rate": 48000,
+            "channels": 2
+          },
+          "proxy_uri": "proxies/asset-broll-02.mp4",
+          "provenance_note": "占位素材；外部库条目须保留真实来源信息"
+        }
+      ],
+      "segments": [
+        {
+          "segment_id": "seg-packing",
+          "asset_id": "asset-short-01",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 3000000,
+            "end": 9000000
+          },
+          "granularity": "coarse_shot",
+          "parent_segment_id": null,
+          "keyframes": [
+            {
+              "source_time_us": 6000000,
+              "uri": "keyframes/seg-packing.jpg"
+            }
+          ],
+          "transcript": {
+            "text": "出发吧。",
+            "segments": []
+          },
+          "description": {
+            "text": "收拾背包并准备出门",
+            "provider": "fixture_annotation"
+          },
+          "quality": {
+            "usable": true,
+            "flags": []
+          }
+        },
+        {
+          "segment_id": "seg-city",
+          "asset_id": "asset-short-02",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 1000000,
+            "end": 7000000
+          },
+          "granularity": "coarse_shot",
+          "parent_segment_id": null,
+          "keyframes": [
+            {
+              "source_time_us": 4000000,
+              "uri": "keyframes/seg-city.jpg"
+            }
+          ],
+          "transcript": {
+            "text": "",
+            "segments": []
+          },
+          "description": {
+            "text": "城市街道",
+            "provider": "fixture_annotation"
+          },
+          "quality": {
+            "usable": true,
+            "flags": []
+          }
+        },
+        {
+          "segment_id": "seg-rest",
+          "asset_id": "asset-short-03",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 1000000,
+            "end": 4000000
+          },
+          "granularity": "coarse_shot",
+          "parent_segment_id": null,
+          "keyframes": [
+            {
+              "source_time_us": 2500000,
+              "uri": "keyframes/seg-rest.jpg"
+            }
+          ],
+          "transcript": {
+            "text": "",
+            "segments": []
+          },
+          "description": {
+            "text": "人物坐下休息",
+            "provider": "fixture_annotation"
+          },
+          "quality": {
+            "usable": true,
+            "flags": []
+          }
+        },
+        {
+          "segment_id": "seg-walk",
+          "asset_id": "asset-long-01",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 40000000,
+            "end": 46000000
+          },
+          "granularity": "coarse_shot",
+          "parent_segment_id": null,
+          "keyframes": [
+            {
+              "source_time_us": 43000000,
+              "uri": "keyframes/seg-walk.jpg"
+            }
+          ],
+          "transcript": {
+            "text": "这里很安静。",
+            "segments": []
+          },
+          "description": {
+            "text": "人物沿林间小路步行",
+            "provider": "fixture_annotation"
+          },
+          "quality": {
+            "usable": true,
+            "flags": []
+          }
+        },
+        {
+          "segment_id": "seg-forest",
+          "asset_id": "asset-broll-01",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 2000000,
+            "end": 5000000
+          },
+          "granularity": "coarse_shot",
+          "parent_segment_id": null,
+          "keyframes": [
+            {
+              "source_time_us": 3500000,
+              "uri": "keyframes/seg-forest.jpg"
+            }
+          ],
+          "transcript": {
+            "text": "",
+            "segments": []
+          },
+          "description": {
+            "text": "树叶与林间光线",
+            "provider": "fixture_annotation"
+          },
+          "quality": {
+            "usable": true,
+            "flags": []
+          }
+        },
+        {
+          "segment_id": "seg-stream",
+          "asset_id": "asset-broll-02",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 2000000,
+            "end": 6000000
+          },
+          "granularity": "coarse_shot",
+          "parent_segment_id": null,
+          "keyframes": [
+            {
+              "source_time_us": 4000000,
+              "uri": "keyframes/seg-stream.jpg"
+            }
+          ],
+          "transcript": {
+            "text": "",
+            "segments": []
+          },
+          "description": {
+            "text": "溪水流动",
+            "provider": "fixture_annotation"
+          },
+          "quality": {
+            "usable": true,
+            "flags": []
+          }
+        }
+      ],
+      "index_revision": 1,
+      "embedding_profile": {
+        "backend": "fixture",
+        "model_id": "not-computed",
+        "dimension": null
+      }
+    },
+    {
+      "schema_version": "0.1.0",
+      "kind": "RetrievalRequest",
+      "document_id": "request-001",
+      "project_id": "project-forest-vlog-001",
+      "revision": 1,
+      "fixtures_only": true,
+      "owner": "C",
+      "inputs": [
+        {
+          "kind": "Brief",
+          "document_id": "brief-001",
+          "revision": 1
+        },
+        {
+          "kind": "AssetManifest",
+          "document_id": "manifest-001",
+          "revision": 1
+        }
+      ],
+      "queries": [
+        {
+          "query_id": "query-open",
+          "beat_id": "beat-open",
+          "semantic_text": "从城市出发",
+          "role": "primary",
+          "allowed_origins": [
+            "user"
+          ],
+          "duration_budget_us": 6000000,
+          "top_k": 4,
+          "iteration": 1,
+          "beat_purpose": "建立出发情境"
+        },
+        {
+          "query_id": "query-middle",
+          "beat_id": "beat-middle",
+          "semantic_text": "在林间散步",
+          "role": "primary",
+          "allowed_origins": [
+            "user"
+          ],
+          "duration_budget_us": 9000000,
+          "top_k": 4,
+          "iteration": 1,
+          "beat_purpose": "推进过程与环境过渡"
+        },
+        {
+          "query_id": "query-close",
+          "beat_id": "beat-close",
+          "semantic_text": "坐下休息",
+          "role": "primary",
+          "allowed_origins": [
+            "user"
+          ],
+          "duration_budget_us": 3000000,
+          "top_k": 4,
+          "iteration": 1,
+          "beat_purpose": "完成情绪收束"
+        },
+        {
+          "query_id": "query-middle-establishing",
+          "beat_id": "beat-middle",
+          "semantic_text": "用于推进过程与环境过渡的环境或情绪画面",
+          "role": "establishing",
+          "allowed_origins": [
+            "external"
+          ],
+          "duration_budget_us": 3000000,
+          "top_k": 3,
+          "iteration": 1,
+          "beat_purpose": "推进过程与环境过渡"
+        },
+        {
+          "query_id": "query-middle-transition",
+          "beat_id": "beat-middle",
+          "semantic_text": "用于推进过程与环境过渡的环境或情绪画面",
+          "role": "transition",
+          "allowed_origins": [
+            "external"
+          ],
+          "duration_budget_us": 3000000,
+          "top_k": 3,
+          "iteration": 1,
+          "beat_purpose": "推进过程与环境过渡"
+        },
+        {
+          "query_id": "query-close-atmosphere",
+          "beat_id": "beat-close",
+          "semantic_text": "用于完成情绪收束的环境或情绪画面",
+          "role": "atmosphere",
+          "allowed_origins": [
+            "external"
+          ],
+          "duration_budget_us": 3000000,
+          "top_k": 3,
+          "iteration": 1,
+          "beat_purpose": "完成情绪收束"
+        }
+      ],
+      "iteration": 1,
+      "max_iterations": 3,
+      "iteration_notes": [
+        "首轮按三段叙事目的发出检索请求"
+      ],
+      "status": "pending"
+    },
+    {
+      "schema_version": "0.1.0",
+      "kind": "CandidateSet",
+      "document_id": "candidates-c-001",
+      "project_id": "project-forest-vlog-001",
+      "revision": 1,
+      "fixtures_only": true,
+      "owner": "B",
+      "inputs": [
+        {
+          "kind": "AssetManifest",
+          "document_id": "manifest-001",
+          "revision": 1
+        },
+        {
+          "kind": "RetrievalRequest",
+          "document_id": "request-001",
+          "revision": 1
+        }
+      ],
+      "status": "ok",
+      "results": [
+        {
+          "query_id": "query-open",
+          "status": "ok",
+          "candidates": [
+            {
+              "candidate_id": "candidate-seg-packing",
+              "segment_id": "seg-packing",
+              "asset_revision": 1,
+              "visual_score": 0.8,
+              "transcript_score": 0.2,
+              "ranking_score": 0.8,
+              "score_profile": "fixture-only; not calibrated across models",
+              "suggested_role": "primary",
+              "evidence": [
+                "fixture_annotation"
+              ],
+              "flags": []
+            },
+            {
+              "candidate_id": "candidate-seg-city",
+              "segment_id": "seg-city",
+              "asset_revision": 1,
+              "visual_score": 0.7,
+              "transcript_score": 0.0,
+              "ranking_score": 0.7,
+              "score_profile": "fixture-only; not calibrated across models",
+              "suggested_role": "primary",
+              "evidence": [
+                "fixture_annotation"
+              ],
+              "flags": []
+            }
+          ]
+        },
+        {
+          "query_id": "query-middle",
+          "status": "ok",
+          "candidates": [
+            {
+              "candidate_id": "candidate-seg-walk",
+              "segment_id": "seg-walk",
+              "asset_revision": 1,
+              "visual_score": 0.8,
+              "transcript_score": 0.2,
+              "ranking_score": 0.8,
+              "score_profile": "fixture-only; not calibrated across models",
+              "suggested_role": "primary",
+              "evidence": [
+                "fixture_annotation"
+              ],
+              "flags": []
+            },
+            {
+              "candidate_id": "candidate-walk-alt",
+              "segment_id": "seg-walk",
+              "asset_revision": 1,
+              "visual_score": 0.65,
+              "transcript_score": 0.0,
+              "ranking_score": 0.65,
+              "score_profile": "fixture-only; not calibrated across models",
+              "suggested_role": "detail",
+              "evidence": [
+                "fixture_annotation"
+              ],
+              "flags": []
+            }
+          ]
+        },
+        {
+          "query_id": "query-middle-establishing",
+          "status": "ok",
+          "candidates": [
+            {
+              "candidate_id": "candidate-seg-forest",
+              "segment_id": "seg-forest",
+              "asset_revision": 1,
+              "visual_score": 0.7,
+              "transcript_score": 0.0,
+              "ranking_score": 0.7,
+              "score_profile": "fixture-only; not calibrated across models",
+              "suggested_role": "establishing",
+              "evidence": [
+                "fixture_annotation"
+              ],
+              "flags": []
+            }
+          ]
+        },
+        {
+          "query_id": "query-middle-transition",
+          "status": "empty",
+          "reason": "当前人工候选夹具未提供独立的过渡空镜证据，不复用建立环境候选或编造素材。",
+          "candidates": []
+        },
+        {
+          "query_id": "query-close",
+          "status": "ok",
+          "candidates": [
+            {
+              "candidate_id": "candidate-seg-rest",
+              "segment_id": "seg-rest",
+              "asset_revision": 1,
+              "visual_score": 0.8,
+              "transcript_score": 0.2,
+              "ranking_score": 0.8,
+              "score_profile": "fixture-only; not calibrated across models",
+              "suggested_role": "primary",
+              "evidence": [
+                "fixture_annotation"
+              ],
+              "flags": []
+            }
+          ]
+        },
+        {
+          "query_id": "query-close-atmosphere",
+          "status": "ok",
+          "candidates": [
+            {
+              "candidate_id": "candidate-seg-stream",
+              "segment_id": "seg-stream",
+              "asset_revision": 1,
+              "visual_score": 0.6,
+              "transcript_score": 0.0,
+              "ranking_score": 0.6,
+              "score_profile": "fixture-only; not calibrated across models",
+              "suggested_role": "atmosphere",
+              "evidence": [
+                "fixture_annotation"
+              ],
+              "flags": []
+            }
+          ]
+        }
+      ],
+      "notes": "人工整理的候选夹具，配合 docs/team/contracts.md 的黄金 AssetManifest 使用；分数不可跨模型比较。"
+    },
+    {
+      "schema_version": "0.1.0",
+      "kind": "StoryPlan",
+      "document_id": "story-001",
+      "project_id": "project-forest-vlog-001",
+      "revision": 1,
+      "fixtures_only": true,
+      "owner": "C",
+      "inputs": [
+        {
+          "kind": "Brief",
+          "document_id": "brief-001",
+          "revision": 1
+        },
+        {
+          "kind": "CandidateSet",
+          "document_id": "candidates-c-001",
+          "revision": 1
+        },
+        {
+          "kind": "AssetManifest",
+          "document_id": "manifest-001",
+          "revision": 1
+        }
+      ],
+      "status": "ready_for_edit",
+      "theme": "从城市出发，在林间散步，最后坐下休息。",
+      "narration_language": "zh-CN",
+      "beats": [
+        {
+          "beat_id": "beat-open",
+          "order": 0,
+          "purpose": "建立出发情境",
+          "duration_budget_us": 6000000,
+          "support": "supported",
+          "shots": [
+            {
+              "candidate_id": "candidate-seg-packing",
+              "segment_id": "seg-packing",
+              "origin": "user",
+              "role": "primary",
+              "decided_by": "fixture:fixed_model_response",
+              "suggested_duration_us": 6000000,
+              "evidence": [
+                "fixture_annotation"
+              ],
+              "transcript": "出发吧。",
+              "summary": {
+                "text": "收拾背包并准备出门",
+                "provider": "fixture_annotation"
+              },
+              "event_review": {
+                "candidate_id": "candidate-seg-packing",
+                "beat_id": "beat-open",
+                "asset_revision": 1,
+                "event": "从城市出发",
+                "source": "fixture_annotation"
+              }
+            }
+          ],
+          "alternative_candidate_ids": [
+            "candidate-seg-city"
+          ],
+          "cue_ids": [
+            "cue-01"
+          ]
+        },
+        {
+          "beat_id": "beat-middle",
+          "order": 1,
+          "purpose": "推进过程与环境过渡",
+          "duration_budget_us": 9000000,
+          "support": "supported",
+          "shots": [
+            {
+              "candidate_id": "candidate-seg-forest",
+              "segment_id": "seg-forest",
+              "origin": "external",
+              "role": "establishing",
+              "decided_by": "fixture:fixed_model_response",
+              "suggested_duration_us": 3000000,
+              "evidence": [
+                "fixture_annotation"
+              ],
+              "transcript": "",
+              "summary": {
+                "text": "树叶与林间光线",
+                "provider": "fixture_annotation"
+              }
+            },
+            {
+              "candidate_id": "candidate-seg-walk",
+              "segment_id": "seg-walk",
+              "origin": "user",
+              "role": "primary",
+              "decided_by": "fixture:fixed_model_response",
+              "suggested_duration_us": 6000000,
+              "evidence": [
+                "fixture_annotation"
+              ],
+              "transcript": "这里很安静。",
+              "summary": {
+                "text": "人物沿林间小路步行",
+                "provider": "fixture_annotation"
+              },
+              "event_review": {
+                "candidate_id": "candidate-seg-walk",
+                "beat_id": "beat-middle",
+                "asset_revision": 1,
+                "event": "在林间散步",
+                "source": "fixture_annotation"
+              }
+            }
+          ],
+          "alternative_candidate_ids": [
+            "candidate-walk-alt"
+          ],
+          "cue_ids": [
+            "cue-02"
+          ]
+        },
+        {
+          "beat_id": "beat-close",
+          "order": 2,
+          "purpose": "完成情绪收束",
+          "duration_budget_us": 3000000,
+          "support": "supported",
+          "shots": [
+            {
+              "candidate_id": "candidate-seg-rest",
+              "segment_id": "seg-rest",
+              "origin": "user",
+              "role": "primary",
+              "decided_by": "fixture:fixed_model_response",
+              "suggested_duration_us": 3000000,
+              "evidence": [
+                "fixture_annotation"
+              ],
+              "transcript": "",
+              "summary": {
+                "text": "人物坐下休息",
+                "provider": "fixture_annotation"
+              },
+              "event_review": {
+                "candidate_id": "candidate-seg-rest",
+                "beat_id": "beat-close",
+                "asset_revision": 1,
+                "event": "坐下休息",
+                "source": "fixture_annotation"
+              }
+            }
+          ],
+          "alternative_candidate_ids": [
+            "candidate-seg-stream"
+          ],
+          "cue_ids": [
+            "cue-03"
+          ]
+        }
+      ],
+      "narration_cues": [
+        {
+          "cue_id": "cue-01",
+          "beat_id": "beat-open",
+          "text": "收拾好背包，我们准备离开城市。",
+          "text_source": "human_editorial",
+          "approved": true,
+          "content_review": "human_editorial",
+          "duration_budget_us": 5800000,
+          "voice_style": "自然中文男声",
+          "expression": "与画面动作、角色和先后顺序对照检查后再批准",
+          "evidence_segment_ids": [
+            "seg-packing"
+          ],
+          "asserts_specific_user_event": true
+        },
+        {
+          "cue_id": "cue-02",
+          "beat_id": "beat-middle",
+          "text": "走进林间，脚步慢了下来，耳边只剩安静的风声。",
+          "text_source": "human_editorial",
+          "approved": true,
+          "content_review": "human_editorial",
+          "duration_budget_us": 8800000,
+          "voice_style": "自然中文男声",
+          "expression": "与画面动作、角色和先后顺序对照检查后再批准",
+          "evidence_segment_ids": [
+            "seg-walk"
+          ],
+          "asserts_specific_user_event": true
+        },
+        {
+          "cue_id": "cue-03",
+          "beat_id": "beat-close",
+          "text": "坐下来，歇一会儿。",
+          "text_source": "human_editorial",
+          "approved": true,
+          "content_review": "human_editorial",
+          "duration_budget_us": 2800000,
+          "voice_style": "自然中文男声",
+          "expression": "与画面动作、角色和先后顺序对照检查后再批准",
+          "evidence_segment_ids": [
+            "seg-rest"
+          ],
+          "asserts_specific_user_event": true
+        }
+      ],
+      "unresolved_gaps": [],
+      "pending_reviews": [],
+      "decision_provenance": {
+        "mode": "fixed_response",
+        "model_call_ids": [
+          "0d95073fb4edcd4c",
+          "d567b0397fdc12b4",
+          "9c607003503abb2e"
+        ],
+        "selected_segment_ids": [
+          "seg-forest",
+          "seg-packing",
+          "seg-rest",
+          "seg-walk"
+        ],
+        "evidence_reviews": [
+          {
+            "candidate_id": "candidate-seg-packing",
+            "beat_id": "beat-open",
+            "asset_revision": 1,
+            "event": "从城市出发",
+            "source": "fixture_annotation"
+          },
+          {
+            "candidate_id": "candidate-seg-city",
+            "beat_id": "beat-open",
+            "asset_revision": 1,
+            "event": "从城市出发",
+            "source": "fixture_annotation"
+          },
+          {
+            "candidate_id": "candidate-seg-walk",
+            "beat_id": "beat-middle",
+            "asset_revision": 1,
+            "event": "在林间散步",
+            "source": "fixture_annotation"
+          },
+          {
+            "candidate_id": "candidate-walk-alt",
+            "beat_id": "beat-middle",
+            "asset_revision": 1,
+            "event": "在林间散步",
+            "source": "fixture_annotation"
+          },
+          {
+            "candidate_id": "candidate-seg-rest",
+            "beat_id": "beat-close",
+            "asset_revision": 1,
+            "event": "坐下休息",
+            "source": "fixture_annotation"
+          }
+        ],
+        "reviewed_anchor_segment_ids": [],
+        "rule_adjustments": [],
+        "human_edits": [
+          "cue-01: 文案来自人工审阅，不记为模型输出",
+          "cue-02: 文案来自人工审阅，不记为模型输出",
+          "cue-03: 文案来自人工审阅，不记为模型输出"
+        ],
+        "iterations": [
+          {
+            "iteration": 1,
+            "request_revision": 1,
+            "candidate_set_revision": 1,
+            "reason": "首轮按三段叙事目的发出检索请求"
+          }
+        ],
+        "raw_response_count": 3,
+        "input_hashes": {
+          "Brief": "ff040171bbb08d81",
+          "AssetManifest": "6b59067a2620efd9",
+          "CandidateSet": "550a3abce390bad8"
+        }
+      }
+    },
+    {
+      "schema_version": "0.1.0",
+      "kind": "VoicePackage",
+      "document_id": "voice-001",
+      "project_id": "project-forest-vlog-001",
+      "revision": 1,
+      "fixtures_only": true,
+      "owner": "E",
+      "inputs": [
+        {
+          "kind": "StoryPlan",
+          "document_id": "story-001",
+          "revision": 1
+        }
+      ],
+      "status": "ready",
+      "timing_authority": "D",
+      "measurement_source": "synthetic_fixture",
+      "synthesis_profile": {
+        "engine": "fixture",
+        "voice": "not-synthesized",
+        "language": "zh-CN",
+        "local": true
+      },
+      "assets": [
+        {
+          "asset_id": "asset-voice-cue-01",
+          "revision": 1,
+          "media_kind": "audio",
+          "origin": "generated",
+          "uri": "audio/narration/cue-01.wav",
+          "content_hash": "fixture:asset-voice-cue-01",
+          "duration_us": 5200000,
+          "audio": {
+            "present": true,
+            "sample_rate": 48000,
+            "channels": 1
+          }
+        },
+        {
+          "asset_id": "asset-voice-cue-02",
+          "revision": 1,
+          "media_kind": "audio",
+          "origin": "generated",
+          "uri": "audio/narration/cue-02.wav",
+          "content_hash": "fixture:asset-voice-cue-02",
+          "duration_us": 8200000,
+          "audio": {
+            "present": true,
+            "sample_rate": 48000,
+            "channels": 1
+          }
+        },
+        {
+          "asset_id": "asset-voice-cue-03",
+          "revision": 1,
+          "media_kind": "audio",
+          "origin": "generated",
+          "uri": "audio/narration/cue-03.wav",
+          "content_hash": "fixture:asset-voice-cue-03",
+          "duration_us": 2200000,
+          "audio": {
+            "present": true,
+            "sample_rate": 48000,
+            "channels": 1
+          }
+        }
+      ],
+      "cues": [
+        {
+          "cue_id": "cue-01",
+          "beat_id": "beat-open",
+          "text": "收拾好背包，我们准备离开城市。",
+          "asset_id": "asset-voice-cue-01",
+          "raw_duration_us": 5200000,
+          "duration_us": 5200000,
+          "duration_budget_us": 5800000,
+          "fit_status": "fits",
+          "tempo_ratio": 1.0,
+          "local_subtitles": [
+            {
+              "range_us": {
+                "begin": 0,
+                "end": 5200000
+              },
+              "text": "收拾好背包，我们准备离开城市。"
+            }
+          ],
+          "needs_retime": false
+        },
+        {
+          "cue_id": "cue-02",
+          "beat_id": "beat-middle",
+          "text": "走进林间，脚步慢了下来，耳边只剩安静的风声。",
+          "asset_id": "asset-voice-cue-02",
+          "raw_duration_us": 8200000,
+          "duration_us": 8200000,
+          "duration_budget_us": 8800000,
+          "fit_status": "fits",
+          "tempo_ratio": 1.0,
+          "local_subtitles": [
+            {
+              "range_us": {
+                "begin": 0,
+                "end": 8200000
+              },
+              "text": "走进林间，脚步慢了下来，耳边只剩安静的风声。"
+            }
+          ],
+          "needs_retime": false
+        },
+        {
+          "cue_id": "cue-03",
+          "beat_id": "beat-close",
+          "text": "坐下来，歇一会儿。",
+          "asset_id": "asset-voice-cue-03",
+          "raw_duration_us": 2200000,
+          "duration_us": 2200000,
+          "duration_budget_us": 2800000,
+          "fit_status": "fits",
+          "tempo_ratio": 1.0,
+          "local_subtitles": [
+            {
+              "range_us": {
+                "begin": 0,
+                "end": 2200000
+              },
+              "text": "坐下来，歇一会儿。"
+            }
+          ],
+          "needs_retime": false
+        }
+      ]
+    },
+    {
+      "schema_version": "0.1.0",
+      "kind": "EditTimeline",
+      "document_id": "timeline-001",
+      "project_id": "project-forest-vlog-001",
+      "revision": 1,
+      "fixtures_only": true,
+      "owner": "D",
+      "inputs": [
+        {
+          "kind": "StoryPlan",
+          "document_id": "story-001",
+          "revision": 1
+        },
+        {
+          "kind": "AssetManifest",
+          "document_id": "manifest-001",
+          "revision": 1
+        },
+        {
+          "kind": "VoicePackage",
+          "document_id": "voice-001",
+          "revision": 1
+        }
+      ],
+      "status": "ready_for_export",
+      "duration_us": 18000000,
+      "output": {
+        "width": 1920,
+        "height": 1080,
+        "fps": {
+          "numerator": 30,
+          "denominator": 1
+        },
+        "sample_rate": 48000
+      },
+      "tracks": [
+        {
+          "track_id": "track-picture",
+          "kind": "video",
+          "clips": [
+            {
+              "clip_id": "clip-video-1",
+              "segment_id": "seg-packing",
+              "asset_id": "asset-short-01",
+              "asset_revision": 1,
+              "beat_id": "beat-open",
+              "role": "primary",
+              "source_range_us": {
+                "begin": 3000000,
+                "end": 9000000
+              },
+              "timeline_range_us": {
+                "begin": 0,
+                "end": 6000000
+              },
+              "playback_rate": {
+                "numerator": 1,
+                "denominator": 1
+              },
+              "audio_policy": "separate_track"
+            },
+            {
+              "clip_id": "clip-video-2",
+              "segment_id": "seg-forest",
+              "asset_id": "asset-broll-01",
+              "asset_revision": 1,
+              "beat_id": "beat-middle",
+              "role": "broll",
+              "source_range_us": {
+                "begin": 2000000,
+                "end": 5000000
+              },
+              "timeline_range_us": {
+                "begin": 6000000,
+                "end": 9000000
+              },
+              "playback_rate": {
+                "numerator": 1,
+                "denominator": 1
+              },
+              "audio_policy": "muted"
+            },
+            {
+              "clip_id": "clip-video-3",
+              "segment_id": "seg-walk",
+              "asset_id": "asset-long-01",
+              "asset_revision": 1,
+              "beat_id": "beat-middle",
+              "role": "primary",
+              "source_range_us": {
+                "begin": 40000000,
+                "end": 46000000
+              },
+              "timeline_range_us": {
+                "begin": 9000000,
+                "end": 15000000
+              },
+              "playback_rate": {
+                "numerator": 1,
+                "denominator": 1
+              },
+              "audio_policy": "separate_track"
+            },
+            {
+              "clip_id": "clip-video-4",
+              "segment_id": "seg-rest",
+              "asset_id": "asset-short-03",
+              "asset_revision": 1,
+              "beat_id": "beat-close",
+              "role": "primary",
+              "source_range_us": {
+                "begin": 1000000,
+                "end": 4000000
+              },
+              "timeline_range_us": {
+                "begin": 15000000,
+                "end": 18000000
+              },
+              "playback_rate": {
+                "numerator": 1,
+                "denominator": 1
+              },
+              "audio_policy": "separate_track"
+            }
+          ]
+        },
+        {
+          "track_id": "track-original",
+          "kind": "source_audio",
+          "clips": [
+            {
+              "clip_id": "clip-original-1",
+              "asset_id": "asset-short-01",
+              "asset_revision": 1,
+              "linked_video_clip_id": "clip-video-1",
+              "source_range_us": {
+                "begin": 3000000,
+                "end": 9000000
+              },
+              "timeline_range_us": {
+                "begin": 0,
+                "end": 6000000
+              },
+              "playback_rate": {
+                "numerator": 1,
+                "denominator": 1
+              },
+              "gain": 0.3
+            },
+            {
+              "clip_id": "clip-original-3",
+              "asset_id": "asset-long-01",
+              "asset_revision": 1,
+              "linked_video_clip_id": "clip-video-3",
+              "source_range_us": {
+                "begin": 40000000,
+                "end": 46000000
+              },
+              "timeline_range_us": {
+                "begin": 9000000,
+                "end": 15000000
+              },
+              "playback_rate": {
+                "numerator": 1,
+                "denominator": 1
+              },
+              "gain": 0.3
+            },
+            {
+              "clip_id": "clip-original-4",
+              "asset_id": "asset-short-03",
+              "asset_revision": 1,
+              "linked_video_clip_id": "clip-video-4",
+              "source_range_us": {
+                "begin": 1000000,
+                "end": 4000000
+              },
+              "timeline_range_us": {
+                "begin": 15000000,
+                "end": 18000000
+              },
+              "playback_rate": {
+                "numerator": 1,
+                "denominator": 1
+              },
+              "gain": 0.3
+            }
+          ]
+        },
+        {
+          "track_id": "track-narration",
+          "kind": "narration",
+          "clips": [
+            {
+              "clip_id": "clip-cue-01",
+              "cue_id": "cue-01",
+              "asset_id": "asset-voice-cue-01",
+              "asset_revision": 1,
+              "source_range_us": {
+                "begin": 0,
+                "end": 5200000
+              },
+              "timeline_range_us": {
+                "begin": 200000,
+                "end": 5400000
+              },
+              "playback_rate": {
+                "numerator": 1,
+                "denominator": 1
+              },
+              "gain": 1.0
+            },
+            {
+              "clip_id": "clip-cue-02",
+              "cue_id": "cue-02",
+              "asset_id": "asset-voice-cue-02",
+              "asset_revision": 1,
+              "source_range_us": {
+                "begin": 0,
+                "end": 8200000
+              },
+              "timeline_range_us": {
+                "begin": 6200000,
+                "end": 14400000
+              },
+              "playback_rate": {
+                "numerator": 1,
+                "denominator": 1
+              },
+              "gain": 1.0
+            },
+            {
+              "clip_id": "clip-cue-03",
+              "cue_id": "cue-03",
+              "asset_id": "asset-voice-cue-03",
+              "asset_revision": 1,
+              "source_range_us": {
+                "begin": 0,
+                "end": 2200000
+              },
+              "timeline_range_us": {
+                "begin": 15200000,
+                "end": 17400000
+              },
+              "playback_rate": {
+                "numerator": 1,
+                "denominator": 1
+              },
+              "gain": 1.0
+            }
+          ]
+        },
+        {
+          "track_id": "track-subtitles",
+          "kind": "subtitle",
+          "cues": [
+            {
+              "subtitle_id": "sub-cue-01",
+              "cue_id": "cue-01",
+              "text": "收拾好背包，我们准备离开城市。",
+              "timeline_range_us": {
+                "begin": 200000,
+                "end": 5400000
+              },
+              "editable": true
+            },
+            {
+              "subtitle_id": "sub-cue-02",
+              "cue_id": "cue-02",
+              "text": "走进林间，脚步慢了下来，耳边只剩安静的风声。",
+              "timeline_range_us": {
+                "begin": 6200000,
+                "end": 14400000
+              },
+              "editable": true
+            },
+            {
+              "subtitle_id": "sub-cue-03",
+              "cue_id": "cue-03",
+              "text": "坐下来，歇一会儿。",
+              "timeline_range_us": {
+                "begin": 15200000,
+                "end": 17400000
+              },
+              "editable": true
+            }
+          ]
+        }
+      ],
+      "render_policy": {
+        "preview_burn_subtitles": true,
+        "editable_export_burn_subtitles": false,
+        "retain_separate_audio_tracks": true,
+        "unsupported_effect_policy": "error"
+      }
+    },
+    {
+      "schema_version": "0.1.0",
+      "kind": "ExportManifest",
+      "document_id": "export-001",
+      "project_id": "project-forest-vlog-001",
+      "revision": 1,
+      "fixtures_only": true,
+      "owner": "F",
+      "inputs": [
+        {
+          "kind": "EditTimeline",
+          "document_id": "timeline-001",
+          "revision": 1
+        },
+        {
+          "kind": "AssetManifest",
+          "document_id": "manifest-001",
+          "revision": 1
+        },
+        {
+          "kind": "VoicePackage",
+          "document_id": "voice-001",
+          "revision": 1
+        }
+      ],
+      "status": "not_exported",
+      "target_app": {
+        "name": "剪映",
+        "version": "UNVERIFIED",
+        "platform": "UNVERIFIED"
+      },
+      "adapter_version": "not-implemented",
+      "package_root": "delivery/project-forest-vlog-001",
+      "planned_files": [
+        {
+          "role": "preview",
+          "uri": "preview.mp4"
+        },
+        {
+          "role": "editable_project",
+          "uri": "editor/project.placeholder"
+        },
+        {
+          "role": "canonical_timeline",
+          "uri": "timeline.json"
+        },
+        {
+          "role": "subtitles",
+          "uri": "captions.srt"
+        }
+      ],
+      "import_verification": {
+        "performed": false,
+        "result": "not_run",
+        "editable_video": null,
+        "editable_text": null,
+        "separate_narration": null,
+        "media_relocation": null
+      },
+      "warnings": [
+        "设计夹具不包含实际媒体，也未生成剪映草稿。"
+      ]
+    }
+  ]
+}

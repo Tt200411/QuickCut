@@ -1,0 +1,132 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "RetrievalRequest",
+  "document_id": "request-countryside",
+  "project_id": "project-countryside",
+  "revision": 1,
+  "fixtures_only": false,
+  "owner": "C",
+  "inputs": [
+    {
+      "kind": "Brief",
+      "document_id": "brief-countryside",
+      "revision": 1
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-1aebcf579acf476087b5110924b0862e",
+      "revision": 1
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "query-open",
+      "beat_id": "beat-open",
+      "semantic_text": "人物沿小路行走",
+      "role": "primary",
+      "allowed_origins": [
+        "external"
+      ],
+      "duration_budget_us": 10000000,
+      "top_k": 6,
+      "iteration": 1,
+      "beat_purpose": "建立出发情境",
+      "aspect_ratio": {
+        "width": 16,
+        "height": 9
+      }
+    },
+    {
+      "query_id": "query-middle",
+      "beat_id": "beat-middle",
+      "semantic_text": "人物沿小路行走",
+      "role": "primary",
+      "allowed_origins": [
+        "external"
+      ],
+      "duration_budget_us": 15000000,
+      "top_k": 6,
+      "iteration": 1,
+      "beat_purpose": "推进过程与环境过渡",
+      "aspect_ratio": {
+        "width": 16,
+        "height": 9
+      }
+    },
+    {
+      "query_id": "query-close",
+      "beat_id": "beat-close",
+      "semantic_text": "夕阳和暖光风景",
+      "role": "primary",
+      "allowed_origins": [
+        "external"
+      ],
+      "duration_budget_us": 5000000,
+      "top_k": 6,
+      "iteration": 1,
+      "beat_purpose": "完成情绪收束",
+      "aspect_ratio": {
+        "width": 16,
+        "height": 9
+      }
+    },
+    {
+      "query_id": "query-middle-establishing",
+      "beat_id": "beat-middle",
+      "semantic_text": "无人机拍摄道路或树林",
+      "role": "establishing",
+      "allowed_origins": [
+        "external"
+      ],
+      "duration_budget_us": 3000000,
+      "top_k": 6,
+      "iteration": 1,
+      "beat_purpose": "推进过程与环境过渡",
+      "aspect_ratio": {
+        "width": 16,
+        "height": 9
+      }
+    },
+    {
+      "query_id": "query-close-atmosphere",
+      "beat_id": "beat-close",
+      "semantic_text": "夕阳和暖光风景",
+      "role": "atmosphere",
+      "allowed_origins": [
+        "external"
+      ],
+      "duration_budget_us": 3000000,
+      "top_k": 6,
+      "iteration": 1,
+      "beat_purpose": "完成情绪收束",
+      "aspect_ratio": {
+        "width": 16,
+        "height": 9
+      }
+    },
+    {
+      "query_id": "query-evidence-gap",
+      "beat_id": "beat-middle",
+      "semantic_text": "组员登顶后坐下休息",
+      "role": "primary",
+      "allowed_origins": [
+        "external"
+      ],
+      "duration_budget_us": 9000000,
+      "top_k": 6,
+      "iteration": 1,
+      "beat_purpose": "材料指定的缺失证据，不应召回成片镜头",
+      "aspect_ratio": {
+        "width": 16,
+        "height": 9
+      }
+    }
+  ],
+  "iteration": 1,
+  "max_iterations": 3,
+  "iteration_notes": [
+    "六条故事素材均为 external。主镜头查询因此也搜索 external，而不是只搜索 user。",
+    "查询文本来自 retrieval-expectations.json。"
+  ],
+  "status": "pending"
+}

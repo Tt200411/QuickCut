@@ -1,0 +1,174 @@
+{
+  "project_id": "project-countryside",
+  "manifest_revision": 1,
+  "stages": [
+    {
+      "asset_id": "asset-806103fd984c4670ba62f904a034f231",
+      "stage": "probe",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-806103fd984c4670ba62f904a034f231",
+      "stage": "keyframes",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-806103fd984c4670ba62f904a034f231",
+      "stage": "proxy",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-806103fd984c4670ba62f904a034f231",
+      "stage": "asr",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-98a4a373272648ae9d94162489ec315a",
+      "stage": "probe",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-98a4a373272648ae9d94162489ec315a",
+      "stage": "keyframes",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-98a4a373272648ae9d94162489ec315a",
+      "stage": "proxy",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-98a4a373272648ae9d94162489ec315a",
+      "stage": "asr",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-577def926287491bb985d17196918ee6",
+      "stage": "probe",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-577def926287491bb985d17196918ee6",
+      "stage": "keyframes",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-577def926287491bb985d17196918ee6",
+      "stage": "proxy",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-577def926287491bb985d17196918ee6",
+      "stage": "asr",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "stage": "probe",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "stage": "keyframes",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "stage": "proxy",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "stage": "asr",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-eb5f269a198c438d84286d2dd103c583",
+      "stage": "probe",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-eb5f269a198c438d84286d2dd103c583",
+      "stage": "keyframes",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-eb5f269a198c438d84286d2dd103c583",
+      "stage": "proxy",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-eb5f269a198c438d84286d2dd103c583",
+      "stage": "asr",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-6d256d1f58e04593a704f8066f04739c",
+      "stage": "probe",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-6d256d1f58e04593a704f8066f04739c",
+      "stage": "keyframes",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-6d256d1f58e04593a704f8066f04739c",
+      "stage": "proxy",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-6d256d1f58e04593a704f8066f04739c",
+      "stage": "asr",
+      "cache_hit": false,
+      "attempts": 1
+    }
+  ],
+  "errors": [],
+  "config": {
+    "window_us": 15000000,
+    "coarse_window_us": 30000000,
+    "proxy_width": 640,
+    "asr": "none",
+    "asr_model": "tiny",
+    "asr_language": null,
+    "asr_device": "cpu",
+    "asr_compute_type": "int8",
+    "asr_beam_size": 5,
+    "asr_cpu_threads": 2,
+    "asr_num_workers": 1,
+    "asr_vad": true,
+    "asr_condition_on_previous_text": false,
+    "asr_initial_prompt": null,
+    "asr_hotwords": null,
+    "asr_model_revision": null,
+    "max_attempts": 1
+  },
+  "tools": {
+    "ffmpeg": "ffmpeg version 9.0.2 Copyright (c) 2000-2026 the FFmpeg developers",
+    "ffprobe": "ffprobe version 9.0.2 Copyright (c) 2007-2026 the FFmpeg developers"
+  }
+}
