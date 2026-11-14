@@ -1,0 +1,36 @@
+{
+  "status": "public-footage demo authorized by the user",
+  "origin_policy": "All external provenance retained. Main-content use is separate from ownership and origin.",
+  "story_assets": [
+    {
+      "path": "media/short-01-trail-back-view.mp4",
+      "demo_role": "main_short"
+    },
+    {
+      "path": "media/short-02-hiker-by-forest.mp4",
+      "demo_role": "main_short"
+    },
+    {
+      "path": "media/short-03-hiker-on-path.mp4",
+      "demo_role": "main_short"
+    },
+    {
+      "path": "media/long-02-countryside-sunset.mp4",
+      "demo_role": "main_long"
+    },
+    {
+      "path": "media/broll-01-trail-aerial.mp4",
+      "demo_role": "broll"
+    },
+    {
+      "path": "variants/broll-02-no-audio-30fps-720p.mp4",
+      "demo_role": "broll"
+    }
+  ],
+  "separate_asr_input": "media/long-01-mandarin-park-guide.webm",
+  "excluded_from_story": [
+    "media/long-01-mandarin-park-guide.webm"
+  ],
+  "retained_source_of_variant": "media/broll-02-countryside-aerial.mp4",
+  "identity_note": "A assigns IDs on import. Local IDs from a different packaged media revision are not reused here."
+}
