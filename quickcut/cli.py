@@ -15,6 +15,7 @@ from .core import (
     update_timeline,
 )
 from .download import download_video
+from .retrieval import RetrievalConfig, Retriever, BRollLibrary
 from .story import build_basic_vlog
 from .voice import render_story_timeline
 
@@ -85,6 +86,37 @@ def main() -> None:
     download.add_argument("--output-dir", default="inputs")
     download.add_argument("--max-duration", type=int, default=900)
 
+    retrieve_cmd = sub.add_parser(
+        "retrieve",
+        help="Module B: run a RetrievalRequest against an AssetManifest and emit a CandidateSet",
+    )
+    retrieve_cmd.add_argument("manifest", help="Path to the project AssetManifest JSON")
+    retrieve_cmd.add_argument("request", help="Path to the RetrievalRequest JSON")
+    retrieve_cmd.add_argument(
+        "--broll-library",
+        action="append",
+        default=[],
+        help="Optional path(s) to a B-roll library AssetManifest (external origin); may be repeated",
+    )
+    retrieve_cmd.add_argument("--output", default="outputs/candidates.json")
+    retrieve_cmd.add_argument(
+        "--encoder",
+        choices=["fallback", "auto", "openclip", "mobileclip"],
+        default=None,
+        help="Visual encoder for keyframes that exist on disk",
+    )
+    retrieve_cmd.add_argument(
+        "--project-root",
+        default=None,
+        help="Project root used to resolve relative media/keyframe URIs",
+    )
+    retrieve_cmd.add_argument(
+        "--low-confidence-threshold",
+        type=float,
+        default=0.22,
+        help="Candidates below this ranking_score get a low_confidence flag",
+    )
+
     args = parser.parse_args()
     if args.command == "index":
         manifest = build_index(args.video, args.cache_dir, window=args.window, stride=args.stride,
@@ -126,3 +158,24 @@ def main() -> None:
                                     narration=not args.no_narration, voice=args.voice))
     elif args.command == "download":
         print(download_video(args.url, args.output_dir, max_duration=args.max_duration))
+    elif args.command == "retrieve":
+        manifest = json.loads(Path(args.manifest).read_text(encoding="utf-8"))
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        for library_path in args.broll_library:
+            manifest = BRollLibrary.load(library_path).merge_into(manifest)
+        config = RetrievalConfig(
+            encoder_mode=args.encoder,
+            low_confidence_threshold=args.low_confidence_threshold,
+        )
+        candidates = Retriever(config).retrieve(
+            manifest, request, project_root=args.project_root,
+        )
+        Path(args.output).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.output).write_text(
+            json.dumps(candidates, ensure_ascii=False, indent=2), encoding="utf-8",
+        )
+        print(json.dumps(candidates, ensure_ascii=False, indent=2))
+
+
+if __name__ == "__main__":
+    main()
