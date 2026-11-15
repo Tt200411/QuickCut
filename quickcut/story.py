@@ -88,7 +88,7 @@ def _complete_narration(story: dict[str, Any], prompt: str, duration: float | No
             clipped_words.pop()
         clipped = " ".join(clipped_words).strip(" ,.;:!?，。！？")
         if clipped:
-            return f"{clipped}{'。' if re.search(r'[\u4e00-\u9fff]', clipped) else '.'}"
+            return clipped + ("。" if re.search(r"[\u4e00-\u9fff]", clipped) else ".")
         return "画面让故事继续向前。" if chinese else "The selected images carry the story forward."
 
     chinese = bool(re.search(r"[\u4e00-\u9fff]", " ".join([current, prompt, theme, *texts])))

@@ -1,0 +1,517 @@
+{
+  "model": "small",
+  "device": "cpu",
+  "compute_type": "int8",
+  "inference": "local",
+  "note": "ASR is corroborating evidence, not a replacement script or naturalness rating",
+  "cues": [
+    {
+      "cue_id": "cue-01",
+      "approved_text": "出发了。",
+      "hypothesis": "互發了",
+      "raw_segments": [
+        {
+          "id": 1,
+          "seek": 0,
+          "start": 0.0,
+          "end": 0.62,
+          "text": "互發了",
+          "tokens": [
+            50364,
+            1369,
+            240,
+            14637,
+            2289,
+            50402
+          ],
+          "avg_logprob": -1.4021035603114538,
+          "compression_ratio": 0.5,
+          "no_speech_prob": 0.42318570613861084,
+          "words": [
+            {
+              "start": 0.0,
+              "end": 0.28,
+              "word": "互",
+              "probability": 0.4975289087742567
+            },
+            {
+              "start": 0.28,
+              "end": 0.5,
+              "word": "發",
+              "probability": 0.11259981989860535
+            },
+            {
+              "start": 0.5,
+              "end": 0.62,
+              "word": "了",
+              "probability": 0.5786236524581909
+            }
+          ],
+          "temperature": 1.0
+        }
+      ],
+      "duration_us": 904021,
+      "character_similarity": 0.3333333333333333,
+      "closing_text": "出发了",
+      "closing_text_found": false,
+      "last_word_end_us": 620000,
+      "tail_gap_us": 284021
+    },
+    {
+      "cue_id": "cue-02",
+      "approved_text": "走进林间，脚步慢了下来。",
+      "hypothesis": "走進零間,小步慢了下來",
+      "raw_segments": [
+        {
+          "id": 1,
+          "seek": 0,
+          "start": 0.0,
+          "end": 2.4,
+          "text": "走進零間,小步慢了下來",
+          "tokens": [
+            50364,
+            9575,
+            18214,
+            6306,
+            114,
+            11016,
+            11,
+            7322,
+            31429,
+            20645,
+            2289,
+            27769,
+            50502
+          ],
+          "avg_logprob": -0.5373728147574833,
+          "compression_ratio": 0.7380952380952381,
+          "no_speech_prob": 0.1456758826971054,
+          "words": [
+            {
+              "start": 0.0,
+              "end": 0.16,
+              "word": "走",
+              "probability": 0.4003418982028961
+            },
+            {
+              "start": 0.16,
+              "end": 0.4,
+              "word": "進",
+              "probability": 0.4314599931240082
+            },
+            {
+              "start": 0.4,
+              "end": 0.7,
+              "word": "零",
+              "probability": 0.8293390870094299
+            },
+            {
+              "start": 0.7,
+              "end": 0.94,
+              "word": "間,",
+              "probability": 0.7486468553543091
+            },
+            {
+              "start": 1.4,
+              "end": 1.54,
+              "word": "小",
+              "probability": 0.6056209802627563
+            },
+            {
+              "start": 1.54,
+              "end": 1.74,
+              "word": "步",
+              "probability": 0.5688058733940125
+            },
+            {
+              "start": 1.74,
+              "end": 1.94,
+              "word": "慢",
+              "probability": 0.8904643654823303
+            },
+            {
+              "start": 1.94,
+              "end": 2.12,
+              "word": "了",
+              "probability": 0.9548428058624268
+            },
+            {
+              "start": 2.12,
+              "end": 2.4,
+              "word": "下來",
+              "probability": 0.9970256686210632
+            }
+          ],
+          "temperature": 0.0
+        }
+      ],
+      "duration_us": 2862729,
+      "character_similarity": 0.5,
+      "closing_text": "慢了下来",
+      "closing_text_found": false,
+      "last_word_end_us": 2400000,
+      "tail_gap_us": 462729
+    },
+    {
+      "cue_id": "cue-03",
+      "approved_text": "我们沿着林间的小路慢慢向前走，停下来听风吹过树叶的声音，然后坐在路边休息，享受这一段安静的时光。",
+      "hypothesis": "我们沿着零间的小路慢慢向前走,停下来听风吹过树叶的声音,然后坐在路边休息,享受这一段安静的时光。",
+      "raw_segments": [
+        {
+          "id": 1,
+          "seek": 0,
+          "start": 0.0,
+          "end": 3.2,
+          "text": "我们沿着零间的小路慢慢向前走,",
+          "tokens": [
+            50364,
+            15003,
+            3308,
+            123,
+            20708,
+            6306,
+            114,
+            31685,
+            1546,
+            7322,
+            24658,
+            41439,
+            24282,
+            8945,
+            9575,
+            11,
+            50549
+          ],
+          "avg_logprob": -0.1921359747648239,
+          "compression_ratio": 1.0147058823529411,
+          "no_speech_prob": 0.02199632115662098,
+          "words": [
+            {
+              "start": 0.0,
+              "end": 0.22,
+              "word": "我们",
+              "probability": 0.6713238954544067
+            },
+            {
+              "start": 0.22,
+              "end": 0.52,
+              "word": "沿",
+              "probability": 0.959821492433548
+            },
+            {
+              "start": 0.52,
+              "end": 0.76,
+              "word": "着",
+              "probability": 0.9846057891845703
+            },
+            {
+              "start": 0.76,
+              "end": 0.96,
+              "word": "零",
+              "probability": 0.6292319893836975
+            },
+            {
+              "start": 0.96,
+              "end": 1.2,
+              "word": "间",
+              "probability": 0.9799861311912537
+            },
+            {
+              "start": 1.2,
+              "end": 1.44,
+              "word": "的",
+              "probability": 0.9746440052986145
+            },
+            {
+              "start": 1.44,
+              "end": 1.7,
+              "word": "小",
+              "probability": 0.9981881976127625
+            },
+            {
+              "start": 1.7,
+              "end": 1.88,
+              "word": "路",
+              "probability": 0.9899501800537109
+            },
+            {
+              "start": 1.88,
+              "end": 2.14,
+              "word": "慢慢",
+              "probability": 0.9837455749511719
+            },
+            {
+              "start": 2.14,
+              "end": 2.54,
+              "word": "向",
+              "probability": 0.9972311854362488
+            },
+            {
+              "start": 2.54,
+              "end": 2.82,
+              "word": "前",
+              "probability": 0.9996781349182129
+            },
+            {
+              "start": 2.82,
+              "end": 3.2,
+              "word": "走,",
+              "probability": 0.9983475208282471
+            }
+          ],
+          "temperature": 0.0
+        },
+        {
+          "id": 2,
+          "seek": 0,
+          "start": 3.62,
+          "end": 6.6,
+          "text": "停下来听风吹过树叶的声音,",
+          "tokens": [
+            50549,
+            36135,
+            4438,
+            6912,
+            31022,
+            47209,
+            2392,
+            117,
+            16866,
+            8987,
+            239,
+            2129,
+            114,
+            1546,
+            32045,
+            18034,
+            11,
+            50719
+          ],
+          "avg_logprob": -0.1921359747648239,
+          "compression_ratio": 1.0147058823529411,
+          "no_speech_prob": 0.02199632115662098,
+          "words": [
+            {
+              "start": 3.62,
+              "end": 3.84,
+              "word": "停",
+              "probability": 0.7933129072189331
+            },
+            {
+              "start": 3.84,
+              "end": 4.18,
+              "word": "下",
+              "probability": 0.9778414964675903
+            },
+            {
+              "start": 4.18,
+              "end": 4.38,
+              "word": "来",
+              "probability": 0.9995823502540588
+            },
+            {
+              "start": 4.38,
+              "end": 4.62,
+              "word": "听",
+              "probability": 0.8688827157020569
+            },
+            {
+              "start": 4.62,
+              "end": 4.92,
+              "word": "风",
+              "probability": 0.9951086640357971
+            },
+            {
+              "start": 4.92,
+              "end": 5.22,
+              "word": "吹",
+              "probability": 0.9997133016586304
+            },
+            {
+              "start": 5.22,
+              "end": 5.46,
+              "word": "过",
+              "probability": 0.9821494221687317
+            },
+            {
+              "start": 5.46,
+              "end": 5.66,
+              "word": "树",
+              "probability": 0.9220603704452515
+            },
+            {
+              "start": 5.66,
+              "end": 5.84,
+              "word": "叶",
+              "probability": 0.9914824962615967
+            },
+            {
+              "start": 5.84,
+              "end": 6.04,
+              "word": "的",
+              "probability": 0.9933062195777893
+            },
+            {
+              "start": 6.04,
+              "end": 6.26,
+              "word": "声",
+              "probability": 0.9902201294898987
+            },
+            {
+              "start": 6.26,
+              "end": 6.6,
+              "word": "音,",
+              "probability": 0.9913840293884277
+            }
+          ],
+          "temperature": 0.0
+        },
+        {
+          "id": 3,
+          "seek": 0,
+          "start": 6.94,
+          "end": 11.44,
+          "text": "然后坐在路边休息,享受这一段安静的时光。",
+          "tokens": [
+            50719,
+            26636,
+            31123,
+            3581,
+            24658,
+            40503,
+            39437,
+            26460,
+            11,
+            27654,
+            23151,
+            5562,
+            2257,
+            28427,
+            16206,
+            5363,
+            247,
+            1546,
+            15729,
+            20690,
+            1543,
+            50949
+          ],
+          "avg_logprob": -0.1921359747648239,
+          "compression_ratio": 1.0147058823529411,
+          "no_speech_prob": 0.02199632115662098,
+          "words": [
+            {
+              "start": 6.94,
+              "end": 7.32,
+              "word": "然后",
+              "probability": 0.9935489296913147
+            },
+            {
+              "start": 7.32,
+              "end": 7.64,
+              "word": "坐",
+              "probability": 0.9951584935188293
+            },
+            {
+              "start": 7.64,
+              "end": 7.86,
+              "word": "在",
+              "probability": 0.9946533441543579
+            },
+            {
+              "start": 7.86,
+              "end": 8.02,
+              "word": "路",
+              "probability": 0.9954962730407715
+            },
+            {
+              "start": 8.02,
+              "end": 8.28,
+              "word": "边",
+              "probability": 0.9955466985702515
+            },
+            {
+              "start": 8.28,
+              "end": 8.54,
+              "word": "休",
+              "probability": 0.9945181012153625
+            },
+            {
+              "start": 8.54,
+              "end": 8.86,
+              "word": "息,",
+              "probability": 0.9992287158966064
+            },
+            {
+              "start": 9.22,
+              "end": 9.42,
+              "word": "享",
+              "probability": 0.9991732239723206
+            },
+            {
+              "start": 9.42,
+              "end": 9.74,
+              "word": "受",
+              "probability": 0.9994487166404724
+            },
+            {
+              "start": 9.74,
+              "end": 9.92,
+              "word": "这",
+              "probability": 0.8599497079849243
+            },
+            {
+              "start": 9.92,
+              "end": 10.12,
+              "word": "一",
+              "probability": 0.9925522804260254
+            },
+            {
+              "start": 10.12,
+              "end": 10.26,
+              "word": "段",
+              "probability": 0.9919992089271545
+            },
+            {
+              "start": 10.26,
+              "end": 10.56,
+              "word": "安",
+              "probability": 0.9961296319961548
+            },
+            {
+              "start": 10.56,
+              "end": 10.8,
+              "word": "静",
+              "probability": 0.9974372386932373
+            },
+            {
+              "start": 10.8,
+              "end": 11.02,
+              "word": "的",
+              "probability": 0.9989346861839294
+            },
+            {
+              "start": 11.02,
+              "end": 11.24,
+              "word": "时",
+              "probability": 0.9976563453674316
+            },
+            {
+              "start": 11.24,
+              "end": 11.44,
+              "word": "光。",
+              "probability": 0.9994608759880066
+            }
+          ],
+          "temperature": 0.0
+        }
+      ],
+      "duration_us": 11782479,
+      "character_similarity": 0.9772727272727273,
+      "closing_text": "静的时光",
+      "closing_text_found": true,
+      "last_word_end_us": 11440000,
+      "tail_gap_us": 342479
+    }
+  ]
+}

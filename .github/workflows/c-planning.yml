@@ -1,0 +1,40 @@
+name: C planning contracts
+
+on:
+  pull_request:
+    paths:
+      - "quickcut/planning/**"
+      - "tests/test_planning*.py"
+      - "scripts/review_c_planning.py"
+      - "examples/team_contracts/**"
+      - "pyproject.toml"
+      - ".github/workflows/c-planning.yml"
+  push:
+    branches: [main, "feat/c-story-planning"]
+    paths:
+      - "quickcut/planning/**"
+      - "tests/test_planning*.py"
+      - "scripts/review_c_planning.py"
+      - "examples/team_contracts/**"
+      - "pyproject.toml"
+      - ".github/workflows/c-planning.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  offline-contracts:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install offline test dependencies
+        run: python -m pip install -e '.[dev]' 'pillow>=10.0'
+      - name: Review C regression, CLI round trips and eight-document integration
+        run: python scripts/review_c_planning.py

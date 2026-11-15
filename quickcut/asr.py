@@ -8,6 +8,7 @@ build a visual index without downloading model weights; selecting ``auto`` or
 from __future__ import annotations
 
 import json
+import math
 import os
 from dataclasses import asdict
 from pathlib import Path
@@ -45,6 +46,15 @@ class FasterWhisperASR:
         compute_type: str | None = None,
         language: str | None = None,
         beam_size: int | None = None,
+        allow_missing_audio: bool = True,
+        cpu_threads: int | None = None,
+        num_workers: int | None = None,
+        vad_filter: bool = True,
+        condition_on_previous_text: bool = True,
+        initial_prompt: str | None = None,
+        hotwords: str | None = None,
+        word_timestamps: bool = False,
+        collect_diagnostics: bool = False,
     ) -> None:
         try:
             import faster_whisper  # type: ignore
@@ -57,6 +67,17 @@ class FasterWhisperASR:
         self.language = language if language is not None else os.getenv("QUICKCUT_ASR_LANGUAGE")
         self.beam_size = beam_size or int(os.getenv("QUICKCUT_ASR_BEAM_SIZE", "1"))
         self._model = None
+        self.allow_missing_audio = allow_missing_audio
+        for value in (cpu_threads, num_workers):
+            if value is not None and (type(value) is not int or value <= 0):
+                raise ValueError("ASR thread and worker counts must be positive integers")
+        self.cpu_threads, self.num_workers = cpu_threads, num_workers
+        self.vad_filter = vad_filter
+        self.condition_on_previous_text = condition_on_previous_text
+        self.initial_prompt, self.hotwords = initial_prompt, hotwords
+        self.word_timestamps = word_timestamps
+        self.collect_diagnostics = collect_diagnostics
+        self.last_diagnostics: dict[str, Any] = {}
 
     def _load_model(self):
         if self._model is None:
@@ -77,23 +98,37 @@ class FasterWhisperASR:
                     av.open = compat_open
             except Exception:
                 pass
-            self._model = self._WhisperModel(self.model, device=self.device, compute_type=self.compute_type)
+            options = {}
+            if self.cpu_threads is not None:
+                options["cpu_threads"] = self.cpu_threads
+            if self.num_workers is not None:
+                options["num_workers"] = self.num_workers
+            self._model = self._WhisperModel(self.model, device=self.device, compute_type=self.compute_type, **options)
         return self._model
 
     def transcribe(self, video_path: str | Path) -> list[TranscriptSegment]:
+        self.last_diagnostics = {}
         kwargs: dict[str, Any] = {
             "beam_size": self.beam_size,
-            "vad_filter": True,
+            "vad_filter": getattr(self, "vad_filter", True),
+            "condition_on_previous_text": getattr(self, "condition_on_previous_text", True),
         }
+        for name in ("initial_prompt", "hotwords", "word_timestamps"):
+            value = getattr(self, name, None)
+            if value:
+                kwargs[name] = value
         if self.language:
             kwargs["language"] = self.language
         try:
-            segments, _info = self._load_model().transcribe(str(video_path), **kwargs)
+            segments, info = self._load_model().transcribe(str(video_path), **kwargs)
         except IndexError:
+            if not self.allow_missing_audio:
+                raise
             # A perfectly valid video-only source has no audio stream. Treat it
             # as an empty transcript so visual indexing still succeeds.
             return []
         result: list[TranscriptSegment] = []
+        diagnostics = []
         for index, segment in enumerate(segments):
             text = str(getattr(segment, "text", "") or "").strip()
             start = float(getattr(segment, "start", 0.0) or 0.0)
@@ -101,7 +136,40 @@ class FasterWhisperASR:
             if not text or end <= start:
                 continue
             result.append(TranscriptSegment(segment_id=f"segment-{index:04d}", start=start, end=end, text=text))
+            if getattr(self, "collect_diagnostics", False):
+                diagnostics.append({"segment_id": result[-1].segment_id,
+                    **{name: _finite(getattr(segment, name, None))
+                       for name in ("avg_logprob", "no_speech_prob", "compression_ratio")},
+                    "words": [{"text": str(word.word), "start": _finite(word.start),
+                               "end": _finite(word.end), "probability": _finite(word.probability)}
+                              for word in (getattr(segment, "words", None) or [])]})
+        if getattr(self, "collect_diagnostics", False):
+            self.last_diagnostics = {
+                "language": getattr(info, "language", None),
+                "language_probability": _finite(getattr(info, "language_probability", None)),
+                "duration_seconds": _finite(getattr(info, "duration", None)),
+                "duration_after_vad_seconds": _finite(getattr(info, "duration_after_vad", None)),
+                "segments": diagnostics, "speech_ranges_seconds": [], "warnings": [],
+            }
+            try:
+                self.last_diagnostics["speech_ranges_seconds"] = _speech_ranges(video_path)
+            except Exception as exc:
+                self.last_diagnostics["warnings"].append({"code": "VAD_DIAGNOSTICS_UNAVAILABLE", "message": str(exc)})
         return result
+
+
+def _finite(value):
+    if isinstance(value, (float, int)) and not isinstance(value, bool) and math.isfinite(value):
+        return float(value)
+    return None
+
+
+def _speech_ranges(path):
+    from faster_whisper.audio import decode_audio
+    from faster_whisper.vad import get_speech_timestamps
+    audio = decode_audio(str(path), sampling_rate=16000)
+    return [{"begin": chunk["start"] / 16000, "end": chunk["end"] / 16000}
+            for chunk in get_speech_timestamps(audio, sampling_rate=16000)]
 
 
 def make_asr(mode: str | None = None):

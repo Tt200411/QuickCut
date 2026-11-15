@@ -1,0 +1,46 @@
+{
+  "iteration": 1,
+  "max_iterations": 3,
+  "rows": [
+    {
+      "beat_id": "beat-open",
+      "primary_candidate_ids": [
+        "candidate-seg-packing",
+        "candidate-seg-city"
+      ],
+      "external_candidate_ids": [],
+      "broll_only": false,
+      "support": "supported",
+      "reason": "存在可作为事件证据的用户主镜头",
+      "expression_rewrite": null
+    },
+    {
+      "beat_id": "beat-middle",
+      "primary_candidate_ids": [
+        "candidate-seg-walk",
+        "candidate-walk-alt"
+      ],
+      "external_candidate_ids": [
+        "candidate-seg-forest"
+      ],
+      "broll_only": false,
+      "support": "supported",
+      "reason": "存在可作为事件证据的用户主镜头",
+      "expression_rewrite": null
+    },
+    {
+      "beat_id": "beat-close",
+      "primary_candidate_ids": [
+        "candidate-seg-rest"
+      ],
+      "external_candidate_ids": [
+        "candidate-seg-stream"
+      ],
+      "broll_only": false,
+      "support": "supported",
+      "reason": "存在可作为事件证据的用户主镜头",
+      "expression_rewrite": null
+    }
+  ],
+  "next_request": null
+}

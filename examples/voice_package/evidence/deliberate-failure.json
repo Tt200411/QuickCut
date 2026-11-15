@@ -1,0 +1,148 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "VoicePackage",
+  "document_id": "voice-story-e-demo",
+  "project_id": "project-e-voice-demo",
+  "revision": 1,
+  "fixtures_only": true,
+  "owner": "E",
+  "inputs": [
+    {
+      "kind": "StoryPlan",
+      "document_id": "story-e-demo",
+      "revision": 1
+    }
+  ],
+  "status": "failed",
+  "timing_authority": "D",
+  "mode": "measure",
+  "measurement_source": "fixture_tone",
+  "synthesis_profile": {
+    "engine": "fixture-tone",
+    "version": "1",
+    "voice": "tone-not-speech",
+    "language": "zh-CN",
+    "rate": 145,
+    "local": true,
+    "emotion_supported": false
+  },
+  "assets": [],
+  "cues": [
+    {
+      "cue_id": "cue-01",
+      "beat_id": "beat-open",
+      "text": "出发了。",
+      "duration_budget_us": 3000000,
+      "script_input": {
+        "kind": "StoryPlan",
+        "document_id": "story-e-demo",
+        "revision": 1
+      },
+      "synthesis_profile": {
+        "engine": "fixture-tone",
+        "version": "1",
+        "voice": "tone-not-speech",
+        "language": "zh-CN",
+        "rate": 145,
+        "local": true,
+        "emotion_supported": false
+      },
+      "cache_key": "ce71d7a816705702e0318f5a12447939888a2a862aeff11c29098376a70cf1b1",
+      "requested_timeline_range_us": null,
+      "fit_status": "failed",
+      "needs_retime": false,
+      "error_code": "TTS_FAILED"
+    },
+    {
+      "cue_id": "cue-02",
+      "beat_id": "beat-middle",
+      "text": "走进林间，脚步慢了下来。",
+      "duration_budget_us": 7000000,
+      "script_input": {
+        "kind": "StoryPlan",
+        "document_id": "story-e-demo",
+        "revision": 1
+      },
+      "synthesis_profile": {
+        "engine": "fixture-tone",
+        "version": "1",
+        "voice": "tone-not-speech",
+        "language": "zh-CN",
+        "rate": 145,
+        "local": true,
+        "emotion_supported": false
+      },
+      "cache_key": "3096ba61b888793013c54e8628307f404afba0a8ab98eb5fb1fcef7997676c1e",
+      "requested_timeline_range_us": null,
+      "fit_status": "failed",
+      "needs_retime": false,
+      "error_code": "TTS_FAILED"
+    },
+    {
+      "cue_id": "cue-03",
+      "beat_id": "beat-close",
+      "text": "我们沿着林间的小路慢慢向前走，停下来听风吹过树叶的声音，然后坐在路边休息，享受这一段安静的时光。",
+      "duration_budget_us": 1000000,
+      "script_input": {
+        "kind": "StoryPlan",
+        "document_id": "story-e-demo",
+        "revision": 1
+      },
+      "synthesis_profile": {
+        "engine": "fixture-tone",
+        "version": "1",
+        "voice": "tone-not-speech",
+        "language": "zh-CN",
+        "rate": 145,
+        "local": true,
+        "emotion_supported": false
+      },
+      "cache_key": "8390e9f680058e50a2819af0623a4256d0149d76e7d19ee3e1db6a35879cba41",
+      "requested_timeline_range_us": null,
+      "fit_status": "failed",
+      "needs_retime": false,
+      "error_code": "TTS_FAILED"
+    }
+  ],
+  "errors": [
+    {
+      "status": "failed",
+      "code": "TTS_FAILED",
+      "stage": "voice",
+      "project_id": "project-e-voice-demo",
+      "message": "deliberate engine failure",
+      "retryable": false,
+      "affected_ids": [
+        "cue-01"
+      ],
+      "action_owner": "E"
+    },
+    {
+      "status": "failed",
+      "code": "TTS_FAILED",
+      "stage": "voice",
+      "project_id": "project-e-voice-demo",
+      "message": "deliberate engine failure",
+      "retryable": false,
+      "affected_ids": [
+        "cue-02"
+      ],
+      "action_owner": "E"
+    },
+    {
+      "status": "failed",
+      "code": "TTS_FAILED",
+      "stage": "voice",
+      "project_id": "project-e-voice-demo",
+      "message": "deliberate engine failure",
+      "retryable": false,
+      "affected_ids": [
+        "cue-03"
+      ],
+      "action_owner": "E"
+    }
+  ],
+  "request": null,
+  "invalidated_cue_ids": [],
+  "alignment_invalidated": false
+}
