@@ -403,6 +403,27 @@ def _cue_text(beat: dict[str, Any], approved: dict[str, str] | None) -> tuple[st
     return f"{event}。", "template_draft"
 
 
+MONTAGE_POLICY = "authorized_external_montage"
+MONTAGE_ROLES = {"beat-open": "establishing", "beat-middle": "detail", "beat-close": "atmosphere"}
+
+
+def picture_policy(brief: dict[str, Any]) -> str:
+    return str((brief.get("requirements") or {}).get("picture_policy") or "")
+
+
+def _pick_montage_candidate(
+    candidates: list[dict[str, Any]], selected_segments: set[str],
+) -> dict[str, Any] | None:
+    """公开素材蒙太奇选一条还没用过的外部画面，主查询优先于空镜查询。"""
+    pool = [
+        c for c in candidates
+        if c["origin"] == "external" and "bad_evidence" not in c.get("flags", [])
+        and c["segment_id"] not in selected_segments
+    ]
+    pool.sort(key=lambda c: (c.get("query_role") == "primary", c.get("ranking_score", 0)), reverse=True)
+    return pool[0] if pool else None
+
+
 def _gap(beat: dict[str, Any], support: dict[str, Any], iteration: int, max_iterations: int) -> dict[str, Any]:
     exhausted = iteration >= max_iterations
     return {
@@ -533,6 +554,55 @@ def plan(
                 "cue_ids": [],
             })
             continue
+
+        if picture_policy(brief) == MONTAGE_POLICY and support["broll_only"]:
+            chosen = _pick_montage_candidate(candidates, selected_segments)
+            approved_text = (approved_cues or {}).get(beat["beat_id"]) if narration_enabled else None
+            if chosen is not None and (not narration_enabled or isinstance(approved_text, str) and approved_text.strip()):
+                duration = min(chosen["duration_us"], beat["duration_budget_us"])
+                role = MONTAGE_ROLES.get(beat["beat_id"], "atmosphere")
+                shot = {
+                    "candidate_id": chosen["candidate_id"],
+                    "segment_id": chosen["segment_id"],
+                    "origin": "external",
+                    "role": role,
+                    "suggested_duration_us": duration,
+                    "decided_by": "rule:authorized_external_montage",
+                    "evidence": chosen["evidence"],
+                    "transcript": chosen["transcript"],
+                    "summary": chosen["summary"],
+                }
+                selected_segments.add(chosen["segment_id"])
+                cue_id = f"cue-{beat['order'] + 1:02d}"
+                if narration_enabled:
+                    cues.append({
+                        "cue_id": cue_id,
+                        "beat_id": beat["beat_id"],
+                        "text": approved_text.strip(),
+                        "text_source": "human_editorial",
+                        "approved": True,
+                        "content_review": "human_editorial",
+                        "duration_budget_us": max(1, beat["duration_budget_us"] - 200_000),
+                        "voice_style": beat["narration_style"],
+                        "expression": "公开素材蒙太奇旁白，不声称这是用户本人的经历",
+                        "evidence_segment_ids": [],
+                        "asserts_specific_user_event": False,
+                    })
+                    human_edits.append(f"{cue_id}: 文案来自已批准的蒙太奇旁白，不记为用户事件")
+                rule_adjustments.append(f"{beat['beat_id']}: 使用已授权的公开素材作画面，不把它当成用户事件证据")
+                beats.append({
+                    "beat_id": beat["beat_id"],
+                    "order": beat["order"],
+                    "purpose": beat["purpose"],
+                    "duration_budget_us": beat["duration_budget_us"],
+                    "support": "supported",
+                    "shots": [shot],
+                    "alternative_candidate_ids": [
+                        c["candidate_id"] for c in candidates if c["candidate_id"] != chosen["candidate_id"]
+                    ],
+                    "cue_ids": [cue_id] if narration_enabled else [],
+                })
+                continue
 
         if support["support"] == "partially_supported":
             # 没有合格的用户事件证据时，不调用选镜器硬凑主镜头。空镜最多承担

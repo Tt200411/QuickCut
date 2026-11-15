@@ -1,0 +1,38 @@
+[
+  {
+    "path": "media/short-01-trail-back-view.mp4",
+    "origin": "external",
+    "source_key": "outdoor-15461943",
+    "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461943/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved."
+  },
+  {
+    "path": "media/short-02-hiker-by-forest.mp4",
+    "origin": "external",
+    "source_key": "outdoor-15461945",
+    "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461945/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved."
+  },
+  {
+    "path": "media/short-03-hiker-on-path.mp4",
+    "origin": "external",
+    "source_key": "outdoor-15461949",
+    "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461949/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved."
+  },
+  {
+    "path": "media/long-02-countryside-sunset.mp4",
+    "origin": "external",
+    "source_key": "outdoor-12444624",
+    "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/a-beautiful-sunset-in-the-countryside-12444624/; Pexels License; https://www.pexels.com/license/; Complete source downscaled from 3840x2160 to 1920x1080 for repository delivery; H.264, preset fast, CRF 29; AAC 96k. No trimming or narration added. Downloaded 4K original retained locally."
+  },
+  {
+    "path": "media/broll-01-trail-aerial.mp4",
+    "origin": "external",
+    "source_key": "outdoor-15461947",
+    "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461947/; Pexels License; https://www.pexels.com/license/; Renamed only; downloaded video bytes preserved."
+  },
+  {
+    "path": "variants/broll-02-no-audio-30fps-720p.mp4",
+    "origin": "external",
+    "source_key": "outdoor-15461936-no-audio-30fps-720p",
+    "provenance_note": "Matthias Groeneveld; https://www.pexels.com/video/15461936/; Pexels License; https://www.pexels.com/license/; Removed audio stream; scaled to 1280x720; converted to constant 30 FPS; encoded H.264 CRF 20. Original preserved."
+  }
+]

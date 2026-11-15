@@ -85,18 +85,19 @@ def test_symlink_root_refused(tmp_path):
 
 
 @pytest.mark.parametrize("seconds", [5, 10, 15])
-def test_manual_fixture_explicit_and_version_bound(tmp_path, seconds):
+def test_retrieval_binds_manifest_and_request(tmp_path, seconds):
     (tmp_path / "source.mp4").write_bytes(b"fixture")
     manifest = manifest_document(tmp_path)
     brief = demo.make_brief(manifest["project_id"], seconds)
-    request = build_retrieval_request(brief, manifest, build_outline(brief), broll_queries=False)
-    candidate = demo.manual_candidates(manifest, request)
-    assert candidate["fixtures_only"] is True
+    outline = build_outline(brief)
+    request = build_retrieval_request(brief, manifest, outline, broll_queries=False)
+    labeled, candidate = demo.retrieve_candidates(manifest, request, outline, tmp_path)
+    assert candidate["kind"] == "CandidateSet"
     assert candidate["owner"] == "B"
-    assert candidate["provenance"]["source"] == "manual_fixture"
-    assert candidate["provenance"]["retrieval_executed"] is False
-    assert candidate["inputs"] == [demo.ref(manifest), demo.ref(request)]
-    assert all(c["evidence"] == ["fixture_annotation"] for r in candidate["results"] for c in r["candidates"])
+    assert candidate["fixtures_only"] is True
+    assert candidate["inputs"] == [demo.ref(labeled), demo.ref(request)]
+    assert candidate["results"]
+    assert all(c["ranking_score"] > 0 for row in candidate["results"] for c in row["candidates"])
     assert manifest["fixtures_only"] is False
 
 
@@ -104,7 +105,7 @@ def test_manual_fixture_explicit_and_version_bound(tmp_path, seconds):
 def test_supported_real_c_e_d(tmp_path, offline, seconds):
     report = demo.run_demo(tmp_path, target_seconds=seconds)
     assert report["status"] == "ready_for_render", report.get("feedback")
-    assert report["calls"] == {"A": 1, "E": 1, "D": 1}
+    assert report["calls"] == {"A": 1, "B": 1, "E": 1, "D": 1}
     assert report["fixturesOnly"] is True and report["manifestFixturesOnly"] is False
     assert report["manifest_unchanged"] is True
     timeline = read(tmp_path, "timeline-r1.json")
@@ -129,7 +130,7 @@ def test_unsupported_stops_before_bridge(tmp_path, offline, monkeypatch, seconds
     monkeypatch.setattr(demo.integration, "build_from_plan", lambda *a, **kw: pytest.fail("不得调用 E/D"))
     report = demo.run_demo(tmp_path, "unsupported", seconds)
     assert report["status"] == "needs_input"
-    assert report["calls"] == {"A": 1, "E": 0, "D": 0}
+    assert report["calls"] == {"A": 1, "B": 1, "E": 0, "D": 0}
     assert report["expected_stop"] is True
     assert report["render"] is None
     assert report["feedback"]["affected_ids"] == ["beat-middle"]
@@ -141,7 +142,7 @@ def test_edit_only_one_cue_misses_without_reingest(tmp_path, offline):
     report = demo.run_demo(tmp_path, "edit")
     assert report["status"] == "ready_for_render", report.get("feedback")
     assert offline["ingest"] == 1
-    assert report["calls"] == {"A": 1, "E": 2, "D": 2}
+    assert report["calls"] == {"A": 1, "B": 1, "E": 2, "D": 2}
     assert report["manifest_hash_before"] == report["manifest_hash_after"]
     first = read(tmp_path, "voice-package-r1.json")
     second = read(tmp_path, "voice-package-r2.json")
@@ -158,7 +159,7 @@ def test_five_seconds_reports_real_voice_budget_failure(tmp_path, offline):
     assert report["status"] == "failed"
     assert report["feedback"]["code"] == "VOICE_NEEDS_RETIME"
     assert report["feedback"]["affected_ids"] == ["cue-03"]
-    assert report["calls"] == {"A": 1, "E": 1, "D": 0}
+    assert report["calls"] == {"A": 1, "B": 1, "E": 1, "D": 0}
     assert read(tmp_path, "voice-package-r1.json")["status"] == "needs_retime"
     assert len(read(tmp_path, "assets-union-r1.json")["assets"]) == 4
     assert report["render"] is None
@@ -183,7 +184,7 @@ def test_manifest_validation_failure_stops_c_e_d(tmp_path, offline, monkeypatch)
     monkeypatch.setattr(demo, "validate_media", corrupt)
     report = demo.run_demo(tmp_path)
     assert report["status"] == "failed"
-    assert report["calls"] == {"A": 1, "E": 0, "D": 0}
+    assert report["calls"] == {"A": 1, "B": 0, "E": 0, "D": 0}
     assert report["feedback"]["stage"] == "A-validate"
     assert not (tmp_path / "candidate-set.json").exists()
 

@@ -1,0 +1,39 @@
+{
+  "status": "draft_for_C_review_not_an_approved_StoryPlan",
+  "topic": "Countryside walk and natural scenery",
+  "chinese_brief": "制作一条约30秒的自然风景短片：先用小路交代郊外环境，再展示人物行走和林边景色，最后以暖色夕阳收尾。采用轻松的中文旁白和横屏画面。公开素材用于主题蒙太奇，不声称是组员的真实经历，也不声称所有镜头拍于同一天、同一地点。",
+  "target_duration_us": 30000000,
+  "language": "zh-CN",
+  "beats": [
+    {
+      "purpose": "Introduce the countryside setting",
+      "suggested_inputs": [
+        "media/broll-01-trail-aerial.mp4",
+        "media/short-01-trail-back-view.mp4"
+      ],
+      "optional_narration": "沿着郊外的小路，看看路边的风景。"
+    },
+    {
+      "purpose": "Show walking and woodland details",
+      "suggested_inputs": [
+        "media/short-02-hiker-by-forest.mp4",
+        "media/short-03-hiker-on-path.mp4",
+        "variants/broll-02-no-audio-30fps-720p.mp4"
+      ],
+      "optional_narration": "放慢脚步，留一点时间给身边的自然。"
+    },
+    {
+      "purpose": "Close with warm sunset scenery",
+      "suggested_inputs": [
+        "media/long-02-countryside-sunset.mp4"
+      ],
+      "optional_narration": "让这段散步，在柔和的光线里收尾。"
+    }
+  ],
+  "hard_constraints": [
+    "No Yangmingshan narration or location labels in this countryside story.",
+    "No claim of one continuous trip, a specific time sequence, or a team member identity.",
+    "C must approve narration and evidence before E synthesis; D selects final intervals.",
+    "No claims of packing, climbing a summit, arriving at a destination, or sitting down: evidence absent."
+  ]
+}

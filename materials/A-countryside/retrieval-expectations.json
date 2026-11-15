@@ -1,0 +1,36 @@
+{
+  "status": "test expectations, not a CandidateSet",
+  "cases": [
+    {
+      "query": "人物沿小路行走",
+      "expected_paths": [
+        "media/short-01-trail-back-view.mp4",
+        "media/short-02-hiker-by-forest.mp4",
+        "media/short-03-hiker-on-path.mp4"
+      ],
+      "exclude_as_event_evidence": [
+        "media/broll-01-trail-aerial.mp4",
+        "variants/broll-02-no-audio-30fps-720p.mp4"
+      ]
+    },
+    {
+      "query": "无人机拍摄道路或树林",
+      "expected_paths": [
+        "media/broll-01-trail-aerial.mp4",
+        "variants/broll-02-no-audio-30fps-720p.mp4"
+      ],
+      "role": "broll"
+    },
+    {
+      "query": "夕阳和暖光风景",
+      "expected_paths": [
+        "media/long-02-countryside-sunset.mp4"
+      ]
+    },
+    {
+      "query": "组员登顶后坐下休息",
+      "expected_result": "evidence_gap",
+      "reason": "No verified team-member identity, summit arrival, or sitting action."
+    }
+  ]
+}

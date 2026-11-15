@@ -1,0 +1,44 @@
+{
+  "status": "disabled",
+  "profile": {
+    "asr": "none",
+    "asr_model": "tiny",
+    "asr_language": null,
+    "asr_device": "cpu",
+    "asr_compute_type": "int8",
+    "asr_beam_size": 5,
+    "asr_cpu_threads": 2,
+    "asr_num_workers": 1,
+    "asr_vad": true,
+    "asr_condition_on_previous_text": false,
+    "asr_initial_prompt": null,
+    "asr_hotwords": null,
+    "asr_model_revision": null,
+    "packages": {
+      "faster-whisper": "unavailable",
+      "ctranslate2": "unavailable",
+      "av": "unavailable",
+      "tokenizers": "0.23.3",
+      "onnxruntime": "unavailable",
+      "huggingface-hub": "2.4.0"
+    },
+    "vad_filter": true,
+    "audio_preprocessing": "video-origin-mono-16k-v1",
+    "diagnostics_version": 1
+  },
+  "segments": [],
+  "diagnostics": {},
+  "source_content_hash": "sha256:191bcc5a37350b6550e869ba4cbc9fb9893a62a9a88eb02f3b52649e4d9786e9",
+  "review": {
+    "status": "not_applicable",
+    "reasons": [],
+    "policy": {
+      "version": 1,
+      "calibrated": false,
+      "min_avg_logprob": -1.0,
+      "max_no_speech_prob": 0.6,
+      "max_compression_ratio": 2.4,
+      "tail_tolerance_us": 500000
+    }
+  }
+}

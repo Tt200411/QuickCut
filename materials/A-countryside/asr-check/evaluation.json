@@ -1,0 +1,35 @@
+{
+  "kind": "ASREvaluation",
+  "reference_id": "mandarin-opening-full-original",
+  "reference_verification": {
+    "status": "human_verified",
+    "reviewer": "user",
+    "date": "2026-11-12",
+    "method": "Manual listening check confirmed by the contributor."
+  },
+  "comparison_kind": "human_reference",
+  "source_content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+  "source_range_us": {
+    "begin": 4500000,
+    "end": 12400000
+  },
+  "selection_method": "word_midpoint",
+  "hypothesis": "我們 現在 這裡 是 冷 水 看 上 方 的 觀 景 台 這裡 同 時 也是 冷 水 看 附 近 最 好的 跳 望 點",
+  "normalization": {
+    "unicode": "NFKC",
+    "casefold": true,
+    "letters_and_numbers_only": true,
+    "chinese_script": "t2s",
+    "opencc_version": "0.1.7"
+  },
+  "metrics": {
+    "reference_characters": 33,
+    "hypothesis_characters": 33,
+    "substitutions": 3,
+    "deletions": 0,
+    "insertions": 0,
+    "edit_distance": 3,
+    "cer": 0.09090909090909091
+  },
+  "scope": "Only the referenced interval; not an overall model accuracy estimate"
+}
