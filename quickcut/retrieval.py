@@ -23,11 +23,12 @@ Design notes
 
 from __future__ import annotations
 
-import os
+import hashlib
+import json
 import re
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 from .encoder import make_encoder
 
@@ -151,7 +152,7 @@ def _hard_constraint_failure(segment: dict[str, Any], asset: dict[str, Any], que
 
 
 def _load_keyframe_bytes(uri: str, project_root: Path | None) -> bytes | None:
-    """Return raw PPM bytes for a keyframe if a real file is reachable.
+    """Return encoded image bytes if a real keyframe is reachable.
 
     Keyframes in the fixture are JPG paths that don't exist on disk, which is
     expected.  We only attempt to read when the file is actually there so the
@@ -164,9 +165,6 @@ def _load_keyframe_bytes(uri: str, project_root: Path | None) -> bytes | None:
         path = project_root / uri
     if not path.exists():
         return None
-    # The encoders currently consume raw PPM bytes.  A full visual pipeline
-    # would decode JPG/PNG first; the fixture does not require that step and
-    # upstream A is expected to pre-extract PPM-compatible frames.
     try:
         return path.read_bytes()
     except OSError:
@@ -213,16 +211,17 @@ class Retriever:
     def _image_embedding(self, segment: dict[str, Any], project_root: Path | None) -> list[float] | None:
         for kf in segment.get("keyframes") or []:
             uri = kf.get("uri", "")
-            if uri in self._image_cache:
-                return self._image_cache[uri]
             ppm = _load_keyframe_bytes(uri, project_root)
             if ppm is None:
                 continue
+            fingerprint = hashlib.sha256(ppm).hexdigest()
+            if fingerprint in self._image_cache:
+                return self._image_cache[fingerprint]
             try:
                 embedding = self._encoder_lazy().encode_image(ppm)
             except Exception:
                 continue
-            self._image_cache[uri] = embedding
+            self._image_cache[fingerprint] = embedding
             return embedding
         return None
 
@@ -278,6 +277,8 @@ class Retriever:
         project_root: str | Path | None = None,
         document_id: str = "candidates-001",
         owner: str = "B",
+        revision: int | None = None,
+        previous: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         _validate_contract_envelope(manifest, "AssetManifest")
         _validate_contract_envelope(request, "RetrievalRequest")
@@ -285,6 +286,11 @@ class Retriever:
             manifest["project_id"] == request["project_id"],
             "AssetManifest and RetrievalRequest belong to different projects",
         )
+        _validate_manifest_reference(manifest, request)
+        require(isinstance(document_id, str) and bool(document_id.strip()),
+                "CandidateSet document_id must be nonempty")
+        require(revision is None or type(revision) is int and revision > 0,
+                "CandidateSet revision must be a positive integer")
 
         root = Path(project_root) if project_root else None
         assets_by_id = {a["asset_id"]: a for a in manifest.get("assets", [])}
@@ -310,12 +316,12 @@ class Retriever:
 
         overall_status = "ok" if any(r["status"] == "ok" for r in results) else "empty"
 
-        return {
+        result = {
             "schema_version": SCHEMA_VERSION,
             "kind": "CandidateSet",
             "document_id": document_id,
             "project_id": manifest["project_id"],
-            "revision": 1,
+            "revision": revision or 1,
             "fixtures_only": manifest.get("fixtures_only", False) or request.get("fixtures_only", False),
             "owner": owner,
             "inputs": [
@@ -325,14 +331,32 @@ class Retriever:
             "status": overall_status,
             "results": results,
             "retrieval_profile": {
+                "config": asdict(self.config),
+                "input_fingerprints": {
+                    "AssetManifest": _fingerprint(manifest),
+                    "RetrievalRequest": _fingerprint(request),
+                },
                 "score_profile": score_profile,
                 "encoder": info,
                 "dedup_by_content_hash": self.config.dedup_by_content_hash,
                 "duration_budget_us_applied_as_filter": False,
-                "tag_labels": TAG_LABELS if encoder_name == "openclip" else None,
+                "tag_labels": {key: list(labels) for key, labels in TAG_LABELS.items()}
+                if encoder_name == "openclip" else None,
                 "tag_method": "openclip-zero-shot" if encoder_name == "openclip" else "unavailable",
             },
         }
+        if previous is not None:
+            _validate_contract_envelope(previous, "CandidateSet")
+            require(previous["document_id"] == document_id
+                    and previous["project_id"] == manifest["project_id"],
+                    "Existing CandidateSet belongs to a different document or project")
+            old_content = {k: v for k, v in previous.items() if k != "revision"}
+            new_content = {k: v for k, v in result.items() if k != "revision"}
+            next_revision = previous["revision"] + (_fingerprint(old_content) != _fingerprint(new_content))
+            require(revision is None or revision >= next_revision,
+                    "CandidateSet revision cannot reuse an old version for changed content")
+            result["revision"] = revision if revision is not None else next_revision
+        return result
 
     def _run_query(
         self,
@@ -345,11 +369,11 @@ class Retriever:
         query_id = query["query_id"]
         semantic_text = query.get("semantic_text", "")
         allowed_origins = _resolve_allowed_origins(query)
-        top_k = int(query.get("top_k", 4))
+        top_k = query.get("top_k", 4)
+        require(type(top_k) is int and top_k > 0, "query top_k must be a positive integer")
         role = query.get("role", "")
 
         pool: list[tuple[float, dict[str, Any], dict[str, Any], dict[str, float]]] = []
-        seen_hashes: set[str] = set()
         reasons_dropped: list[str] = []
         constraint_rejected = 0
         eligible = 0
@@ -369,15 +393,6 @@ class Retriever:
                 constraint_rejected += 1
                 reasons_dropped.append(f"segment {segment['segment_id']} {failure}")
                 continue
-            if self.config.dedup_by_content_hash:
-                content_hash = asset.get("content_hash")
-                if content_hash and content_hash in seen_hashes:
-                    # Keep the first occurrence; duplicates typically arise
-                    # when the same B-roll clip is imported twice.
-                    continue
-                if content_hash:
-                    seen_hashes.add(content_hash)
-
             eligible += 1
             visual = self._visual_score(semantic_text, segment, project_root)
             transcript_overlap, description_overlap = self._text_score(semantic_text, segment)
@@ -401,7 +416,23 @@ class Retriever:
             pool.append((ranking, segment, asset, components))
 
         pool.sort(key=lambda row: row[0], reverse=True)
-        top = pool[:top_k]
+        # An asset hash identifies a complete file, not a candidate interval.
+        # Score every window first, then retain the highest-ranked duplicate
+        # of the same source interval (including reimports under another ID).
+        top = []
+        seen_intervals = set()
+        for row in pool:
+            _, segment, asset, _ = row
+            bounds = segment.get("source_range_us") or {}
+            content_hash = asset.get("content_hash")
+            interval_key = (content_hash, bounds.get("begin"), bounds.get("end"))
+            if self.config.dedup_by_content_hash and content_hash:
+                if interval_key in seen_intervals:
+                    continue
+                seen_intervals.add(interval_key)
+            top.append(row)
+            if len(top) >= top_k:
+                break
 
         candidates: list[dict[str, Any]] = []
         flags_any_above_threshold = False
@@ -480,6 +511,27 @@ def _validate_contract_envelope(doc: dict[str, Any], kind: str) -> None:
     require(doc.get("kind") == kind, f"document kind must be {kind}")
     for field_name in ("document_id", "project_id", "revision"):
         require(field_name in doc, f"{kind}: missing {field_name}")
+    require(type(doc["revision"]) is int and doc["revision"] > 0,
+            f"{kind}: revision must be a positive integer")
+    for field_name in ("document_id", "project_id"):
+        require(isinstance(doc[field_name], str) and bool(doc[field_name].strip()),
+                f"{kind}: {field_name} must be nonempty")
+
+
+def _fingerprint(document: dict[str, Any]) -> str:
+    payload = json.dumps(document, sort_keys=True, ensure_ascii=False,
+                         separators=(",", ":"), allow_nan=False).encode("utf-8")
+    return "sha256:" + hashlib.sha256(payload).hexdigest()
+
+
+def _validate_manifest_reference(manifest: dict[str, Any], request: dict[str, Any]) -> None:
+    links = request.get("inputs")
+    require(isinstance(links, list), "RetrievalRequest must include exact AssetManifest input reference")
+    references = [link for link in links if isinstance(link, dict) and link.get("kind") == "AssetManifest"]
+    expected = {key: manifest[key] for key in ("kind", "document_id", "revision")}
+    require(len(references) == 1 and references[0] == expected
+            and type(references[0].get("revision")) is int,
+            "STALE_INPUT_REVISION: RetrievalRequest must reference the exact AssetManifest")
 
 
 def _suggest_role(requested_role: str, origin: str) -> str:
@@ -537,25 +589,36 @@ class BRollLibrary:
         return cls(path=path, manifest=manifest)
 
     def merge_into(self, project_manifest: dict[str, Any]) -> dict[str, Any]:
-        """Return a new manifest that unions the library into the project.
+        """Combine protocol fixtures; real libraries must be registered by A.
 
-        The project manifest is treated as authoritative on conflicts — a
-        user-side ``asset_id`` with the same ID as a library asset wins, and we
-        emit a flag the retriever will later drop through dedup.  We never
-        mutate the caller's dict.
+        This helper does not copy media or rebase library-relative paths and
+        therefore cannot produce a production AssetManifest. C must issue a
+        new request referencing the returned fixture revision.
         """
         import copy as _copy
+        require(project_manifest.get("fixtures_only") is True
+                and self.manifest.get("fixtures_only") is True,
+                "Register real B-roll with A ingestion, then issue a new C request; "
+                "in-memory library merging is fixtures-only")
         merged = _copy.deepcopy(project_manifest)
         existing_ids = {a["asset_id"] for a in merged.get("assets", [])}
         existing_segs = {s["segment_id"] for s in merged.get("segments", [])}
         for asset in self.manifest.get("assets", []):
             if asset["asset_id"] in existing_ids:
+                require(next(a for a in merged["assets"] if a["asset_id"] == asset["asset_id"]) == asset,
+                        f"Conflicting library asset ID: {asset['asset_id']}")
                 continue
-            merged.setdefault("assets", []).append(asset)
+            merged.setdefault("assets", []).append(_copy.deepcopy(asset))
+            existing_ids.add(asset["asset_id"])
         for segment in self.manifest.get("segments", []):
             if segment["segment_id"] in existing_segs:
+                require(next(s for s in merged["segments"] if s["segment_id"] == segment["segment_id"]) == segment,
+                        f"Conflicting library segment ID: {segment['segment_id']}")
                 continue
-            merged.setdefault("segments", []).append(segment)
+            merged.setdefault("segments", []).append(_copy.deepcopy(segment))
+            existing_segs.add(segment["segment_id"])
+        if merged != project_manifest:
+            merged["revision"] += 1
         return merged
 
 
@@ -569,7 +632,10 @@ def retrieve(
     config: RetrievalConfig | None = None,
     project_root: str | Path | None = None,
     document_id: str = "candidates-001",
+    revision: int | None = None,
+    previous: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     return Retriever(config).retrieve(
         manifest, request, project_root=project_root, document_id=document_id,
+        revision=revision, previous=previous,
     )

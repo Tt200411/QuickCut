@@ -116,6 +116,10 @@ def _validate(timeline: Document, manifest: Document, voice: Document) -> tuple[
     if "processing" in manifest:
         _require(manifest["processing"].get("status") == "success" and not manifest["processing"].get("errors"), "AssetManifest 处理尚未成功")
     _require(not timeline.get("unresolved_gaps") and not timeline.get("pending_reviews"), "timeline 仍有缺口或待审项")
+    policy = timeline.get("render_policy", {})
+    _require(isinstance(policy, dict), "render_policy 必须是对象")
+    _require(type(policy.get("preview_burn_subtitles", False)) is bool,
+             "preview_burn_subtitles 必须是布尔值")
     _no_effects(timeline)
     duration = _integer(timeline.get("duration_us"), "duration_us")
     output = timeline.get("output", {})
@@ -244,11 +248,71 @@ def _srt(cues: list[Document]) -> str:
     return "\n".join(blocks)
 
 
-def _run(command: list[str]) -> bytes:
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+def _frame_subtitles(cues: list[Document], fps: Fraction) -> list[Document]:
+    """Map visible frames to libass's centisecond clock without rounding early."""
+    result = []
+    for cue in cues:
+        begin, end = (math.ceil(Fraction(cue["timeline_range_us"][key], 1_000_000) * fps)
+                      for key in ("begin", "end"))
+        if end > begin:
+            result.append({"text": cue["text"], "timeline_range_us": {
+                "begin": begin * 10_000, "end": end * 10_000}})
+    return result
+
+
+def _run(command: list[str], *, cwd: Path | None = None) -> bytes:
+    result = subprocess.run(command, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if result.returncode:
         raise PreviewError(f"媒体命令失败（{result.returncode}）: {result.stderr.decode('utf-8', errors='replace')}")
     return result.stdout
+
+
+_SUBTITLE_FONTS = (
+    ("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc", "Noto Sans CJK SC"),
+    ("/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc", "Noto Sans CJK SC"),
+    ("/System/Library/Fonts/Hiragino Sans GB.ttc", "Hiragino Sans GB"),
+    ("/System/Library/Fonts/STHeiti Light.ttc", "Heiti SC"),
+    ("C:/Windows/Fonts/msyh.ttc", "Microsoft YaHei"),
+    ("C:/Windows/Fonts/simhei.ttf", "SimHei"),
+)
+
+
+def _subtitle_font() -> tuple[Path, str]:
+    """Select a known CJK font rather than silently relying on a Latin fallback."""
+    configured = os.getenv("QUICKCUT_SUBTITLE_FONT")
+    if configured:
+        path = Path(configured).expanduser().resolve()
+        name = os.getenv("QUICKCUT_SUBTITLE_FONT_NAME", "")
+        _require(path.is_file() and path.suffix.lower() in {".ttf", ".ttc", ".otf"},
+                 "QUICKCUT_SUBTITLE_FONT 必须是现有 TTF/TTC/OTF 字体")
+        _require(bool(name) and re.fullmatch(r"[\w .-]+", name) is not None,
+                 "配置字体时须提供安全的 QUICKCUT_SUBTITLE_FONT_NAME 字体家族名")
+        return path, name
+    for filename, name in _SUBTITLE_FONTS:
+        path = Path(filename)
+        if path.is_file():
+            return path, name
+    raise PreviewError("烧录中文字幕需要 CJK 字体；安装 fonts-noto-cjk 或配置 "
+                       "QUICKCUT_SUBTITLE_FONT 与 QUICKCUT_SUBTITLE_FONT_NAME",
+                       code="subtitle_font_required")
+
+
+def _subtitle_ffmpeg(preferred: str) -> str:
+    """Use an installed libass build; never replace an explicit user override."""
+    candidates = [preferred]
+    if not os.getenv("QUICKCUT_FFMPEG"):
+        try:
+            import imageio_ffmpeg
+            candidates.append(imageio_ffmpeg.get_ffmpeg_exe())
+        except ImportError:
+            pass
+    for binary in dict.fromkeys(candidates):
+        available = _run([binary, "-hide_banner", "-filters"]).decode("utf-8", errors="replace")
+        if re.search(r"\bsubtitles\s+V->V", available):
+            return binary
+    raise PreviewError("时间线要求烧录字幕，但 FFmpeg 不含 libass subtitles filter；"
+                       "安装支持 libass 的 FFmpeg 或使用 runtime 中的 imageio-ffmpeg",
+                       code="subtitle_filter_required")
 
 
 def _ffprobe_binary() -> str | None:
@@ -307,6 +371,10 @@ def render_timeline_preview(
     """
     assets, tracks = _validate(timeline, manifest, voice)
     subtitle_text = _srt(tracks["subtitle"]["cues"])
+    fps = Fraction(timeline["output"]["fps"]["numerator"], timeline["output"]["fps"]["denominator"])
+    frame_subtitles = _frame_subtitles(tracks["subtitle"]["cues"], fps)
+    burn_requested = timeline.get("render_policy", {}).get("preview_burn_subtitles", False)
+    burn_subtitles = burn_requested and bool(frame_subtitles)
     root = Path(project_root).expanduser().resolve(strict=True)
     _require(root.is_dir(), "project_root 必须是目录")
     destination = Path(output_path).expanduser().absolute()
@@ -325,6 +393,10 @@ def render_timeline_preview(
     probe = _ffprobe_binary()
     if not probe:
         raise PreviewError("发布预览必须安装 ffprobe 或配置 QUICKCUT_FFPROBE", code="ffprobe_required")
+    font = None
+    if burn_subtitles:
+        ffmpeg = _subtitle_ffmpeg(ffmpeg)
+        font = _subtitle_font()
     used = {c["asset_id"] for t in tracks.values() for c in t.get("clips", [])}
     paths = {}
     measurements = {}
@@ -366,10 +438,15 @@ def render_timeline_preview(
         measurements[asset_id] = measured
     output = timeline["output"]
     sample_rate = output["sample_rate"]
-    fps = Fraction(output["fps"]["numerator"], output["fps"]["denominator"])
     duration = timeline["duration_us"]
     with tempfile.TemporaryDirectory(prefix=".quickcut-preview-", dir=destination.parent) as directory:
         temp = Path(directory)
+        subtitle_file = temp / "captions.srt"
+        subtitle_file.write_text(subtitle_text, encoding="utf-8")
+        if font:
+            (temp / "burn-captions.srt").write_text(_srt(frame_subtitles), encoding="utf-8")
+            (temp / "fonts").mkdir()
+            shutil.copyfile(font[0], temp / "fonts" / ("subtitle" + font[0].suffix.lower()))
         command = [ffmpeg, "-v", "error", "-xerror", "-nostdin", "-n", "-copyts"]
         filters = []
         video_labels = []
@@ -398,8 +475,19 @@ def render_timeline_preview(
             video_labels.append(f"[{label}]")
             input_index += 1
         total_frames = math.ceil(Fraction(duration, 1_000_000) * fps)
-        filters.append("".join(video_labels) + f"concat=n={len(video_labels)}:v=1:a=0,"
-                       f"settb=expr={time_base},setpts=N[picture]")
+        picture_filter = ("".join(video_labels) + f"concat=n={len(video_labels)}:v=1:a=0,"
+                          f"settb=expr={time_base},setpts=N")
+        if burn_subtitles:
+            # Only fixed local filenames enter the filter graph. Source/output/font
+            # directories may contain Windows drive colons, quotes or Unicode.
+            # libass rounds SRT to centiseconds. Temporarily give every frame
+            # exactly 10 ms, then restore the true clock after burning. This keeps
+            # even submillisecond cue boundaries correct at 120 or fractional fps.
+            picture_filter += (
+                ",settb=expr=1/100,setpts=N,subtitles=filename=burn-captions.srt:fontsdir=fonts:"
+                f"force_style='FontName={font[1]},FontSize=20,Outline=1.3,Shadow=0,MarginV=18,Alignment=2',"
+                f"settb=expr={time_base},setpts=N")
+        filters.append(picture_filter + "[picture]")
         audio_labels = ["[silence]"]
         total_samples = round(Fraction(duration * sample_rate, 1_000_000))
         filters.append(f"anullsrc=r={sample_rate}:cl=stereo,atrim=end_sample={total_samples}[silence]")
@@ -435,7 +523,7 @@ def render_timeline_preview(
                     "-pix_fmt", "yuv420p", "-r", rate, "-fps_mode", "cfr",
                     "-c:a", "aac", "-b:a", "192k", "-ar", str(sample_rate), "-ac", "2",
                     "-movflags", "+faststart", str(movie)]
-        _run(command)
+        _run(command, cwd=temp)
         _decode(ffmpeg, movie, {"video", "audio"})
         tolerance = math.ceil(1_000_000 / fps) + 2000
         info = _probe(probe, movie)
@@ -458,15 +546,19 @@ def render_timeline_preview(
             "duration_validation": "ffprobe",
             "video_frame_quantization": "ceil_global_timeline_boundaries",
             "video_frame_ranges": frame_ranges, "measured_video_frames": int(video["nb_frames"]),
-            "full_decode_verified": True, "subtitles_burned": False, "subtitles_editable": True,
+            "full_decode_verified": True, "subtitles_burned": burn_subtitles, "subtitles_editable": True,
+            "subtitle_policy_requested": burn_requested,
+            "subtitle_font": font[1] if font else None,
+            "ffmpeg_binary": ffmpeg,
+            "subtitle_frame_quantization": "ceil_global_timeline_boundaries",
             "srt_time_quantization": "floor_to_millisecond",
             "audio_mix": "source_audio_and_narration_with_timeline_offsets_and_gains",
             "editor_project_exported": False, "editor_import_verified": False, "f_acceptance_completed": False,
-            "notes": ["字幕未烧录，独立全局 SRT 保留编辑性。", "这是媒体预览，不是剪辑工程导出，未完成 F 验收。"],
+            "notes": [("按时间线要求烧录预览字幕，同时保留独立全局 SRT。" if burn_subtitles else
+                       "预览无烧录字幕，独立全局 SRT 保留编辑性。"),
+                      "这是媒体预览，不是剪辑工程导出，未完成 F 验收。"],
             "files": dict(zip(("preview", "subtitles", "report"), map(str, destinations))),
         }
-        subtitle_file = temp / "captions.srt"
-        subtitle_file.write_text(subtitle_text, encoding="utf-8")
         report_file = temp / "report.json"
         report_file.write_text(json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")
         # 每个临时文件放到目标同目录，再用 link 排他发布，避免检查后覆盖的竞态。

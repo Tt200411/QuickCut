@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import tempfile
 from pathlib import Path
 
 from .core import (
@@ -15,7 +17,7 @@ from .core import (
     update_timeline,
 )
 from .download import download_video
-from .retrieval import RetrievalConfig, Retriever, BRollLibrary
+from .retrieval import RetrievalConfig, Retriever
 from .story import build_basic_vlog
 from .voice import render_story_timeline
 
@@ -26,6 +28,56 @@ def _load_timeline(path: str):
     items = [TimelineItem(**item) for item in data.pop("items", [])]
     data.pop("duration", None)
     return Timeline(items=items, **data)
+
+
+def _retrieve_to_file(args) -> dict:
+    if args.broll_library:
+        raise ValueError(
+            "--broll-library cannot register or relocate media. Import the external files "
+            "with quickcut.ingest first, then issue a C request referencing the new "
+            "AssetManifest revision. No CandidateSet was written."
+        )
+    manifest_path, request_path = Path(args.manifest), Path(args.request)
+    output = Path(args.output)
+    if output.is_symlink() or output.resolve() in {manifest_path.resolve(), request_path.resolve()}:
+        raise ValueError("CandidateSet output must not overwrite an input or symbolic link")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    request = json.loads(request_path.read_text(encoding="utf-8"))
+    output.parent.mkdir(parents=True, exist_ok=True)
+    lock = output.with_name(output.name + ".lock")
+    # A retrieval may take seconds or minutes; serialize writers so two calls
+    # cannot both replace revision n with different content labelled n+1.
+    try:
+        handle = lock.open("x", encoding="utf-8")
+    except FileExistsError as exc:
+        raise ValueError(f"CandidateSet output is locked by another writer: {lock}") from exc
+    staged = None
+    try:
+        with handle:
+            handle.write(str(os.getpid()))
+        previous = json.loads(output.read_text(encoding="utf-8")) if output.exists() else None
+        config = RetrievalConfig(
+            encoder_mode=args.encoder,
+            low_confidence_threshold=args.low_confidence_threshold,
+        )
+        candidates = Retriever(config).retrieve(
+            manifest, request, project_root=args.project_root,
+            document_id=args.document_id, revision=args.revision, previous=previous,
+        )
+        if candidates != previous:
+            with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=output.parent,
+                                             prefix=".candidates-", delete=False) as stream:
+                staged = Path(stream.name)
+                json.dump(candidates, stream, ensure_ascii=False, indent=2, allow_nan=False)
+                stream.write("\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(staged, output)
+        return candidates
+    finally:
+        if staged is not None:
+            staged.unlink(missing_ok=True)
+        lock.unlink()
 
 
 def main() -> None:
@@ -96,9 +148,12 @@ def main() -> None:
         "--broll-library",
         action="append",
         default=[],
-        help="Optional path(s) to a B-roll library AssetManifest (external origin); may be repeated",
+        help="Unsupported until A has registered library media; import via quickcut.ingest instead",
     )
     retrieve_cmd.add_argument("--output", default="outputs/candidates.json")
+    retrieve_cmd.add_argument("--document-id", default="candidates-001")
+    retrieve_cmd.add_argument("--revision", type=int, default=None,
+                              help="Optional explicit revision; existing output otherwise increments only on change")
     retrieve_cmd.add_argument(
         "--encoder",
         choices=["fallback", "auto", "openclip", "mobileclip"],
@@ -159,21 +214,10 @@ def main() -> None:
     elif args.command == "download":
         print(download_video(args.url, args.output_dir, max_duration=args.max_duration))
     elif args.command == "retrieve":
-        manifest = json.loads(Path(args.manifest).read_text(encoding="utf-8"))
-        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
-        for library_path in args.broll_library:
-            manifest = BRollLibrary.load(library_path).merge_into(manifest)
-        config = RetrievalConfig(
-            encoder_mode=args.encoder,
-            low_confidence_threshold=args.low_confidence_threshold,
-        )
-        candidates = Retriever(config).retrieve(
-            manifest, request, project_root=args.project_root,
-        )
-        Path(args.output).parent.mkdir(parents=True, exist_ok=True)
-        Path(args.output).write_text(
-            json.dumps(candidates, ensure_ascii=False, indent=2), encoding="utf-8",
-        )
+        try:
+            candidates = _retrieve_to_file(args)
+        except (ValueError, OSError) as exc:
+            parser.error(str(exc))
         print(json.dumps(candidates, ensure_ascii=False, indent=2))
 
 

@@ -6,9 +6,9 @@ B 负责检索与外部空镜库。输入是 A 的素材清单和 C 的检索请
 AssetManifest（A）
 RetrievalRequest（C）
         │
-        ├─ 可选：并入外部空镜库
-        ├─ 核对两份文档属于同一项目
-        └─ 对每条查询：过滤来源 → 去掉不可用和重复片段 → 打分 → 取前 top_k
+        ├─ 外部空镜先经 A 注册到同一项目素材清单
+        ├─ 核对项目与请求引用的 Manifest 精确版本
+        └─ 对每条查询：过滤来源与不可用片段 → 所有窗口打分 → 相同源区间去重 → 取前 top_k
         │
         ▼
 CandidateSet（交给 C）
@@ -20,7 +20,7 @@ CandidateSet（交给 C）
 
 | 文件                                    | 作用                                                                       |
 | ------------------------------------- | ------------------------------------------------------------------------ |
-| `quickcut/retrieval.py`               | B 的管线。`retrieve()` 读取清单和请求，写出 `CandidateSet`。`BRollLibrary` 把外部空镜库并进项目清单 |
+| `quickcut/retrieval.py`               | B 的管线。`retrieve()` 读取清单和请求，生成 `CandidateSet`；`BRollLibrary` 仅供协议夹具合并 |
 | `quickcut/encoder.py`                 | 视觉打分。默认是颜色直方图；加上 `--encoder openclip` 时使用 OpenCLIP                       |
 | `quickcut/cli.py` 的 `retrieve`        | 命令行入口                                                                    |
 | `tests/test_retrieval.py`             | B 的自动化测试                                                                 |
@@ -31,7 +31,11 @@ CandidateSet（交给 C）
 
 ## 输入和输出
 
-两份输入的协议版本都是 `0.1.0`，而且 `project_id` 必须相同。
+两份输入的协议版本都是 `0.1.0`，而且 `project_id` 必须相同；请求必须精确引用实际传入的 Manifest document_id/revision。
+
+CLI 重跑同一输出文件时，内容相同复用原 revision，输入、配置或结果变化则递增；写入使用独占锁和原子替换。API 持续更新同一文档时传入 `previous`，或由调用者显式维护 `revision`。输出不可覆盖输入文件。
+
+外部空镜必须先通过 A 的 `quickcut.ingest --external ...` 导入同一项目，再由 C 针对新 Manifest revision 发出请求。`--broll-library` 会明确拒绝尚未注册的库，避免生成 C 找不到资产或片段的候选；不会静默复制、改写来源或假定库路径属于项目根。
 
 `AssetManifest` 来自 A。每个片段包含 `segment_id`、所属 `asset_id`、来源（`user` 或 `external`）、源时间、关键帧路径、字幕和文字描述。
 
@@ -46,7 +50,7 @@ CandidateSet（交给 C）
 在 `QuickCut-B` 目录执行：
 
 ```bash
-python3 -m pip install -e '.[dev]'
+python3 -m pip install -e '.[dev,ingest]'
 python3 -m pytest tests/test_retrieval.py -q
 ```
 
@@ -66,11 +70,11 @@ PY
 python3 -m quickcut.cli retrieve outputs/manifest.json outputs/request.json --output outputs/candidates.json
 ```
 
-样例里的视频和关键帧文件不在仓库中，所以这次 `visual_score` 全是 `0.0`，排序来自字幕和描述。有真实关键帧时加上 `--project-root`；要做图文语义检索时再加上 `--encoder openclip`，并先安装 `pip install -e '.[ml]'`。
+样例里的视频和关键帧文件不在仓库中，所以这次 `visual_score` 全是 `0.0`，排序来自字幕和描述。有真实关键帧时加上 `--project-root`；默认颜色编码器支持 PPM 和通过 Pillow 解码的 PNG/JPEG，真实图片需安装 `.[ingest]`。要做图文语义检索时再加上 `--encoder openclip`，并先安装 `pip install -e '.[ml]'`。
 
 ## 测试结果
 
-`python3 -m pytest tests/test_retrieval.py -q` 的结果是 **17 passed**。覆盖协议格式、跨项目拒绝、来源过滤、空结果、低置信标记、零分片段不凑数、重复空镜去重和空镜库合并。
+初版检索的历史记录为 **17 passed**。2026-11-15 的检索、编码器、蒙太奇与 pipeline demo 联合回归为 **63 passed**，新增长视频后续窗口、PNG关键帧、旧版本拒绝、输出修订及外部库注册边界验证。
 
 样例检索生成的 `outputs/candidates.json` 是合法的 `CandidateSet`：
 

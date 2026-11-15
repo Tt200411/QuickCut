@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import array
 from copy import deepcopy
+from fractions import Fraction
 import importlib.util
 import json
 import math
@@ -9,6 +10,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+from types import SimpleNamespace
 
 import pytest
 
@@ -96,6 +98,8 @@ def test_accepts_current_d_without_mutating_inputs():
     lambda t, m, v: t.update(duration_us=1.6),
     lambda t, m, v: t.update(revision=False),
     lambda t, m, v: t.update(status="draft"),
+    lambda t, m, v: t.update(render_policy="burn"),
+    lambda t, m, v: t["render_policy"].update(preview_burn_subtitles="true"),
     lambda t, m, v: v.update(status="needs_retime"),
     lambda t, m, v: v.update(errors=["失败"]),
     lambda t, m, v: t.update(fixtures_only=False),
@@ -165,6 +169,7 @@ def _amplitude(samples, hz, begin, end):
 
 def test_render_decodable_hard_cuts_scale_pad_audio_offsets_and_gains(tmp_path, media, ffmpeg):
     movie = tmp_path / "preview.mp4"
+    media[0]["render_policy"]["preview_burn_subtitles"] = False
     report = preview.render_timeline_preview(*media, tmp_path, movie)
     assert report["full_decode_verified"] is True
     assert report["fixtures_only"] is True
@@ -201,6 +206,98 @@ def test_render_decodable_hard_cuts_scale_pad_audio_offsets_and_gains(tmp_path, 
     with pytest.raises(preview.PreviewError, match="拒绝覆盖"):
         preview.render_timeline_preview(*media, tmp_path, movie)
     assert movie.read_bytes() == original
+
+
+@pytest.mark.parametrize("interval", [(250_000, 500_000), (240_001, 480_001)])
+@pytest.mark.parametrize("rate", [(25, 1), (120, 1), (30_000, 1001)])
+def test_burns_chinese_only_inside_caption_interval_and_keeps_srt(tmp_path, media, ffmpeg, interval, rate):
+    # Exercise shell/filter metacharacters in the containing path without relying
+    # on platform-specific filter escaping. The graph uses a fixed local SRT name.
+    target_dir = tmp_path / "中文 ' [preview],; folder"
+    target_dir.mkdir()
+    movie = target_dir / "字幕.mp4"
+    media[0]["output"].update(width=320, height=240, fps=dict(zip(("numerator", "denominator"), rate)))
+    media[0]["tracks"][3]["cues"][0]["timeline_range_us"] = dict(zip(("begin", "end"), interval))
+    media[2]["cues"][0]["local_subtitles"][0]["range_us"] = dict(
+        zip(("begin", "end"), (value - 200_000 for value in interval)))
+    report = preview.render_timeline_preview(*media, tmp_path, movie)
+    assert report["subtitles_burned"] is True
+    assert report["subtitle_policy_requested"] is True
+    assert report["subtitle_font"]
+    assert "可编辑字幕" in movie.with_suffix(".srt").read_text()
+
+    frames = _run([ffmpeg, "-v", "error", "-i", str(movie), "-map", "0:v:0",
+                   "-f", "rawvideo", "-pix_fmt", "rgb24", "-"])
+    frame_bytes = 320 * 240 * 3
+
+    def white_pixels(index):
+        pixels = frames[index * frame_bytes:(index + 1) * frame_bytes]
+        return sum(min(pixels[i:i + 3]) > 170 for i in range(0, len(pixels), 3))
+
+    fps = Fraction(*rate)
+    first, end = (math.ceil(Fraction(value, 1_000_000) * fps) for value in interval)
+    assert white_pixels(first - 1) == 0
+    assert white_pixels(first) > 20
+    assert white_pixels(end - 1) > 20
+    assert white_pixels(end) == 0
+    assert report["measured_video_frames"] == math.ceil(Fraction(8, 5) * fps)
+    assert len(frames) == report["measured_video_frames"] * frame_bytes
+    assert report["measured_stream_durations_us"]["audio"] == pytest.approx(1_600_000, abs=2000)
+
+
+def test_configured_font_with_quoted_path_is_copied_safely(tmp_path, media, monkeypatch):
+    original, family = preview._subtitle_font()
+    configured = tmp_path / ("字体 ' [custom]" + original.suffix)
+    configured.write_bytes(original.read_bytes())
+    monkeypatch.setenv("QUICKCUT_SUBTITLE_FONT", str(configured))
+    monkeypatch.setenv("QUICKCUT_SUBTITLE_FONT_NAME", family)
+    report = preview.render_timeline_preview(*media, tmp_path, tmp_path / "font.mp4")
+    assert report["subtitles_burned"] is True
+    assert report["subtitle_font"] == family
+
+
+def test_missing_cjk_font_rejects_requested_burn_without_publishing(tmp_path, media, monkeypatch):
+    monkeypatch.delenv("QUICKCUT_SUBTITLE_FONT", raising=False)
+    monkeypatch.setattr(preview, "_SUBTITLE_FONTS", ())
+    with pytest.raises(preview.PreviewError) as error:
+        preview.render_timeline_preview(*media, tmp_path, tmp_path / "missing-font.mp4")
+    assert error.value.code == "subtitle_font_required"
+    assert not list(tmp_path.glob("missing-font.*"))
+
+
+def test_missing_libass_rejects_requested_burn_without_publishing(tmp_path, media, monkeypatch):
+    original = preview._run
+
+    def without_subtitles(command, **kwargs):
+        return b"" if command[-1] == "-filters" else original(command, **kwargs)
+
+    monkeypatch.setattr(preview, "_run", without_subtitles)
+    with pytest.raises(preview.PreviewError) as error:
+        preview.render_timeline_preview(*media, tmp_path, tmp_path / "missing-filter.mp4")
+    assert error.value.code == "subtitle_filter_required"
+    assert not list(tmp_path.glob("missing-filter.*"))
+
+
+def test_caption_ffmpeg_falls_back_to_installed_libass_build(monkeypatch):
+    monkeypatch.delenv("QUICKCUT_FFMPEG", raising=False)
+    monkeypatch.setitem(sys.modules, "imageio_ffmpeg", SimpleNamespace(get_ffmpeg_exe=lambda: "bundled"))
+    monkeypatch.setattr(preview, "_run", lambda command: b" subtitles V->V " if command[0] == "bundled" else b"")
+    assert preview._subtitle_ffmpeg("system") == "bundled"
+
+
+def test_caption_ffmpeg_honors_explicit_override_without_libass(monkeypatch):
+    monkeypatch.setenv("QUICKCUT_FFMPEG", "explicit")
+    calls = []
+
+    def inspect(command):
+        calls.append(command[0])
+        return b""
+
+    monkeypatch.setattr(preview, "_run", inspect)
+    with pytest.raises(preview.PreviewError) as error:
+        preview._subtitle_ffmpeg("explicit")
+    assert error.value.code == "subtitle_filter_required"
+    assert calls == ["explicit"]
 
 
 def test_ffprobe_validates_real_streams_and_duration(tmp_path, media):
@@ -446,6 +543,7 @@ def test_cli_subprocess_success_and_missing_ffprobe_exit(tmp_path, media, ffmpeg
 
 
 def test_quickcut_ffmpeg_override(tmp_path, media, ffmpeg, monkeypatch):
+    media[0]["render_policy"]["preview_burn_subtitles"] = False
     monkeypatch.setenv("QUICKCUT_FFMPEG", ffmpeg)
     calls = []
     original = core._ffmpeg_binary

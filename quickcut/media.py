@@ -78,6 +78,20 @@ def read_json(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _rotation_degrees(video: dict) -> int:
+    # Display Matrix is authoritative; older containers expose only a rotate tag.
+    raw = next((item["rotation"] for item in video.get("side_data_list", [])
+                if item.get("side_data_type") == "Display Matrix" and "rotation" in item),
+               video.get("tags", {}).get("rotate", 0))
+    try:
+        rotation = Fraction(str(raw))
+    except (ValueError, ZeroDivisionError) as exc:
+        raise MediaError("Invalid video display rotation") from exc
+    if rotation.denominator != 1 or rotation % 90:
+        raise MediaError("Only quarter-turn video display rotation is supported")
+    return int(rotation)
+
+
 def probe_media(path: Path) -> dict:
     data = json.loads(run_media([ffprobe(), "-v", "error", "-show_streams", "-show_format", "-of", "json", str(path)]))
     videos = [s for s in data["streams"] if s["codec_type"] == "video" and not s.get("disposition", {}).get("attached_pic")]
@@ -93,9 +107,15 @@ def probe_media(path: Path) -> dict:
     fps = video.get("avg_frame_rate", "0/0")
     if fps in {"0/0", "0/1"}:
         fps = video.get("r_frame_rate", "0/0")
+    rotation = _rotation_degrees(video)
+    width, height = video["width"], video["height"]
+    if rotation % 180:
+        width, height = height, width
     return {
         "duration_us": us(duration),
-        "video": {"width": video["width"], "height": video["height"], "fps": rational(fps),
+        "video": {"width": width, "height": height,
+                  "encoded_width": video["width"], "encoded_height": video["height"],
+                  "rotation_degrees": rotation, "fps": rational(fps),
                   "time_base": video["time_base"], "start_time_us": us(video.get("start_time", "0")),
                   "codec": video["codec_name"], "stream_index": video["index"]},
         "audio": ({"present": True, "sample_rate": int(audio["sample_rate"]),
@@ -167,7 +187,8 @@ def extract_frames(path: Path, frames: list[dict], segments: list[dict], directo
     for offset in range(0, len(indices), 128):
         batch = indices[offset:offset + 128]
         expression = "+".join(f"eq(n\\,{index})" for index in batch)
-        run_media([_ffmpeg_binary(), "-v", "error", "-y", "-noautorotate", "-i", str(path),
+        # FFmpeg applies the display matrix before select/scale; frame PTS stay intact.
+        run_media([_ffmpeg_binary(), "-v", "error", "-y", "-i", str(path),
                    "-map", f"0:{stream_index}", "-vf", f"select={expression},scale=256:-2", "-fps_mode", "vfr",
                    "-start_number", str(offset), str(directory / "%08d.png")])
     positions = {index: pos for pos, index in enumerate(indices)}
@@ -180,8 +201,9 @@ def extract_frames(path: Path, frames: list[dict], segments: list[dict], directo
 
 def create_proxy(source: Path, target: Path, frames: list[dict], width: int, stream_index: int = 0) -> dict:
     target.parent.mkdir(parents=True, exist_ok=True)
-    # Preserve display PTS and frame count, including VFR. Audio stays in the original asset.
-    run_media([_ffmpeg_binary(), "-v", "error", "-y", "-noautorotate", "-i", str(source),
+    # Bake display orientation into pixels, preserving PTS/frame count, including VFR.
+    # Audio stays in the original asset.
+    run_media([_ffmpeg_binary(), "-v", "error", "-y", "-i", str(source),
                "-map", f"0:{stream_index}", "-an", "-vf", f"scale='min({width},iw)':-2,setpts=PTS-STARTPTS",
                "-c:v", "libx264", "-preset", "ultrafast", "-crf", "28", "-bf", "0",
                "-fps_mode", "passthrough", "-enc_time_base", "1:1000000",

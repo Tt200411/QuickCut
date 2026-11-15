@@ -17,6 +17,22 @@ def build(story, root, **kwargs):
     return v.build_voice_package(story, root, fixture=True, **kwargs)
 
 
+@pytest.mark.parametrize('pending', ['status', 'unresolved_gaps', 'pending_reviews', 'cue'])
+def test_unapproved_story_stops_before_creating_audio(story, tmp_path, monkeypatch, pending):
+    if pending == 'status':
+        story['status'] = 'needs_input'
+    elif pending == 'cue':
+        story['narration_cues'][0]['approved'] = False
+    else:
+        story[pending] = [{'beat_id': 'beat-open', 'reason': 'awaiting C review'}]
+    monkeypatch.setattr(v, 'synthesize', lambda *args: pytest.fail('unapproved script reached TTS'))
+    root = tmp_path / 'not-created'
+    with pytest.raises(v.VoiceError) as error:
+        v.build_voice_package(story, root)
+    assert error.value.code in {'STORY_NOT_READY', 'UNAPPROVED_SCRIPT'}
+    assert not root.exists()
+
+
 def test_local_timing_and_no_mutation(story, tmp_path):
     original = copy.deepcopy(story)
     p = build(story, tmp_path)

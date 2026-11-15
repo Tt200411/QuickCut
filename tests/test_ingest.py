@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import io
 import json
 import shutil
 import wave
@@ -11,7 +12,7 @@ import pytest
 import quickcut.ingest as ingest
 from quickcut.core import _ffmpeg_binary
 from quickcut.ingest import IngestConfig, SourceSpec, ingest_assets, validate_asset_manifest
-from quickcut.media import MediaError, digest, read_json, resolve_uri, run_media
+from quickcut.media import MediaError, digest, frame_timestamps, probe_media, read_json, resolve_uri, run_media
 from quickcut.types import TranscriptSegment
 from scripts.smoke_ingest import generate_video
 
@@ -215,6 +216,79 @@ def test_vfr_fractional_fps_source_and_proxy_mapping(tmp_path):
     assert shots[-1]["source_range_us"]["end"] == asset["duration_us"]
     assert all(a["source_range_us"]["end"] == b["source_range_us"]["begin"] for a, b in zip(shots, shots[1:]))
     validate_asset_manifest(manifest, root)
+
+
+@pytest.mark.parametrize("rotation", [90, -90])
+def test_rotated_video_metadata_keyframes_proxy_and_pts(tmp_path, rotation):
+    from PIL import Image
+
+    original, rotated = tmp_path / "landscape.mp4", tmp_path / "portrait.mp4"
+    run_media([_ffmpeg_binary(), "-v", "error", "-y", "-f", "lavfi", "-i",
+               "color=blue:size=160x96:rate=25:duration=1",
+               "-vf", "drawbox=x=0:y=0:w=80:h=96:color=red:t=fill",
+               "-c:v", "libx264", str(original)])
+    # Older FFmpeg writes rotate tags; recent versions require an input display matrix.
+    run_media([_ffmpeg_binary(), "-v", "error", "-y", "-i", str(original),
+               "-c", "copy", "-metadata:s:v:0", f"rotate={rotation}", str(rotated)])
+    if probe_media(rotated)["video"]["rotation_degrees"] == 0:
+        run_media([_ffmpeg_binary(), "-v", "error", "-y", "-display_rotation:v:0", str(rotation),
+                   "-i", str(original), "-c", "copy", str(rotated)])
+    original_hash = digest(rotated)
+    source_metadata = probe_media(rotated)
+    expected_pts = frame_timestamps(rotated, source_metadata)
+    root = tmp_path / "project"
+    result = ingest_assets(root, [SourceSpec(rotated)], config=IngestConfig(proxy_width=96))
+    assert result["processing"]["status"] == "success"
+    asset = result["assets"][0]
+    assert (asset["video"]["width"], asset["video"]["height"]) == (96, 160)
+    assert (asset["video"]["encoded_width"], asset["video"]["encoded_height"]) == (160, 96)
+    assert asset["video"]["rotation_degrees"] == rotation
+    assert digest(rotated) == digest(resolve_uri(root, asset["uri"])) == original_hash
+    assert read_json(resolve_uri(root, asset["source_pts_uri"]))["frames"] == expected_pts
+    mapping = read_json(resolve_uri(root, asset["proxy_mapping_uri"]))["frames"]
+    assert [{k: frame[k] for k in ("source_pts", "source_time_us")} for frame in mapping] == expected_pts
+    assert all(abs(frame["source_time_us"] - frame["proxy_time_us"]) <= 2 for frame in mapping)
+
+    def assert_orientation(image):
+        assert image.height > image.width
+        upper = image.convert("RGB").getpixel((image.width // 2, image.height // 4))
+        lower = image.convert("RGB").getpixel((image.width // 2, image.height * 3 // 4))
+        blue, red = (upper, lower) if rotation == 90 else (lower, upper)
+        assert blue[2] > 200 and blue[0] < 30
+        assert red[0] > 200 and red[2] < 30
+
+    keyframe = next(s["keyframes"][0] for s in result["segments"] if s["keyframes"])
+    assert keyframe["source_time_us"] in {frame["source_time_us"] for frame in expected_pts}
+    with Image.open(resolve_uri(root, keyframe["uri"])) as image:
+        assert_orientation(image)
+    proxy = resolve_uri(root, asset["proxy_uri"])
+    proxy_video = probe_media(proxy)["video"]
+    assert (proxy_video["width"], proxy_video["height"], proxy_video["rotation_degrees"]) == (96, 160, 0)
+    png = run_media([_ffmpeg_binary(), "-v", "error", "-noautorotate", "-i", str(proxy),
+                     "-frames:v", "1", "-f", "image2pipe", "-c:v", "png", "-"])
+    with Image.open(io.BytesIO(png)) as image:
+        assert_orientation(image)
+    validate_asset_manifest(result, root)
+
+
+def test_orientation_implementation_upgrade_invalidates_only_visual_stages(video, tmp_path, monkeypatch):
+    root = tmp_path / "project"
+    with monkeypatch.context() as legacy:
+        legacy.setattr(ingest, "STAGE_IMPLEMENTATION_VERSIONS",
+                       {"probe": 1, "keyframes": 1, "proxy": 1, "asr": 1})
+        previous = ingest_assets(root, [SourceSpec(video)])
+    current = ingest_assets(root, [])
+    hits = {stage["stage"]: stage["cache_hit"] for stage in stages(root)}
+    assert hits == {"probe": False, "keyframes": False, "proxy": False, "asr": True}
+    old, new = previous["assets"][0], current["assets"][0]
+    assert (new["asset_id"], new["revision"], new["content_hash"]) == (
+        old["asset_id"], old["revision"], old["content_hash"])
+    assert new["source_pts_uri"] != old["source_pts_uri"]
+    assert new["proxy_uri"] != old["proxy_uri"]
+    assert new["transcript"] == old["transcript"]
+    assert current["revision"] > previous["revision"]
+    assert current == ingest_assets(root, [])
+    assert all(stage["cache_hit"] for stage in stages(root))
 
 
 @pytest.mark.parametrize("uri", ["../secret", "/absolute", "C:/absolute", "x\\file"])

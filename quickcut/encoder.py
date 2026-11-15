@@ -101,7 +101,20 @@ class FallbackEncoder:
         }
 
     def encode_image(self, ppm: bytes) -> list[float]:
-        width, height, pixels = parse_ppm(ppm)
+        if ppm.startswith((b"P6", b"P3")):
+            width, height, pixels = parse_ppm(ppm)
+        else:
+            # A delivers PNG keyframes. Keep the dependency-free PPM path for
+            # the original indexer, and use the ingestion extra's Pillow for
+            # encoded images rather than silently losing the visual signal.
+            try:
+                from PIL import Image
+            except ImportError as exc:
+                raise RuntimeError("PNG/JPEG keyframes require quickcut[ingest]") from exc
+            with Image.open(io.BytesIO(ppm)) as image:
+                image = image.convert("RGB")
+                width, height = image.size
+                pixels = image.tobytes()
         if len(pixels) < width * height * 3:
             raise ValueError("Truncated PPM keyframe")
         bins = [0.0] * 64

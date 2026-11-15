@@ -173,12 +173,19 @@ def validate_story(story, expected_revision=None):
     integer(story.get("revision"), "StoryPlan.revision")
     if expected_revision is not None and story["revision"] != expected_revision:
         raise VoiceError("STALE_INPUT_REVISION", "StoryPlan revision differs from requested revision")
+    if (story.get("status") != "ready_for_edit" or story.get("unresolved_gaps")
+            or story.get("pending_reviews")):
+        raise VoiceError("STORY_NOT_READY", "C must approve the StoryPlan and resolve pending gaps before synthesis")
     ids = set()
     beats = {b["beat_id"] for b in story.get("beats", [])}
     for cue in story.get("narration_cues", []):
         if not isinstance(cue.get("cue_id"), str) or not cue["cue_id"] or cue["cue_id"] in ids:
             raise VoiceError("INVALID_INPUT", "Missing/duplicate cue_id")
         ids.add(cue["cue_id"])
+        # Legacy 0.1 handoffs express approval at StoryPlan level. If a newer
+        # producer supplies per-cue approval, an explicit rejection is binding.
+        if "approved" in cue and cue["approved"] is not True:
+            raise VoiceError("UNAPPROVED_SCRIPT", "Narration cue has not been approved by C", [cue["cue_id"]])
         if not cue.get("text", "").strip() or cue.get("beat_id") not in beats:
             raise VoiceError("INVALID_INPUT", "Empty text or unknown beat", [cue["cue_id"]])
         integer(cue.get("duration_budget_us"), "duration_budget_us")

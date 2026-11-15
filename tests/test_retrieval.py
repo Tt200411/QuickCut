@@ -34,6 +34,10 @@ def request_doc(bundle) -> dict:
     return next(d for d in bundle["documents"] if d["kind"] == "RetrievalRequest")
 
 
+def _ref(document):
+    return {key: document[key] for key in ("kind", "document_id", "revision")}
+
+
 def _result(candidates: dict, query_id: str) -> dict:
     for r in candidates["results"]:
         if r["query_id"] == query_id:
@@ -105,6 +109,7 @@ def test_role_default_origin_when_not_specified(manifest):
             {"query_id": "q1", "beat_id": "b1", "semantic_text": "森林", "role": "primary", "top_k": 5},
         ],
     }
+    req["inputs"] = [_ref(manifest)]
     out = retrieve(manifest, req)
     result = _result(out, "q1")
     for c in result["candidates"]:
@@ -134,6 +139,7 @@ def test_empty_candidate_set_is_a_legal_result(manifest):
             }
         ],
     }
+    req["inputs"] = [_ref(manifest)]
     out = retrieve(manifest, req)
     result = _result(out, "q-empty")
     assert result["status"] == "empty"
@@ -153,6 +159,7 @@ def test_overall_status_empty_when_all_queries_empty(manifest):
              "role": "primary", "allowed_origins": ["generated"], "top_k": 1},
         ],
     }
+    req["inputs"] = [_ref(manifest)]
     out = retrieve(manifest, req)
     assert out["status"] == "empty"
 
@@ -197,6 +204,7 @@ def test_low_confidence_flag_fires_below_threshold(manifest):
              "role": "primary", "top_k": 3},
         ],
     }
+    req["inputs"] = [_ref(manifest)]
     out = retrieve(manifest, req, config=RetrievalConfig(low_confidence_threshold=0.9))
     result = _result(out, "q-city")
     assert result["candidates"]
@@ -229,6 +237,7 @@ def test_query_with_no_overlap_is_empty(manifest):
              "role": "primary_or_broll", "top_k": 4},
         ],
     }
+    req["inputs"] = [_ref(manifest)]
     out = retrieve(manifest, req)
     result = _result(out, "q-noise")
     assert result["status"] == "empty"
@@ -282,6 +291,7 @@ def _filter_request(**query_fields):
     return {
         "schema_version": "0.1.0", "kind": "RetrievalRequest", "document_id": "request-filter",
         "project_id": "project-filter", "revision": 1, "fixtures_only": True,
+        "inputs": [{"kind": "AssetManifest", "document_id": "manifest-filter", "revision": 1}],
         "queries": [query],
     }
 
@@ -407,7 +417,7 @@ def test_broll_library_merges_into_project_manifest(tmp_path, manifest):
     library_payload = {
         "schema_version": "0.1.0", "kind": "AssetManifest",
         "document_id": "lib-001", "project_id": "library",
-        "revision": 1,
+        "revision": 1, "fixtures_only": True,
         "assets": [
             {"asset_id": "asset-lib-mountain", "revision": 1, "media_kind": "video",
              "origin": "external", "uri": "media/library/mountain.mp4",
@@ -444,7 +454,153 @@ def test_broll_library_merges_into_project_manifest(tmp_path, manifest):
              "role": "atmosphere", "allowed_origins": ["external"], "top_k": 3},
         ],
     }
+    req["inputs"] = [_ref(merged)]
     out = retrieve(merged, req)
     result = _result(out, "q-mountain")
     assert result["status"] == "ok"
     assert any(c["segment_id"] == "seg-lib-mountain" for c in result["candidates"])
+
+
+def test_later_window_of_same_video_remains_retrievable():
+    manifest = _tiny_manifest()
+    manifest["assets"] = manifest["assets"][:1]
+    first = manifest["segments"][0]
+    first["description"]["text"] = "公路"
+    second = copy.deepcopy(first)
+    second.update(segment_id="later-window", source_range_us={"begin": 5_000_000, "end": 10_000_000})
+    second["description"]["text"] = "树林行走"
+    manifest["segments"] = [first, second]
+    result = retrieve(manifest, _filter_request(semantic_text="树林行走"))
+    assert result["results"][0]["candidates"][0]["segment_id"] == "later-window"
+
+
+def test_duplicate_interval_retains_best_score_not_first_import():
+    manifest = _tiny_manifest()
+    first, second = manifest["segments"][:2]
+    manifest["assets"][1]["content_hash"] = manifest["assets"][0]["content_hash"]
+    first["description"]["text"] = "小路"
+    second["description"]["text"] = "小路行走"
+    manifest["segments"] = [first, second]
+    result = retrieve(manifest, _filter_request())
+    assert [c["segment_id"] for c in result["results"][0]["candidates"]] == [second["segment_id"]]
+
+
+@pytest.mark.parametrize("reference", [None, [],
+    [{"kind": "AssetManifest", "document_id": "manifest-filter", "revision": 99}],
+    [{"kind": "AssetManifest", "document_id": "wrong-document", "revision": 1}],
+    [{"kind": "AssetManifest", "document_id": "manifest-filter", "revision": True}],
+])
+def test_rejects_missing_or_stale_manifest_reference(reference):
+    request = _filter_request()
+    request["inputs"] = reference
+    with pytest.raises(ValueError, match="AssetManifest"):
+        retrieve(_tiny_manifest(), request)
+
+
+def test_content_revisions_reuse_identical_result_and_advance_on_change():
+    manifest, request = _tiny_manifest(), _filter_request()
+    first = retrieve(manifest, request, revision=3)
+    assert retrieve(manifest, request, previous=first) == first
+    request["revision"] = 2
+    request["queries"][0]["semantic_text"] = "夕阳"
+    changed = retrieve(manifest, request, previous=first)
+    assert changed["revision"] == 4 and changed["status"] == "empty"
+    assert changed["document_id"] == first["document_id"]
+    assert changed["inputs"][1]["revision"] == 2
+    with pytest.raises(ValueError, match="old version"):
+        retrieve(manifest, request, previous=first, revision=3)
+
+
+def test_previous_candidate_set_cannot_be_from_another_project():
+    manifest, request = _tiny_manifest(), _filter_request()
+    first = retrieve(manifest, request)
+    first["project_id"] = "somebody-elses-project"
+    with pytest.raises(ValueError, match="different document or project"):
+        retrieve(manifest, request, previous=first)
+
+
+def test_model_profile_reuses_revision_after_json_roundtrip(monkeypatch):
+    from quickcut.encoder import FallbackEncoder
+    encoder = FallbackEncoder()
+    encoder.name = "openclip"
+    monkeypatch.setattr("quickcut.retrieval.make_encoder", lambda mode: encoder)
+    first = retrieve(_tiny_manifest(), _filter_request())
+    saved = json.loads(json.dumps(first))
+    repeated = retrieve(_tiny_manifest(), _filter_request(), previous=saved)
+    assert repeated == saved and repeated["revision"] == 1
+
+
+def test_image_cache_binds_content_not_relative_filename(tmp_path):
+    from quickcut.encoder import ppm_to_png
+    pytest.importorskip("PIL")
+    manifest, request = _tiny_manifest(), _filter_request(semantic_text="green", top_k=1)
+    manifest["assets"] = manifest["assets"][:1]
+    segment = manifest["segments"][0]
+    segment["description"] = {"text": ""}
+    segment["keyframes"] = [{"uri": "frame.png"}]
+    manifest["segments"] = [segment]
+    frame = tmp_path / "frame.png"
+    frame.write_bytes(ppm_to_png(b"P6\n1 1\n255\n" + bytes([20, 180, 20])))
+    retriever = Retriever()
+    green = retriever.retrieve(manifest, request, project_root=tmp_path)
+    assert green["results"][0]["candidates"][0]["visual_score"] > 0.9
+    frame.write_bytes(ppm_to_png(b"P6\n1 1\n255\n" + bytes([180, 20, 20])))
+    red = retriever.retrieve(manifest, request, project_root=tmp_path, previous=green)
+    assert red["revision"] == 2
+    assert red["results"][0]["candidates"][0]["visual_score"] < 0.6
+
+
+def test_production_library_cannot_be_merged_without_registration(tmp_path):
+    manifest = _tiny_manifest()
+    manifest["fixtures_only"] = False
+    library = BRollLibrary(tmp_path / "library.json", _tiny_manifest())
+    with pytest.raises(ValueError, match="Register real B-roll with A"):
+        library.merge_into(manifest)
+
+
+def _cli_args(tmp_path, manifest, request):
+    from argparse import Namespace
+    return Namespace(
+        manifest=str(_write(tmp_path, "manifest.json", manifest)),
+        request=str(_write(tmp_path, "request.json", request)),
+        output=str(tmp_path / "candidate-set.json"), broll_library=[],
+        encoder="fallback", project_root=str(tmp_path), low_confidence_threshold=0.22,
+        document_id="candidates-001", revision=None,
+    )
+
+
+def test_cli_persists_revisions_and_does_not_touch_identical_output(tmp_path):
+    from quickcut.cli import _retrieve_to_file
+    args = _cli_args(tmp_path, _tiny_manifest(), _filter_request())
+    first = _retrieve_to_file(args)
+    path = Path(args.output)
+    mtime = path.stat().st_mtime_ns
+    assert _retrieve_to_file(args) == first
+    assert path.stat().st_mtime_ns == mtime
+    args.low_confidence_threshold = 0.99
+    second = _retrieve_to_file(args)
+    assert second["revision"] == 2
+    assert json.loads(path.read_text()) == second
+    assert not path.with_name(path.name + ".lock").exists()
+
+
+def test_cli_rejects_unregistered_library_without_output(tmp_path):
+    from quickcut.cli import _retrieve_to_file
+    args = _cli_args(tmp_path, _tiny_manifest(), _filter_request())
+    args.broll_library = ["external-library.json"]
+    with pytest.raises(ValueError, match="Import the external files"):
+        _retrieve_to_file(args)
+    assert not Path(args.output).exists()
+
+
+def test_cli_rejects_another_writer_and_preserves_existing_output(tmp_path):
+    from quickcut.cli import _retrieve_to_file
+    args = _cli_args(tmp_path, _tiny_manifest(), _filter_request())
+    _retrieve_to_file(args)
+    path = Path(args.output)
+    before = path.read_bytes()
+    lock = path.with_name(path.name + ".lock")
+    lock.write_text("other-writer")
+    with pytest.raises(ValueError, match="locked by another writer"):
+        _retrieve_to_file(args)
+    assert path.read_bytes() == before and lock.read_text() == "other-writer"

@@ -11,6 +11,7 @@ import base64
 import hashlib
 import io
 import json
+import os
 import sys
 from pathlib import Path
 from urllib.request import Request
@@ -18,6 +19,27 @@ from urllib.request import Request
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from quickcut.core import load_manifest
 from quickcut.vlm import _open_ollama, _visual_payload
+
+
+def _contact_font(size: int = 24):
+    """Labels contain only numeric positions and seconds, not Chinese prose."""
+    from PIL import ImageFont
+    configured = os.getenv("QUICKCUT_CONTACT_FONT")
+    if configured:
+        # An explicit invalid font is a configuration error, not an excuse to
+        # silently render with an unrelated font.
+        return ImageFont.truetype(str(Path(configured).expanduser()), size)
+    for filename in (
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/System/Library/Fonts/Supplemental/Arial.ttf",
+        "C:/Windows/Fonts/arial.ttf",
+        "DejaVuSans.ttf",
+    ):
+        try:
+            return ImageFont.truetype(filename, size)
+        except OSError:
+            continue
+    return ImageFont.load_default()
 
 
 def main():
@@ -32,7 +54,7 @@ def main():
     out.parent.mkdir(parents=True, exist_ok=True)
     calls, beats, order = [], [], []
     for act in config["acts"]:
-        from PIL import Image, ImageDraw, ImageFont
+        from PIL import Image, ImageDraw
         pool = [s for s in manifest.shots if act["start"] <= s.start < act["end"]]
         ids = [s.shot_id for s in pool]
         images, slots, keyframes = _visual_payload(pool, require_visual=True, visual_mode="contact_sheet", contact_sheet_size=24)
@@ -40,7 +62,7 @@ def main():
             raise ValueError("Each act must fit one contact sheet (24 frames maximum)")
         sheet = Image.new("RGB", (4 * 320, ((len(pool) + 3) // 4) * 220), "#171717")
         draw = ImageDraw.Draw(sheet)
-        font = ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf", 24)
+        font = _contact_font()
         for i, shot in enumerate(pool):
             frame = Image.open(shot.keyframe).convert("RGB").resize((320, 180))
             x, y = (i % 4) * 320, (i // 4) * 220

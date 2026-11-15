@@ -20,6 +20,11 @@ from .media import (MediaError, create_proxy, digest, extract_frames, ffprobe, f
                     us, valid_png, write_json)
 
 
+# Version each stage independently: orientation fixes must not reuse old visual
+# artifacts, while an unchanged transcript remains valid.
+STAGE_IMPLEMENTATION_VERSIONS = {"probe": 2, "keyframes": 2, "proxy": 2, "asr": 1}
+
+
 @dataclass(frozen=True)
 class SourceSpec:
     path: str | Path
@@ -122,7 +127,8 @@ def _error(project_id, asset_id, stage, error, attempts=1):
 
 def _run_stage(root, record, name, profile, action, valid, report, config):
     key = fingerprint({"stage": name, "profile": profile, "asset_revision": record["revision"],
-                       "content_hash": record["content_hash"], "implementation": 1})
+                       "content_hash": record["content_hash"],
+                       "implementation": STAGE_IMPLEMENTATION_VERSIONS[name]})
     cache = record.setdefault("stages", {}).get(name)
     if cache and cache["key"] == key:
         try:
