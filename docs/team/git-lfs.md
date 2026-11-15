@@ -1,6 +1,6 @@
 # 团队视频素材：Git LFS 与 fork / PR
 
-共享视频放在 `materials/` 下，使用小写扩展名 `.mp4`、`.mov`、`.mkv` 或 `.webm`。仓库的 `.gitattributes` 会把这些文件交给 Git LFS；源码、JSON 清单、来源/授权说明、哈希和预览图仍由普通 Git 保存。`inputs/`、`outputs/`、`cache/`、`tmp/` 继续用于本地数据，不上传。
+共享视频放在 `materials/` 下，使用小写扩展名 `.mp4`、`.mov`、`.mkv` 或 `.webm`。仓库的 `.gitattributes` 会把这些文件交给 Git LFS；已冻结的团队交接样例 `ABCDE/media/**/*.mp4` 和 `ABCDE/derived/**/proxy.mp4` 也使用 LFS。源码、JSON 清单、来源/授权说明、哈希和预览图仍由普通 Git 保存。`inputs/`、`outputs/`、`cache/`、`tmp/` 继续用于本地数据，不上传。
 
 ## 首次上传为什么会被拒绝
 
@@ -55,7 +55,7 @@ git push origin HEAD
 
 正常的 `git push` 会通过 LFS 钩子先上传真实内容，再上传 Git 提交。已有 PR 会自动更新；不需要新建 PR。若没有暂存改动，跳过 `git commit`。
 
-PR #7 在本次排查时的八个视频仍是普通 Git 文件。上述重新暂存会把当前版本改成 LFS 指针，但**旧提交里的普通视频仍保留在 Git 历史中**。这不会自动恢复此前压缩过的 4K 原文件；如需替换，提交新素材时也应更新清单、哈希和相关验证记录。不要为了此次上传修复对共享分支执行 `git lfs migrate --everything` 或强制推送。
+2026-11-15 整合时，PR #7 的八个共享视频及 `ABCDE` 的六份原片已转换为 LFS，六份缺失的代理也按冻结清单恢复并纳入 LFS；代理 SHA-256 与原登记值逐一一致。**旧提交里的普通视频仍保留在 Git 历史中**。这不会自动恢复此前压缩过的 4K 原文件；如需替换，提交新素材时也应更新清单、哈希和相关验证记录。不要为了此次上传修复对共享分支执行 `git lfs migrate --everything` 或强制推送。
 
 ## 下载与检查
 
