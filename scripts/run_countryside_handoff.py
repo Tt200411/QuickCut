@@ -230,7 +230,8 @@ def main(root: Path):
         })
     ready = built is not None and result.story_plan["status"] == "ready_for_edit"
     f_inputs = {
-        "project_root": str(root),
+        "project_root": ".",
+        "project_root_relative_to": "document_directory",
         "ready_for_f": ready,
         "required": {
             "EditTimeline": "timeline.json" if ready else None,

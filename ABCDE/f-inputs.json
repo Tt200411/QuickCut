@@ -1,5 +1,6 @@
 {
-  "project_root": "/Users/buluu/Documents/cv/QuickCut-B/ABCDE",
+  "project_root": ".",
+  "project_root_relative_to": "document_directory",
   "ready_for_f": true,
   "required": {
     "EditTimeline": "timeline.json",
