@@ -5,3 +5,6 @@ materials/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
 materials/**/*.mov filter=lfs diff=lfs merge=lfs -text
 materials/**/*.mkv filter=lfs diff=lfs merge=lfs -text
 materials/**/*.webm filter=lfs diff=lfs merge=lfs -text
+
+# Frozen A–E handoff media use the same content-addressed LFS storage.
+ABCDE/media/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
