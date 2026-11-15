@@ -1,0 +1,92 @@
+{
+  "status": "partial",
+  "cases": [
+    {
+      "query": "人物沿小路行走",
+      "expected_paths": [
+        "media/short-01-trail-back-view.mp4",
+        "media/short-02-hiker-by-forest.mp4",
+        "media/short-03-hiker-on-path.mp4"
+      ],
+      "recalled_paths": [
+        "media/short-01-trail-back-view.mp4",
+        "media/short-03-hiker-on-path.mp4",
+        "media/broll-01-trail-aerial.mp4",
+        "variants/broll-02-no-audio-30fps-720p.mp4",
+        "media/short-02-hiker-by-forest.mp4"
+      ],
+      "missed_paths": [],
+      "unexpected_paths": [],
+      "excluded_as_event_evidence_but_returned": [
+        "media/broll-01-trail-aerial.mp4",
+        "variants/broll-02-no-audio-30fps-720p.mp4"
+      ],
+      "expected_ranked_after_excluded": [
+        {
+          "path": "media/short-02-hiker-by-forest.mp4",
+          "ranked_after": [
+            "media/broll-01-trail-aerial.mp4",
+            "variants/broll-02-no-audio-30fps-720p.mp4"
+          ]
+        }
+      ],
+      "query_ids": [
+        "query-open",
+        "query-middle"
+      ],
+      "status": "partial"
+    },
+    {
+      "query": "无人机拍摄道路或树林",
+      "expected_paths": [
+        "media/broll-01-trail-aerial.mp4",
+        "variants/broll-02-no-audio-30fps-720p.mp4"
+      ],
+      "recalled_paths": [
+        "variants/broll-02-no-audio-30fps-720p.mp4",
+        "media/short-02-hiker-by-forest.mp4",
+        "media/broll-01-trail-aerial.mp4",
+        "media/short-03-hiker-on-path.mp4"
+      ],
+      "missed_paths": [],
+      "unexpected_paths": [
+        "media/short-02-hiker-by-forest.mp4",
+        "media/short-03-hiker-on-path.mp4"
+      ],
+      "excluded_as_event_evidence_but_returned": [],
+      "expected_ranked_after_excluded": [],
+      "query_ids": [
+        "query-middle-establishing"
+      ],
+      "status": "partial"
+    },
+    {
+      "query": "夕阳和暖光风景",
+      "expected_paths": [
+        "media/long-02-countryside-sunset.mp4"
+      ],
+      "recalled_paths": [
+        "media/long-02-countryside-sunset.mp4"
+      ],
+      "missed_paths": [],
+      "unexpected_paths": [],
+      "excluded_as_event_evidence_but_returned": [],
+      "expected_ranked_after_excluded": [],
+      "query_ids": [
+        "query-close",
+        "query-close-atmosphere"
+      ],
+      "status": "recalled"
+    },
+    {
+      "query": "组员登顶后坐下休息",
+      "expected_result": "evidence_gap",
+      "query_ids": [
+        "query-evidence-gap"
+      ],
+      "status": "gap_confirmed",
+      "recalled_paths": [],
+      "reason": "No verified team-member identity, summit arrival, or sitting action."
+    }
+  ]
+}

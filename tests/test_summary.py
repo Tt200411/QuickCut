@@ -57,6 +57,22 @@ def test_narration_end_uses_closing_words_not_hallucinated_tail():
     assert closing_phrase_end(words, "不存在的话") is None
 
 
+def test_contact_font_does_not_require_macos_fonts(monkeypatch):
+    image_font = pytest.importorskip("PIL.ImageFont")
+    monkeypatch.delenv("QUICKCUT_CONTACT_FONT", raising=False)
+    fallback = image_font.load_default()
+    monkeypatch.setattr(image_font, "load_default", lambda: fallback)
+    monkeypatch.setattr(image_font, "truetype", lambda *args: (_ for _ in ()).throw(OSError("font unavailable")))
+    selected = plan_summary_acts._contact_font()
+    assert selected.getbbox("1 | 12.5s")[2] > 0
+
+
+def test_explicit_contact_font_failure_is_not_hidden(tmp_path, monkeypatch):
+    monkeypatch.setenv("QUICKCUT_CONTACT_FONT", str(tmp_path / "missing.ttf"))
+    with pytest.raises(OSError):
+        plan_summary_acts._contact_font()
+
+
 def test_act_planner_saves_actual_visual_selections_without_padding(planning_fixture, monkeypatch):
     manifest, manifest_path, config_path, output = planning_fixture
     requests = []

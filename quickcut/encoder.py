@@ -90,8 +90,31 @@ def ppm_to_png(data: bytes) -> bytes:
 class FallbackEncoder:
     name = "fallback-color-histogram"
 
+    def profile(self) -> dict[str, object]:
+        return {
+            "encoder": self.name,
+            "model": self.name,
+            "pretrained": "none",
+            "dimension": 72,
+            "visual_score": "color-histogram",
+            "calibrated": False,
+        }
+
     def encode_image(self, ppm: bytes) -> list[float]:
-        width, height, pixels = parse_ppm(ppm)
+        if ppm.startswith((b"P6", b"P3")):
+            width, height, pixels = parse_ppm(ppm)
+        else:
+            # A delivers PNG keyframes. Keep the dependency-free PPM path for
+            # the original indexer, and use the ingestion extra's Pillow for
+            # encoded images rather than silently losing the visual signal.
+            try:
+                from PIL import Image
+            except ImportError as exc:
+                raise RuntimeError("PNG/JPEG keyframes require quickcut[ingest]") from exc
+            with Image.open(io.BytesIO(ppm)) as image:
+                image = image.convert("RGB")
+                width, height = image.size
+                pixels = image.tobytes()
         if len(pixels) < width * height * 3:
             raise ValueError("Truncated PPM keyframe")
         bins = [0.0] * 64
@@ -143,12 +166,25 @@ class OpenClipEncoder:
         # DataCompDR registry; override it for a local checkpoint if needed.
         model_name = os.getenv("QUICKCUT_CLIP_MODEL", "MobileCLIP-S2")
         pretrained = os.getenv("QUICKCUT_CLIP_PRETRAINED", "datacompdr")
+        self.model_name = model_name
+        self.pretrained = pretrained
         self._torch = torch
         self._Image = Image
         self._model, _, self._preprocess = open_clip.create_model_and_transforms(model_name, pretrained=pretrained)
         self._tokenizer = open_clip.get_tokenizer(model_name)
         self._model.eval()
+        self.dimension = int(getattr(self._model, "embed_dim", 0) or 0)
         self._text_cache: dict[str, list[float]] = {}
+
+    def profile(self) -> dict[str, object]:
+        return {
+            "encoder": self.name,
+            "model": self.model_name,
+            "pretrained": self.pretrained,
+            "dimension": self.dimension,
+            "visual_score": "cosine",
+            "calibrated": False,
+        }
 
     def _image(self, ppm: bytes):
         return self._Image.open(io.BytesIO(ppm)).convert("RGB")

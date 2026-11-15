@@ -1,0 +1,23 @@
+{
+  "media_validation": "passed",
+  "cues": [
+    {
+      "cue_id": "cue-01",
+      "duration_us": 904021,
+      "fit_status": "fits",
+      "hash_verified": true
+    },
+    {
+      "cue_id": "cue-02",
+      "duration_us": 2862729,
+      "fit_status": "fits",
+      "hash_verified": true
+    },
+    {
+      "cue_id": "cue-03",
+      "duration_us": 11782479,
+      "fit_status": "needs_retime",
+      "hash_verified": true
+    }
+  ]
+}

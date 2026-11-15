@@ -1,0 +1,42 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "Brief",
+  "document_id": "brief-countryside",
+  "project_id": "project-countryside",
+  "revision": 1,
+  "fixtures_only": false,
+  "owner": "C",
+  "inputs": [],
+  "requirements": {
+    "story": "沿着郊外的小路看看路边的风景，放慢脚步留一点时间给身边的自然，让这段散步在柔和的光线里收尾。",
+    "format": "thematic_montage",
+    "language": "zh-CN",
+    "target_duration_us": 30000000,
+    "aspect_ratio": {
+      "width": 16,
+      "height": 9
+    },
+    "tone": "轻松",
+    "narration": {
+      "enabled": true,
+      "style": "轻松中文旁白"
+    },
+    "picture_policy": "authorized_external_montage",
+    "broll_policy": {
+      "enabled": true,
+      "roles": [
+        "establishing",
+        "atmosphere"
+      ],
+      "must_not_assert_user_events": true
+    },
+    "target_editor": "未验证"
+  },
+  "constraints": {
+    "local_inference_only": true,
+    "preserve_source_audio": true,
+    "editable_tracks_required": true,
+    "origin_policy": "公开素材保持 external；不改记为用户实拍"
+  },
+  "source_note": "旁白采用 brief-proposal.json 的三句可选文案，并标明不声称用户本人经历"
+}

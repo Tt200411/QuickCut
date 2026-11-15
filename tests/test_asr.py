@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from quickcut.asr import (
     assign_transcripts,
     load_transcript_sidecar,
@@ -56,3 +58,23 @@ def test_transcript_score_is_token_overlap():
     assert _transcript_score("dog runs", "a dog runs through the garden") == 1.0
     assert _transcript_score("dog runs", "a person walks") == 0.0
     assert make_asr("none").name == "none"
+
+
+@pytest.mark.parametrize("allow_missing_audio", [True, False])
+def test_backend_index_error_is_not_silenced_in_strict_ingestion(allow_missing_audio):
+    from quickcut.asr import FasterWhisperASR
+
+    class BrokenModel:
+        def transcribe(self, *args, **kwargs):
+            raise IndexError("backend failure")
+
+    backend = object.__new__(FasterWhisperASR)
+    backend.beam_size = 1
+    backend.language = "zh"
+    backend.allow_missing_audio = allow_missing_audio
+    backend._load_model = lambda: BrokenModel()
+    if allow_missing_audio:
+        assert backend.transcribe("unused.wav") == []
+    else:
+        with pytest.raises(IndexError, match="backend failure"):
+            backend.transcribe("unused.wav")

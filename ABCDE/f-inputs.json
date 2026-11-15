@@ -1,0 +1,20 @@
+{
+  "project_root": ".",
+  "project_root_relative_to": "document_directory",
+  "ready_for_f": true,
+  "required": {
+    "EditTimeline": "timeline.json",
+    "VoicePackage": "voice-package.json",
+    "AssetManifest": "asset-manifest.json"
+  },
+  "also_written": [
+    "brief.json",
+    "approved-cues.json",
+    "retrieval-request.json",
+    "candidate-set.json",
+    "story-plan.json",
+    "alignment.json"
+  ],
+  "blocked_by": null,
+  "why": "F 读取冻结 EditTimeline、VoicePackage，以及能解析到文件的素材引用。"
+}

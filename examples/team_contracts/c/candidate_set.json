@@ -1,0 +1,137 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "CandidateSet",
+  "document_id": "candidates-c-001",
+  "project_id": "project-forest-vlog-001",
+  "revision": 1,
+  "fixtures_only": true,
+  "owner": "B",
+  "inputs": [
+    {"kind": "AssetManifest", "document_id": "manifest-001", "revision": 1},
+    {"kind": "RetrievalRequest", "document_id": "request-001", "revision": 1}
+  ],
+  "status": "ok",
+  "results": [
+    {
+      "query_id": "query-open",
+      "status": "ok",
+      "candidates": [
+        {
+          "candidate_id": "candidate-seg-packing",
+          "segment_id": "seg-packing",
+          "asset_revision": 1,
+          "visual_score": 0.8,
+          "transcript_score": 0.2,
+          "ranking_score": 0.8,
+          "score_profile": "fixture-only; not calibrated across models",
+          "suggested_role": "primary",
+          "evidence": ["fixture_annotation"],
+          "flags": []
+        },
+        {
+          "candidate_id": "candidate-seg-city",
+          "segment_id": "seg-city",
+          "asset_revision": 1,
+          "visual_score": 0.7,
+          "transcript_score": 0.0,
+          "ranking_score": 0.7,
+          "score_profile": "fixture-only; not calibrated across models",
+          "suggested_role": "primary",
+          "evidence": ["fixture_annotation"],
+          "flags": []
+        }
+      ]
+    },
+    {
+      "query_id": "query-middle",
+      "status": "ok",
+      "candidates": [
+        {
+          "candidate_id": "candidate-seg-walk",
+          "segment_id": "seg-walk",
+          "asset_revision": 1,
+          "visual_score": 0.8,
+          "transcript_score": 0.2,
+          "ranking_score": 0.8,
+          "score_profile": "fixture-only; not calibrated across models",
+          "suggested_role": "primary",
+          "evidence": ["fixture_annotation"],
+          "flags": []
+        },
+        {
+          "candidate_id": "candidate-walk-alt",
+          "segment_id": "seg-walk",
+          "asset_revision": 1,
+          "visual_score": 0.65,
+          "transcript_score": 0.0,
+          "ranking_score": 0.65,
+          "score_profile": "fixture-only; not calibrated across models",
+          "suggested_role": "detail",
+          "evidence": ["fixture_annotation"],
+          "flags": []
+        }
+      ]
+    },
+    {
+      "query_id": "query-middle-establishing",
+      "status": "ok",
+      "candidates": [
+        {
+          "candidate_id": "candidate-seg-forest",
+          "segment_id": "seg-forest",
+          "asset_revision": 1,
+          "visual_score": 0.7,
+          "transcript_score": 0.0,
+          "ranking_score": 0.7,
+          "score_profile": "fixture-only; not calibrated across models",
+          "suggested_role": "establishing",
+          "evidence": ["fixture_annotation"],
+          "flags": []
+        }
+      ]
+    },
+    {
+      "query_id": "query-middle-transition",
+      "status": "empty",
+      "reason": "当前人工候选夹具未提供独立的过渡空镜证据，不复用建立环境候选或编造素材。",
+      "candidates": []
+    },
+    {
+      "query_id": "query-close",
+      "status": "ok",
+      "candidates": [
+        {
+          "candidate_id": "candidate-seg-rest",
+          "segment_id": "seg-rest",
+          "asset_revision": 1,
+          "visual_score": 0.8,
+          "transcript_score": 0.2,
+          "ranking_score": 0.8,
+          "score_profile": "fixture-only; not calibrated across models",
+          "suggested_role": "primary",
+          "evidence": ["fixture_annotation"],
+          "flags": []
+        }
+      ]
+    },
+    {
+      "query_id": "query-close-atmosphere",
+      "status": "ok",
+      "candidates": [
+        {
+          "candidate_id": "candidate-seg-stream",
+          "segment_id": "seg-stream",
+          "asset_revision": 1,
+          "visual_score": 0.6,
+          "transcript_score": 0.0,
+          "ranking_score": 0.6,
+          "score_profile": "fixture-only; not calibrated across models",
+          "suggested_role": "atmosphere",
+          "evidence": ["fixture_annotation"],
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "notes": "人工整理的候选夹具，配合 docs/team/contracts.md 的黄金 AssetManifest 使用；分数不可跨模型比较。"
+}

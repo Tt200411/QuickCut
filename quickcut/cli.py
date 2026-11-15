@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import tempfile
 from pathlib import Path
 
 from .core import (
@@ -15,6 +17,7 @@ from .core import (
     update_timeline,
 )
 from .download import download_video
+from .retrieval import RetrievalConfig, Retriever
 from .story import build_basic_vlog
 from .voice import render_story_timeline
 
@@ -25,6 +28,56 @@ def _load_timeline(path: str):
     items = [TimelineItem(**item) for item in data.pop("items", [])]
     data.pop("duration", None)
     return Timeline(items=items, **data)
+
+
+def _retrieve_to_file(args) -> dict:
+    if args.broll_library:
+        raise ValueError(
+            "--broll-library cannot register or relocate media. Import the external files "
+            "with quickcut.ingest first, then issue a C request referencing the new "
+            "AssetManifest revision. No CandidateSet was written."
+        )
+    manifest_path, request_path = Path(args.manifest), Path(args.request)
+    output = Path(args.output)
+    if output.is_symlink() or output.resolve() in {manifest_path.resolve(), request_path.resolve()}:
+        raise ValueError("CandidateSet output must not overwrite an input or symbolic link")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    request = json.loads(request_path.read_text(encoding="utf-8"))
+    output.parent.mkdir(parents=True, exist_ok=True)
+    lock = output.with_name(output.name + ".lock")
+    # A retrieval may take seconds or minutes; serialize writers so two calls
+    # cannot both replace revision n with different content labelled n+1.
+    try:
+        handle = lock.open("x", encoding="utf-8")
+    except FileExistsError as exc:
+        raise ValueError(f"CandidateSet output is locked by another writer: {lock}") from exc
+    staged = None
+    try:
+        with handle:
+            handle.write(str(os.getpid()))
+        previous = json.loads(output.read_text(encoding="utf-8")) if output.exists() else None
+        config = RetrievalConfig(
+            encoder_mode=args.encoder,
+            low_confidence_threshold=args.low_confidence_threshold,
+        )
+        candidates = Retriever(config).retrieve(
+            manifest, request, project_root=args.project_root,
+            document_id=args.document_id, revision=args.revision, previous=previous,
+        )
+        if candidates != previous:
+            with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=output.parent,
+                                             prefix=".candidates-", delete=False) as stream:
+                staged = Path(stream.name)
+                json.dump(candidates, stream, ensure_ascii=False, indent=2, allow_nan=False)
+                stream.write("\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(staged, output)
+        return candidates
+    finally:
+        if staged is not None:
+            staged.unlink(missing_ok=True)
+        lock.unlink()
 
 
 def main() -> None:
@@ -85,6 +138,40 @@ def main() -> None:
     download.add_argument("--output-dir", default="inputs")
     download.add_argument("--max-duration", type=int, default=900)
 
+    retrieve_cmd = sub.add_parser(
+        "retrieve",
+        help="Module B: run a RetrievalRequest against an AssetManifest and emit a CandidateSet",
+    )
+    retrieve_cmd.add_argument("manifest", help="Path to the project AssetManifest JSON")
+    retrieve_cmd.add_argument("request", help="Path to the RetrievalRequest JSON")
+    retrieve_cmd.add_argument(
+        "--broll-library",
+        action="append",
+        default=[],
+        help="Unsupported until A has registered library media; import via quickcut.ingest instead",
+    )
+    retrieve_cmd.add_argument("--output", default="outputs/candidates.json")
+    retrieve_cmd.add_argument("--document-id", default="candidates-001")
+    retrieve_cmd.add_argument("--revision", type=int, default=None,
+                              help="Optional explicit revision; existing output otherwise increments only on change")
+    retrieve_cmd.add_argument(
+        "--encoder",
+        choices=["fallback", "auto", "openclip", "mobileclip"],
+        default=None,
+        help="Visual encoder for keyframes that exist on disk",
+    )
+    retrieve_cmd.add_argument(
+        "--project-root",
+        default=None,
+        help="Project root used to resolve relative media/keyframe URIs",
+    )
+    retrieve_cmd.add_argument(
+        "--low-confidence-threshold",
+        type=float,
+        default=0.22,
+        help="Candidates below this ranking_score get a low_confidence flag",
+    )
+
     args = parser.parse_args()
     if args.command == "index":
         manifest = build_index(args.video, args.cache_dir, window=args.window, stride=args.stride,
@@ -126,3 +213,13 @@ def main() -> None:
                                     narration=not args.no_narration, voice=args.voice))
     elif args.command == "download":
         print(download_video(args.url, args.output_dir, max_duration=args.max_duration))
+    elif args.command == "retrieve":
+        try:
+            candidates = _retrieve_to_file(args)
+        except (ValueError, OSError) as exc:
+            parser.error(str(exc))
+        print(json.dumps(candidates, ensure_ascii=False, indent=2))
+
+
+if __name__ == "__main__":
+    main()

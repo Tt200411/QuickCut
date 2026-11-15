@@ -1,0 +1,25 @@
+{
+  "note": "同一 Brief 下，素材充足与结尾缺少主镜头两个方案的差异。人工夹具，不是两次真实模型推理。",
+  "left": "examples/team_contracts/c/story_plan.json",
+  "right": "examples/team_contracts/c/insufficient/story_plan.json",
+  "diff": {
+    "status": [
+      "ready_for_edit",
+      "needs_input"
+    ],
+    "mode": [
+      "rule",
+      "rule"
+    ],
+    "changed_beats": [
+      "beat-close"
+    ],
+    "changed_cues": [
+      "cue-03"
+    ],
+    "gap_counts": [
+      0,
+      1
+    ]
+  }
+}
