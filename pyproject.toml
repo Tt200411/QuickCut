@@ -43,5 +43,8 @@ quickcut-ingest = "quickcut.ingest:main"
 [tool.setuptools.packages.find]
 include = ["quickcut*"]
 
+[tool.setuptools.package-data]
+quickcut = ["templates/jianying/*.json", "templates/jianying/*.txt"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

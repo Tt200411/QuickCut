@@ -1,0 +1,9 @@
+The draft_content.json and draft_meta_info.json templates are from
+GuanYixuan/pyJianYingDraft, commit 1e228479dda361e312e85f6037002346cf6dca9a.
+https://github.com/GuanYixuan/pyJianYingDraft
+Copyright the pyJianYingDraft contributors; licensed under Apache-2.0.
+The accompanying LICENSE.txt contains that license.
+
+QuickCut's limited Mac adapter uses the documented serialization structure as
+a reference. These templates do not constitute an official Jianying format
+specification or a guarantee that any target editor version will import them.
