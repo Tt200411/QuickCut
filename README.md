@@ -10,6 +10,7 @@ It separates the current single-source MVP from the proposed multi-source and Ji
 - [A–F 六人任务、交付与验收](docs/team/workstreams.md)
 - [模块协议与修订规则](docs/team/contracts.md)
 - [可复用的协议黄金样例与校验器](examples/team_contracts/README.md)
+- [视频素材的 Git LFS 上传、下载与故障处理](docs/team/git-lfs.md)
 - [可编辑流程图及 PNG](figures/README.md)
 - [完整 PDF 手册（含流程图、六人任务书与接口契约）](output/pdf/QuickCut_项目指导手册.pdf)
 

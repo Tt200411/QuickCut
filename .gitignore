@@ -14,3 +14,10 @@ tmp/
 *.mp4
 *.mov
 *.mkv
+*.webm
+
+# Only explicitly shared material packages are versioned (through Git LFS).
+!/materials/**/*.mp4
+!/materials/**/*.mov
+!/materials/**/*.mkv
+!/materials/**/*.webm

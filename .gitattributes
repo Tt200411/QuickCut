@@ -1,1 +1,7 @@
 *.pdf binary
+
+# Shared video fixtures use LFS; source, metadata and previews stay in Git.
+materials/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
+materials/**/*.mov filter=lfs diff=lfs merge=lfs -text
+materials/**/*.mkv filter=lfs diff=lfs merge=lfs -text
+materials/**/*.webm filter=lfs diff=lfs merge=lfs -text
