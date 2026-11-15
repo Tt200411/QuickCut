@@ -14,14 +14,14 @@ This collection supports the handbook's first material sample: three different-l
 | `media/broll-01-trail-aerial.mp4` | 36.97 s | 1920x1080 | 24000/1001 | yes |
 | `media/broll-02-countryside-aerial.mp4` | 44.48 s | 1920x1080 | 24000/1001 | yes |
 | `media/long-01-mandarin-park-guide.webm` | 113.38 s | 1280x720 | 30000/1001 | yes |
-| `media/long-02-countryside-sunset.mp4` | 77.33 s | 1920x1080 | 24000/1001 | yes |
+| `media/long-02-countryside-sunset.mp4` | 77.33 s | 3840x2160 | 24000/1001 | yes |
 | `variants/broll-02-no-audio-30fps-720p.mp4` | 44.47 s | 1280x720 | 30/1 | no |
 
 Use `story-sources.json` for the six-file countryside montage. `sources.json` includes eight files: the six story inputs, the preserved original of the no-audio B-roll variant, and a separate Mandarin guide for ASR. These are seven independent source recordings, not eight. The original and its variant are not independent recordings.
 
 ## Adaptations and source terms
 
-The six countryside recordings are by **Matthias Groeneveld**, under the [Pexels License](https://www.pexels.com/license/). Source-page links and hashes are in `inventory.json`. The long sunset recording was downscaled to 1080p to keep the repository file below GitHub's single-file limit; its original 4K source hash and the changes are recorded. No scenes were concatenated, repeated, trimmed or given synthetic narration.
+The six countryside recordings are by **Matthias Groeneveld**, under the [Pexels License](https://www.pexels.com/license/). Source-page links and hashes are in `inventory.json`. The full sunset recording is the downloaded 3840x2160 original (229,864,947 bytes), stored with Git LFS without re-encoding. No scenes were concatenated, repeated, trimmed or given synthetic narration.
 
 `variants/broll-02-no-audio-30fps-720p.mp4` is an explicit test adaptation: audio removed, scaled to 720p and converted to constant 30 FPS. It tests no-audio handling and mixed frame rates; it is not evidence of native phone variable-frame-rate coverage. Its unmodified parent is retained.
 
@@ -39,11 +39,27 @@ B should use the explicit demo roles when selecting publicly sourced main conten
 
 ## Checks and ASR scope
 
-All delivered files have recorded hashes and media metadata. Unmodified files were hash-checked against the previously fully decoded originals; the new 1080p long clip was fully decoded and scanned independently. The six countryside originals contain silent audio tracks. The converted B-roll has no audio stream. The guide is the separate speech input.
+All delivered files have recorded hashes and media metadata. All eight delivered inputs were hash-checked against the previously validated collection. The restored 4K long clip was also freshly decoded in full and scanned independently. The six countryside originals contain silent audio tracks. The converted B-roll has no audio stream. The guide is the separate speech input.
 
-The local A validation of the original material collection produced 146 segments and checked real ASR, proxy timestamps, cache reuse, missing input and absent model weights. The repository's long clip is a new 1080p derivative with a different content hash. It was separately imported and validated: 29 segments, 26 usable shot candidates and zero microseconds of proxy timestamp error, with ASR explicitly disabled. Import the delivered collection to generate a shared project manifest; old IDs and caches are not included as though they described the new file.
+The local A validation of this exact eight-file collection produced 146 segments and 130 usable shot candidates, and checked real ASR, proxy timestamps, cache reuse, missing input and absent model weights. All delivered media hashes match those validated inputs. The 4K long clip produced 29 segments, 26 usable shot candidates and 1,854 proxy frames with zero microseconds of timestamp error. Import the delivered collection to create project-specific IDs and outputs; local manifests and caches are not included.
 
 `asr-check/` retains the raw base-model result for the unchanged guide and a hash-bound comparison against the user-confirmed opening passage. The 33-character passage had 3 substitutions (CER 9.09%) in this full-recording run. Its approximate 4.5-12.4 second selection and results apply only to that passage, not to overall recognition accuracy. Only its text was human-confirmed; the full transcript still requires review. The local model path in the exported profile is normalized to `base`; model revision and weight hashes are preserved.
+
+## Download with Git LFS
+
+Install [Git LFS](https://git-lfs.com/) before cloning. To download this material PR before it is merged:
+
+```powershell
+git lfs install
+git clone --branch codex/a-countryside-materials-20261114 https://github.com/hezi413/QuickCut.git
+cd QuickCut
+git lfs pull
+git lfs fsck
+```
+
+After this PR is merged, clone or update the team repository and run `git lfs pull` there. All eight videos use LFS; JSON, documentation, checksums and previews remain ordinary Git files. Use a Git clone with LFS enabled to obtain the actual videos; an archive download may contain only pointer files. The 720p no-audio file remains an intentional test variant, and its unmodified parent is also included.
+
+`inventory.json` records the SHA-256 and size of the actual media, not their Git pointer files. Compare downloaded bytes against `SHA256SUMS.txt`. Text files use LF line endings so the recorded checksums remain reproducible across platforms. This update restores the 4K original and converts the current videos to LFS; earlier ordinary Git versions remain in history.
 
 ## Import
 
