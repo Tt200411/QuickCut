@@ -1,6 +1,10 @@
 # QuickCut 验收操作手册
 
-本手册用于复现模块、执行真实链路和记录交付证据；架构及失效规则见 [PIPELINE_ENGINEERING.md](PIPELINE_ENGINEERING.md)。所有命令从 repo 根目录执行，输出目录使用新的 run 标识，避免覆盖既有证据。**最终本地全量回归：812 passed in 35.50s，无 skip，macOS / Python 3.13.12。**最终证据位于仓库外 `../outputs/QuickCut-engineering-final-20261113/`，四个 demo 与 supported 10 秒预览的实测索引见[第 5.4 节](#54-最终本地证据索引2026-11-13)。旧 A 环境的 805 项结果仅作历史记录。远端 CI 尚未运行，已配置矩阵不记为通过。软件回归、合成媒体工程路径、真实产品质量和剪映实机验收分别记录。
+本手册用于复现模块、执行真实链路和记录交付证据；架构及失效规则见 [PIPELINE_ENGINEERING.md](PIPELINE_ENGINEERING.md)。所有命令从 repo 根目录执行，输出目录使用新的 run 标识，避免覆盖既有证据。
+
+**2026-11-15 当前回归：本机 902 passed in 29.29s；提交 `bc80347ebebec539f2ccd3a44affb2f5c25eece1` 的云端 Ubuntu / Python 3.10 与 3.13 两个矩阵均通过，[Actions run 43686548818](https://github.com/Tt200411/QuickCut/actions/runs/43686548818)。** F 已实现 macOS 剪映专业版 **6.1.0 / build 309** 四轨导出；v1 样例编辑保存重开与 v2 真实包搬迁安装、原生打开、成片导出的范围分别见 [F 导出说明](F-export.md)和 [F 实机验收记录](F-acceptance-20261115.md)。这些结果不代表其他编辑器版本、平台或完整产品质量已验收。
+
+2026-11-13 的 **812 passed in 35.50s，无 skip，macOS / Python 3.13.12** 保留为历史结果，原始证据位于仓库外 `../outputs/QuickCut-engineering-final-20261113/`，四个 demo 与 supported 10 秒预览的实测索引见[第 5.4 节](#54-最终本地证据索引2026-11-13)。更早 A 环境的 805 项结果同样仅作历史记录。软件回归、合成媒体工程路径、真实产品质量和剪映实机验收分别记录。
 
 ## 1. 开始前先确认验收层级
 
@@ -14,7 +18,7 @@
 
 执行结果只填 `通过/失败/阻塞/未执行`，每项附证据位置和 owner。协议预期负例被拒绝可以判该负例通过，但不得把它的 `needs_retime` 包标为最终成片成功。跳过可选模型时写“未执行”，不要用 rule/fixed 或音调结果代替真实模型分数。
 
-现有入口包括 A 接入、C planning、E VoicePackage、D 编译、C→E→D 初编 API，以及 [doctor](../../scripts/doctor_pipeline.py)、[统一工程 demo](../../scripts/demo_pipeline.py) 和 [新 IR preview](../../scripts/render_timeline_preview.py)。demo 保存 JSON、验证合成媒体和改单句缓存；preview 生成 MP4、独立 SRT 与报告。它们尚不构成真实 B/Qwen/人审/自然语音/自动 fit/剪映的完整产品闭环。初编 API 本身不保存聚合 JSON，第 7 节保留真实模块逐步交接方法。
+现有入口包括 A 接入、C planning、E VoicePackage、D 编译、C→E→D 初编 API，以及 [doctor](../../scripts/doctor_pipeline.py)、[统一工程 demo](../../scripts/demo_pipeline.py)、[新 IR preview](../../scripts/render_timeline_preview.py) 和 [F 工程导出与安装](F-export.md)。demo 保存 JSON、验证合成媒体和改单句缓存；preview 生成 MP4、独立 SRT 与报告，F 输出可迁移四轨工程包。各入口和限定版本的 F 样例验收尚不构成真实 B/Qwen/人审/自然语音/自动 fit 的完整产品闭环。初编 API 本身不保存聚合 JSON，第 7 节保留真实模块逐步交接方法。
 
 ## 2. 版本和环境预检
 
@@ -35,7 +39,7 @@ ffmpeg -hide_banner -encoders
 ffmpeg -hide_banner -filters
 ```
 
-最终本地验收的集成 HEAD 为 `4785e16be89068591973f2d2b6f3cb2df1fa86d2`；各 demo 报告记录当时 `.github/workflows/pipeline-integration.yml` 的未提交差异和关键源码哈希。已集成 A PR #4 `cf988d0a0e65dbd63c4174fae83bda77acf86723`（`origin/pr-4-latest`）、D #2 `38dcb8b16ea5e0089da5a94142a171e32ff8abba`、E #1 `d1c6c95105fe33432735a34071e5312b604eb63c`、C #5 `620b24f277754d948ed69a8aba01d381a044e9f8`。旧 `origin/pr-4` 的 A `3c6d4e99f9df6ffe87a1efb2808f66728d807ea3` 仅保留追溯，不能当作最终 A。C 模块提交不等于集成 HEAD。复跑时记录实际 HEAD、差异、模块 refs 与哈希；ref 变化后不能直接沿用旧结论。
+2026-11-13 历史本地验收的集成 HEAD 为 `4785e16be89068591973f2d2b6f3cb2df1fa86d2`；各 demo 报告记录当时 `.github/workflows/pipeline-integration.yml` 的未提交差异和关键源码哈希。已集成 A PR #4 `cf988d0a0e65dbd63c4174fae83bda77acf86723`（`origin/pr-4-latest`）、D #2 `38dcb8b16ea5e0089da5a94142a171e32ff8abba`、E #1 `d1c6c95105fe33432735a34071e5312b604eb63c`、C #5 `620b24f277754d948ed69a8aba01d381a044e9f8`。旧 `origin/pr-4` 的 A `3c6d4e99f9df6ffe87a1efb2808f66728d807ea3` 仅保留追溯，不能当作最终 A。C 模块提交不等于集成 HEAD。复跑时记录实际 HEAD、差异、模块 refs 与哈希；ref 变化后不能直接沿用旧结论。
 
 运行目录建议为 `outputs/acceptance/<run-id>/`；项目媒体根单独固定，所有模块交接沿用同一根。该目录是操作建议，不表示已有自动证据收集器。运行清单可手工维护，先记录命令、stdout/stderr、退出码、输入输出 refs，再做人工判定。
 
@@ -228,7 +232,7 @@ python -m pytest tests/test_ingest.py tests/test_asr.py tests/test_encoder.py -q
 python -m pytest tests/test_timeline.py tests/test_voice_package.py tests/test_integration.py -q
 ```
 
-C 测试文件名先在 `tests/` 确认，再选 planning 相关测试或运行全量 `python -m pytest -q`。模型 mock 测试不计真实模型验收；环境缺失导致 skip/失败需原样记录。最终本地全量结果为 812 passed in 35.50s、无 skip（macOS / Python 3.13.12），原始文本与 JUnit 见第 5.4 节；旧 A 环境的 805 passed、33.55s 仅是历史结果。后续复跑记录实际命令、代码状态和统计，保留每次证据。
+C 测试文件名先在 `tests/` 确认，再选 planning 相关测试或运行全量 `python -m pytest -q`。模型 mock 测试不计真实模型验收；环境缺失导致 skip/失败需原样记录。2026-11-15 当前本机结果为 902 passed in 29.29s，云端矩阵见本文开头与第 10.1 节。2026-11-13 历史全量结果为 812 passed in 35.50s、无 skip（macOS / Python 3.13.12），原始文本与 JUnit 见第 5.4 节；旧 A 环境的 805 passed、33.55s 同样仅作历史记录。后续复跑记录实际命令、代码状态和统计，保留每次证据。
 
 ## 5. 生成媒体与旧单源回归
 
@@ -499,7 +503,9 @@ compiled = compile_from_voice(
 
 ### 7.6 F：媒体执行与可编辑工程实机
 
-新 IR 已有 `scripts/render_timeline_preview.py`，完整命令、映射与退出码见第 5.3 节。真实链路使用第 7.5 节保存的同一组 Timeline、A Manifest 和 VoicePackage，传共同媒体根，生成 MP4、独立 SRT 与报告；不能将新 Timeline 传给旧单源 renderer。preview 必需 ffprobe，非零 PTS/全局帧量化已有修复；剪映工程导出与实机仍待验收。后续工程必须与预览共享冻结 Timeline ref。
+新 IR 已有 `scripts/render_timeline_preview.py`，完整命令、映射与退出码见第 5.3 节。真实链路使用第 7.5 节保存的同一组 Timeline、A Manifest 和 VoicePackage，传共同媒体根，生成 MP4、独立 SRT 与报告；不能将新 Timeline 传给旧单源 renderer。preview 必需 ffprobe，非零 PTS/全局帧量化已有修复。工程导出与安装现有 `scripts/export_project.py` 和 `scripts/install_jianying_draft.py`，用法见 [F 导出说明](F-export.md)，工程必须与预览共享冻结 Timeline ref。
+
+截至 2026-11-15，macOS 剪映专业版 **6.1.0 / build 309** 已有独立画面、原声、旁白和字幕四轨样例验收：v1 fixture 验证字幕修改保存重开，v1 真实 countryside 包验证字幕修改、旁白替换、画面移动及保存重开；v2 真实包验证搬迁、校验、重新安装、原生打开与本地 MOV 导出，未重复修改验收。具体包、哈希与尚待补齐项目见 [F 实机验收记录](F-acceptance-20261115.md)。以下检查仍是完整验收要求，不能将已做的部分推定为其他项目、版本或效果全部通过。
 
 对实际导出的 MP4 使用以下媒体检查，替换为真实文件：
 
@@ -582,7 +588,7 @@ ffmpeg -v error -i /path/to/preview.mp4 -f null -
 | 缓存与成本 | 阶段/句子命中、失效理由、冷/热耗时、实际资源 |
 | 结论 | 通过/失败/阻塞/未执行，已知限制，下一owner与复测条件 |
 
-当前已保存的全量回归为 812 passed in 35.50s（macOS / Python 3.13.12）；合成 demo 和 10/15 秒及 edit r2 预览结果见第 5.4 节。旧 805 项结果仅作历史记录，不代替最终证据或远端 CI。真实检索、Qwen、真人证据审核、自然语音、自动 fit 和剪映编辑仍按各自实验结果填写。历史 E 音频、中文样例或旧日志作为参考附件时注明原配置。
+截至 2026-11-15，当前本机全量回归为 902 passed in 29.29s，`bc80347` 的云端 Ubuntu / Python 3.10、3.13 矩阵均通过（第 10.1 节）。2026-11-13 的 812 passed in 35.50s（macOS / Python 3.13.12）、当时合成 demo 和 10/15 秒及 edit r2 预览仍按第 5.4 节保存为历史证据；更早的 805 项结果同样不替代当前回归。真实检索、Qwen、真人证据审核、自然语音、自动 fit 仍按各自实验结果填写；剪映限定版本与样例操作以 [F 实机验收记录](F-acceptance-20261115.md) 为准。历史 E 音频、中文样例或旧日志作为参考附件时注明原配置。
 
 ## 10. 交付门禁与 CI
 
@@ -606,7 +612,7 @@ P0/P1/P2 的 owner、依赖和验收条件以工程说明第13节为准。P0 阻
 
 始终上传 `pipeline-integration-ubuntu-python-${{ matrix.python-version }}`，内容为 `$PIPELINE_OUTPUT/` 全目录、含隐藏文件，保留 7 天；包括 doctor JSON、pytest 文本/JUnit、每个 demo 的 stdout/stderr、项目媒体与阶段/根报告、preview MP4/SRT/报告。失败时也上传已有证据；产物缺失仍需查看失败步骤，不能把上传成功当验收成功。
 
-以上是已读 CI 配置的行为与预期，**不是远端 workflow 已通过的运行结论**。取得真实 run 后另记 run ID、commit/工作树身份、矩阵结果和 artifact 位置；macOS 的 812 项回归不能替代 Ubuntu 两个矩阵的证据。
+以上表格描述 CI 配置；当前已有对应的实际运行证据：提交 **`bc80347ebebec539f2ccd3a44affb2f5c25eece1`** 的 [Actions run 43686548818](https://github.com/Tt200411/QuickCut/actions/runs/43686548818) 中，**Ubuntu / Python 3.10 与 3.13 两个矩阵均通过**。各 job 的步骤日志与 `pipeline-integration-ubuntu-python-3.10`、`pipeline-integration-ubuntu-python-3.13` artifacts 从该 run 页面查看，受上述保留期限限制。本机 902 项回归与该云端运行分别记录；云端无模型/桌面环境的检查不替代真实模型质量或剪映实机验收，也不覆盖后续尚未运行的提交。
 
 ### 10.2 当前入口与剩余门禁
 
@@ -615,6 +621,7 @@ P0/P1/P2 的 owner、依赖和验收条件以工程说明第13节为准。P0 阻
 | 环境与项目预检 | doctor 已有，第 2.3 节 | 实际机器报告，不以版本检查代替模型/媒体验收 |
 | 工程编排与改单句缓存 | demo 已有，第 5.3 节 | 合成演示报告已保存，见第 5.4 节；真实 B/Qwen/人审/自然声音和镜头编辑另验 |
 | 新 IR 媒体执行 | preview 已有，第 5.3/7.6 节 | 新媒体实测与完整看片听审，不等于工程交付 |
-| 自动 fit 与剪映 | 自动 fit 调度、剪映可编辑工程仍未验收 | 有界请求/旧回复拒绝；指定软件版本打开、编辑、保存、重开、搬迁、导出 |
+| 自动 fit | 自动 fit 调度仍需独立验收 | 有界请求与旧回复拒绝、真实完整适配闭环 |
+| 剪映可编辑工程 | 四轨 exporter 与迁移安装已实现；macOS 6.1.0 / build 309 的 v1/v2 样例操作分别有证据 | [F 实机验收记录](F-acceptance-20261115.md)中的剩余检查；其他版本/平台、未测效果和完整人工播放听感 |
 
 仅有入口或配置不等于验收完成；结果必须绑定命令、输入 refs、代码状态和真实报告。文档修订不改源码、黄金 fixture 或历史证据。
