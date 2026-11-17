@@ -1,0 +1,476 @@
+"""Offline contract tests; real model acceptance is a separate recorded run."""
+import copy
+import hashlib
+import io
+import json
+
+import pytest
+from PIL import Image
+
+from quickcut.planning import build_outline, build_retrieval_request, plan, OllamaSelector
+from quickcut.planning.contracts import envelope, ref, PlanningError, content_hash
+from quickcut.planning.production import generate_draft, confirm_draft, preview_selections
+from quickcut.planning.validator import validate_story_plan
+
+
+@pytest.fixture
+def inputs(tmp_path):
+    brief = envelope("Brief", "brief-live", "project-live", 1, fixtures_only=False, owner="C", inputs=[])
+    brief["requirements"] = {
+        "story": "林间光影，沿路风景，轻松收束", "target_duration_us": 30_000_000,
+        "language": "zh-CN", "picture_policy": "thematic_montage",
+        "narration": {"enabled": True}, "broll_policy": {"enabled": False, "roles": []},
+    }
+    manifest = envelope("AssetManifest", "assets-live", "project-live", 1, fixtures_only=False, owner="A", inputs=[])
+    manifest.update(assets=[], segments=[])
+    for i, origin in enumerate(["user", "external", "user"]):
+        Image.new("RGB", (8, 8), ["red", "blue", "green"][i]).save(tmp_path / f"frame-{i}.png")
+        transcript = {"status": "success", "text": f"原始转写{i}",
+                      "segments": [{"source_range_us": {"begin": 0, "end": 1_000_000}, "text": f"原始转写{i}"}],
+                      "review_status": "needs_review", "uri": f"asr-{i}.json"}
+        manifest["assets"].append({"asset_id": f"asset-{i}", "revision": 1, "origin": origin,
+                                   "uri": f"source-{i}.mp4", "duration_us": 15_000_000,
+                                   "transcript": {"review": {"status": "needs_review", "reasons": ["low_confidence"]}}})
+        manifest["segments"].append({"segment_id": f"segment-{i}", "asset_id": f"asset-{i}", "asset_revision": 1,
+                                     "source_range_us": {"begin": 0, "end": 15_000_000}, "transcript": transcript,
+                                     "keyframes": [{"uri": f"frame-{i}.png", "source_time_us": 100_000}]})
+    request = build_retrieval_request(brief, manifest, build_outline(brief), broll_queries=False)
+    candidates = envelope("CandidateSet", "candidates-live", "project-live", 1, fixtures_only=False, owner="B",
+                          inputs=[ref(manifest), ref(request)])
+    candidates["status"] = "success"
+    candidates["results"] = [
+        {"query_id": q["query_id"], "status": "ok", "candidates": [{
+            "candidate_id": f"candidate-{i}", "segment_id": f"segment-{i}", "asset_revision": 1,
+            "ranking_score": 0.9, "evidence": ["actual_keyframe"],
+            "transcript_evidence": copy.deepcopy(manifest["segments"][i]["transcript"]),
+        }]} for i, q in enumerate(request["queries"])
+    ]
+    return brief, manifest, candidates, request
+
+
+@pytest.fixture
+def model(monkeypatch):
+    requests = []
+    def respond(request, timeout):
+        payload = json.loads(request.data)
+        prompt = json.loads(payload["prompt"])
+        requests.append(payload)
+        cid = next(c["candidate_id"] for c in prompt["candidates"] if c["selectable"])
+        answer = {"shot_order": [cid], "roles": {cid: "atmosphere"}, "reasons": {cid: "与主题一致"},
+                  "narration_draft": "光影在路边缓缓流动。"}
+        return io.BytesIO(json.dumps({"model": payload["model"], "done": True, "response": json.dumps(answer)}).encode())
+    monkeypatch.setattr("quickcut.planning.selection.open_ollama", respond)
+    return requests
+
+
+def draft_for(inputs, tmp_path):
+    brief, manifest, candidates, request = inputs
+    return generate_draft(brief, manifest, candidates, retrieval_request=request, project_root=tmp_path)
+
+
+def confirm(draft):
+    return confirm_draft(draft, approved_text_by_beat={b["beat_id"]: b["narration_draft"] for b in draft["beats"]},
+                         reviewer="测试确认者", reviewed_at="2026-11-16T10:00:00+08:00")
+
+
+def test_live_draft_requires_confirmation_and_preserves_model_evidence(inputs, tmp_path, model):
+    draft = draft_for(inputs, tmp_path)
+    assert draft["status"] == "needs_review"
+    assert draft["human_review_performed"] is False
+    assert len(model) == len(draft["model_calls"]) == 3
+    assert draft["beats"][1]["planned_shots"][0]["suggested_duration_us"] == 15_000_000
+    call = draft["model_calls"][0]["raw_response"]
+    assert call["actual_backend"] == "ollama"
+    assert call["request"]["image_mapping"][0]["source_time_us"] == 100_000
+    assert call["request"]["source_frame_sha256"] == [hashlib.sha256((tmp_path / "frame-0.png").read_bytes()).hexdigest()]
+    assert call["request"]["visual_mode"] == "numbered_contact_sheet"
+    assert len(call["request"]["payload"]["images"]) == 1
+    assert call["request"]["payload"]["options"]["num_ctx"] == 8192
+    assert call["request"]["payload"]["options"]["num_predict"] == 1024
+    schema = call["request"]["payload"]["format"]
+    assert schema["required"] == ["shot_order", "reasons", "roles", "narration_draft"]
+    assert schema["properties"]["shot_order"]["items"]["enum"] == ["C01"]
+    assert call["request"]["candidate_aliases"] == {"C01": "candidate-0"}
+    assert call["parsed"]["shot_order"] == ["C01"]
+    assert call["canonicalized"]["shot_order"] == ["candidate-0"]
+    assert json.loads(call["body"]["response"])["shot_order"] == ["C01"]
+    assert model[0]["format"]["properties"]["shot_order"]["maxItems"] == 1  # Only one supplied candidate.
+    assert model[2]["format"]["properties"]["shot_order"]["maxItems"] == 1  # Five-second closing beat.
+    prompt = json.loads(call["request"]["payload"]["prompt"])
+    assert prompt["candidates"][0]["transcript_evidence"]["segments"][0]["source_range_us"]["end"] == 1_000_000
+    assert prompt["candidates"][0]["transcript_evidence"]["review_status"] == "needs_review"
+    assert len(list((tmp_path / "planning-evidence").glob("*.json"))) == 3
+    result = confirm(draft)
+    assert len(model) == 3  # Confirmation does not rerun or invent inference.
+    assert result.story_plan["status"] == "ready_for_edit"
+    shots = [b["shots"][0] for b in result.story_plan["beats"]]
+    assert [s["origin"] for s in shots] == ["user", "external", "user"]
+    assert all(s["role"] != "primary" and s["decided_by"].startswith("model:") for s in shots)
+    assert shots[0]["transcript_evidence"]["review_status"] == "needs_review"
+    assert all(not c["asserts_specific_user_event"] for c in result.story_plan["narration_cues"])
+    assert len(result.story_plan["decision_provenance"]["model_call_ids"]) == 3
+    assert result.run["approval_records"]["beat-open"]["text_hash"] == content_hash("光影在路边缓缓流动。")
+
+
+def test_confirmation_rejects_tampered_draft_and_missing_reviewer(inputs, tmp_path, model):
+    draft = draft_for(inputs, tmp_path)
+    altered = copy.deepcopy(draft)
+    altered["inputs"]["Brief"]["requirements"]["story"] = "changed without revision bump"
+    with pytest.raises(PlanningError, match="草案已变化"):
+        confirm(altered)
+    with pytest.raises(PlanningError, match="确认者"):
+        confirm_draft(draft, approved_text_by_beat={}, reviewer="", reviewed_at="2026-11-16T10:00:00+08:00")
+
+
+def test_validator_rejects_changed_approved_text_and_missing_picture_confirmation(inputs, tmp_path, model):
+    result = confirm(draft_for(inputs, tmp_path))
+    story = copy.deepcopy(result.story_plan)
+    story["narration_cues"][0]["text"] = "确认后偷偷替换"
+    story["beats"][0]["shots"][0].pop("montage_review")
+    brief, manifest, candidates, request = inputs
+    report = validate_story_plan(story, brief=brief, manifest=manifest, candidate_set=candidates,
+                                 upstream={"Brief": brief, "AssetManifest": manifest, "CandidateSet": candidates,
+                                           "RetrievalRequest": request})
+    assert not report["ok"]
+    assert any("用户确认" in e for e in report["errors"])
+    assert any("当前文本" in e for e in report["errors"])
+
+
+def test_missing_visuals_and_retrieval_errors_are_not_rule_fallback(inputs, tmp_path, model):
+    (tmp_path / "frame-0.png").unlink()
+    with pytest.raises(PlanningError, match="没有可读取的关键帧"):
+        draft_for(inputs, tmp_path)
+    assert not model
+    inputs[2]["status"] = "error"
+    with pytest.raises(PlanningError, match="B 检索失败"):
+        draft_for(inputs, tmp_path)
+
+
+def test_explicit_ollama_external_montage_calls_model(inputs, tmp_path, model):
+    brief, manifest, candidates, request = inputs
+    brief["requirements"]["picture_policy"] = "authorized_external_montage"
+    for asset in manifest["assets"]:
+        asset["origin"] = "external"
+    for query in request["queries"]:
+        query["allowed_origins"] = ["external"]
+    result = plan(brief, manifest, candidates, retrieval_request=request,
+                  selector=OllamaSelector(project_root=tmp_path),
+                  approved_cues={b["beat_id"]: "确认后的主题旁白" for b in build_outline(brief)})
+    assert len(model) == 3
+    assert len(result.run["raw_responses"]) == 3
+    assert all(b["shots"][0]["decided_by"].startswith("model:") for b in result.story_plan["beats"])
+    assert result.story_plan["decision_provenance"]["input_hashes"]["Brief"] == content_hash(brief)
+    assert result.story_plan["decision_provenance"]["input_hashes"]["Brief"] != content_hash(ref(brief))
+
+
+def test_assistant_confirmation_is_not_recorded_as_human(inputs, tmp_path, model):
+    draft = draft_for(inputs, tmp_path)
+    result = confirm_draft(draft, approved_text_by_beat={b["beat_id"]: b["narration_draft"] for b in draft["beats"]},
+                           reviewer="Codex visual acceptance", reviewed_at="2026-11-16T10:00:00+08:00",
+                           confirmation_kind="assistant_review")
+    assert result.run["human_review_performed"] is False
+    assert result.story_plan["decision_provenance"]["human_review_performed"] is False
+    assert result.story_plan["beats"][0]["shots"][0]["montage_review"]["source"] == "assistant_montage_review"
+    assert result.story_plan["narration_cues"][0]["text_source"] == "assistant_review"
+
+
+def test_close_narration_budget_rejected_before_tts(inputs, tmp_path, model):
+    draft = draft_for(inputs, tmp_path)
+    assert draft["beats"][-1]["narration_max_chars"] == 10
+    texts = {b["beat_id"]: b["narration_draft"] for b in draft["beats"]}
+    texts["beat-close"] = "这是一段远远超过五秒钟朗读预算的过长中文旁白。"
+    with pytest.raises(PlanningError, match="最多 10 字"):
+        confirm_draft(draft, approved_text_by_beat=texts, reviewer="测试者", reviewed_at="2026-11-16T10:00:00+08:00")
+
+
+def test_failed_real_request_keeps_replayable_input_evidence(inputs, tmp_path, monkeypatch):
+    def timeout(*args, **kwargs):
+        raise TimeoutError("local inference timed out")
+    monkeypatch.setattr("quickcut.planning.selection.open_ollama", timeout)
+    with pytest.raises(PlanningError, match="本地 Ollama"):
+        draft_for(inputs, tmp_path)
+    archived = list((tmp_path / "planning-evidence").glob("*.json"))
+    assert len(archived) == 1
+    record = json.loads(archived[0].read_text())
+    assert record["status"] == "failed"
+    assert record["inference_executed"] is False
+    assert record["request"]["payload"]["images"]
+    assert record["request"]["source_frame_sha256"]
+    assert "local inference timed out" in record["error"]
+
+
+def test_local_ollama_transport_bypasses_system_and_environment_proxy(monkeypatch):
+    from quickcut.planning import selection
+    import urllib.request
+    captured = {}
+    class Opener:
+        def open(self, request, *, timeout):
+            captured.update(url=request.full_url, timeout=timeout)
+            return "direct"
+    def build(handler):
+        captured["proxies"] = handler.proxies
+        return Opener()
+    monkeypatch.setenv("http_proxy", "http://proxy.invalid:9999")
+    monkeypatch.setenv("https_proxy", "http://proxy.invalid:9999")
+    monkeypatch.setattr(urllib.request, "build_opener", build)
+    assert selection.open_ollama(urllib.request.Request("http://127.0.0.1:11434/api/generate"), timeout=120) == "direct"
+    assert captured == {"proxies": {}, "url": "http://127.0.0.1:11434/api/generate", "timeout": 120}
+
+
+def test_production_deduplicates_same_segment_from_multiple_queries(inputs, tmp_path, model):
+    brief, manifest, candidates, request = inputs
+    primary = request["queries"][1]
+    extra = {**primary, "query_id": "query-middle-detail", "role": "detail"}
+    request["queries"].append(extra)
+    alias = copy.deepcopy(candidates["results"][1]["candidates"][0])
+    alias.update(candidate_id="candidate-middle-alias", ranking_score=0.8)
+    candidates["results"].append({"query_id": extra["query_id"], "status": "ok", "candidates": [alias]})
+    draft = draft_for(inputs, tmp_path)
+    middle = draft["beats"][1]
+    assert len(middle["candidates"]) == 1
+    assert middle["candidates"][0]["retrieval_aliases"] == [{"candidate_id": "candidate-middle-alias", "query_id": "query-middle-detail"}]
+    sent = json.loads(model[1]["prompt"])["candidates"]
+    assert [c["candidate_id"] for c in sent] == ["C01"]
+    assert draft["model_calls"][1]["raw_response"]["request"]["candidate_aliases"] == {"C01": "candidate-1"}
+    assert confirm(draft).story_plan["status"] == "ready_for_edit"
+
+
+def test_montage_selection_rejects_different_ids_for_same_source_segment(inputs):
+    from quickcut.planning.selection import Selection, validate_selection
+    from quickcut.planning.planning import candidates_for_beat
+    brief, manifest, candidates, request = inputs
+    beat = build_outline(brief)[1]
+    item = candidates_for_beat(beat, request, candidates, manifest)[0]
+    alias = {**item, "candidate_id": "same-source-alias"}
+    selection = Selection(beat["beat_id"], [item["candidate_id"], alias["candidate_id"]], source="model:qwen2.5vl:3b")
+    with pytest.raises(PlanningError, match="重复使用同一源片段"):
+        validate_selection(selection, beat=beat, candidates=[item, alias], thematic_montage=True)
+
+
+def test_reconfirm_frozen_draft_produces_new_story_revision_without_inference(inputs, tmp_path, model):
+    draft = draft_for(inputs, tmp_path)
+    first = confirm(draft)
+    texts = {b["beat_id"]: b["narration_draft"] for b in draft["beats"]}
+    texts["beat-close"] = "光影渐渐收束。"
+    revised = confirm_draft(draft, approved_text_by_beat=texts, reviewer="测试确认者",
+                            reviewed_at="2026-11-16T10:05:00+08:00", plan_revision=2)
+    assert revised.story_plan["revision"] == revised.run["revision"] == 2
+    assert revised.story_plan["document_id"] == first.story_plan["document_id"]
+    assert revised.story_plan["narration_cues"][-1]["text"] == "光影渐渐收束。"
+    assert revised.run["approval_records"]["beat-close"]["text_hash"] == content_hash("光影渐渐收束。")
+    assert len(model) == 3
+
+
+@pytest.mark.parametrize("revision", [0, -1, True, False, 1.0, "2", None])
+def test_confirmation_rejects_invalid_story_revision(inputs, tmp_path, model, revision):
+    draft = draft_for(inputs, tmp_path)
+    with pytest.raises(PlanningError, match="plan_revision 必须为正整数"):
+        confirm_draft(draft, approved_text_by_beat={b["beat_id"]: b["narration_draft"] for b in draft["beats"]},
+                      reviewer="测试确认者", reviewed_at="2026-11-16T10:00:00+08:00", plan_revision=revision)
+
+
+def test_http_failure_keeps_ollama_error_body(inputs, tmp_path, monkeypatch):
+    import urllib.error
+    body = b'{"error":"request exceeds available context"}'
+    def reject(request, *, timeout):
+        raise urllib.error.HTTPError(request.full_url, 400, "Bad Request", {}, io.BytesIO(body))
+    monkeypatch.setattr("quickcut.planning.selection.open_ollama", reject)
+    with pytest.raises(PlanningError, match="request exceeds available context"):
+        draft_for(inputs, tmp_path)
+    record = json.loads(next((tmp_path / "planning-evidence").glob("*.json")).read_text())
+    assert record["raw_body"] == body.decode()
+    assert record["request"]["payload"]["options"]["num_ctx"] == 8192
+
+
+def add_alternative(inputs):
+    _, manifest, candidates, _ = inputs
+    asset = copy.deepcopy(manifest["assets"][0])
+    asset.update(asset_id="asset-alternative", origin="external", uri="alternative.mp4")
+    segment = copy.deepcopy(manifest["segments"][0])
+    segment.update(segment_id="segment-alternative", asset_id="asset-alternative")
+    candidate = copy.deepcopy(candidates["results"][0]["candidates"][0])
+    candidate.update(candidate_id="candidate-alternative", segment_id="segment-alternative", ranking_score=0.7)
+    manifest["assets"].append(asset)
+    manifest["segments"].append(segment)
+    candidates["results"][0]["candidates"].append(candidate)
+
+
+@pytest.mark.parametrize("kind,source", [("human", "human_edit"), ("assistant_review", "assistant_edit")])
+def test_replacement_and_reorder_preserve_actual_model_call(inputs, tmp_path, model, kind, source):
+    add_alternative(inputs)
+    draft = draft_for(inputs, tmp_path)
+    before = copy.deepcopy(draft)
+    overrides = {"beat-open": ["candidate-alternative", "candidate-0"]}
+    preview = preview_selections(draft, overrides)
+    assert [s["suggested_duration_us"] for s in preview["beat-open"]["planned_shots"]] == [5_000_000, 5_000_000]
+    result = confirm_draft(draft, approved_text_by_beat={b["beat_id"]: b["narration_draft"] for b in draft["beats"]},
+                           reviewer="实际确认者", reviewed_at="2026-11-16T11:00:00+08:00", plan_revision=2,
+                           confirmation_kind=kind, selection_overrides=overrides)
+    shots = result.story_plan["beats"][0]["shots"]
+    assert [s["candidate_id"] for s in shots] == overrides["beat-open"]
+    assert [s["origin"] for s in shots] == ["external", "user"]
+    assert all(s["decided_by"] == source for s in shots)
+    assert result.run["raw_responses"] == before["model_calls"]
+    assert result.story_plan["decision_provenance"]["model_call_ids"] == [content_hash(c) for c in before["model_calls"]]
+    assert result.run["selection_edits"][0]["source"] == source
+    assert result.run["selection_edits"][0]["before"] == ["candidate-0"]
+    assert draft == before
+    assert len(model) == 3
+
+
+@pytest.mark.parametrize("overrides", [[], {"unknown": ["candidate-0"]}, {"beat-open": []},
+                                      {"beat-open": ["candidate-1"]}, {"beat-open": ["candidate-0", "candidate-0"]}])
+def test_selection_override_rejects_unfrozen_invalid_or_duplicate_ids(inputs, tmp_path, model, overrides):
+    draft = draft_for(inputs, tmp_path)
+    with pytest.raises(PlanningError):
+        preview_selections(draft, overrides)
+
+
+def test_selection_override_rejects_segment_used_by_another_beat(inputs, tmp_path, model):
+    # The same alternative is returned by B for two beats but was not selected by Qwen.
+    add_alternative(inputs)
+    candidates = inputs[2]
+    candidate = copy.deepcopy(candidates["results"][0]["candidates"][-1])
+    candidate["candidate_id"] = "alternative-middle"
+    candidates["results"][1]["candidates"].append(candidate)
+    draft = draft_for(inputs, tmp_path)
+    with pytest.raises(PlanningError, match="不同段落不能重复"):
+        preview_selections(draft, {"beat-open": ["candidate-alternative"], "beat-middle": ["alternative-middle"]})
+
+
+def test_incomplete_model_format_retries_once_with_two_real_request_records(inputs, tmp_path, model, monkeypatch):
+    from quickcut.planning import selection
+    original = selection.open_ollama
+    attempts = []
+    def first_incomplete(request, *, timeout):
+        attempts.append(json.loads(request.data))
+        if len(attempts) == 1:
+            return io.BytesIO(json.dumps({"model": "qwen2.5vl:3b", "done": True,
+                                          "response": json.dumps({"narration_draft": "林间光影。"})}).encode())
+        return original(request, timeout=timeout)
+    monkeypatch.setattr(selection, "open_ollama", first_incomplete)
+    draft = draft_for(inputs, tmp_path)
+    assert len(attempts) == 4
+    assert len(draft["model_attempts"]) == 4
+    assert draft["model_attempts"][0]["status"] == "invalid_model_format"
+    assert draft["model_attempts"][1]["format_attempt"] == 2
+    assert "format_repair" in json.loads(attempts[1]["prompt"])
+    assert len(list((tmp_path / "planning-evidence").glob("*.json"))) == 4
+    assert confirm(draft).story_plan["decision_provenance"]["actual_model_attempt_count"] == 4
+
+
+def test_repeated_bad_model_format_stops_after_two_requests(inputs, tmp_path, monkeypatch):
+    requests = []
+    def always_incomplete(request, *, timeout):
+        requests.append(json.loads(request.data))
+        return io.BytesIO(json.dumps({"done": True, "response": '{"narration_draft":"林间光影。"}'}).encode())
+    monkeypatch.setattr("quickcut.planning.selection.open_ollama", always_incomplete)
+    with pytest.raises(PlanningError) as caught:
+        draft_for(inputs, tmp_path)
+    assert len(requests) == 2
+    assert len(caught.value.detail["attempts"]) == 2
+    assert len(list((tmp_path / "planning-evidence").glob("*.json"))) == 2
+
+
+def test_short_alias_prompt_bounds_text_but_keeps_full_asr_archive(inputs, tmp_path, model):
+    transcript = inputs[1]["segments"][0]["transcript"]
+    transcript["text"] = "真实语音转写" * 100
+    transcript["segments"] = [{"source_range_us": {"begin": i * 1_000_000, "end": (i + 1) * 1_000_000},
+                               "text": "真实语音转写" * 30} for i in range(10)]
+    inputs[2]["results"][0]["candidates"][0]["transcript_evidence"] = copy.deepcopy(transcript)
+    draft = draft_for(inputs, tmp_path)
+    call = draft["model_calls"][0]["raw_response"]
+    prompt = json.loads(call["request"]["payload"]["prompt"])
+    compact = prompt["candidates"][0]["transcript_evidence"]
+    assert len(compact["text"]) == 240
+    assert len(compact["segments"]) == 3
+    assert compact["omitted_span_count"] == 7
+    assert call["request"]["candidate_evidence"][0]["transcript_evidence"] == transcript
+    assert "candidate-0" not in call["request"]["payload"]["prompt"]
+
+
+def test_narration_schema_budget_includes_punctuation_and_targets_short_single_sentence(inputs, tmp_path, model):
+    draft = draft_for(inputs, tmp_path)
+    for beat, request in zip(draft["beats"], model):
+        limit = beat["narration_max_chars"]
+        prompt = json.loads(request["prompt"])
+        # Real Qwen previously generated 27 spoken characters under maxLength=31
+        # for a 23-character beat. The grammar must forbid that first response.
+        assert request["format"]["properties"]["narration_draft"]["maxLength"] == limit
+        assert prompt["narration_length_includes_punctuation"] is True
+        assert prompt["narration_target_chars"] == {"min": max(4, int(limit * 0.6)), "max": limit - 1}
+        assert "不要复述ASR" in prompt["task"] and "不要堆叠地名" in prompt["task"]
+        assert f"总长最多 {limit} 个字符（包括标点）" in prompt["task"]
+    assert model[0]["format"]["properties"]["narration_draft"]["maxLength"] == 23
+    assert model[2]["format"]["properties"]["narration_draft"]["maxLength"] == 10
+
+
+def test_unknown_short_alias_is_never_silently_mapped(inputs, tmp_path, monkeypatch):
+    requests = []
+    def invalid_alias(request, *, timeout):
+        requests.append(request)
+        return io.BytesIO(json.dumps({"done": True, "response": json.dumps({
+            "shot_order": ["C99"], "reasons": {"C99": "画面"}, "roles": {"C99": "broll"},
+            "narration_draft": "林间光影。"})}).encode())
+    monkeypatch.setattr("quickcut.planning.selection.open_ollama", invalid_alias)
+    with pytest.raises(PlanningError, match="短ID非法"):
+        draft_for(inputs, tmp_path)
+    assert len(requests) == 2
+
+
+@pytest.mark.parametrize("bad_text,warning_code", [
+    ("沿着山林间的小路缓缓向前走感受这一刻自然带来的宁静美丽。", "NARRATION_TOO_LONG"),
+    ("也别忘了多带几", "NARRATION_INCOMPLETE_SENTENCE"),
+    ("A peaceful forest.", "NARRATION_NON_CHINESE"),
+    ("", "NARRATION_EMPTY"),
+])
+def test_bad_narration_preserves_real_selection_but_blocks_confirmation(inputs, tmp_path, model, monkeypatch, bad_text, warning_code):
+    from quickcut.planning import selection
+    original = selection.open_ollama
+    requests = []
+    def bad_first(request, *, timeout):
+        requests.append(json.loads(request.data))
+        if len(requests) == 1:
+            answer = {"shot_order": ["C01"], "reasons": {"C01": "主题一致"},
+                      "roles": {"C01": "atmosphere"}, "narration_draft": bad_text}
+            return io.BytesIO(json.dumps({"model": "qwen2.5vl:3b", "done": True,
+                                          "response": json.dumps(answer)}).encode())
+        return original(request, timeout=timeout)
+    monkeypatch.setattr(selection, "open_ollama", bad_first)
+    draft = draft_for(inputs, tmp_path)
+    assert len(requests) == 3
+    assert draft["status"] == "needs_review"
+    assert draft["beats"][0]["narration_draft"] == bad_text
+    assert draft["beats"][0]["narration_review"]["status"] == "requires_edit"
+    assert warning_code in {item["code"] for item in draft["beats"][0]["review_warnings"]}
+    assert any(item["beat_id"] == "beat-open" and item["code"] == warning_code for item in draft["review_warnings"])
+    first = draft["model_calls"][0]["raw_response"]
+    assert json.loads(first["body"]["response"])["narration_draft"] == bad_text
+    assert first["canonicalized"]["shot_order"] == ["candidate-0"]
+    assert not first.get("previous_attempts")
+    with pytest.raises(PlanningError):
+        confirm(draft)
+    original_draft = copy.deepcopy(draft)
+    texts = {beat["beat_id"]: beat["narration_draft"] for beat in draft["beats"]}
+    texts["beat-open"] = "林间光影。"
+    result = confirm_draft(draft, approved_text_by_beat=texts, reviewer="助手验收", confirmation_kind="assistant_review",
+                           reviewed_at="2026-11-16T10:00:00+08:00")
+    assert result.story_plan["status"] == "ready_for_edit"
+    assert result.story_plan["narration_cues"][0]["text"] == "林间光影。"
+    assert result.story_plan["narration_cues"][0]["text_source"] == "assistant_review"
+    assert len(requests) == 3 and draft == original_draft
+
+
+def test_each_incomplete_draft_sentence_is_reviewable_without_rerunning_real_selection(inputs, tmp_path, monkeypatch):
+    requests = []
+    def incomplete(request, *, timeout):
+        requests.append(request)
+        answer = {"shot_order": ["C01"], "reasons": {"C01": "主题"}, "roles": {"C01": "atmosphere"},
+                  "narration_draft": "也别忘了多带几"}
+        return io.BytesIO(json.dumps({"done": True, "response": json.dumps(answer)}).encode())
+    monkeypatch.setattr("quickcut.planning.selection.open_ollama", incomplete)
+    draft = draft_for(inputs, tmp_path)
+    assert len(requests) == 3
+    assert all(beat["narration_review"]["status"] == "requires_edit" for beat in draft["beats"])
+    with pytest.raises(PlanningError, match="句末标点"):
+        confirm(draft)

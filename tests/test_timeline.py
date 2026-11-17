@@ -82,3 +82,12 @@ def test_refuses_to_extend_beyond_selected_segment():
     with pytest.raises(TimelineError) as error:
         _compile(bundle)
     assert error.value.code == "VOICE_NEEDS_RETIME"
+
+
+def test_boolean_reference_revision_is_not_revision_one():
+    bundle = load_case("normal")
+    voice = next(doc for doc in bundle["documents"] if doc["kind"] == "VoicePackage")
+    voice["inputs"][0]["revision"] = True
+    with pytest.raises(TimelineError) as exc:
+        _compile(bundle)
+    assert exc.value.code == "STALE_INPUT_REVISION"

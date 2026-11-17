@@ -1,4 +1,4 @@
-"""真实 A → B 检索 → C → E 测试音调 → D JSON；不执行渲染。"""
+"""合成素材 A → B 检索 → C → E → D JSON；默认测试音调，可指定 IndexTTS2 配置。"""
 from __future__ import annotations
 
 import argparse
@@ -102,13 +102,53 @@ def git_state():
             "source_hashes": {name: digest(REPO / name) for name in modules}}
 
 
-def make_brief(project_id, target_seconds):
+def load_voice_config(path):
+    """Load an explicit IndexTTS2 config; relative model/reference paths use REPO.
+
+    The backend's lazy constructor verifies files and runtime without loading weights.
+    An invalid/missing config is fatal; it never selects the system voice or test tone.
+    """
+    from quickcut.indextts2 import IndexTTS2Backend
+
+    config = json.loads(Path(path).expanduser().read_text(encoding="utf-8"))
+    if not isinstance(config, dict) or config.get("engine") != "indextts2":
+        raise DemoError("INVALID_VOICE_CONFIG", "--voice-config 必须明确指定 engine: indextts2")
+    overrides = config.get("cue_overrides", {})
+    if not isinstance(overrides, dict) or any(not isinstance(value, dict) for value in overrides.values()):
+        raise DemoError("INVALID_VOICE_CONFIG", "cue_overrides 必须是按 cue ID 指定的配置对象")
+    if any(set(value) - {"reference_audio", "seed"} for value in overrides.values()):
+        raise DemoError("INVALID_VOICE_CONFIG", "IndexTTS2 cue overrides support only reference_audio and seed")
+    for value in [config, *overrides.values()]:
+        for key in ("model_dir", "reference_audio"):
+            if isinstance(value.get(key), str) and value[key]:
+                location = Path(value[key]).expanduser()
+                value[key] = str((location if location.is_absolute() else REPO / location).resolve())
+    try:
+        backend = IndexTTS2Backend(config)
+        checked_references = set()
+        for settings in [config, *({**config, **override} for override in overrides.values())]:
+            reference, _ = backend.cue_settings(settings, "zh-CN")
+            if reference in checked_references:
+                continue
+            with wave.open(str(reference), "rb") as wav:
+                expected_bytes = wav.getnframes() * wav.getnchannels() * wav.getsampwidth()
+                if expected_bytes <= 0 or wav.getframerate() <= 0:
+                    raise ValueError(f"IndexTTS2 reference_audio must contain WAV audio frames: {reference}")
+                if len(wav.readframes(wav.getnframes())) != expected_bytes:
+                    raise ValueError(f"IndexTTS2 reference_audio has incomplete WAV audio frames: {reference}")
+            checked_references.add(reference)
+    except (OSError, ValueError, EOFError, wave.Error) as exc:
+        raise DemoError("INVALID_VOICE_CONFIG", str(exc)) from exc
+    return config
+
+
+def make_brief(project_id, target_seconds, *, real_voice=False):
     brief = envelope("Brief", "brief-demo", project_id, 1, fixtures_only=True, owner="C", inputs=[])
     brief.update(requirements={
         "story": "展示第一段测试画面，展示第二段测试画面，展示第三段测试画面。",
         "format": "demo", "language": "zh-CN", "target_duration_us": target_seconds * 1_000_000,
         "aspect_ratio": {"width": 16, "height": 9}, "tone": "测试",
-        "narration": {"enabled": True, "style": "fixture_tone，不是真实语音"},
+        "narration": {"enabled": True, "style": "IndexTTS2 中文旁白" if real_voice else "fixture_tone，不是真实语音"},
         "broll_policy": {"enabled": False, "roles": [], "must_not_assert_user_events": True},
         "target_editor": "未验证",
     }, constraints={"local_inference_only": True, "preserve_source_audio": True,
@@ -253,6 +293,12 @@ def observe_bridge(report, root, revision):
                 write_json(root / filename, value)
                 report["files"][filename.split("-r")[0]] = filename
                 if name.startswith("E-"):
+                    report["voice"] = {"status": value["status"],
+                        "measurement_source": value["measurement_source"],
+                        "synthesis_profile": value["synthesis_profile"],
+                        "errors": value.get("errors", [])}
+                    if value["synthesis_profile"].get("engine") == "indextts2":
+                        report["capabilities"]["E"]["package_ready"] = value["status"] == "ready"
                     manifest = json.loads((root / "asset-manifest.json").read_text(encoding="utf-8"))
                     union_name = f"assets-union-r{revision}.json"
                     write_json(root / union_name, {"fixtures_only": True,
@@ -290,7 +336,7 @@ def feedback(exc, report):
             "action_owner": getattr(exc, "action_owner", "demo")}
 
 
-def run_demo(root, case="supported", target_seconds=10):
+def run_demo(root, case="supported", target_seconds=10, *, voice_config=None):
     if case not in {"supported", "unsupported", "edit"} or target_seconds not in {5, 10, 15}:
         raise DemoError("INVALID_ARGUMENT", "case 或 target_seconds 无效")
     root = prepare_root(root)
@@ -298,12 +344,17 @@ def run_demo(root, case="supported", target_seconds=10):
     report = {"schema_version": "0.1.0", "project_id": "project-pipeline-demo", "case": case,
               "target_seconds": target_seconds, "fixturesOnly": True, "status": "running",
               "stages": [], "calls": {"A": 0, "B": 0, "E": 0, "D": 0}, "files": {},
-              "render": None, "limitations": LIMITATIONS}
+              "render": None, "limitations": list(LIMITATIONS)}
     try:
         with stage(report, "setup"):
             report["git"] = git_state()
             report["capabilities"] = capabilities()
-            brief = make_brief(report["project_id"], target_seconds)
+            tts_config = load_voice_config(voice_config) if voice_config is not None else None
+            if tts_config is not None:
+                report["capabilities"]["E"] = {"mode": "indextts2", "speech": True,
+                    "model_revision": tts_config["model_revision"], "package_ready": False}
+                report["limitations"][2] = "E 使用配置的 IndexTTS2 合成真实语音；合成画面和预设审批仍为夹具，超时长即停止 D。"
+            brief = make_brief(report["project_id"], target_seconds, real_voice=tts_config is not None)
             outline = build_outline(brief)
             window_us = max(b["duration_budget_us"] for b in outline) + 1_000_000
             config = IngestConfig(window_us=window_us, coarse_window_us=window_us * 3,
@@ -360,7 +411,8 @@ def run_demo(root, case="supported", target_seconds=10):
                 with observe_bridge(report, root, revision):
                     built = integration.build_from_plan(
                         result, brief=brief, manifest=labeled, candidate_set=candidates, root=root,
-                        output=OUTPUT, fixture=True, previous=previous, voice_revision=revision,
+                        output=OUTPUT, fixture=tts_config is None, config=tts_config,
+                        previous=previous, voice_revision=revision,
                         expected_story_revision=revision, timeline_revision=revision)
             with stage(report, f"media-validation-r{revision}"):
                 report["media_validation"] = validate_media(root, manifest, built.assets, built.voice_package)
@@ -400,9 +452,11 @@ def main(argv=None):
     parser.add_argument("--root", type=Path, required=True, help="必须不存在或为空的项目根")
     parser.add_argument("--case", choices=["supported", "unsupported", "edit"], default="supported")
     parser.add_argument("--target-seconds", type=int, choices=[5, 10, 15], default=10)
+    parser.add_argument("--voice-config", type=Path,
+                        help="IndexTTS2 JSON 配置；模型/参考音频相对路径按仓库根解析；不传则使用测试音调")
     args = parser.parse_args(argv)
     try:
-        report = run_demo(args.root, args.case, args.target_seconds)
+        report = run_demo(args.root, args.case, args.target_seconds, voice_config=args.voice_config)
     except Exception as exc:
         report = {"status": "failed", "code": getattr(exc, "code", "DEMO_FAILED"), "stage": "setup",
                   "message": str(exc), "retryable": False}

@@ -11,6 +11,13 @@ See [E-local-voice.md](../../docs/team/E-local-voice.md) for usage and handoff d
 - `fixture/`: test-tone outputs, with `fixtures_only: true`; these are not Mandarin speech.
 - `evidence/`: media hash/timing verification, test logs, raw local ASR responses, and environment records.
 
+The two fixed StoryPlan examples explicitly mark each cue as approved. Their
+`historical_example_confirmation` records document the previously authored
+demonstration text; they do not represent a new human review or listening pass.
+Text, revisions, fixture flags, old VoicePackages, WAVs, and historical evidence
+are preserved. New or edited user scripts require explicit approval of every
+cue before synthesis; `ready_for_edit` alone is insufficient.
+
 Every URI is relative to the corresponding `real/` or `fixture/` project root. A few MB of actual media are included; no personal media directories are needed. Runtime cache WAVs contain speech after boundary-silence removal and are excluded from Git by repository policy. Delivered narration WAVs include sentence-end padding and optional bounded tempo adjustment. The first run on a new machine builds its cache; later sentence edits can reuse it.
 
 Documentation and descriptive metadata are English. Mandarin scripts/subtitles, raw ASR evidence, and exact installed voice identifiers retain their original language to match the actual audio.

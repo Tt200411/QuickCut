@@ -39,12 +39,13 @@ all = [
 [project.scripts]
 quickcut = "quickcut.cli:main"
 quickcut-ingest = "quickcut.ingest:main"
+quickcut-web = "quickcut.workbench:main"
 
 [tool.setuptools.packages.find]
 include = ["quickcut*"]
 
 [tool.setuptools.package-data]
-quickcut = ["templates/jianying/*.json", "templates/jianying/*.txt"]
+quickcut = ["templates/jianying/*.json", "templates/jianying/*.txt", "web/*.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

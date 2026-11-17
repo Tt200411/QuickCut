@@ -82,7 +82,14 @@
       "voice_style": "Natural Mandarin male voice",
       "evidence_segment_ids": [
         "seg-packing"
-      ]
+      ],
+      "approved": true,
+      "approval_record": {
+        "method": "historical_example_confirmation",
+        "scope": "Previously authored fixed demonstration text at this StoryPlan revision; not a new live user approval.",
+        "confirmed_text": "我们出发了。",
+        "evidence": "examples/voice_package/README.md and examples/voice_package/evidence/commands.txt"
+      }
     },
     {
       "cue_id": "cue-02",
@@ -92,7 +99,14 @@
       "voice_style": "Natural Mandarin male voice",
       "evidence_segment_ids": [
         "seg-walk"
-      ]
+      ],
+      "approved": true,
+      "approval_record": {
+        "method": "historical_example_confirmation",
+        "scope": "Previously authored fixed demonstration text at this StoryPlan revision; not a new live user approval.",
+        "confirmed_text": "走进林间，脚步慢了下来。",
+        "evidence": "examples/voice_package/README.md and examples/voice_package/evidence/commands.txt"
+      }
     },
     {
       "cue_id": "cue-03",
@@ -102,7 +116,14 @@
       "voice_style": "Natural Mandarin male voice",
       "evidence_segment_ids": [
         "seg-rest"
-      ]
+      ],
+      "approved": true,
+      "approval_record": {
+        "method": "historical_example_confirmation",
+        "scope": "Previously authored fixed demonstration text at this StoryPlan revision; not a new live user approval.",
+        "confirmed_text": "我们沿着林间的小路慢慢向前走，停下来听风吹过树叶的声音，然后坐在路边休息，享受这一段安静的时光。",
+        "evidence": "examples/voice_package/README.md and examples/voice_package/evidence/commands.txt"
+      }
     }
   ],
   "unresolved_gaps": [],

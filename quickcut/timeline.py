@@ -32,9 +32,11 @@ def _require(condition: bool, message: str) -> None:
 
 
 def _index(records: list[Document], key: str) -> dict[str, Document]:
+    _require(isinstance(records, list), f"{key} records must be an array")
     result = {}
     for record in records:
-        value = record[key]
+        _require(isinstance(record, dict), f"{key} record must be an object")
+        value = record.get(key)
         _require(isinstance(value, str) and bool(value) and value not in result,
                  f"Missing or duplicate {key}: {value}")
         result[value] = record
@@ -66,7 +68,7 @@ def _check_refs(docs: dict[str, Document]) -> None:
         for dependency in required.get(kind, ()):
             links.setdefault(dependency, {})
         for dependency, link in links.items():
-            if dependency in docs and link != _ref(docs[dependency]):
+            if dependency in docs and (type(link.get("revision")) is not int or link != _ref(docs[dependency])):
                 raise TimelineError(
                     f"{kind} must reference the current {dependency}",
                     code="STALE_INPUT_REVISION", affected_ids=(source["document_id"],),
@@ -85,9 +87,80 @@ def _make_clip(clip_id: str, asset: Document, source_begin: int,
     }
 
 
+def _picture_plans(brief: Document, manifest: Document, story: Document,
+                   assets: dict[str, Document], boundaries: Document | None = None) -> tuple[list, list]:
+    """Resolve approved shots and optional human in/out decisions, without media inference.
+
+    Edits address (beat_id, zero-based shot_index), so repeated uses of one
+    segment remain independent. A manually confirmed end is a hard boundary.
+    """
+    beats = sorted(_index(story["beats"], "beat_id").values(), key=lambda b: b["order"])
+    _require(bool(beats) and len({b["order"] for b in beats}) == len(beats),
+             "Story must have at least one beat and an unambiguous order")
+    edits = {}
+    if boundaries is not None:
+        _require(isinstance(boundaries, dict), "boundaries must be an object")
+        for key, doc in (("story_plan", story), ("asset_manifest", manifest)):
+            link = boundaries.get(key)
+            if not isinstance(link, dict) or type(link.get("revision")) is not int or link != _ref(doc):
+                raise TimelineError(f"Manual boundaries reference a stale {key}", code="STALE_INPUT_REVISION")
+        _require(isinstance(boundaries.get("edits"), list), "boundaries.edits must be a list")
+        by_beat = {b["beat_id"]: b for b in beats}
+        for edit in boundaries["edits"]:
+            _require(isinstance(edit, dict), "Each boundary edit must be an object")
+            bid, index = edit.get("beat_id"), edit.get("shot_index")
+            _require(bid in by_beat and type(index) is int and 0 <= index < len(by_beat[bid]["shots"]),
+                     "Manual boundary references an unknown shot")
+            _require((bid, index) not in edits, "Duplicate manual boundary for one shot")
+            _require(edit.get("segment_id") == by_beat[bid]["shots"][index]["segment_id"],
+                     "Manual boundary segment differs from the selected shot")
+            _require(edit.get("method") == "manual" and all(
+                isinstance(edit.get(k), str) and edit[k].strip() for k in ("reviewer", "reason")),
+                "Manual boundaries require method=manual, reviewer and reason")
+            edits[bid, index] = deepcopy(edit)
+    segments = _index(manifest["segments"], "segment_id")
+    plans, decisions = [], []
+    for beat in beats:
+        budget = _positive_us(beat["duration_budget_us"], f"{beat['beat_id']} budget")
+        shots = []
+        for index, shot in enumerate(beat["shots"]):
+            segment = segments[shot["segment_id"]]
+            asset = assets[segment["asset_id"]]
+            source = segment["source_range_us"]
+            begin, end = source["begin"], source["end"]
+            _require(asset["media_kind"] == "video" and segment["asset_revision"] == asset["revision"],
+                     f"{segment['segment_id']}: video asset missing or stale")
+            _require(type(begin) is int and type(end) is int and 0 <= begin < end <= asset["duration_us"],
+                     f"{segment['segment_id']}: source interval out of bounds")
+            edit = edits.get((beat["beat_id"], index))
+            if edit is not None:
+                interval = edit.get("source_range_us", {})
+                _require(isinstance(interval, dict), "Manual source_range_us must be an object")
+                lo, hi = interval.get("begin"), interval.get("end")
+                _require(type(lo) is int and type(hi) is int and begin <= lo < hi <= end,
+                         f"{segment['segment_id']}: manual bounds exceed the selected segment")
+                begin, duration, headroom = lo, hi - lo, 0
+            else:
+                duration = _positive_us(shot.get("suggested_duration_us", end - begin), "Shot duration")
+                _require(duration <= end - begin, f"{segment['segment_id']}: source interval out of bounds")
+                headroom = end - begin - duration
+            shots.append((shot, asset, begin, duration, headroom))
+            decisions.append({"beat_id": beat["beat_id"], "shot_index": index, "segment_id": segment["segment_id"],
+                "method": "manual" if edit else "segment_prefix_budget", "reviewer": edit["reviewer"] if edit else None,
+                "reason": edit["reason"] if edit else "Use the selected segment start and approved duration; no media boundary inference",
+                "segment_range_us": deepcopy(source), "source_range_us": _range(begin, begin + duration)})
+        planned = sum(s[3] for s in shots)
+        _require(0 < planned <= budget, f"{beat['beat_id']}: picture is empty or exceeds its beat budget")
+        plans.append((beat, shots, planned, budget))
+    _require(sum(p[2] for p in plans) <= brief["requirements"]["target_duration_us"],
+             "Planned picture exceeds the Brief budget")
+    return plans, decisions
+
+
 def compile_timeline(
     brief: Document, manifest: Document, story: Document, voice: Document, *,
     output: Document, document_id: str = "timeline-001", revision: int = 1,
+    boundaries: Document | None = None,
 ) -> Document:
     """Build four tracks from approved selections and measured voice durations.
 
@@ -123,7 +196,6 @@ def compile_timeline(
     limit = _positive_us(brief["requirements"]["target_duration_us"], "Brief duration")
     preserve_audio = brief["constraints"]["preserve_source_audio"]
     assets = _index(manifest["assets"] + voice["assets"], "asset_id")
-    segments = _index(manifest["segments"], "segment_id")
     story_cues = _index(story["narration_cues"], "cue_id")
     voice_cues = _index(voice["cues"], "cue_id")
     _require(set(story_cues) == set(voice_cues), "VoicePackage must cover the approved cues")
@@ -134,28 +206,8 @@ def compile_timeline(
     _require(len(cue_order) == len(story_cues) and set(cue_order) == set(story_cues),
              "Each approved cue must appear in exactly one beat")
 
-    plans = []
-    planned_total = 0
-    for beat in beats:
-        beat_id = beat["beat_id"]
-        budget = _positive_us(beat["duration_budget_us"], f"{beat_id} budget")
-        shots = []
-        for shot in beat["shots"]:
-            segment = segments[shot["segment_id"]]
-            asset = assets[segment["asset_id"]]
-            source = segment["source_range_us"]
-            begin, end = source["begin"], source["end"]
-            duration = _positive_us(shot.get("suggested_duration_us", end - begin), "Shot duration")
-            _require(asset["media_kind"] == "video" and segment["asset_revision"] == asset["revision"],
-                     f"{segment['segment_id']}: video asset missing or stale")
-            _require(type(begin) is int and type(end) is int and 0 <= begin < end <= asset["duration_us"]
-                     and duration <= end - begin, f"{segment['segment_id']}: source interval out of bounds")
-            shots.append((shot, asset, begin, duration, end - begin - duration))
-        planned = sum(shot[3] for shot in shots)
-        _require(0 < planned <= budget, f"{beat_id}: picture is empty or exceeds its beat budget")
-        planned_total += planned
-        plans.append((beat, shots, planned, budget))
-    _require(planned_total <= limit, "Planned picture exceeds the Brief budget")
+    plans, boundary_decisions = _picture_plans(brief, manifest, story, assets, boundaries)
+    planned_total = sum(p[2] for p in plans)
 
     picture, original, narration, subtitles = [], [], [], []
     timeline_cursor = 0
@@ -214,6 +266,8 @@ def compile_timeline(
             number = len(picture) + 1
             duration += extra[index]
             clip = _make_clip(f"clip-video-{number}", asset, begin, timeline_cursor, duration)
+            boundary_decisions[number - 1]["clip_id"] = clip["clip_id"]
+            boundary_decisions[number - 1]["source_range_us"] = deepcopy(clip["source_range_us"])
             has_original = preserve_audio and asset.get("audio", {}).get("present") is True
             picture.append({
                 **clip, "segment_id": shot["segment_id"], "beat_id": beat_id, "role": shot["role"],
@@ -245,6 +299,7 @@ def compile_timeline(
         "project_id": project_id, "revision": revision, "fixtures_only": fixtures_only, "owner": "D",
         "inputs": [_ref(doc) for doc in (story, manifest, voice, brief)],
         "status": "ready_for_export", "duration_us": timeline_cursor, "output": deepcopy(output),
+        "boundary_decisions": boundary_decisions,
         "tracks": [
             {"track_id": "track-picture", "kind": "video", "clips": picture},
             {"track_id": "track-original", "kind": "source_audio", "clips": original},

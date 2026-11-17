@@ -38,7 +38,7 @@ def _documents():
         beats=[dict(beat_id="beat", order=1, duration_budget_us=1_600_000, cue_ids=["cue"],
                     shots=[dict(segment_id=aid, role="source", suggested_duration_us=800_000) for aid in ("red", "blue")])])
     voice = _envelope("VoicePackage", "voice")
-    voice.update(status="ready", errors=[], inputs=[timeline_preview._ref(story)],
+    voice.update(status="ready", mode="measure", errors=[], inputs=[timeline_preview._ref(story)],
         assets=[dict(asset_id="speech", revision=1, media_kind="audio", uri="speech.wav",
                      content_hash="sha256:" + "0" * 64, duration_us=400_000, audio={"present": True})],
         cues=[dict(cue_id="cue", beat_id="beat", asset_id="speech", text="可编辑字幕", fit_status="fits", needs_retime=False,
@@ -90,6 +90,68 @@ def _amplitude(path, frequency):
     real = sum(v * math.cos(2 * math.pi * frequency * i / rate) for i, v in enumerate(mono))
     imag = sum(v * math.sin(2 * math.pi * frequency * i / rate) for i, v in enumerate(mono))
     return 2 * math.hypot(real, imag) / n / 32768
+
+
+@pytest.fixture
+def webm_source(tmp_path):
+    ffmpeg = core._ffmpeg_binary()
+    if not timeline_preview._ffprobe_binary():
+        pytest.skip("WebM measurement needs ffprobe")
+    path = tmp_path / "short-video-long-audio.webm"
+    subprocess.run([ffmpeg, "-v", "error", "-f", "lavfi", "-i", "color=c=red:s=160x120:r=25:d=0.8",
+        "-f", "lavfi", "-i", "sine=frequency=400:sample_rate=48000:duration=1.6",
+        "-c:v", "libvpx-vp9", "-deadline", "realtime", "-cpu-used", "8", "-c:a", "libopus", str(path)],
+        check=True, capture_output=True)
+    return path
+
+
+def test_webm_measures_playable_stream_instead_of_longer_container(webm_source):
+    probe = timeline_preview._ffprobe_binary()
+    info = timeline_preview._probe(probe, webm_source)
+    video = next(stream for stream in info["streams"] if stream["codec_type"] == "video")
+    assert video.get("duration") in (None, "N/A")
+    measured = timeline_preview._measured_stream(probe, webm_source, video)
+    assert timeline_preview._duration(info["format"]) > 1_500_000
+    assert timeline_preview._duration(measured) == 800_000
+    assert measured["duration_measurement"]["method"] == "decoded_frames"
+    tracks = {"video": {"kind": "video", "clips": [
+        {"asset_id": "webm", "source_range_us": {"begin": 0, "end": 700_000}}]},
+        "narration": {"kind": "narration", "clips": []}}
+    measurement = export._inspect_media(webm_source, {"asset_id": "webm"}, tracks, core._ffmpeg_binary(), probe)
+    assert measurement["duration_us"] == 800_000
+    tracks["video"]["clips"][0]["source_range_us"]["end"] = 1_200_000
+    with pytest.raises(export.ExportError, match="真实 video 流不能覆盖"):
+        export._inspect_media(webm_source, {"asset_id": "webm"}, tracks, core._ffmpeg_binary(), probe)
+
+
+def test_export_and_preview_accept_webm_without_declared_stream_duration(tmp_path, source_media, docs):
+    root = tmp_path / "project"
+    shutil.copytree(source_media, root)
+    webm = root / "red.webm"
+    subprocess.run([core._ffmpeg_binary(), "-v", "error", "-i", str(root / "red.mp4"),
+        "-c:v", "libvpx-vp9", "-deadline", "realtime", "-cpu-used", "8", "-c:a", "libopus", str(webm)],
+        check=True, capture_output=True)
+    asset = next(asset for asset in docs[1]["assets"] if asset["asset_id"] == "red")
+    asset.update(uri="red.webm", content_hash=digest(webm))
+    docs[0]["render_policy"]["preview_burn_subtitles"] = False
+    report = export.export_project(*docs, root, tmp_path / "export", preview=True)
+    assert report["status"] == "generated"
+    assert export.verify_package(tmp_path / "export")[0] == report
+
+
+@pytest.mark.parametrize("position,expected_y", [(None, -0.8), ("bottom", -0.8), ("top", 0.8)])
+def test_editable_caption_position_matches_render_policy(tmp_path, source_media, docs, position, expected_y):
+    if position is not None:
+        docs[0]["render_policy"]["subtitle_position"] = position
+    package = tmp_path / "caption-package"
+    export.export_project(*docs, source_media, package)
+    draft = _load(package / "draft/draft_info.json")
+    texts = next(track for track in draft["tracks"] if track["type"] == "text")
+    assert all(segment["clip"]["transform"] == {"x": 0.0, "y": expected_y} for segment in texts["segments"])
+    assert all(segment["clip"]["transform"]["y"] == 0.0
+               for track in draft["tracks"] if track["type"] == "video" for segment in track["segments"])
+    assert "可编辑字幕" in (package / "captions.srt").read_text()
+    assert export.verify_package(package)[0]["status"] == "generated"
 
 
 def test_export_has_four_independent_tracks_exact_ranges_gain_and_audible_sources(tmp_path, source_media, docs):
@@ -153,6 +215,27 @@ def test_rejects_stale_contracts_and_unsupported_features_without_publishing(tmp
         export.export_project(*docs, source_media, tmp_path / "no-export")
     assert not (tmp_path / "no-export").exists()
     assert not list(tmp_path.glob(".quickcut-export-*"))
+
+
+@pytest.mark.parametrize('damage', ['missing_mode', 'fit_mode', 'request', 'cue_range'])
+def test_export_rejects_disguised_initial_voice_before_media_access(tmp_path, damage, monkeypatch):
+    docs = _documents()
+    voice = docs[2]
+    if damage == 'missing_mode':
+        voice.pop('mode')
+    elif damage == 'fit_mode':
+        voice['mode'] = 'fit'
+    elif damage == 'request':
+        voice['request'] = {'kind': 'VoiceFitRequest'}
+    else:
+        voice['cues'][0]['requested_timeline_range_us'] = {'begin': 0, 'end': 400000}
+    monkeypatch.setattr(export, '_inspect_media', lambda *args, **kwargs: pytest.fail('Invalid handoff reached media access'))
+    package = tmp_path / 'rejected'
+    with pytest.raises(export.ExportError) as exc:
+        export.export_project(*docs, tmp_path, package)
+    assert exc.value.code == 'TIMELINE_INVALID'
+    assert not package.exists()
+    assert not list(tmp_path.glob('.quickcut-export-*'))
 
 
 def test_fixtures_require_explicit_opt_in_and_preserve_marker(tmp_path, source_media, docs):

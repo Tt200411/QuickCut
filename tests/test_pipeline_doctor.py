@@ -8,7 +8,9 @@ from pathlib import Path
 import socket
 import subprocess
 import sys
+from types import SimpleNamespace
 from unittest.mock import Mock
+import wave
 
 import pytest
 
@@ -274,3 +276,188 @@ def test_a_import_failure_is_structured(tools, monkeypatch, capsys):
     code, report = invoke(capsys, "--require-media")
     assert code == 2
     assert checks(report)["A.core.ffmpeg"]["error"]["type"] == "ImportError"
+
+
+@pytest.fixture
+def index_config(tmp_path, monkeypatch):
+    from quickcut import indextts2
+
+    model_dir = tmp_path / "checkpoints"
+    for filename in (
+        "config.yaml", "gpt.pth", "s2mel.pth", "bpe.model", "wav2vec2bert_stats.pt",
+        "feat1.pt", "feat2.pt", "hf_cache/w2v-bert-2.0/config.json",
+        "hf_cache/w2v-bert-2.0/preprocessor_config.json",
+        "hf_cache/w2v-bert-2.0/model.safetensors",
+        "hf_cache/semantic_codec_model.safetensors", "hf_cache/campplus_cn_common.bin",
+        "hf_cache/bigvgan/config.json", "hf_cache/bigvgan/bigvgan_generator.pt",
+    ):
+        path = model_dir / filename
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(b"file-presence fixture, not model weights")
+    reference = tmp_path / "reference.wav"
+    with wave.open(str(reference), "wb") as wav:
+        wav.setparams((1, 2, 16000, 0, "NONE", "not compressed"))
+        wav.writeframes(b"\x01\x00" * 160)
+    config = {"engine": "indextts2", "model_dir": str(model_dir),
+              "model_revision": "740dcaf", "reference_audio": str(reference), "device": "mps"}
+    path = tmp_path / "voice-config.json"
+    path.write_text(json.dumps(config), encoding="utf-8")
+    monkeypatch.setattr(indextts2, "version", lambda name: "2.0.0")
+    # A constructor reaching inference would be an accidental model load.
+    monkeypatch.setattr(indextts2.IndexTTS2Backend, "synthesize",
+                        Mock(side_effect=AssertionError("preflight must not synthesize")))
+    torch = SimpleNamespace(
+        device=lambda name: SimpleNamespace(type=name.partition(":")[0],
+                                           index=int(name.partition(":")[2]) if ":" in name else None),
+        backends=SimpleNamespace(mps=SimpleNamespace(is_available=lambda: True)),
+        cuda=SimpleNamespace(is_available=lambda: True, device_count=lambda: 1),
+    )
+    monkeypatch.setitem(sys.modules, "torch", torch)
+    return path, config, torch
+
+
+def test_index_preflight_uses_selected_model_without_requiring_say(tools, index_config, capsys):
+    path, config, _ = index_config
+    del tools[0]["say"]
+    code, report = invoke(capsys, "--voice-config", str(path), "--require-media")
+    assert code == 0
+    entry = checks(report)["E.local_tts"]
+    assert entry["selected"] == "indextts2"
+    assert entry["model_revision"] == "740dcaf"
+    assert entry["device"] == "mps"
+    assert entry["reference_audio"]["frames"] == 160
+    assert entry["real_inference"] == "not_run"
+    assert report["evidence"]["real_inference"] == "not_run"
+
+
+def test_index_relative_paths_use_repository_from_another_cwd(tools, index_config, monkeypatch, capsys):
+    path, config, _ = index_config
+    monkeypatch.setattr(doctor, "PROJECT_ROOT", path.parent)
+    other = path.parent / "other-working-directory"
+    other.mkdir()
+    monkeypatch.chdir(other)
+    config["model_dir"] = "checkpoints"
+    config["reference_audio"] = "reference.wav"
+    config["cue_overrides"] = {"cue-01": {"reference_audio": "reference.wav"}}
+    path.write_text(json.dumps(config), encoding="utf-8")
+    code, report = invoke(capsys, "--voice-config", str(path), "--require-media")
+    assert code == 0
+    entry = checks(report)["E.local_tts"]
+    assert Path(entry["model_dir"]) == path.parent / "checkpoints"
+    assert Path(entry["reference_audio"]["path"]) == path.parent / "reference.wav"
+
+    # A missing per-cue reference must not be hidden by a valid base reference.
+    config["cue_overrides"]["cue-01"]["reference_audio"] = "missing.wav"
+    path.write_text(json.dumps(config), encoding="utf-8")
+    code, report = invoke(capsys, "--voice-config", str(path), "--require-media")
+    assert code == 2
+    assert "reference_audio" in checks(report)["E.local_tts"]["error"]["message"]
+
+
+@pytest.mark.parametrize("case", ["invalid", "empty", "truncated"])
+def test_index_override_wav_is_checked_beyond_file_presence(tools, index_config, capsys, case):
+    path, config, _ = index_config
+    reference = path.parent / "override.wav"
+    if case == "invalid":
+        reference.write_bytes(b"not audio")
+    elif case == "empty":
+        with wave.open(str(reference), "wb") as wav:
+            wav.setparams((1, 2, 16000, 0, "NONE", "not compressed"))
+    else:
+        reference.write_bytes(Path(config["reference_audio"]).read_bytes()[:-2])
+    config["cue_overrides"] = {"cue-01": {"reference_audio": str(reference)}}
+    path.write_text(json.dumps(config), encoding="utf-8")
+    code, report = invoke(capsys, "--voice-config", str(path), "--require-media")
+    assert code == 2
+    entry = checks(report)["E.local_tts"]
+    assert entry["status"] == "failed"
+    assert "cue-01 reference_audio" in entry["error"]["message"]
+
+
+@pytest.mark.parametrize("key", ["rate", "model_dir", "device", "emotion", "engine"])
+def test_index_override_keys_match_e_contract(tools, index_config, capsys, key):
+    path, config, _ = index_config
+    config["cue_overrides"] = {"cue-01": {key: 145}}
+    path.write_text(json.dumps(config), encoding="utf-8")
+    code, report = invoke(capsys, "--voice-config", str(path), "--require-media")
+    assert code == 2
+    assert "cue-01 overrides support only reference_audio and seed" in checks(report)["E.local_tts"]["error"]["message"]
+
+
+def test_index_valid_seed_only_override_reuses_checked_base_wav(tools, index_config, capsys):
+    path, config, _ = index_config
+    config["cue_overrides"] = {"cue-01": {"seed": 7}}
+    path.write_text(json.dumps(config), encoding="utf-8")
+    code, report = invoke(capsys, "--voice-config", str(path), "--require-media")
+    assert code == 0
+    assert checks(report)["E.local_tts"]["status"] == "ok"
+
+
+@pytest.mark.parametrize("missing", ["gpt.pth", "hf_cache/w2v-bert-2.0/model.safetensors"])
+def test_missing_index_weights_cannot_pass_using_system_voice(tools, index_config, capsys, missing):
+    path, config, _ = index_config
+    (Path(config["model_dir"]) / missing).unlink()
+    code, report = invoke(capsys, "--voice-config", str(path), "--require-media")
+    assert code == 2 and report["status"] == "degraded"
+    entry = checks(report)["E.local_tts"]
+    assert entry["status"] == "failed" and entry["selected"] == "indextts2"
+    assert missing in entry["error"]["message"]
+    assert invoke(capsys, "--voice-config", str(path))[0] == 0
+
+
+@pytest.mark.parametrize("case", ["missing", "invalid", "empty"])
+def test_index_reference_failures_block_preflight(tools, index_config, capsys, case):
+    path, config, _ = index_config
+    reference = Path(config["reference_audio"])
+    if case == "missing":
+        reference.unlink()
+    elif case == "invalid":
+        reference.write_bytes(b"not a WAV")
+    else:
+        with wave.open(str(reference), "wb") as wav:
+            wav.setparams((1, 2, 16000, 0, "NONE", "not compressed"))
+    code, report = invoke(capsys, "--voice-config", str(path), "--require-media")
+    assert code == 2
+    assert checks(report)["E.local_tts"]["status"] == "failed"
+
+
+@pytest.mark.parametrize("device", ["mps", "cuda", "cuda:1"])
+def test_index_unavailable_device_is_reported(tools, index_config, capsys, device):
+    path, config, torch = index_config
+    config["device"] = device
+    path.write_text(json.dumps(config), encoding="utf-8")
+    torch.backends.mps.is_available = lambda: False
+    torch.cuda.is_available = lambda: device == "cuda:1"
+    code, report = invoke(capsys, "--voice-config", str(path), "--require-media")
+    assert code == 2
+    assert "unavailable" in checks(report)["E.local_tts"]["error"]["message"]
+
+
+def test_index_missing_runtime_is_reported(tools, index_config, monkeypatch, capsys):
+    from quickcut import indextts2
+
+    path, _, _ = index_config
+    monkeypatch.setattr(indextts2, "version", Mock(side_effect=indextts2.PackageNotFoundError("indextts")))
+    code, report = invoke(capsys, "--voice-config", str(path), "--require-media")
+    assert code == 2
+    assert "Python environment" in checks(report)["E.local_tts"]["error"]["message"]
+
+
+@pytest.mark.parametrize("content", ["{", "[]", '{"engine": "fixture-tone"}'])
+def test_invalid_voice_config_never_falls_back_to_system_voice(tools, tmp_path, capsys, content):
+    path = tmp_path / "invalid.json"
+    path.write_text(content, encoding="utf-8")
+    code, report = invoke(capsys, "--voice-config", str(path), "--require-media")
+    assert code == 2
+    assert checks(report)["E.local_tts"]["status"] == "failed"
+
+
+def test_default_preflight_does_not_import_torch(tools, monkeypatch, capsys):
+    original_import = doctor.importlib.import_module
+
+    def import_module(name, *args, **kwargs):
+        assert name != "torch", "system TTS preflight must not import torch"
+        return original_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(doctor.importlib, "import_module", import_module)
+    assert invoke(capsys, "--require-media")[0] == 0

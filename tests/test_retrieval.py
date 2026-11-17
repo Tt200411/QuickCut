@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 from pathlib import Path
 
@@ -59,6 +60,14 @@ def test_retrieve_returns_well_formed_candidate_set(manifest, request_doc):
     assert inputs_kinds == {"AssetManifest", "RetrievalRequest"}
     # One result per query, in request order.
     assert [r["query_id"] for r in out["results"]] == [q["query_id"] for q in request_doc["queries"]]
+
+
+def test_retrieve_records_the_implementation_that_produced_its_scores(manifest, request_doc):
+    out = retrieve(manifest, request_doc)
+    package = Path(__file__).resolve().parents[1] / "quickcut"
+    recorded = out["retrieval_profile"]["implementation_fingerprints"]
+    assert recorded == {name: "sha256:" + hashlib.sha256((package / name).read_bytes()).hexdigest()
+                        for name in ("retrieval.py", "encoder.py")}
 
 
 def test_retrieve_rejects_cross_project(manifest, request_doc):
@@ -556,6 +565,187 @@ def test_production_library_cannot_be_merged_without_registration(tmp_path):
     library = BRollLibrary(tmp_path / "library.json", _tiny_manifest())
     with pytest.raises(ValueError, match="Register real B-roll with A"):
         library.merge_into(manifest)
+
+
+def _production_visual_docs():
+    manifest, request = _tiny_manifest(), _filter_request(semantic_text="green")
+    manifest["fixtures_only"] = request["fixtures_only"] = False
+    manifest["assets"] = manifest["assets"][:1]
+    manifest["segments"] = manifest["segments"][:1]
+    manifest["segments"][0]["keyframes"] = [{"uri": "frame.ppm", "source_time_us": 1}]
+    return manifest, request
+
+
+def test_production_missing_keyframe_is_error_even_with_matching_description(tmp_path):
+    manifest, request = _production_visual_docs()
+    manifest["segments"][0]["description"] = {"text": "green"}
+    result = retrieve(manifest, request, project_root=tmp_path)
+    row = result["results"][0]
+    assert result["status"] == row["status"] == "error"
+    assert row["candidates"] == []
+    assert result["errors"] == row["errors"]
+    error = row["errors"][0]
+    assert error["code"] == "KEYFRAME_MISSING" and error["action_owner"] == "A"
+    assert error["keyframe_uri"] == "frame.ppm"
+    assert error["asset_id"] == manifest["assets"][0]["asset_id"]
+    assert error["segment_id"] == manifest["segments"][0]["segment_id"]
+
+
+def test_production_invalid_keyframe_uri_is_locatable(tmp_path):
+    manifest, request = _production_visual_docs()
+    manifest["segments"][0]["keyframes"][0]["uri"] = "../outside.png"
+    result = retrieve(manifest, request, project_root=tmp_path)
+    assert result["errors"][0]["code"] == "KEYFRAME_URI_INVALID"
+
+
+def test_fixture_marker_must_be_boolean_before_allowing_missing_images():
+    manifest, request = _production_visual_docs()
+    manifest["fixtures_only"] = "false"
+    with pytest.raises(ValueError, match="fixtures_only must be boolean"):
+        retrieve(manifest, request)
+
+
+def test_restored_media_advances_failed_revision_to_success(tmp_path):
+    manifest, request = _production_visual_docs()
+    retriever = Retriever(RetrievalConfig(encoder_mode="fallback"))
+    failed = retriever.retrieve(manifest, request, project_root=tmp_path)
+    (tmp_path / "frame.ppm").write_bytes(b"P6\n1 1\n255\n" + bytes([10, 200, 10]))
+    recovered = retriever.retrieve(manifest, request, project_root=tmp_path, previous=failed)
+    assert failed["status"] == "error"
+    assert recovered["status"] == "ok" and recovered["errors"] == []
+    assert recovered["revision"] == failed["revision"] + 1
+
+
+def test_one_valid_candidate_does_not_hide_an_unreadable_eligible_candidate(tmp_path):
+    manifest, request = _production_visual_docs()
+    invalid = copy.deepcopy(manifest["segments"][0])
+    invalid.update(segment_id="later-missing-frame", source_range_us={"begin": 5_000_000, "end": 10_000_000},
+                   keyframes=[{"uri": "missing.ppm"}])
+    manifest["segments"].append(invalid)
+    (tmp_path / "frame.ppm").write_bytes(b"P6\n1 1\n255\n" + bytes([10, 200, 10]))
+    result = retrieve(manifest, request, project_root=tmp_path)
+    assert result["status"] == "error"
+    assert result["results"][0]["evaluated_candidate_count"] == 1
+    assert result["results"][0]["candidates"] == []
+    assert result["errors"][0]["segment_id"] == "later-missing-frame"
+
+
+def test_corrupt_keyframe_is_not_a_valid_no_match(tmp_path):
+    pytest.importorskip("PIL")
+    manifest, request = _production_visual_docs()
+    (tmp_path / "frame.ppm").write_bytes(b"broken image")
+    result = retrieve(manifest, request, project_root=tmp_path)
+    assert result["status"] == "error"
+    assert result["errors"][0]["code"] == "KEYFRAME_ENCODING_FAILED"
+
+
+@pytest.mark.parametrize("failure", ["exception", "nan"])
+def test_scoring_failure_cannot_be_masked_by_text(tmp_path, monkeypatch, failure):
+    from quickcut.encoder import FallbackEncoder
+    encoder = FallbackEncoder()
+    def score(*args):
+        if failure == "exception":
+            raise RuntimeError("model execution failed")
+        return float("nan")
+    monkeypatch.setattr(encoder, "score_text_image", score)
+    monkeypatch.setattr("quickcut.retrieval.make_encoder", lambda mode: encoder)
+    manifest, request = _production_visual_docs()
+    manifest["segments"][0]["description"] = {"text": "green"}
+    (tmp_path / "frame.ppm").write_bytes(b"P6\n1 1\n255\n" + bytes([10, 200, 10]))
+    result = retrieve(manifest, request, project_root=tmp_path)
+    assert result["status"] == "error" and result["results"][0]["candidates"] == []
+    assert result["errors"][0]["code"] == "VISUAL_SCORING_FAILED"
+
+
+def test_semantic_label_failure_is_reported_instead_of_crashing_or_succeeding(tmp_path, monkeypatch):
+    from quickcut.encoder import FallbackEncoder
+    encoder = FallbackEncoder()
+    encoder.name = "openclip"
+    def score(text, embedding):
+        if text != "green":
+            raise RuntimeError("semantic label execution failed")
+        return 0.8
+    monkeypatch.setattr(encoder, "score_text_image", score)
+    monkeypatch.setattr("quickcut.retrieval.make_encoder", lambda mode: encoder)
+    manifest, request = _production_visual_docs()
+    (tmp_path / "frame.ppm").write_bytes(b"P6\n1 1\n255\n" + bytes([10, 200, 10]))
+    result = retrieve(manifest, request, project_root=tmp_path)
+    assert result["status"] == "error" and result["results"][0]["candidates"] == []
+    assert result["errors"][0]["code"] == "LABEL_SCORING_FAILED"
+
+
+def test_missing_encoder_returns_model_error_without_no_match(monkeypatch):
+    def unavailable(mode):
+        raise RuntimeError("required encoder weights absent")
+    monkeypatch.setattr("quickcut.retrieval.make_encoder", unavailable)
+    manifest, request = _production_visual_docs()
+    result = retrieve(manifest, request, config=RetrievalConfig(encoder_mode="openclip"))
+    assert result["status"] == "error"
+    assert result["errors"][0]["code"] == "ENCODER_UNAVAILABLE"
+    assert result["retrieval_profile"]["encoder"]["encoder"] == "unavailable"
+
+
+def test_production_auto_fallback_is_not_accepted_as_real_model(monkeypatch):
+    from quickcut.encoder import FallbackEncoder
+    fallback = FallbackEncoder(requested_mode="auto", fallback_reason="checkpoint missing")
+    monkeypatch.setattr("quickcut.retrieval.make_encoder", lambda mode: fallback)
+    manifest, request = _production_visual_docs()
+    result = retrieve(manifest, request, config=RetrievalConfig(encoder_mode="auto"))
+    assert result["status"] == "error" and result["errors"][0]["code"] == "ENCODER_UNAVAILABLE"
+
+
+def test_transcript_only_retrieval_preserves_exact_spans_and_review_metadata():
+    manifest, request = _production_visual_docs()
+    segment = manifest["segments"][0]
+    segment["keyframes"] = []
+    segment["source_range_us"] = {"begin": 5_000_000, "end": 10_000_000}
+    segment["description"] = {"text": ""}
+    segment["transcript"] = {"status": "success", "text": "green", "review_status": "needs_review",
+                             "uri": "derived/transcript.json", "segments": [
+                                 {"text": "green", "source_range_us": {"begin": 2, "end": 5_500_000}}]}
+    original = copy.deepcopy(segment["transcript"])
+    result = retrieve(manifest, request)
+    row = result["results"][0]
+    assert row["status"] == "ok"
+    candidate = row["candidates"][0]
+    assert candidate["visual_score"] == 0 and candidate["visual_status"] == "text_only"
+    assert candidate["transcript_evidence"] == original
+    assert {"visual_not_available", "transcript_needs_review"} <= set(candidate["flags"])
+    assert row["diagnostics"][0]["code"] == "VISUAL_NOT_AVAILABLE"
+    candidate["transcript_evidence"]["segments"][0]["text"] = "changed"
+    assert segment["transcript"] == original
+
+
+def test_failed_transcript_text_is_not_used_as_successful_text_only_evidence():
+    manifest, request = _production_visual_docs()
+    segment = manifest["segments"][0]
+    segment["keyframes"] = []
+    segment["transcript"] = {"status": "failed", "text": "green"}
+    result = retrieve(manifest, request)
+    assert result["status"] == "error"
+    assert result["errors"][0]["code"] == "KEYFRAME_MISSING"
+
+
+def test_fixture_missing_images_remain_explicit_protocol_only_evidence():
+    result = retrieve(_tiny_manifest(), _filter_request())
+    assert result["status"] == "ok" and result["fixtures_only"] is True
+    assert all(c["visual_status"] == "fixture_text_only" for c in result["results"][0]["candidates"])
+
+
+def test_cli_retrieval_error_exits_nonzero_and_keeps_machine_readable_diagnostics(tmp_path):
+    import subprocess
+    import sys
+    manifest, request = _production_visual_docs()
+    manifest_path = _write(tmp_path, "manifest.json", manifest)
+    request_path = _write(tmp_path, "request.json", request)
+    output = tmp_path / "candidates.json"
+    process = subprocess.run([sys.executable, "-m", "quickcut.cli", "retrieve", str(manifest_path),
+                              str(request_path), "--output", str(output), "--project-root", str(tmp_path),
+                              "--encoder", "fallback"], capture_output=True, text=True)
+    assert process.returncode == 2
+    document = json.loads(process.stdout)
+    assert document == json.loads(output.read_text())
+    assert document["status"] == "error" and document["errors"][0]["code"] == "KEYFRAME_MISSING"
 
 
 def _cli_args(tmp_path, manifest, request):

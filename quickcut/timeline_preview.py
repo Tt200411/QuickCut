@@ -107,7 +107,30 @@ def _validate(timeline: Document, manifest: Document, voice: Document) -> tuple[
     for kind in ("AssetManifest", "VoicePackage"):
         _require(tl[kind] == _ref(docs[kind]), f"timeline 引用了旧版本 {kind}")
     _require(links["VoicePackage"].get("StoryPlan") == tl["StoryPlan"], "VoicePackage 的 StoryPlan 引用过期")
-    _require(set(links["VoicePackage"]) == {"StoryPlan"}, "仅支持 D 初次编排的 VoicePackage 引用")
+    fitted_voice = set(links["VoicePackage"]) == {"StoryPlan", "EditTimeline"}
+    if fitted_voice:
+        from .retiming import validate_voice_fit_receipt
+        try:
+            validate_voice_fit_receipt(timeline, voice, manifest=manifest)
+        except ValueError as exc:
+            raise PreviewError(f"D/E fit 返回凭据无效: {exc}") from exc
+    else:
+        _require(set(links["VoicePackage"]) == {"StoryPlan"} and not timeline.get("voice_fit"),
+                 "需要初测 VoicePackage 或绑定当前 pending Timeline 的已验收 fit 回复")
+        # The frozen, media-free golden contract predates E's mode field.
+        # Its explicit synthetic provenance is a fixture-only compatibility case;
+        # missing mode never authorizes a production measurement package.
+        legacy_fixture = ("mode" not in voice and all(d["fixtures_only"] for d in docs.values())
+                          and voice.get("measurement_source") == "synthetic_fixture"
+                          and isinstance(voice.get("synthesis_profile"), dict)
+                          and voice["synthesis_profile"].get("engine") == "fixture")
+        _require(voice.get("mode") == "measure" or legacy_fixture,
+                 "初测 VoicePackage 必须明确 mode=measure；fit 回复不能剥离引用和回执后导出")
+        _require(voice.get("request") is None,
+                 "初测 VoicePackage 不能携带适配 request；需要完整 D/E fit 回执")
+        _require(all(cue.get("requested_timeline_range_us") is None
+                     for cue in _index(voice.get("cues"), "cue_id").values()),
+                 "初测 VoicePackage 不能携带适配句子区间；需要完整 D/E fit 回执")
     for kind, link in links["AssetManifest"].items():
         _require(kind in tl and link == tl[kind], "AssetManifest 的上游引用不一致")
     _require(not (manifest["fixtures_only"] or voice["fixtures_only"]) or timeline["fixtures_only"], "timeline 丢失 fixture 来源标记")
@@ -120,6 +143,8 @@ def _validate(timeline: Document, manifest: Document, voice: Document) -> tuple[
     _require(isinstance(policy, dict), "render_policy 必须是对象")
     _require(type(policy.get("preview_burn_subtitles", False)) is bool,
              "preview_burn_subtitles 必须是布尔值")
+    _require(policy.get("subtitle_position", "bottom") in ("top", "bottom"),
+             "subtitle_position 必须是 top 或 bottom")
     _no_effects(timeline)
     duration = _integer(timeline.get("duration_us"), "duration_us")
     output = timeline.get("output", {})
@@ -334,6 +359,19 @@ def _duration(stream: Document) -> int:
     return _integer(result, "实测时长")
 
 
+def _measured_stream(binary: str, path: Path, stream: Document) -> Document:
+    if stream.get("duration") not in (None, "N/A"):
+        return stream
+    from .media import MediaError, decoded_stream_bounds
+    try:
+        measured = decoded_stream_bounds(binary, path, stream)
+    except MediaError as exc:
+        raise PreviewError(str(exc)) from exc
+    return {**stream, "duration": str(Fraction(measured["duration_us"], 1_000_000)),
+            "start_time": str(Fraction(measured["start_us"], 1_000_000)),
+            "duration_measurement": measured}
+
+
 def _start_time(stream: Document) -> int:
     value = stream.get("start_time")
     _require(value is not None and value != "N/A", "ffprobe 未能测量流 start_time")
@@ -374,6 +412,7 @@ def render_timeline_preview(
     fps = Fraction(timeline["output"]["fps"]["numerator"], timeline["output"]["fps"]["denominator"])
     frame_subtitles = _frame_subtitles(tracks["subtitle"]["cues"], fps)
     burn_requested = timeline.get("render_policy", {}).get("preview_burn_subtitles", False)
+    subtitle_position = timeline.get("render_policy", {}).get("subtitle_position", "bottom")
     burn_subtitles = burn_requested and bool(frame_subtitles)
     root = Path(project_root).expanduser().resolve(strict=True)
     _require(root.is_dir(), "project_root 必须是目录")
@@ -421,6 +460,7 @@ def render_timeline_preview(
         starts[asset_id] = {}
         for kind, stream in streams.items():
             _require(stream is not None, f"素材缺少 {kind} 流: {asset_id}")
+            stream = streams[kind] = _measured_stream(probe, path, stream)
             # WAV 的采样从零开始，容器不提供 start_time；带视频素材必须读取真实流起点。
             starts[asset_id][kind] = (_video_origin(probe, path) if kind == "video" else
                                      0 if info["format"].get("format_name") == "wav" else _start_time(stream))
@@ -483,9 +523,11 @@ def render_timeline_preview(
             # libass rounds SRT to centiseconds. Temporarily give every frame
             # exactly 10 ms, then restore the true clock after burning. This keeps
             # even submillisecond cue boundaries correct at 120 or fractional fps.
+            # libass force_style uses internal SSA alignment (top-center=6),
+            # unlike an ASS Style line's numpad alignment (top-center=8).
             picture_filter += (
                 ",settb=expr=1/100,setpts=N,subtitles=filename=burn-captions.srt:fontsdir=fonts:"
-                f"force_style='FontName={font[1]},FontSize=20,Outline=1.3,Shadow=0,MarginV=18,Alignment=2',"
+                f"force_style='FontName={font[1]},FontSize=20,Outline=1.3,Shadow=0,MarginV=18,Alignment={6 if subtitle_position == 'top' else 2}',"
                 f"settb=expr={time_base},setpts=N")
         filters.append(picture_filter + "[picture]")
         audio_labels = ["[silence]"]
@@ -548,6 +590,7 @@ def render_timeline_preview(
             "video_frame_ranges": frame_ranges, "measured_video_frames": int(video["nb_frames"]),
             "full_decode_verified": True, "subtitles_burned": burn_subtitles, "subtitles_editable": True,
             "subtitle_policy_requested": burn_requested,
+            "subtitle_position": subtitle_position,
             "subtitle_font": font[1] if font else None,
             "ffmpeg_binary": ffmpeg,
             "subtitle_frame_quantization": "ceil_global_timeline_boundaries",

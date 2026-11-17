@@ -134,7 +134,7 @@ def test_run_ollama_project_images_and_escape_guards(
             "roles": {chosen["candidate_id"]: "primary"},
         }}).encode("utf-8"))
 
-    monkeypatch.setattr("urllib.request.urlopen", respond)
+    monkeypatch.setattr("quickcut.planning.selection.open_ollama", respond)
     options = [] if kind == "default" else ["--project-root", str(project)]
     assert cli.main([
         "run", "--mode", "ollama", "--bundle", str(bundle),

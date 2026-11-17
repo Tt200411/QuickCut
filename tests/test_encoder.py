@@ -28,3 +28,50 @@ def test_fallback_rejects_corrupt_encoded_keyframe():
     pytest.importorskip("PIL")
     with pytest.raises((ValueError, OSError)):
         FallbackEncoder().encode_image(b"\x89PNG\r\n\x1a\nbroken")
+
+
+@pytest.mark.parametrize("mode", ["openclip", "mobileclip"])
+def test_explicit_model_failure_never_returns_color_fallback(monkeypatch, mode):
+    import quickcut.encoder as module
+    monkeypatch.setattr(module, "_ENCODER_CACHE", {})
+    def unavailable():
+        raise RuntimeError("missing real weights")
+    monkeypatch.setattr(module, "OpenClipEncoder", unavailable)
+    with pytest.raises(RuntimeError, match="missing real weights"):
+        module.make_encoder(mode)
+
+
+def test_auto_failure_is_disclosed_and_not_cached(monkeypatch, capsys):
+    import quickcut.encoder as module
+    monkeypatch.setattr(module, "_ENCODER_CACHE", {})
+    def unavailable():
+        raise RuntimeError("offline checkpoint missing")
+    monkeypatch.setattr(module, "OpenClipEncoder", unavailable)
+    fallback = module.make_encoder("auto")
+    assert fallback.profile()["requested_mode"] == "auto"
+    assert fallback.profile()["fallback_reason"] == "offline checkpoint missing"
+    output = capsys.readouterr()
+    assert output.out == "" and "offline checkpoint missing" in output.err
+    restored = object()
+    monkeypatch.setattr(module, "OpenClipEncoder", lambda: restored)
+    assert module.make_encoder("auto") is restored
+
+
+def test_encoder_cache_tracks_checkpoint_and_text_model_selection(monkeypatch):
+    import quickcut.encoder as module
+    monkeypatch.setattr(module, "_ENCODER_CACHE", {})
+    monkeypatch.setattr(module, "OpenClipEncoder", object)
+    monkeypatch.setenv("QUICKCUT_CLIP_PRETRAINED", "checkpoint-a")
+    first = module.make_encoder("openclip")
+    assert module.make_encoder("openclip") is first
+    monkeypatch.setenv("QUICKCUT_CLIP_PRETRAINED", "checkpoint-b")
+    second = module.make_encoder("openclip")
+    assert second is not first
+    monkeypatch.setenv("QUICKCUT_CLIP_TEXT_MODEL", "pinned-tokenizer")
+    assert module.make_encoder("openclip") is not second
+
+
+def test_unknown_encoder_cannot_silently_select_fallback():
+    from quickcut.encoder import make_encoder
+    with pytest.raises(ValueError, match="Unknown visual encoder"):
+        make_encoder("openclpi")

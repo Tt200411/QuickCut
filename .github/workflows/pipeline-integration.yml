@@ -42,7 +42,7 @@ jobs:
           sudo apt-get update
           # ffmpeg 包同时提供 ffprobe；doctor 必需检查系统 TTS。
           sudo apt-get install --no-install-recommends -y ffmpeg espeak-ng fonts-noto-cjk
-          python -m pip install -e '.[dev,ingest,runtime]'
+          python -m pip install -e '.[dev,server,ingest,runtime]'
           ffmpeg -version
           ffprobe -version
           mkdir -p "$PIPELINE_OUTPUT"

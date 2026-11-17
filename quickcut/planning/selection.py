@@ -6,16 +6,54 @@
 from __future__ import annotations
 
 import base64
+import copy
+import hashlib
 import io
 import json
 import math
 import os
 import urllib.request
+import urllib.error
+from datetime import datetime, timezone
+from time import perf_counter
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Protocol
 
 from .contracts import PlanningError, UNSUPPORTED_STORY_BEAT, VLM_INVALID_PLAN
+
+
+def narration_character_limit(budget_us: int) -> int:
+    """Conservative Chinese speech budget with 0.8 s left for pauses/tail."""
+    return max(2, int(max(0, budget_us / 1_000_000 - 0.8) * 2.5))
+
+
+def narration_character_count(text: str) -> int:
+    return sum(char.isalnum() for char in text)
+
+
+def narration_review(text: str, budget_us: int, *, max_chars: int | None = None) -> dict[str, Any]:
+    """Content issues require editing; only explicit confirmation can approve."""
+    limit = narration_character_limit(budget_us) if max_chars is None else max_chars
+    narration = text.strip()
+    count = narration_character_count(narration)
+    warnings = []
+    if not narration:
+        warnings.append({"code": "NARRATION_EMPTY", "message": "请填写完整中文旁白后再确认。"})
+    else:
+        if count > limit:
+            warnings.append({"code": "NARRATION_TOO_LONG", "message": f"旁白超出朗读预算：最多 {limit} 字（不计标点），当前 {count} 字，请改短后确认。"})
+        if not any("\u4e00" <= char <= "\u9fff" for char in narration):
+            warnings.append({"code": "NARRATION_NON_CHINESE", "message": "请将旁白改成与画面相符的中文完整句。"})
+        if not narration.rstrip("\"'”’」』》）】)").endswith(("。", "！", "？", ".", "!", "?")):
+            warnings.append({"code": "NARRATION_INCOMPLETE_SENTENCE", "message": "旁白缺少句末标点，可能是残句；请核对并改成完整句后确认。"})
+    return {"status": "requires_edit" if warnings else "pending_confirmation", "warnings": warnings,
+            "character_count": count, "max_chars": limit, "approved": False}
+
+
+def open_ollama(request: urllib.request.Request, *, timeout: float):
+    """Never send local source frames through environment/system HTTP proxies."""
+    return urllib.request.build_opener(urllib.request.ProxyHandler({})).open(request, timeout=timeout)
 
 
 @dataclass
@@ -26,6 +64,7 @@ class Selection:
     source: str = "rule"
     raw_response: dict[str, Any] | None = None
     role_overrides: dict[str, str] = field(default_factory=dict)
+    narration_draft: str | None = None
 
     def to_record(self) -> dict[str, Any]:
         return {
@@ -34,6 +73,8 @@ class Selection:
             "reasons": self.reasons,
             "source": self.source,
             "raw_response": self.raw_response,
+            "role_overrides": self.role_overrides,
+            "narration_draft": self.narration_draft,
         }
 
 
@@ -82,7 +123,7 @@ def _check_broll(
     selection: Selection, *, beat: dict[str, Any], candidates: list[dict[str, Any]],
     context: dict[str, Any],
 ) -> None:
-    if not _broll_allowed(beat, context):
+    if not context.get("thematic_montage") and not _broll_allowed(beat, context):
         blocked = {c["candidate_id"] for c in candidates if c["origin"] != "user"}
         if blocked.intersection(selection.ordered_candidate_ids):
             raise _invalid_plan("该段禁止选用外部或生成空镜", beat=beat, context=context,
@@ -209,11 +250,13 @@ class OllamaSelector:
         base_url: str | None = None,
         timeout: float | None = None,
         project_root: str | Path | None = None,
+        archive_dir: str | Path | None = None,
     ) -> None:
         self.model = model or os.getenv("QUICKCUT_VLM_MODEL", "qwen2.5vl:3b")
         self.base_url = (base_url or os.getenv("QUICKCUT_OLLAMA_URL", "http://127.0.0.1:11434")).rstrip("/")
         self.timeout = float(timeout or os.getenv("QUICKCUT_VLM_TIMEOUT", "120"))
         self.project_root = Path(project_root) if project_root else None
+        self.archive_dir = Path(archive_dir) if archive_dir else None
 
     def _images(
         self, candidates: list[dict[str, Any]], *, image_mapping: list[dict[str, Any]] | None = None,
@@ -273,11 +316,67 @@ class OllamaSelector:
         return images
 
     def select(self, *, beat: dict[str, Any], candidates: list[dict[str, Any]], context: dict[str, Any]) -> Selection:
+        attempts = []
+        limit = 2 if context.get("draft_narration") else 1
+        for number in range(1, limit + 1):
+            attempt_context = {**context, "format_attempt": number}
+            if attempts:
+                attempt_context["repair_instruction"] = "上一次输出格式不完整。必须返回全部 required 字段，reasons/roles 只写所选短ID。错误：" + str(attempts[-1].get("validation_error", ""))[:250]
+                attempt_context["previous_attempt_archive"] = attempts[-1].get("archive_path")
+            try:
+                selection = self._select_once(beat=beat, candidates=candidates, context=attempt_context)
+                if attempts:
+                    selection.raw_response["previous_attempts"] = attempts
+                    path = selection.raw_response.get("archive_path")
+                    if path:
+                        Path(path).write_text(json.dumps(selection.raw_response, ensure_ascii=False, sort_keys=True), encoding="utf-8")
+                return selection
+            except PlanningError as exc:
+                if not exc.detail.get("model_format_error"):
+                    raise
+                attempts.append(exc.detail["attempt_record"])
+                if number == limit:
+                    exc.detail["attempts"] = attempts
+                    raise
+        raise AssertionError("unreachable")
+
+    def _select_once(self, *, beat: dict[str, Any], candidates: list[dict[str, Any]], context: dict[str, Any]) -> Selection:
         allowed = [c["candidate_id"] for c in candidates]
         if not allowed:
             return Selection(beat_id=beat["beat_id"], source=self.name)
         images_mapping: list[dict[str, Any]] = []
         images = self._images(candidates, image_mapping=images_mapping)
+        if context.get("require_visual") and not images:
+            raise _invalid_plan("真实视觉规划没有可读取的关键帧", beat=beat, context=context, raw=None)
+        source_frame_hashes = [hashlib.sha256(base64.b64decode(data)).hexdigest() for data in images]
+        contact_sheet = bool(context.get("contact_sheet") and images)
+        if contact_sheet:
+            from PIL import Image, ImageDraw
+            # One numbered image keeps the local 3B model's visual context bounded.
+            # Prefer at least one actual frame per candidate before extra frames.
+            first, seen = [], set()
+            for index, mapping in enumerate(images_mapping):
+                if mapping["candidate_id"] not in seen:
+                    first.append(index)
+                    seen.add(mapping["candidate_id"])
+            indices = (first + [i for i in range(len(images)) if i not in first])[:12]
+            frame_images = [images[i] for i in indices]
+            images_mapping = [dict(images_mapping[i], image_index=j, submitted_image_index=0, contact_cell_index=j)
+                              for j, i in enumerate(indices)]
+            source_frame_hashes = [source_frame_hashes[i] for i in indices]
+            columns = min(4, len(frame_images))
+            canvas = Image.new("RGB", (columns * 256, math.ceil(len(frame_images) / columns) * 172), "white")
+            draw = ImageDraw.Draw(canvas)
+            for index, data in enumerate(frame_images):
+                with Image.open(io.BytesIO(base64.b64decode(data))) as frame:
+                    thumb = frame.convert("RGB")
+                    thumb.thumbnail((256, 144))
+                    x, y = (index % columns) * 256, (index // columns) * 172
+                    canvas.paste(thumb, (x, y + 24))
+                    draw.text((x + 4, y + 4), f"#{index} t={images_mapping[index]['source_time_us']} us", fill="black")
+            buffer = io.BytesIO()
+            canvas.save(buffer, format="PNG")
+            images = [base64.b64encode(buffer.getvalue()).decode("ascii")]
         evidence = [
             {
                 "candidate_id": c["candidate_id"],
@@ -285,10 +384,14 @@ class OllamaSelector:
                 "origin": c["origin"],
                 "source_range_us": c.get("source_range_us"),
                 "transcript": c.get("transcript", ""),
+                "transcript_evidence": c.get("transcript_evidence", {}),
+                "transcript_review": c.get("transcript_review", {}),
+                "event_review": c.get("event_review"),
                 "visual_evidence": any(m["candidate_id"] == c["candidate_id"] for m in images_mapping),
                 "image_indices": [m["image_index"] for m in images_mapping
                                   if m["candidate_id"] == c["candidate_id"]],
-                "selectable": c["origin"] == "user" or _broll_allowed(beat, context),
+                "selectable": (bool(context.get("thematic_montage")) or c["origin"] == "user" or _broll_allowed(beat, context))
+                    and (not context.get("require_visual") or any(m["candidate_id"] == c["candidate_id"] for m in images_mapping)),
             }
             for c in candidates
         ]
@@ -317,12 +420,112 @@ class OllamaSelector:
                 "roles": {"candidate_id": "primary | establishing | transition | atmosphere | broll"},
             },
         }
+        if context.get("thematic_montage"):
+            instruction["task"] = (
+                "你是主题蒙太奇剪辑师。仅从 selectable=true 的真实候选选画面；保留素材来源。"
+                "user 只表示用户上传，不证明故事发生在用户身上。所有镜头使用 establishing/detail/"
+                "transition/atmosphere/broll 角色，禁止 primary，不虚构用户经历、人物关系或因果。"
+                "参考实际附图、源时间和 ASR；review_status=needs_review 的 ASR 不可当已核实事实。"
+                "不要重复或编造候选ID。用完整 candidate_id，不能写图片编号。"
+            )
+            instruction["required_output"]["roles"] = {
+                "candidate_id": "establishing | transition | detail | atmosphere | broll"
+            }
+        if contact_sheet:
+            instruction["image_layout"] = (
+                "实际只附一张接触表。每格左上角 #编号 是 image_mapping/contact_cell_index 的零基编号；"
+                "candidates.image_indices 指这些格子，而非多张图片。依照映射返回完整 candidate_id。"
+            )
+        narration_limit = narration_character_limit(beat["duration_budget_us"])
+        narration_target_max = max(1, narration_limit - 1)
+        narration_target_min = min(narration_target_max, max(4, int(narration_limit * 0.6)))
+        if context.get("draft_narration"):
+            instruction["task"] += (
+                "同时返回 narration_draft：一句自然简洁的中文主题旁白，必须符合已选画面，"
+                "只作氛围/主题表达，不陈述用户未证实的经历。这是待用户确认草稿，不能自称已批准。"
+                f"建议只写 {narration_target_min}–{narration_target_max} 个汉字；"
+                f"总长最多 {narration_limit} 个字符（含标点），留出句末标点的位置。"
+                "用一个自然完整的短句，不要复述 ASR，不要堆叠地名，避免朗读超时。"
+            )
+            instruction["narration_max_chars"] = narration_limit
+            instruction["narration_target_chars"] = {"min": narration_target_min, "max": narration_target_max}
+            instruction["narration_length_includes_punctuation"] = True
+            instruction["required_output"]["narration_draft"] = "待确认的中文旁白"
+        instruction["story_theme"] = context.get("story_theme", "")
+        instruction["previous_selected_segment_ids"] = context.get("previous_selected_segment_ids", [])
+        if context.get("repair_instruction"):
+            instruction["format_repair"] = context["repair_instruction"]
+        aliases = {f"C{i + 1:02d}": c["candidate_id"] for i, c in enumerate(evidence)} if context.get("short_candidate_ids") else {}
+        reverse_aliases = {cid: alias for alias, cid in aliases.items()}
+        max_shots = 1 if beat["duration_budget_us"] <= 5_000_000 else 2
+        if aliases:
+            compact = []
+            for item in evidence:
+                transcript = item["transcript_evidence"] or {}
+                spans = transcript.get("segments", [])
+                compact.append({
+                    "candidate_id": reverse_aliases[item["candidate_id"]], "origin": item["origin"],
+                    "source_range_us": item["source_range_us"], "image_indices": item["image_indices"],
+                    "visual_evidence": item["visual_evidence"], "selectable": item["selectable"],
+                    "transcript_evidence": {
+                        "status": transcript.get("status"), "review_status": transcript.get("review_status"),
+                        "text": str(transcript.get("text", item["transcript"]))[:240],
+                        "segments": [{"source_range_us": span.get("source_range_us"),
+                                      "text": str(span.get("text", ""))[:100]} for span in spans[:3]],
+                        "omitted_span_count": max(0, len(spans) - 3),
+                        "review": (item.get("transcript_review") or {}).get("status"),
+                    },
+                })
+            instruction["task"] = (
+                f"看图，为本段主题择优选择1到{max_shots}个镜头，不要全选。候选用短ID C01等表示，"
+                "图格编号不是候选ID。保留来源，不把用户上传或外部画面说成用户经历，不编造人物关系/因果。"
+                "输出完整JSON：shot_order为所选短ID，reasons和roles只包含这些所选短ID，理由每项不超过12字；"
+                "角色只能是establishing/detail/transition/atmosphere/broll。"
+                f"narration_draft是与所选图像相符的单句中文主题旁白，建议 {narration_target_min}–{narration_target_max} 个汉字，"
+                f"总长最多 {narration_limit} 个字符（包括标点），留出句末标点的位置。"
+                "必须用自然完整的主题短句，以。！？之一结束；不要复述ASR、不要堆叠地名、不要残句或截断句尾。"
+                "ASR仅作参考，needs_review不代表已证实；只选selectable=true。"
+            )
+            instruction["candidates"] = compact
+            instruction["image_mapping"] = [{"cell": m["image_index"], "candidate_id": reverse_aliases[m["candidate_id"]],
+                                               "source_time_us": m["source_time_us"]} for m in images_mapping]
+            instruction["image_layout"] = "单张接触表；格子#编号对应image_mapping.cell。"
+            instruction.pop("previous_selected_segment_ids", None)
+            instruction.pop("required_output", None)
+            instruction["beat"] = {"purpose": beat["purpose"], "duration_budget_us": beat["duration_budget_us"]}
+            instruction["max_selected_shots"] = max_shots
+        selectable = [reverse_aliases.get(c["candidate_id"], c["candidate_id"]) for c in evidence if c["selectable"]]
+        count_limit = min(max_shots, len(selectable)) if aliases else max(1, len(selectable))
+        role_names = ["establishing", "transition", "detail", "atmosphere", "broll"]
+        if not context.get("thematic_montage"):
+            role_names.insert(0, "primary")
+        response_schema = {
+            "type": "object", "additionalProperties": False,
+            "properties": {
+                "shot_order": {"type": "array", "minItems": 1, "maxItems": count_limit,
+                               "uniqueItems": True, "items": {"type": "string", "enum": selectable}},
+                "reasons": {"type": "object", "additionalProperties": False,
+                            "maxProperties": count_limit,
+                            "properties": {cid: {"type": "string", "maxLength": 24} for cid in selectable}},
+                "roles": {"type": "object", "additionalProperties": False,
+                          "maxProperties": count_limit,
+                          "properties": {cid: {"type": "string", "enum": role_names} for cid in selectable}},
+            },
+            "required": ["shot_order", "reasons", "roles"],
+        }
+        if context.get("draft_narration"):
+            response_schema["properties"]["narration_draft"] = {
+                "type": "string", "minLength": 1,
+                "maxLength": narration_limit,
+            }
+            response_schema["required"].append("narration_draft")
         payload: dict[str, Any] = {
             "model": self.model,
             "prompt": json.dumps(instruction, ensure_ascii=False),
             "stream": False,
-            "format": "json",
-            "options": {"temperature": 0},
+            "format": response_schema,
+            "options": {"temperature": 0, "num_ctx": 8192, "num_predict": 1024},
+            "keep_alive": context.get("keep_alive", "0s"),
         }
         if images:
             payload["images"] = images
@@ -333,32 +536,107 @@ class OllamaSelector:
             method="POST",
         )
         raw_body: Any = None
+        started_at = datetime.now(timezone.utc).isoformat()
+        started = perf_counter()
+        request_archive = {
+            "url": f"{self.base_url}/api/generate", "method": "POST", "payload": payload,
+            "candidate_ids": allowed, "image_mapping": images_mapping,
+            "candidate_aliases": aliases, "candidate_evidence": evidence,
+            "excluded_candidate_ids": context.get("excluded_candidate_ids", []),
+            "image_sha256": [hashlib.sha256(base64.b64decode(data)).hexdigest() for data in images],
+            "source_frame_sha256": source_frame_hashes,
+            "visual_mode": "numbered_contact_sheet" if contact_sheet else "individual_frames",
+            "started_at": started_at,
+            "format_attempt": context.get("format_attempt", 1),
+            "previous_attempt_archive": context.get("previous_attempt_archive"),
+        }
+        archive_path = None
+        attempt = {"endpoint": "/api/generate", "model": self.model, "request": request_archive,
+                   "actual_backend": "ollama", "inference_executed": False, "status": "requested"}
+        if self.archive_dir:
+            self.archive_dir.mkdir(parents=True, exist_ok=True)
+            call_id = hashlib.sha256(json.dumps(request_archive, sort_keys=True).encode()).hexdigest()
+            archive_path = self.archive_dir / f"{call_id}.json"
+            attempt["archive_path"] = str(archive_path.resolve())
+
+        def save_attempt(record):
+            if archive_path:
+                archive_path.write_text(json.dumps(record, ensure_ascii=False, sort_keys=True), encoding="utf-8")
+
+        save_attempt(attempt)
         try:
-            with urllib.request.urlopen(request, timeout=self.timeout) as response:
+            with open_ollama(request, timeout=self.timeout) as response:
                 raw_body = response.read().decode("utf-8")
             body = json.loads(raw_body)
         except Exception as exc:
-            raise _invalid_plan(
-                f"本地 Ollama 调用或响应解析失败（{self.model} @ {self.base_url}）：{exc}",
+            if isinstance(exc, urllib.error.HTTPError):
+                try:
+                    raw_body = exc.read().decode("utf-8", errors="replace")
+                except OSError:
+                    pass
+            attempt.update(status="failed", error=str(exc), raw_body=raw_body, elapsed_seconds=perf_counter() - started)
+            save_attempt(attempt)
+            error = _invalid_plan(
+                f"本地 Ollama 调用或响应解析失败（{self.model} @ {self.base_url}）：{exc}"
+                + (f"；服务返回：{raw_body[:2000]}" if isinstance(exc, urllib.error.HTTPError) and raw_body else ""),
                 beat=beat, context=context, raw=raw_body,
-            ) from exc
+            )
+            error.detail.update(request=request_archive, archive_path=str(archive_path) if archive_path else None)
+            raise error from exc
+        attempt.update(status="response_received", body=body, elapsed_seconds=perf_counter() - started,
+                       inference_executed=isinstance(body, dict) and body.get("done") is True)
+        save_attempt(attempt)
+
+        def invalid_format(error):
+            attempt.update(status="invalid_model_format", validation_error=str(error))
+            save_attempt(attempt)
+            error.detail.update(model_format_error=True, attempt_record=dict(attempt))
+            return error
+
         if not isinstance(body, dict):
             raise _invalid_plan("Ollama 响应必须是 JSON object", beat=beat, context=context, raw=body)
         raw_text = body.get("response")
         try:
             parsed = json.loads(raw_text) if isinstance(raw_text, str) else raw_text
         except ValueError as exc:
-            raise _invalid_plan("本地模型返回内容不是合法 JSON", beat=beat,
-                                context=context, raw=raw_text) from exc
-        _plan_fields(parsed, beat=beat, context=context, raw=raw_text)
+            raise invalid_format(_invalid_plan("本地模型返回内容不是合法 JSON", beat=beat,
+                                               context=context, raw=raw_text)) from exc
+        try:
+            _plan_fields(parsed, beat=beat, context=context, raw=raw_text)
+            if context.get("draft_narration") and any(key not in parsed for key in response_schema["required"]):
+                raise _invalid_plan("模型响应缺少必填字段", beat=beat, context=context, raw=raw_text)
+            canonical = parsed
+            if aliases:
+                selected_aliases = parsed["shot_order"]
+                if (not 1 <= len(selected_aliases) <= max_shots or len(set(selected_aliases)) != len(selected_aliases)
+                        or set(selected_aliases) - set(selectable)):
+                    raise _invalid_plan("模型选镜短ID非法、重复或超过本段数量限制", beat=beat, context=context, raw=raw_text)
+                if any(set(parsed.get(key, {})) != set(selected_aliases) for key in ("reasons", "roles")):
+                    raise _invalid_plan("reasons/roles 必须且只能逐项包含 shot_order 中的短ID", beat=beat, context=context, raw=raw_text)
+                canonical = {**copy.deepcopy(parsed), "shot_order": [aliases[cid] for cid in selected_aliases],
+                             "reasons": {aliases[cid]: reason for cid, reason in parsed["reasons"].items()},
+                             "roles": {aliases[cid]: role for cid, role in parsed["roles"].items()}}
+        except PlanningError as exc:
+            raise invalid_format(exc)
         selection = Selection(
             beat_id=beat["beat_id"],
-            ordered_candidate_ids=list(parsed["shot_order"]),
-            reasons=dict(parsed.get("reasons", {})),
+            ordered_candidate_ids=list(canonical["shot_order"]),
+            reasons=dict(canonical.get("reasons", {})),
             source=f"model:{self.model}",
-            raw_response={"endpoint": "/api/generate", "model": self.model, "body": body, "parsed": parsed},
-            role_overrides=dict(parsed.get("roles", {})),
+            raw_response={**attempt, "parsed": parsed, "canonicalized": canonical, "status": "parsed_response",
+                          "inference_executed": body.get("done") is True},
+            role_overrides=dict(canonical.get("roles", {})),
+            narration_draft=canonical.get("narration_draft"),
         )
+        if context.get("draft_narration") and not isinstance(selection.narration_draft, str):
+            raise invalid_format(_invalid_plan("模型没有返回待确认中文旁白 narration_draft", beat=beat, context=context, raw=selection.raw_response))
+        # A structurally valid real selection survives a rough narration draft.
+        # Production exposes content warnings and blocks confirmation until fixed.
+        if context.get("require_visual"):
+            pictured = {m["candidate_id"] for m in images_mapping}
+            if set(selection.ordered_candidate_ids) - pictured:
+                raise _invalid_plan("模型选择了没有实际附图的候选", beat=beat, context=context, raw=selection.raw_response)
+        save_attempt(selection.raw_response)
         _check_broll(selection, beat=beat, candidates=candidates, context=context)
         return selection
 
@@ -369,6 +647,7 @@ def validate_selection(
     beat: dict[str, Any],
     candidates: list[dict[str, Any]],
     max_broll_ratio: float = 0.4,
+    thematic_montage: bool = False,
 ) -> tuple[list[dict[str, Any]], list[str]]:
     """返回 (按角色与预算整理后的镜头记录, 规则修正说明)。
 
@@ -405,7 +684,12 @@ def validate_selection(
     if problems:
         raise _invalid_plan("镜头选择含非法或重复 ID，需要重新规划", beat=beat,
                             raw=selection.raw_response, problems=problems)
-    _check_broll(selection, beat=beat, candidates=candidates, context={})
+    if thematic_montage:
+        segments = [by_id[cid]["segment_id"] for cid in selection.ordered_candidate_ids]
+        if len(set(segments)) != len(segments):
+            raise _invalid_plan("主题蒙太奇不能通过不同候选 ID 重复使用同一源片段", beat=beat,
+                                raw=selection.raw_response)
+    _check_broll(selection, beat=beat, candidates=candidates, context={"thematic_montage": thematic_montage})
 
     records: list[dict[str, Any]] = []
     for candidate_id in selection.ordered_candidate_ids:
@@ -417,6 +701,10 @@ def validate_selection(
         if origin != "user":
             if declared == "primary":
                 problems.append(f"非用户素材 {candidate_id} 被标为证明用户事件的主镜头")
+            role = declared if declared in {"establishing", "transition", "atmosphere", "detail", "broll"} else "broll"
+        elif thematic_montage:
+            if declared == "primary":
+                problems.append(f"主题蒙太奇 {candidate_id} 不得冒充用户事件主镜头")
             role = declared if declared in {"establishing", "transition", "atmosphere", "detail", "broll"} else "broll"
         else:
             role = "primary"
@@ -441,7 +729,7 @@ def validate_selection(
                             raw=selection.raw_response, problems=problems)
 
     primary_count = sum(1 for r in records if r["origin"] == "user")
-    if primary_count == 0:
+    if primary_count == 0 and not thematic_montage:
         raise PlanningError(
             UNSUPPORTED_STORY_BEAT,
             f"段落 {beat['beat_id']} 缺少用户素材事件证据，空镜不能替代具体事件",
@@ -452,9 +740,20 @@ def validate_selection(
 
     # 按比例上限分配空镜预算，默认给主镜头保留至少 60%。
     external_count = len(records) - primary_count
-    if external_count > primary_count:
+    if external_count > primary_count and not thematic_montage:
         raise _invalid_plan("空镜数量超过主镜头，故事可能被环境画面填满", beat=beat,
                             raw=selection.raw_response)
+    if thematic_montage:
+        for record in records:
+            record["suggested_duration_us"] = min(record["candidate_duration_us"], budget // len(records))
+        remaining = budget - sum(r["suggested_duration_us"] for r in records)
+        for record in records:
+            added = min(remaining, record["candidate_duration_us"] - record["suggested_duration_us"])
+            record["suggested_duration_us"] += added
+            remaining -= added
+        if any(r["suggested_duration_us"] <= 0 for r in records):
+            raise _invalid_plan("主题镜头时长必须为正", beat=beat, raw=selection.raw_response)
+        return records, []
     external_total = min(int(budget * max_broll_ratio), external_count * 3_000_000)
     primary_total = budget - external_total
     for record in records:

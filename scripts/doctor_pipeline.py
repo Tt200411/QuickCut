@@ -11,11 +11,14 @@ import platform
 import shutil
 import subprocess
 import sys
+import wave
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 # 直接运行脚本时也使用本仓库，并避免导入生成 __pycache__。
 if __package__ in (None, ""):
     sys.dont_write_bytecode = True
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 TOOL_TIMEOUT = 5
 PACKAGES = (
@@ -64,7 +67,9 @@ def a_binary(module, function):
     return getattr(importlib.import_module(module), function)()
 
 
-def check_tts():
+def check_tts(voice_config=None):
+    if voice_config is not None:
+        return check_configured_tts(voice_config)
     engines = {name: shutil.which(name) for name in ("say", "espeak-ng", "espeak")}
     selected = next((name for name, path in engines.items() if path), None)
     return {
@@ -72,6 +77,81 @@ def check_tts():
         "engines": engines, "selected": selected,
         "scope": "仅检查默认系统 TTS 可执行文件；未合成、未验证中文 voice。IndexTTS2 需单独配置和验证。",
     }
+
+
+def check_configured_tts(voice_config):
+    """Validate the selected local model without loading weights or synthesizing."""
+    result = {
+        "name": "E.local_tts", "status": "failed", "selected": None,
+        "configuration": str(voice_config), "real_inference": "not_run",
+        "scope": "检查指定 IndexTTS2 的本地模型文件、运行环境、参考 WAV 和设备；不加载权重、不执行推理。",
+    }
+    try:
+        config = json.loads(Path(voice_config).expanduser().read_text(encoding="utf-8"))
+        if not isinstance(config, dict) or config.get("engine") != "indextts2":
+            raise ValueError("--voice-config 必须指定 engine=indextts2；系统语音预检请不传此参数")
+        result["selected"] = "indextts2"
+        overrides = config.get("cue_overrides", {})
+        if not isinstance(overrides, dict) or any(not isinstance(value, dict) for value in overrides.values()):
+            raise ValueError("cue_overrides 必须是按 cue ID 指定的配置对象")
+        for cue_id, override in overrides.items():
+            if set(override) - {"reference_audio", "seed"}:
+                raise ValueError(f"IndexTTS2 cue {cue_id} overrides support only reference_audio and seed")
+        # Match the demo/handoff entry points even when launched from another cwd.
+        # The config filename itself remains relative to the caller's directory.
+        for settings in [config, *overrides.values()]:
+            for key in ("model_dir", "reference_audio"):
+                value = settings.get(key)
+                if isinstance(value, str) and value:
+                    location = Path(value).expanduser()
+                    settings[key] = str((location if location.is_absolute() else PROJECT_ROOT / location).resolve())
+        backend_type = importlib.import_module("quickcut.indextts2").IndexTTS2Backend
+        backend = backend_type(config)
+        reference, profile = backend.cue_settings(config, config.get("language", "zh-CN"))
+        result["reference_audio"] = check_reference_wav(reference, profile)
+        for cue_id, override in overrides.items():
+            try:
+                cue_reference, cue_profile = backend.cue_settings(
+                    {**config, **override}, config.get("language", "zh-CN"))
+                check_reference_wav(cue_reference, cue_profile)
+            except (OSError, ValueError, wave.Error, EOFError) as exc:
+                raise ValueError(f"IndexTTS2 cue {cue_id} reference_audio: {exc}") from exc
+        torch = importlib.import_module("torch")
+        device = torch.device(backend.device)
+        if device.type == "mps" and not torch.backends.mps.is_available():
+            raise ValueError("IndexTTS2 MPS is unavailable in this Python environment")
+        if device.type == "cuda":
+            if not torch.cuda.is_available():
+                raise ValueError("IndexTTS2 CUDA is unavailable in this Python environment")
+            if device.index is not None and device.index >= torch.cuda.device_count():
+                raise ValueError(f"IndexTTS2 CUDA device index is unavailable: {device.index}")
+        result.update(
+            status="ok", model_dir=str(backend.model_dir),
+            model_revision=backend.model_revision, runtime_version=backend.runtime_version,
+            device=backend.device,
+        )
+    except Exception as exc:
+        result["error"] = failure(exc)
+    return result
+
+
+def check_reference_wav(reference, profile):
+    """Check the WAV header and complete frame payload without loading a model."""
+    with wave.open(str(reference), "rb") as wav:
+        remaining = wav.getnframes()
+        if remaining <= 0 or wav.getnchannels() <= 0 or wav.getframerate() <= 0:
+            raise ValueError("IndexTTS2 reference_audio must contain WAV audio frames")
+        frame_size = wav.getnchannels() * wav.getsampwidth()
+        while remaining:
+            frames = wav.readframes(min(remaining, 65536))
+            if not frames or len(frames) % frame_size:
+                raise ValueError("IndexTTS2 reference_audio contains incomplete WAV audio frames")
+            remaining -= len(frames) // frame_size
+        return {
+            "path": str(reference), "sample_rate": wav.getframerate(),
+            "channels": wav.getnchannels(), "frames": wav.getnframes(),
+            "sha256": profile["reference_sha256"],
+        }
 
 
 def check_packages():
@@ -144,14 +224,14 @@ def check_manifest(project_root):
     return result
 
 
-def build_report(*, project_root=None, require_media=False):
+def build_report(*, project_root=None, require_media=False, voice_config=None):
     required = [
         {"name": "python", "status": "ok" if sys.version_info >= (3, 10) else "failed",
          "version": platform.python_version(), "minimum": "3.10"},
         check_binary("A.core.ffmpeg", lambda: a_binary("quickcut.core", "_ffmpeg_binary")),
         check_binary("A.media.ffprobe", lambda: a_binary("quickcut.media", "ffprobe")),
         check_binary("E.ffmpeg_path", lambda: shutil.which("ffmpeg")),
-        check_tts(),
+        check_tts(voice_config),
     ]
     manifest = check_manifest(project_root)
     if project_root is not None:
@@ -194,8 +274,10 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--project-root", help="可选项目根；只读校验 asset-manifest.json 和媒体引用")
     parser.add_argument("--require-media", action="store_true", help="必需媒体预检失败时退出 2；默认仅报告并退出 0")
+    parser.add_argument("--voice-config", help="IndexTTS2 配置 JSON（配置内相对路径按仓库根解析）；校验模型、参考 WAV 和设备，取代系统 TTS 检查（不执行推理）")
     args = parser.parse_args(argv)
-    report = build_report(project_root=args.project_root, require_media=args.require_media)
+    report = build_report(project_root=args.project_root, require_media=args.require_media,
+                          voice_config=args.voice_config)
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return report["exit_code"]
 

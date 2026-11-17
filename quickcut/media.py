@@ -153,6 +153,47 @@ def frame_timestamps(path: Path, metadata: dict) -> list[dict]:
     return result
 
 
+def decoded_stream_bounds(binary: str, path: Path, stream: dict) -> dict:
+    """Measure a stream without trusting its container's potentially longer tail.
+
+    Matroska/WebM commonly omits stream.duration. Decoded frame timestamps and
+    the final frame's own duration/sample count establish the playable interval;
+    a long audio track must never make a short video appear to cover more time.
+    """
+    try:
+        timebase = Fraction(stream["time_base"])
+        if timebase <= 0 or stream["codec_type"] not in {"video", "audio"}:
+            raise ValueError("invalid stream timebase/type")
+        data = json.loads(run_media([
+            binary, "-v", "error", "-select_streams", str(stream["index"]),
+            "-show_frames", "-show_entries",
+            "frame=best_effort_timestamp,pts,duration_time,pkt_duration_time,nb_samples,sample_rate",
+            "-of", "json", str(path),
+        ]))
+        frames = data.get("frames", [])
+        if not frames:
+            raise ValueError("no decoded frames")
+        timestamps = [Fraction(frame.get("best_effort_timestamp", frame.get("pts"))) * timebase
+                      for frame in frames]
+        if any(b <= a for a, b in zip(timestamps, timestamps[1:])):
+            raise ValueError("non-increasing decoded frame timestamps")
+        last = frames[-1]
+        if stream["codec_type"] == "audio" and last.get("nb_samples"):
+            tail = Fraction(int(last["nb_samples"]), int(last.get("sample_rate") or stream["sample_rate"]))
+        else:
+            tail = Fraction(str(last.get("duration_time") or last.get("pkt_duration_time")))
+        if tail <= 0:
+            raise ValueError("final decoded frame has no positive duration")
+        start = round(timestamps[0] * 1_000_000)
+        end = round((timestamps[-1] + tail) * 1_000_000)
+        if end <= start:
+            raise ValueError("decoded stream has no positive duration")
+        return {"start_us": start, "end_us": end, "duration_us": end - start,
+                "frame_count": len(frames), "method": "decoded_frames"}
+    except (KeyError, TypeError, ValueError, ZeroDivisionError) as exc:
+        raise MediaError(f"Cannot measure decoded {stream.get('codec_type')} stream: {exc}") from exc
+
+
 def valid_png(path: Path) -> bool:
     try:
         from PIL import Image

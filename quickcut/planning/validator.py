@@ -4,9 +4,9 @@ from __future__ import annotations
 from typing import Any
 
 from .contracts import (
-    PlanningError, VLM_INVALID_PLAN, check_envelope, check_inputs, check_project,
+    PlanningError, VLM_INVALID_PLAN, check_envelope, check_inputs, check_project, content_hash,
 )
-from .planning import build_outline, build_retrieval_request, candidates_for_beat, evidence_review
+from .planning import build_outline, build_retrieval_request, candidates_for_beat, evidence_review, MONTAGE_POLICIES, THEMATIC_POLICY
 
 
 def validate_story_plan(
@@ -76,7 +76,8 @@ def _validate_story_plan(
                 "checks": checks, "counts": {"beats": len(beats), "cues": len(cues), "gaps": len(gaps)}}
 
     target = positive(brief["requirements"].get("target_duration_us"), "Brief.target_duration_us")
-    montage = (brief.get("requirements") or {}).get("picture_policy") == "authorized_external_montage"
+    montage = (brief.get("requirements") or {}).get("picture_policy") in MONTAGE_POLICIES
+    thematic = (brief.get("requirements") or {}).get("picture_policy") == THEMATIC_POLICY
     outline_by_id = {b["beat_id"]: b for b in outline}
     beat_ids = [b.get("beat_id") for b in beats]
     if not beats or len(set(beat_ids)) != len(beat_ids):
@@ -146,7 +147,23 @@ def _validate_story_plan(
                 external_duration += suggested
             if origin != "user" and not montage and (not outline_by_id.get(beat_id, {}).get("broll_allowed") or not brief["requirements"].get("broll_policy", {}).get("enabled")):
                 errors.append(f"{beat_id} 不允许空镜")
-            if origin == "user":
+            if thematic:
+                record = shot.get("montage_review") or {}
+                valid_review = (
+                    record.get("candidate_id") == cid and record.get("segment_id") == candidate["segment_id"]
+                    and record.get("asset_id") == candidate["asset_id"]
+                    and record.get("asset_revision") == candidate["asset_revision"]
+                    and record.get("source_range_us") == candidate["source_range_us"]
+                    and record.get("beat_id") == beat_id and record.get("source") in {"human_montage_review", "assistant_montage_review"}
+                    and (record.get("source") != "assistant_montage_review" or
+                         (record.get("confirmation_kind") == "assistant_review" and record.get("human_review_performed") is False))
+                    and bool(record.get("reviewer")) and bool(record.get("reviewed_at")) and record in reviews
+                )
+                if not valid_review and plan.get("status") == "ready_for_edit":
+                    errors.append(f"{cid} 主题画面缺少用户确认记录")
+                if shot.get("role") == "primary":
+                    errors.append(f"{cid} 主题画面不得声称为用户事件主镜头")
+            elif origin == "user":
                 record = shot.get("event_review")
                 review = evidence_review(candidate, outline_by_id[beat_id], {cid: record}, fixtures_only=fixtures_only)
                 if not record or record != review or record not in reviews:
@@ -157,6 +174,9 @@ def _validate_story_plan(
             for key in ("evidence", "transcript", "summary"):
                 if shot.get(key) != candidate[key]:
                     errors.append(f"{cid} 的 {key} 与真实素材证据不一致")
+            for key in ("transcript_evidence", "transcript_review"):
+                if key in shot and shot[key] != candidate[key]:
+                    errors.append(f"{cid} 的 {key} 与真实 ASR 证据不一致")
         if shot_sum > budget:
             errors.append(f"{beat_id} 镜头建议时长超过段落预算")
         if not beat.get("shots") and not any(g.get("beat_id") == beat_id for g in gaps):
@@ -212,6 +232,11 @@ def _validate_story_plan(
                 errors.append(f"{cid} 未批准，不能 ready_for_edit")
             if not any(p.get("type") == "narration" and p.get("cue_id") == cid and p.get("beat_id") == bid for p in pending):
                 errors.append(f"{cid} 未批准文案必须登记 pending_reviews")
+        elif thematic:
+            approval = provenance.get("narration_approvals", {}).get(bid, {})
+            if (approval.get("text_hash") != content_hash(cue["text"]) or not approval.get("reviewer")
+                    or not approval.get("reviewed_at")):
+                errors.append(f"{cid} 旁白批准必须绑定当前文本及真实确认记录")
     for beat in beats:
         bid = beat.get("beat_id")
         if cue_budgets_by_beat.get(bid, 0) > budgets_by_beat[bid]:
@@ -230,7 +255,7 @@ def _validate_story_plan(
             errors.append(f"{gap.get('gap_id')} 没有解决建议")
     if not provenance.get("mode"):
         errors.append("decision_provenance 缺少 mode")
-    if str(provenance.get("mode", "")).startswith("model:") and not provenance.get("model_call_ids"):
+    if (str(provenance.get("mode", "")).startswith("model:") or provenance.get("mode") == "ollama") and not provenance.get("model_call_ids") and plan.get("status") == "ready_for_edit":
         errors.append("模型输出没有记录调用")
     return {
         "ok": not errors, "status": plan.get("status"), "errors": errors,

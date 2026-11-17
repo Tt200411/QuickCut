@@ -156,6 +156,8 @@
 
 `narration_cues[]` 包含 `cue_id`、`beat_id`、批准文本、时间预算、声音风格、证据片段 ID。`unresolved_gaps[]` 列出缺失人物/动作/结尾等问题，并明确解决建议。`decision_provenance` 记录使用的模型调用、规则调整和人工审阅，而不是把所有结果都标成“Qwen 自动选择”。
 
+当前运行时要求每句显式 `approved: true`，独立 E 也执行这一门槛；仅 `ready_for_edit` 或缺省 approved 不构成批准。固定 E 历史示例的 `historical_example_confirmation` 仅说明此前演示文案的来源，不是新用户文案的审批捷径，见 [E 说明](E-local-voice.md)。黄金夹具的固定批准意图不自动赋予任意新输入。
+
 段落时间预算之和应符合 Brief 约束，但它不是最终时序。E 不以预算假装已经获得真实语音；D 可以在语音实测后重新分配段落长度。
 
 ### 3.6 `VoicePackage`：返回声音事实与时长问题
@@ -173,6 +175,8 @@
 
 没有明确画面句子区间时，E 先返回句子自身的局部时序。D 把它映射到成片。若 D 已给出明确句子区间，E 应在本次生成请求中记录该区间和基于的时间线 revision，并在回复里回显；D 只接受与当前请求匹配的回复。这类重合成请求可作为任务元数据保存，不要求首版增加一个新的核心文档种类。
 
+2026-11-16 实现使用 `VoiceFitRequest` 任务元数据和不可导出的 `pending_voice_fit` Timeline。请求绑定 StoryPlan、Brief、Manifest、原测量包、人工边界和 pending 内容哈希，指定本轮 E revision、完整句子区间及最多两轮限制。E 回复保留 StoryPlan + pending Timeline 引用和完整 request；D 通过专用入口接受，不删除依赖来迁就初编接口。最终 Timeline 的 `voice_fit` 回执保存 request、pending、接受的 E 引用及回复哈希；F 必须校验。接口、失败留档和外部 E 子进程用法见 [D/E 适配说明](D-retiming.md)。
+
 ### 3.7 `EditTimeline`：D 是全局时序的唯一所有者
 
 | 轨道类型 | clip/cue 至少包含 |
@@ -186,6 +190,8 @@
 `output` 记录画幅、分辨率、fps、采样率；`render_policy` 区分“预览可以烧录字幕”和“工程导出必须保留文字轨”。静态增益、淡入淡出、ducking 等参数应作为显式意图，F 负责一致执行。
 
 基础版本要求单轨无意外重叠，画面完整覆盖成片区间。跨轨并行是正常情况，例如画面与旁白；以后加入叠化时，需要明确 overlap/effect 语义及导出能力映射，不能让通用无重叠检查把合法叠化当作错误。
+
+D 的人工边界输入绑定 StoryPlan/Manifest 精确版本，以 `beat_id + shot_index` 定位并核对 segment；保存实际 `reviewer`、`reason`、`method: manual` 和源入出点。人工出点在后续适配中保持硬限制。Timeline 的 `boundary_decisions` 记录最终源区间与 clip。未人工确认的默认方法是 `segment_prefix_budget`，只表示选定片段前缀和预算，不能宣称局部动作/场景模型已精剪。边界或画面时序改变后须重做受影响 D/E 冻结及 F 输出。
 
 ### 3.8 `ExportManifest`：不能把写出文件等同于导入成功
 
@@ -233,7 +239,7 @@ python examples/team_contracts/validate.py --self-test
 
 ## 6. 有限反馈循环和失败结果
 
-这部分是团队约定的建议默认值，不是当前运行时已有的自动重试机制。
+这部分区分团队反馈策略与具体运行入口。D/E 的最多两轮已由 `complete_voice_timeline` 实现；其他入口不因这条约定而自动拥有重试能力。各模块真实运行验收仍需分别记录。
 
 ### B ↔ C：故事与素材二次对齐
 
@@ -246,6 +252,8 @@ python examples/team_contracts/validate.py --self-test
 1. E 逐句合成并返回真实时长。适配比例应在项目允许范围内；大幅变速必须被显式标记。
 2. D 优先利用合理停顿、镜头延长或可用空镜调整区间。若需要改变事实和文案，交给 C。
 3. 默认同一句最多自动适配 2 轮；仍超预算返回 `needs_retime`，停止该版最终导出并提供待处理 cue 列表。
+
+当前 D/E 实现从真实 `mode: measure` 包开始，最多执行两次整包 fit 请求；每轮包含全部句子区间，未变化的音频可以按 E 缓存规则复用。只使用当前镜头的合法剩余长度，不自动新增空镜或放宽人工出点、C 单句预算；需要这些变化时交 C/人工。每轮 pending/request/reply 与哈希保留在 `fit_rounds`，成功和失败都须留档。实际 WAV 不完整、哈希变化、纯静音或陈旧回复直接拒绝，不消耗重试来掩盖输入错误。新回路的自动化回归不是本轮真实模型/听审/编辑器验收。
 
 ### 模块统一错误信封（建议）
 

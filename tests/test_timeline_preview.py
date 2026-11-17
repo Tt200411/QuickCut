@@ -43,7 +43,7 @@ def _documents():
                              shots=[dict(segment_id=aid, role="source", suggested_duration_us=800_000)
                                     for aid in ("red", "blue")])])
     voice = _envelope("VoicePackage", "voice")
-    voice.update(status="ready", errors=[], inputs=[preview._ref(story)],
+    voice.update(status="ready", mode="measure", errors=[], inputs=[preview._ref(story)],
                  assets=[dict(asset_id="speech", revision=1, media_kind="audio", uri="speech.wav",
                               content_hash="sha256:" + "0" * 64, duration_us=400_000, audio={"present": True})],
                  cues=[dict(cue_id="cue", beat_id="beat", asset_id="speech", text="可编辑字幕",
@@ -93,6 +93,51 @@ def test_accepts_current_d_without_mutating_inputs():
     assert docs == before
 
 
+def test_frozen_golden_fixture_without_mode_has_explicit_synthetic_compatibility():
+    bundle = json.loads((Path(__file__).resolve().parents[1] / 'examples/team_contracts/bundle.json').read_text())
+    docs = {doc['kind']: doc for doc in bundle['documents']}
+    # Compile the old voice measurements through current D; the frozen example
+    # Timeline itself predates the required Brief reference and is not rewritten.
+    docs['EditTimeline'] = compile_timeline(docs['Brief'], docs['AssetManifest'], docs['StoryPlan'],
+                                            docs['VoicePackage'], output=docs['EditTimeline']['output'])
+    before = deepcopy(docs)
+    assert 'mode' not in docs['VoicePackage']
+    assert docs['VoicePackage']['measurement_source'] == 'synthetic_fixture'
+    preview._validate(docs['EditTimeline'], docs['AssetManifest'], docs['VoicePackage'])
+    assert docs == before
+    # Relabeling the old synthetic envelope as production cannot invoke compatibility.
+    for kind in ('EditTimeline', 'AssetManifest', 'VoicePackage'):
+        docs[kind]['fixtures_only'] = False
+    with pytest.raises(preview.PreviewError, match='mode=measure'):
+        preview._validate(docs['EditTimeline'], docs['AssetManifest'], docs['VoicePackage'])
+
+
+@pytest.mark.parametrize('mode', ['missing', None, 'fit', 'unknown'])
+def test_production_initial_voice_requires_explicit_measure_mode(mode):
+    docs = _documents()
+    for doc in docs:
+        doc['fixtures_only'] = False
+    if mode == 'missing':
+        docs[2].pop('mode')
+    else:
+        docs[2]['mode'] = mode
+    with pytest.raises(preview.PreviewError, match='mode=measure'):
+        preview._validate(*docs)
+
+
+@pytest.mark.parametrize('residue', ['request', 'empty_request', 'cue_range'])
+def test_explicit_measure_mode_cannot_hide_fit_request_metadata(residue):
+    docs = _documents()
+    if residue == 'request':
+        docs[2]['request'] = {'kind': 'VoiceFitRequest'}
+    elif residue == 'empty_request':
+        docs[2]['request'] = {}
+    else:
+        docs[2]['cues'][0]['requested_timeline_range_us'] = {'begin': 200000, 'end': 600000}
+    with pytest.raises(preview.PreviewError, match='初测 VoicePackage'):
+        preview._validate(*docs)
+
+
 @pytest.mark.parametrize("mutate", [
     lambda t, m, v: t.update(duration_us=True),
     lambda t, m, v: t.update(duration_us=1.6),
@@ -100,6 +145,7 @@ def test_accepts_current_d_without_mutating_inputs():
     lambda t, m, v: t.update(status="draft"),
     lambda t, m, v: t.update(render_policy="burn"),
     lambda t, m, v: t["render_policy"].update(preview_burn_subtitles="true"),
+    lambda t, m, v: t["render_policy"].update(subtitle_position="middle"),
     lambda t, m, v: v.update(status="needs_retime"),
     lambda t, m, v: v.update(errors=["失败"]),
     lambda t, m, v: t.update(fixtures_only=False),
@@ -254,6 +300,21 @@ def test_configured_font_with_quoted_path_is_copied_safely(tmp_path, media, monk
     report = preview.render_timeline_preview(*media, tmp_path, tmp_path / "font.mp4")
     assert report["subtitles_burned"] is True
     assert report["subtitle_font"] == family
+
+
+@pytest.mark.parametrize("position", ["top", "bottom"])
+def test_caption_position_changes_actual_pixels_and_keeps_editable_text(tmp_path, media, ffmpeg, position):
+    media[0]["output"].update(width=320, height=240)
+    media[0]["render_policy"]["subtitle_position"] = position
+    movie = tmp_path / f"caption-{position}.mp4"
+    report = preview.render_timeline_preview(*media, tmp_path, movie)
+    pixels = _pixels(ffmpeg, movie, 0.3)
+    rows = [offset // (320 * 3) for offset in range(0, len(pixels), 3)
+            if min(pixels[offset:offset + 3]) > 170]
+    assert len(rows) > 20
+    assert max(rows) < 120 if position == "top" else min(rows) > 120
+    assert report["subtitle_position"] == position
+    assert "可编辑字幕" in movie.with_suffix(".srt").read_text()
 
 
 def test_missing_cjk_font_rejects_requested_burn_without_publishing(tmp_path, media, monkeypatch):

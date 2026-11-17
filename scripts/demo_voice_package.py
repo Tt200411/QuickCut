@@ -1,6 +1,5 @@
 """Reproduce E's three Chinese cues, partial failure, fitting and local revision."""
 import argparse
-import copy
 import json
 from pathlib import Path
 import sys
@@ -26,9 +25,8 @@ def main():
     first = v.build_voice_package(story,a.root,config=config,fixture=a.fixture)
     save(a.root/'voice-r1.json',first)
     assert first['cues'][-1]['needs_retime']
-    changed = copy.deepcopy(story)
-    changed['revision'] = 2
-    changed['narration_cues'][0]['text'] = '我们出发了。'
+    # The separately approved fixed revision retains its own historical record.
+    changed = json.loads(Path('examples/voice_package/story-r2.json').read_text())
     second = v.build_voice_package(changed,a.root,config=config,fixture=a.fixture,previous=first,revision=2)
     save(a.root/'story-r2.json',changed)
     save(a.root/'voice-r2.json',second)

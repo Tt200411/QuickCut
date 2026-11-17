@@ -230,3 +230,155 @@ def test_cli_success_defaults_to_ten_seconds(tmp_path, offline, capsys):
     report = json.loads(capsys.readouterr().out)
     assert report["target_seconds"] == 10
     assert report["status"] == "ready_for_render"
+
+
+@pytest.fixture
+def index_backend(monkeypatch, tmp_path):
+    """Replace only neural inference; execute the real E package and D bridge."""
+    import array
+    import shutil
+    from quickcut import indextts2, voice_package
+
+    calls = []
+
+    class Backend:
+        def __init__(self, config):
+            self.config = config
+
+        def cue_settings(self, config, language):
+            return Path(config["reference_audio"]), {
+                "engine": "indextts2", "model_revision": config["model_revision"],
+                "model": "IndexTeam/IndexTTS-2", "language": language, "seed": 42,
+            }
+
+        def synthesize(self, text, output, reference, seed):
+            calls.append((text, reference, seed))
+            voice_package.write_pcm(output, array.array("h", [1500] * 48000))
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("IndexTTS2 mode must never select a system voice or fixture tone")
+
+    monkeypatch.setattr(indextts2, "IndexTTS2Backend", Backend)
+    monkeypatch.setattr(voice_package, "select_profile", forbidden)
+    monkeypatch.setattr(voice_package, "normalize_wav", shutil.copyfile)
+    monkeypatch.setattr(demo, "REPO", tmp_path)
+    speaker = tmp_path / "inputs/reference.wav"
+    speaker.parent.mkdir()
+    voice_package.write_pcm(speaker, array.array("h", [1500] * 480))
+    config = tmp_path / "indextts.json"
+    config.write_text(json.dumps({"engine": "indextts2", "model_revision": "740dcaf",
+                                 "reference_audio": "inputs/reference.wav", "model_dir": "models/index"}))
+    return config, calls, Backend
+
+
+def test_explicit_index_config_executes_e_and_keeps_synthetic_provenance(tmp_path, offline, index_backend):
+    config, calls, _ = index_backend
+    root = tmp_path / "run"
+    report = demo.run_demo(root, target_seconds=15, voice_config=config)
+    assert report["status"] == "ready_for_render", report.get("feedback")
+    assert report["fixturesOnly"] is True
+    assert report["capabilities"]["E"]["package_ready"] is True
+    assert report["voice"]["synthesis_profile"]["model_revision"] == "740dcaf"
+    voice = read(root, "voice-package-r1.json")
+    assert voice["measurement_source"] == "measured_pcm_samples"
+    assert voice["fixtures_only"] is True
+    assert len(calls) == 3
+    assert all(call[1] == demo.REPO / "inputs/reference.wav" for call in calls)
+    assert "IndexTTS2" in report["limitations"][2]
+
+
+def test_index_failure_is_saved_and_never_falls_back(tmp_path, offline, index_backend, monkeypatch):
+    config, _, backend = index_backend
+
+    def unavailable(*args):
+        raise RuntimeError("IndexTTS2 unavailable")
+
+    monkeypatch.setattr(backend, "synthesize", unavailable)
+    root = tmp_path / "run"
+    report = demo.run_demo(root, voice_config=config)
+    assert report["status"] == "failed"
+    assert report["feedback"]["code"] == "VOICE_NOT_READY"
+    assert report["voice"]["status"] == "failed"
+    assert report["voice"]["synthesis_profile"]["engine"] == "indextts2"
+    assert all(error["message"] == "IndexTTS2 unavailable" for error in report["voice"]["errors"])
+    assert report["calls"]["D"] == 0
+    assert not (root / "timeline-r1.json").exists()
+
+
+@pytest.mark.parametrize("config", [{}, {"engine": "auto"}, [], {"engine": "indextts2", "cue_overrides": []}])
+def test_voice_config_rejects_implicit_or_invalid_backend_before_ingest(tmp_path, offline, config):
+    path = tmp_path / "invalid.json"
+    path.write_text(json.dumps(config))
+    report = demo.run_demo(tmp_path / "run", voice_config=path)
+    assert report["status"] == "failed"
+    assert report["feedback"]["code"] == "INVALID_VOICE_CONFIG"
+    assert report["calls"] == {"A": 0, "B": 0, "E": 0, "D": 0}
+
+
+def test_voice_config_missing_models_reports_setup_failure(tmp_path, offline):
+    config = tmp_path / "missing.json"
+    config.write_text(json.dumps({"engine": "indextts2", "model_revision": "740dcaf",
+                                 "model_dir": str(tmp_path / "missing-models")}))
+    report = demo.run_demo(tmp_path / "run", voice_config=config)
+    assert report["feedback"]["code"] == "INVALID_VOICE_CONFIG"
+    assert "Missing local IndexTTS2 model files" in report["feedback"]["message"]
+    assert report["calls"]["A"] == 0
+
+
+@pytest.mark.parametrize("overrides", [{"rate": 145}, {"model_revision": "another-version"}, {"emotion": "happy"}])
+def test_voice_config_rejects_unsupported_cue_overrides_before_ingest(tmp_path, offline, index_backend, overrides):
+    config_path, calls, _ = index_backend
+    config = read(tmp_path, config_path.name)
+    config["cue_overrides"] = {"cue-01": overrides}
+    config_path.write_text(json.dumps(config))
+    report = demo.run_demo(tmp_path / "run", voice_config=config_path)
+    assert report["feedback"]["code"] == "INVALID_VOICE_CONFIG"
+    assert "only reference_audio and seed" in report["feedback"]["message"]
+    assert report["calls"]["A"] == 0 and calls == []
+
+
+@pytest.mark.parametrize("scope", ["base", "cue_override"])
+@pytest.mark.parametrize("case", ["missing", "invalid", "empty", "truncated"])
+def test_voice_config_validates_each_reference_wav_before_ingest(tmp_path, offline, index_backend, scope, case):
+    import wave
+
+    config_path, calls, _ = index_backend
+    config = read(tmp_path, config_path.name)
+    reference = tmp_path / "bad-reference.wav"
+    if case == "invalid":
+        reference.write_bytes(b"not audio")
+    elif case in {"empty", "truncated"}:
+        with wave.open(str(reference), "wb") as wav:
+            wav.setparams((1, 2, 16000, 0, "NONE", "not compressed"))
+            if case == "truncated":
+                wav.writeframes(b"\x01\x00" * 160)
+        if case == "truncated":
+            reference.write_bytes(reference.read_bytes()[:-10])
+    if scope == "base":
+        config["reference_audio"] = str(reference)
+    else:
+        config["cue_overrides"] = {"cue-01": {"reference_audio": str(reference), "seed": 7}}
+    config_path.write_text(json.dumps(config))
+    report = demo.run_demo(tmp_path / "run", voice_config=config_path)
+    assert report["status"] == "failed"
+    assert report["feedback"]["code"] == "INVALID_VOICE_CONFIG"
+    assert report["calls"]["A"] == 0 and calls == []
+
+
+def test_voice_config_checks_per_cue_settings(tmp_path, offline, index_backend, monkeypatch):
+    config_path, _, backend = index_backend
+    config = read(tmp_path, config_path.name)
+    config["cue_overrides"] = {"cue-01": {"seed": -1}}
+    config_path.write_text(json.dumps(config))
+    original = backend.cue_settings
+
+    def settings(self, config, language):
+        if config.get("seed") == -1:
+            raise ValueError("IndexTTS2 seed must be non-negative")
+        return original(self, config, language)
+
+    monkeypatch.setattr(backend, "cue_settings", settings)
+    report = demo.run_demo(tmp_path / "run", voice_config=config_path)
+    assert report["feedback"]["code"] == "INVALID_VOICE_CONFIG"
+    assert "seed" in report["feedback"]["message"]
+    assert report["calls"]["A"] == 0

@@ -268,8 +268,9 @@ def build_demo():
 
 
 def launch() -> None:
-    demo = build_demo()
-    demo.launch()
+    # build_demo remains available for the historical single-source UI.
+    from .workbench import main
+    main(["--open"])
 
 
 if __name__ == "__main__":

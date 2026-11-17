@@ -38,13 +38,13 @@ def _manifest():
             "description": {"text": caption, "provider": "material_title"},
             "transcript": {"text": ""},
         })
-    document = envelope("AssetManifest", "manifest-montage", PROJECT, 1, fixtures_only=False, owner="A", inputs=[])
+    document = envelope("AssetManifest", "manifest-montage", PROJECT, 1, fixtures_only=True, owner="A", inputs=[])
     document.update(assets=assets, segments=segments)
     return document
 
 
 def _brief():
-    document = envelope("Brief", "brief-montage", PROJECT, 1, fixtures_only=False, owner="C", inputs=[])
+    document = envelope("Brief", "brief-montage", PROJECT, 1, fixtures_only=True, owner="C", inputs=[])
     document.update(requirements={
         "story": "沿着郊外的小路看看路边的风景，放慢脚步留一点时间给身边的自然，让这段散步在柔和的光线里收尾。",
         "language": "zh-CN", "target_duration_us": 30_000_000,

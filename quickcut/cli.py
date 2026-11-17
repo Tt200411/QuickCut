@@ -219,7 +219,8 @@ def main() -> None:
         except (ValueError, OSError) as exc:
             parser.error(str(exc))
         print(json.dumps(candidates, ensure_ascii=False, indent=2))
+        return 2 if candidates.get("status") == "error" else 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

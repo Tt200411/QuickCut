@@ -1,15 +1,24 @@
 # QuickCut MVP
 
+## 本地网页工作台
+
+双击 [QuickCut.command](QuickCut.command)，或执行 `./scripts/quickcut_web.sh`，打开 `http://127.0.0.1:8765`。
+导入视频并输入剪辑要求，查看真实模型生成的选镜/旁白，确认后使用 IndexTTS2 配音，下载剪辑视频与四轨工程，并自动启动剪映。
+缺模型或运行失败会明确提示，支持保留素材重试和返回草案改稿。
+
+当前使用说明、环境和验收边界见 [HTML 工作台](docs/team/WORKBENCH.md)。下文保留的单视频原型和合成工程 demo 用于兼容与回归，不是网页的生产路径。
+
 ## Team implementation guide
 
 Start with the [Chinese project guide](docs/PROJECT_GUIDE.zh-CN.md) for the shared product goal,
 coarse-to-fine multi-source workflow, local model choices, and the six-person implementation plan.
-It separates the current single-source MVP from the proposed multi-source and Jianying draft workflow.
+It records the original prototype and multi-source plan; the maintained multi-source user entry point is now the HTML workbench above.
 
 - [C → A 素材协作：需求卡、缺口诊断与交接清单](docs/team/C_A_HANDOFF.md)
 - [全链路工程说明：入口、交接与已知限制](docs/team/PIPELINE_ENGINEERING.md)
 - [验收操作手册：命令、退出码、CI 与证据](docs/team/ACCEPTANCE_RUNBOOK.md)
 - [F：剪映可编辑工程导出、迁移安装与验收状态](docs/team/F-export.md)
+- [E：IndexTTS2 本地部署、参考音频与配音交接](docs/team/E-local-voice.md#indextts2-narration)
 - [MVP capabilities and reuse map](docs/team/mvp-baseline.md)
 - [A-F workstreams, deliverables, and acceptance criteria](docs/team/workstreams.md)
 - [Module contracts and revision rules](docs/team/contracts.md)
@@ -33,6 +42,8 @@ python scripts/doctor_pipeline.py --require-media \
 从项目根 `run-report.json` 的 `render.files` 读取 timeline、manifest、voice_package，再调用 [preview 脚本](scripts/render_timeline_preview.py)；可直接运行的映射示例、四种用例和退出码见[验收手册](docs/team/ACCEPTANCE_RUNBOOK.md)。`--manifest` 使用 A 清单，不能传 assets_union。preview 必需 ffprobe，生成真实 MP4、独立可编辑 SRT 和报告，并按 Timeline 的 `preview_burn_subtitles` 决定是否烧录中文字幕；剪映工程另用下述 F 入口导出。
 
 `--case` 支持 supported/unsupported/edit，`--target-seconds` 支持 5/10/15。10 秒 supported/edit 预期退出 0；unsupported 退出 2 并返回 needs_input；5 秒固定音调触发 needs_retime，顶层 failed、退出 2，不生成 Timeline。当前 demo 已执行 B 检索，但使用合成画面上的测试文案做字面匹配，配合 rule C、预设批准和 E 音调；不代表真实视觉检索/Qwen/人审/自然语音、自动 fit 或剪映验收。C 的真实 Ollama 路径已支持 `python -m quickcut.planning run --project-root PROJECT_ROOT ...`。
+
+IndexTTS2 使用 `IndexTeam/IndexTTS-2` 权重 `740dcaf`，通过 `python3 scripts/setup_indextts2.py` 安装到独立 Python 3.11 环境。准备参考 WAV 后，用 `scripts/indextts2_python.sh` 运行 E；doctor 和 demo 均支持 `--voice-config examples/voice_package/indextts2.config.json`。指定模型配置后，缺文件或推理失败会停止，不会回退系统语音。乡村真实链路默认选择 IndexTTS2，系统语音对照需显式传 `--system-voice`。具体命令和其他模块依赖见 [E 部署说明](docs/team/E-local-voice.md#indextts2-narration)。
 
 2026-11-13 的历史集成包含 A PR #4 `cf988d0a0e65dbd63c4174fae83bda77acf86723`、D #2 `38dcb8b`、E #1 `d1c6c95` 和 C #5 `620b24f`。该轮本地全量回归为 **812 passed in 35.50s，无 skip（macOS / Python 3.13.12）**；旧 A 环境的 805 项结果也仅作历史记录。原始证据保存在仓库外 `../outputs/QuickCut-engineering-final-20261113/`（未随 Git 提交）：supported/edit 10 秒成功，unsupported 10 秒退出 2、`needs_input`（A/E/D=1/0/0）；5 秒退出 2，`VOICE_NEEDS_RETIME` 指向 cue-03、owner D（A/E/D=1/1/0）。该轮 supported 预览实测 **10 秒、300 帧、全量解码通过**，输出 MP4 和独立 SRT，未烧字幕。详细报告索引见[验收手册](docs/team/ACCEPTANCE_RUNBOOK.md#54-最终本地证据索引2026-11-13)。当时远端 CI 尚未运行；这份历史记录不代表当前分支或云端 CI 结果。
 

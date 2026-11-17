@@ -22,7 +22,7 @@ from quickcut.planning.selection import (
 def deny_network(monkeypatch):
     def unexpected(*args, **kwargs):
         pytest.fail("测试不得访问真实 Ollama 或网络")
-    monkeypatch.setattr("urllib.request.urlopen", unexpected)
+    monkeypatch.setattr("quickcut.planning.selection.open_ollama", unexpected)
 
 
 @pytest.fixture
@@ -56,7 +56,7 @@ def mock_ollama(monkeypatch, body, *, raw=False):
         data = body if raw else json.dumps(body)
         return io.BytesIO(data.encode("utf-8"))
 
-    monkeypatch.setattr("urllib.request.urlopen", respond)
+    monkeypatch.setattr("quickcut.planning.selection.open_ollama", respond)
     return requests
 
 

@@ -37,9 +37,10 @@ def _range(value: dict) -> dict:
     return {"start": value["begin"], "duration": value["end"] - value["begin"]}
 
 
-def _clip_settings(*, subtitle: bool = False) -> dict:
+def _clip_settings(*, subtitle: bool = False, subtitle_position: str = "bottom") -> dict:
     return {"alpha": 1.0, "flip": {"horizontal": False, "vertical": False}, "rotation": 0.0,
-            "scale": {"x": 1.0, "y": 1.0}, "transform": {"x": 0.0, "y": -0.8 if subtitle else 0.0}}
+            "scale": {"x": 1.0, "y": 1.0}, "transform": {
+                "x": 0.0, "y": (0.8 if subtitle_position == "top" else -0.8) if subtitle else 0.0}}
 
 
 def build_draft(timeline: dict, resources: list[dict], draft_directory: Path, *,
@@ -53,6 +54,9 @@ def build_draft(timeline: dict, resources: list[dict], draft_directory: Path, *,
     content = _template("draft_content.json")
     meta = _template("draft_meta_info.json")
     output = timeline["output"]
+    subtitle_position = timeline.get("render_policy", {}).get("subtitle_position", "bottom")
+    if subtitle_position not in ("top", "bottom"):
+        raise ValueError("subtitle_position must be top or bottom")
     now = time.time_ns() // 1000
     platform = {"app_id": 3704, "app_source": "lv", "app_version": target_version, "os": "mac"}
     content.update(id=draft_id, name=name, duration=timeline["duration_us"], new_version="75.0.0",
@@ -124,7 +128,7 @@ def build_draft(timeline: dict, resources: list[dict], draft_directory: Path, *,
                     "typesetting": 0, "alignment": 1, "letter_spacing": 0.0, "line_spacing": 0.02,
                     "line_feed": 1, "line_max_width": 0.82, "force_apply_line_max_width": False,
                     "check_flag": 7, "type": "subtitle", "global_alpha": 1.0})
-                segment.update(material_id=mid, clip=_clip_settings(subtitle=True),
+                segment.update(material_id=mid, clip=_clip_settings(subtitle=True, subtitle_position=subtitle_position),
                                uniform_scale={"on": True, "value": 1.0})
             else:
                 key = f"source_audio:{item['clip_id']}" if kind == "source_audio" else item["asset_id"]

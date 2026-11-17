@@ -1,6 +1,6 @@
 # F：剪映工程导出与迁移安装
 
-F 消费同一冻结版本的 `EditTimeline`、A `AssetManifest` 和 E `VoicePackage`，生成媒体自包含的剪映工程包。当前适配器是 `quickcut-jianying-mac-0.1.0`，目标为 **macOS 剪映专业版 6.1.0**。入口是 Python API 和两个 CLI 脚本；没有新增 HTTP 导出接口。
+F 消费同一冻结版本的 `EditTimeline`、A `AssetManifest` 和 E `VoicePackage`，生成媒体自包含的剪映工程包。当前适配器是 `quickcut-jianying-mac-0.1.0`，目标为 **macOS 剪映专业版 6.1.0**。本地工作台在确认旁白后调用 F，另外保留 Python API 和 CLI 脚本入口。
 
 ## 当前能力与边界
 
@@ -13,11 +13,21 @@ F 消费同一冻结版本的 `EditTimeline`、A `AssetManifest` 和 E `VoicePac
 
 工程输入必须保持 `editable_export_burn_subtitles: false`、`retain_separate_audio_tracks: true` 和 `unsupported_effect_policy: "error"`。可选 MP4 预览按 `preview_burn_subtitles` 烧录中文字幕；这一设置不改变工程的独立文字轨。
 
+`render_policy.subtitle_position` 可选 `top` 或 `bottom`，省略时为 `bottom`，其他值会被拒绝。工作台的旁白字幕位置选择同时控制预览的烧录位置和剪映独立文字对象的位置；全局 SRT 保留原文本与时间，不记录位置。原素材如果已有底部烧录字幕，可以手动选择 `top`，原片和原字幕不会被裁切、遮盖或删除。该展示策略在最终 Timeline 冻结前应用，不修改 D/E 的时序或适配回执。
+
 首版拒绝背景音乐/音效轨、转场、滤镜/效果、动画、变速、音量包络、自动压低原声、淡入淡出、重叠画面及视频空隙。带非零旋转元数据的源视频也拒绝导出，应先由 A 规范方向、更新素材版本，再重新冻结 D/E 引用。未支持功能会明确报错，不会静默删除或扁平化。其他剪映版本、Windows 剪映及 CapCut 不在此适配器的兼容承诺内。
 
 ## 输入与生产门禁
 
 三份输入均为 `0.1.0`，必须同项目、引用精确匹配，Timeline 为 `ready_for_export` 且无错误/未解决缺口，VoicePackage 为 `ready`，旁白已经适配预算。`--manifest` 使用 A 清单，不使用 A+E 的 `assets-union.json`；导出器自己合并并校验 A/E 资产。
+
+声音输入有两条明确路径：初测包只引用当前 StoryPlan，明确 `mode: measure`，无适配 request，且各 cue 没有 `requested_timeline_range_us`；D/E 适配后的包保留 StoryPlan 和待适配 Timeline 两个输入引用，必须同时携带 D 最终 Timeline 的完整 `voice_fit` 回执。回执包含本轮 request、pending Timeline、接受的 VoicePackage 引用和回复内容哈希。删除 Timeline 引用及回执后仍带 fit mode、request 或句子区间的输入会被拒绝；生产包缺少 mode 也拒绝。D 的入口与结构见 [人工边界和有限适配](D-retiming.md)。
+
+兼容旧黄金协议测量包的唯一缺 mode 分支要求三份输入全部为 `fixtures_only: true`，且 E 明确标记 `measurement_source: synthetic_fixture`、`synthesis_profile.engine: fixture`，仍不得有 request 或适配句子区间。原因是原黄金包早于 E 的 mode 字段，且明确没有真实语音；不能将其改标生产后继续使用此分支。现代测试包同样应显式写 mode。该兼容不会授予独立 E 文案审批，也不放宽生产导出默认拒绝 fixture 的规则。
+
+预览、导出和包校验共享严格门禁：核对请求/回复精确 revision 与内容哈希、A 清单内容、最终 Timeline 身份、冻结画面/原声区间、边界决策、旁白完整源区间及请求的全局起点。`pending_voice_fit` 不是可导出状态；超预算、缺失/过期回执或接受 fit 后修改时序会被拒绝。F 不重新分配句子位置，也不裁尾来消除 D/E 的失败。
+
+`boundary_decisions` 是 D 的决策来源，随冻结 Timeline 留在包内。`manual` 必须对应具体 shot 的实际 reviewer/reason；`segment_prefix_budget` 仅表示按已选 segment 起点和时长预算取片段，不能被解释为已做动作模型精剪。F 按冻结源区间生成工程，不负责补做边界审阅。
 
 默认拒绝 `fixtures_only: true` 的输入。导出、校验和安装各自要求显式 `allow_fixtures=True` 或 `--allow-fixtures` 才能处理测试包，并保留 fixture 标记。测试包可验证工程行为，不可据此声明真实检索、语音质量或生产验收通过。
 
@@ -26,6 +36,8 @@ F 消费同一冻结版本的 `EditTimeline`、A `AssetManifest` 和 E `VoicePac
 需要 Python 3.10+、FFmpeg 与 ffprobe，可使用 `QUICKCUT_FFMPEG` / `QUICKCUT_FFPROBE` 指定路径。媒体资源先按 [Git LFS 说明](git-lfs.md)下载到本地，LFS 指针文件不构成有效视频。建议安装 `pip install -e '.[dev,ingest,runtime]'`。
 
 导出会核对真实 SHA-256、完整解码、流起点与源区间覆盖。旁白必须是可读取的 PCM WAV，**包括尾部停顿在内的完整采样时长**须与 E 的声明一致，容差为一个采样；不会为了凑声明而截断旁白或补静音。独立原声提取也按完整目标采样数校验。包内资源复制后再次核对哈希，安装前重新检查文件大小、哈希、冻结输入和资源映射。
+
+WebM/Matroska 常省略 `stream.duration`。这种输入的预览和导出会解码所选流，以帧时间戳及末帧时长测量视频范围，以末帧实际采样数测量音频末端；不会把容器总时长套给每条流。较长的音频不能使较短视频通过越界校验，无法确定末帧时长也会明确失败。已有回归覆盖缺失流时长的 WebM 导出与预览，以及 0.8 秒视频配 1.6 秒音频时的视频越界拒绝。
 
 ## CLI：导出、校验与安装
 
@@ -93,6 +105,8 @@ installed = install_jianying_draft(package)
 API 不改写输入对象；导出失败不发布部分工程包。`verify_package()` 只校验文件和协议，不操作编辑器。捕获 `ExportError` 后用 `to_dict()` 获取错误信封。常见错误有 `FIXTURE_EXPORT_REJECTED`、`TIMELINE_INVALID`、`MEDIA_HASH_MISMATCH`、`NARRATION_DURATION_MISMATCH`、`EDITOR_FEATURE_UNSUPPORTED`、`EDITOR_VERSION_UNSUPPORTED`、`OUTPUT_EXISTS` 和 `EDITOR_RUNNING`。
 
 ## 验收状态与证据
+
+2026-11-16 新增的 D/E fit 回路、人工边界及 F 回执门禁已有自动化回归；相关测试包含 fixture 音调与独立 Python 子进程，并非本轮真实模型/HTML UI/剪映整链验收。以下 2026-11-15 实机结果仍按原包和版本范围记载。
 
 代码生成成功始终记录 `status: "generated"`，其 `validation.editor_import` 与 `validation.editor_edit_save_reopen` 为 `not_run`。安装成功仍返回 `editor_import_verified: false`。这些值描述命令实际执行的检查，不会因为有一份可解析 JSON 或一段 MP4 而自动变为 `verified_import`。
 

@@ -23,14 +23,17 @@ Design notes
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
+import math
 import re
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
 from .encoder import make_encoder
+from .media import resolve_uri
 
 
 SCHEMA_VERSION = "0.1.0"
@@ -151,24 +154,48 @@ def _hard_constraint_failure(segment: dict[str, Any], asset: dict[str, Any], que
     return None
 
 
-def _load_keyframe_bytes(uri: str, project_root: Path | None) -> bytes | None:
+class RetrievalVisualError(RuntimeError):
+    """An unavailable signal is not evidence that the requested event is absent."""
+
+    def __init__(self, code: str, message: str, *, uri: str | None = None, owner: str = "B"):
+        super().__init__(message)
+        self.code, self.uri, self.owner = code, uri, owner
+
+
+def _load_keyframe_bytes(uri: str, project_root: Path | None, *, fixture: bool = False) -> bytes | None:
     """Return encoded image bytes if a real keyframe is reachable.
 
     Keyframes in the fixture are JPG paths that don't exist on disk, which is
     expected.  We only attempt to read when the file is actually there so the
     retriever stays runnable without media.
     """
-    if not uri:
-        return None
-    path = Path(uri)
-    if not path.is_absolute() and project_root is not None:
-        path = project_root / uri
-    if not path.exists():
-        return None
+    if not isinstance(uri, str) or not uri:
+        raise RetrievalVisualError("KEYFRAME_URI_INVALID", "Keyframe URI is missing", owner="A")
+    try:
+        path = resolve_uri((project_root or Path.cwd()).resolve(), uri)
+    except (TypeError, ValueError) as exc:
+        raise RetrievalVisualError("KEYFRAME_URI_INVALID", str(exc), uri=uri, owner="A") from exc
+    if not path.is_file():
+        if fixture:
+            return None
+        raise RetrievalVisualError("KEYFRAME_MISSING", "Declared keyframe file does not exist", uri=uri, owner="A")
     try:
         return path.read_bytes()
-    except OSError:
-        return None
+    except OSError as exc:
+        raise RetrievalVisualError("KEYFRAME_UNREADABLE", str(exc), uri=uri, owner="A") from exc
+
+
+def _diagnostic(error: RetrievalVisualError, query: dict, segment: dict | None = None) -> dict:
+    return {"code": error.code, "stage": "retrieval", "action_owner": error.owner,
+            "query_id": query["query_id"], "asset_id": (segment or {}).get("asset_id"),
+            "segment_id": (segment or {}).get("segment_id"), "keyframe_uri": error.uri,
+            "message": str(error)}
+
+
+def _valid_transcript(segment: dict) -> bool:
+    transcript = segment.get("transcript") or {}
+    text = transcript.get("text")
+    return transcript.get("status") == "success" and isinstance(text, str) and bool(text.strip())
 
 
 # --------------------------------- core -----------------------------------
@@ -208,10 +235,11 @@ class Retriever:
             self._encoder = make_encoder(self.config.encoder_mode)
         return self._encoder
 
-    def _image_embedding(self, segment: dict[str, Any], project_root: Path | None) -> list[float] | None:
+    def _image_embedding(self, segment: dict[str, Any], project_root: Path | None,
+                         *, fixture: bool = False) -> list[float] | None:
         for kf in segment.get("keyframes") or []:
             uri = kf.get("uri", "")
-            ppm = _load_keyframe_bytes(uri, project_root)
+            ppm = _load_keyframe_bytes(uri, project_root, fixture=fixture)
             if ppm is None:
                 continue
             fingerprint = hashlib.sha256(ppm).hexdigest()
@@ -219,30 +247,36 @@ class Retriever:
                 return self._image_cache[fingerprint]
             try:
                 embedding = self._encoder_lazy().encode_image(ppm)
-            except Exception:
-                continue
+                if not embedding or any(not math.isfinite(float(value)) for value in embedding):
+                    raise ValueError("Encoder returned an empty or non-finite embedding")
+            except Exception as exc:
+                raise RetrievalVisualError("KEYFRAME_ENCODING_FAILED", str(exc), uri=uri) from exc
             self._image_cache[fingerprint] = embedding
             return embedding
         return None
 
     def _visual_score(self, query_text: str, segment: dict[str, Any],
-                      project_root: Path | None) -> float:
-        embedding = self._image_embedding(segment, project_root)
+                      project_root: Path | None, *, fixture: bool = False) -> float:
+        embedding = self._image_embedding(segment, project_root, fixture=fixture)
         if embedding is None:
             return 0.0
         try:
-            return float(max(0.0, self._encoder_lazy().score_text_image(query_text, embedding)))
-        except Exception:
-            return 0.0
+            score = float(self._encoder_lazy().score_text_image(query_text, embedding))
+            if not math.isfinite(score):
+                raise ValueError("Encoder returned a non-finite similarity")
+            return max(0.0, score)
+        except Exception as exc:
+            raise RetrievalVisualError("VISUAL_SCORING_FAILED", str(exc),
+                                       uri=(segment.get("keyframes") or [{}])[0].get("uri")) from exc
 
     def _broll_tags(self, segment: dict[str, Any], asset: dict[str, Any],
-                    project_root: Path | None) -> dict[str, Any]:
+                    project_root: Path | None, *, fixture: bool = False) -> dict[str, Any]:
         if asset.get("origin") != "external":
             return {"status": "not_applicable", "reason": "tags are recorded for external b-roll"}
         if self._encoder_lazy().name != "openclip":
             return {"status": "not_predicted", "method": "unavailable",
                     "reason": "fallback encoder has no semantic label head"}
-        embedding = self._image_embedding(segment, project_root)
+        embedding = self._image_embedding(segment, project_root, fixture=fixture)
         if embedding is None:
             return {"status": "not_predicted", "method": "openclip-zero-shot",
                     "reason": "no readable keyframe"}
@@ -252,6 +286,8 @@ class Retriever:
             score, label = max(
                 (self._encoder_lazy().score_text_image(text, embedding), text) for text in labels
             )
+            if not math.isfinite(float(score)):
+                raise ValueError("Encoder returned a non-finite label similarity")
             predicted[group] = {"label": label, "score": round(float(score), 4)}
         return {
             "status": "predicted",
@@ -261,9 +297,9 @@ class Retriever:
             **predicted,
         }
 
-    def _text_score(self, query_text: str, segment: dict[str, Any]) -> tuple[float, float]:
+    def _text_score(self, query_text: str, segment: dict[str, Any], *, fixture: bool = False) -> tuple[float, float]:
         q = _tokens(query_text)
-        transcript = _tokens((segment.get("transcript") or {}).get("text", ""))
+        transcript = _tokens((segment.get("transcript") or {}).get("text", "")) if fixture or _valid_transcript(segment) else set()
         description = _tokens((segment.get("description") or {}).get("text", ""))
         return _overlap(q, transcript), _overlap(q, description)
 
@@ -296,9 +332,19 @@ class Retriever:
         assets_by_id = {a["asset_id"]: a for a in manifest.get("assets", [])}
         segments = manifest.get("segments", [])
 
-        encoder = self._encoder_lazy()
-        encoder_name = encoder.name
-        info = encoder.profile() if hasattr(encoder, "profile") else {"encoder": encoder_name}
+        fixture = manifest.get("fixtures_only", False) or request.get("fixtures_only", False)
+        initialization_error = None
+        try:
+            encoder = self._encoder_lazy()
+            encoder_name = encoder.name
+            info = encoder.profile() if hasattr(encoder, "profile") else {"encoder": encoder_name}
+            if not fixture and info.get("fallback_reason"):
+                raise RuntimeError(f"Production retrieval will not substitute a failed model: {info['fallback_reason']}")
+        except Exception as exc:
+            initialization_error = RetrievalVisualError("ENCODER_UNAVAILABLE", str(exc))
+            encoder_name = "unavailable"
+            info = {"encoder": encoder_name, "requested_mode": self.config.encoder_mode,
+                    "error": str(exc)}
         score_profile = (
             f"encoder={info.get('encoder', encoder_name)}; model={info.get('model')}; "
             f"pretrained={info.get('pretrained')}; dimension={info.get('dimension')}; "
@@ -310,11 +356,17 @@ class Retriever:
 
         results: list[dict[str, Any]] = []
         for query in request.get("queries", []):
+            if initialization_error:
+                results.append({"query_id": query["query_id"], "status": "error",
+                                "reason": str(initialization_error), "candidates": [],
+                                "errors": [_diagnostic(initialization_error, query)]})
+                continue
             results.append(self._run_query(
-                query, segments, assets_by_id, root, score_profile,
+                query, segments, assets_by_id, root, score_profile, fixture=fixture,
             ))
 
-        overall_status = "ok" if any(r["status"] == "ok" for r in results) else "empty"
+        overall_status = ("error" if any(r["status"] == "error" for r in results) else
+                          "ok" if any(r["status"] == "ok" for r in results) else "empty")
 
         result = {
             "schema_version": SCHEMA_VERSION,
@@ -330,12 +382,14 @@ class Retriever:
             ],
             "status": overall_status,
             "results": results,
+            "errors": [error for row in results for error in row.get("errors", [])],
             "retrieval_profile": {
                 "config": asdict(self.config),
                 "input_fingerprints": {
                     "AssetManifest": _fingerprint(manifest),
                     "RetrievalRequest": _fingerprint(request),
                 },
+                "implementation_fingerprints": _implementation_fingerprints(),
                 "score_profile": score_profile,
                 "encoder": info,
                 "dedup_by_content_hash": self.config.dedup_by_content_hash,
@@ -365,6 +419,7 @@ class Retriever:
         assets_by_id: dict[str, dict[str, Any]],
         project_root: Path | None,
         score_profile: str,
+        *, fixture: bool = False,
     ) -> dict[str, Any]:
         query_id = query["query_id"]
         semantic_text = query.get("semantic_text", "")
@@ -377,6 +432,9 @@ class Retriever:
         reasons_dropped: list[str] = []
         constraint_rejected = 0
         eligible = 0
+        errors = []
+        diagnostics = []
+        visual_states = {}
 
         for segment in segments:
             asset = assets_by_id.get(segment.get("asset_id"))
@@ -394,8 +452,22 @@ class Retriever:
                 reasons_dropped.append(f"segment {segment['segment_id']} {failure}")
                 continue
             eligible += 1
-            visual = self._visual_score(semantic_text, segment, project_root)
-            transcript_overlap, description_overlap = self._text_score(semantic_text, segment)
+            try:
+                if not segment.get("keyframes") and not fixture:
+                    if not _valid_transcript(segment):
+                        raise RetrievalVisualError("KEYFRAME_MISSING", "No keyframes or successful transcript are available", owner="A")
+                    visual = 0.0
+                    visual_states[segment["segment_id"]] = "text_only"
+                    diagnostics.append(_diagnostic(RetrievalVisualError(
+                        "VISUAL_NOT_AVAILABLE", "No keyframe was declared; retrieval uses the successful ASR text only", owner="A"), query, segment))
+                else:
+                    visual = self._visual_score(semantic_text, segment, project_root, fixture=fixture)
+                    visual_states[segment["segment_id"]] = ("scored" if self._image_embedding(
+                        segment, project_root, fixture=fixture) is not None else "fixture_text_only")
+            except RetrievalVisualError as exc:
+                errors.append(_diagnostic(exc, query, segment))
+                continue
+            transcript_overlap, description_overlap = self._text_score(semantic_text, segment, fixture=fixture)
             weighted_text = max(
                 self.config.transcript_weight * transcript_overlap,
                 self.config.description_weight * description_overlap,
@@ -443,6 +515,17 @@ class Retriever:
                 flags.append("low_confidence")
             else:
                 flags_any_above_threshold = True
+            visual_status = visual_states[segment["segment_id"]]
+            if visual_status == "text_only":
+                flags.append("visual_not_available")
+            transcript_evidence = copy.deepcopy(segment.get("transcript") or {})
+            if transcript_evidence.get("review_status") == "needs_review":
+                flags.append("transcript_needs_review")
+            try:
+                tags = self._broll_tags(segment, asset, project_root, fixture=fixture)
+            except Exception as exc:
+                errors.append(_diagnostic(RetrievalVisualError("LABEL_SCORING_FAILED", str(exc)), query, segment))
+                continue
             candidates.append({
                 "candidate_id": f"candidate-{query_id}-{segment['segment_id']}",
                 "segment_id": segment["segment_id"],
@@ -452,6 +535,8 @@ class Retriever:
                 "visual_score": components["visual"],
                 "transcript_score": components["transcript"],
                 "description_score": components["description"],
+                "visual_status": visual_status,
+                "transcript_evidence": transcript_evidence,
                 "ranking_score": round(ranking, 4),
                 "score_profile": score_profile,
                 "suggested_role": suggested_role,
@@ -461,7 +546,7 @@ class Retriever:
                 "provenance_note": asset.get("provenance_note", ""),
                 "flags": flags,
                 "unmet_conditions": [],
-                "tags": self._broll_tags(segment, asset, project_root),
+                "tags": tags,
             })
 
         constraints = {
@@ -471,6 +556,12 @@ class Retriever:
             "duration_budget_us_applied_as_filter": False,
             "rejected": constraint_rejected,
         }
+        if errors:
+            return {"query_id": query_id, "status": "error",
+                    "reason": "Retrieval inputs or model execution failed; this is not a confirmed no-match",
+                    "allowed_origins": list(allowed_origins), "constraints": constraints,
+                    "candidates": [], "errors": errors, "diagnostics": diagnostics,
+                    "evaluated_candidate_count": len(candidates)}
         if not candidates:
             if eligible:
                 reason = "No segment had a positive match for the query"
@@ -485,6 +576,7 @@ class Retriever:
                 "allowed_origins": list(allowed_origins),
                 "constraints": constraints,
                 "candidates": [],
+                "diagnostics": diagnostics,
             }
 
         return {
@@ -494,6 +586,7 @@ class Retriever:
             "allowed_origins": list(allowed_origins),
             "constraints": constraints,
             "candidates": candidates,
+            "diagnostics": diagnostics,
         }
 
 
@@ -513,6 +606,8 @@ def _validate_contract_envelope(doc: dict[str, Any], kind: str) -> None:
         require(field_name in doc, f"{kind}: missing {field_name}")
     require(type(doc["revision"]) is int and doc["revision"] > 0,
             f"{kind}: revision must be a positive integer")
+    if "fixtures_only" in doc:
+        require(type(doc["fixtures_only"]) is bool, f"{kind}: fixtures_only must be boolean")
     for field_name in ("document_id", "project_id"):
         require(isinstance(doc[field_name], str) and bool(doc[field_name].strip()),
                 f"{kind}: {field_name} must be nonempty")
@@ -522,6 +617,13 @@ def _fingerprint(document: dict[str, Any]) -> str:
     payload = json.dumps(document, sort_keys=True, ensure_ascii=False,
                          separators=(",", ":"), allow_nan=False).encode("utf-8")
     return "sha256:" + hashlib.sha256(payload).hexdigest()
+
+
+def _implementation_fingerprints() -> dict[str, str]:
+    """Distinguish newly evaluated candidates from outputs of an older build."""
+    package = Path(__file__).resolve().parent
+    return {name: "sha256:" + hashlib.sha256((package / name).read_bytes()).hexdigest()
+            for name in ("retrieval.py", "encoder.py")}
 
 
 def _validate_manifest_reference(manifest: dict[str, Any], request: dict[str, Any]) -> None:

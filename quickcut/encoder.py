@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import io
+import hashlib
 import math
 import os
+from pathlib import Path
 import re
 import struct
+import sys
 import zlib
 from typing import Iterable
 
@@ -90,8 +93,11 @@ def ppm_to_png(data: bytes) -> bytes:
 class FallbackEncoder:
     name = "fallback-color-histogram"
 
+    def __init__(self, *, requested_mode: str = "fallback", fallback_reason: str | None = None):
+        self.requested_mode, self.fallback_reason = requested_mode, fallback_reason
+
     def profile(self) -> dict[str, object]:
-        return {
+        profile = {
             "encoder": self.name,
             "model": self.name,
             "pretrained": "none",
@@ -99,6 +105,9 @@ class FallbackEncoder:
             "visual_score": "color-histogram",
             "calibrated": False,
         }
+        if self.fallback_reason:
+            profile.update(requested_mode=self.requested_mode, fallback_reason=self.fallback_reason)
+        return profile
 
     def encode_image(self, ppm: bytes) -> list[float]:
         if ppm.startswith((b"P6", b"P3")):
@@ -168,12 +177,37 @@ class OpenClipEncoder:
         pretrained = os.getenv("QUICKCUT_CLIP_PRETRAINED", "datacompdr")
         self.model_name = model_name
         self.pretrained = pretrained
+        self.model_revision = os.getenv("QUICKCUT_CLIP_MODEL_REVISION")
+        self.text_model = os.getenv("QUICKCUT_CLIP_TEXT_MODEL")
+        self.checkpoint_hash = None
+        if Path(pretrained).is_file():
+            hasher = hashlib.sha256()
+            with Path(pretrained).open("rb") as stream:
+                for chunk in iter(lambda: stream.read(8 * 1024 * 1024), b""):
+                    hasher.update(chunk)
+            self.checkpoint_hash = "sha256:" + hasher.hexdigest()
         self._torch = torch
         self._Image = Image
-        self._model, _, self._preprocess = open_clip.create_model_and_transforms(model_name, pretrained=pretrained)
-        self._tokenizer = open_clip.get_tokenizer(model_name)
+        kwargs = {}
+        if self.text_model:
+            # A pinned local HF config/tokenizer lets the complete CLIP checkpoint
+            # run offline without downloading a redundant text-tower checkpoint.
+            config = open_clip.get_model_config(model_name)
+            if not config or not config.get("text_cfg", {}).get("hf_model_name"):
+                raise ValueError("QUICKCUT_CLIP_TEXT_MODEL requires an HF text-tower model")
+            text_config = dict(config["text_cfg"], hf_model_name=self.text_model,
+                               hf_tokenizer_name=self.text_model, hf_model_pretrained=False)
+            kwargs["text_cfg"] = text_config
+        self._model, _, self._preprocess = open_clip.create_model_and_transforms(model_name, pretrained=pretrained, **kwargs)
+        if self.text_model:
+            from open_clip.tokenizer import HFTokenizer
+            self._tokenizer = HFTokenizer(self.text_model, context_length=text_config.get("context_length", 77),
+                                          **text_config.get("tokenizer_kwargs", {}))
+        else:
+            self._tokenizer = open_clip.get_tokenizer(model_name)
         self._model.eval()
-        self.dimension = int(getattr(self._model, "embed_dim", 0) or 0)
+        self.dimension = int(getattr(self._model, "embed_dim", 0) or
+                             getattr(getattr(self._model, "visual", None), "output_dim", 0) or 0)
         self._text_cache: dict[str, list[float]] = {}
 
     def profile(self) -> dict[str, object]:
@@ -184,6 +218,10 @@ class OpenClipEncoder:
             "dimension": self.dimension,
             "visual_score": "cosine",
             "calibrated": False,
+            "model_revision": self.model_revision,
+            "checkpoint_sha256": self.checkpoint_hash,
+            "text_model": self.text_model,
+            "device": "cpu",
         }
 
     def _image(self, ppm: bytes):
@@ -209,22 +247,32 @@ class OpenClipEncoder:
         return cosine(self.encode_text(text), image_embedding)
 
 
-_ENCODER_CACHE: dict[str, object] = {}
+_ENCODER_CACHE: dict[tuple, object] = {}
 
 
 def make_encoder(mode: str | None = None):
     mode = (mode or os.getenv("QUICKCUT_ENCODER", "fallback")).lower()
-    if mode in _ENCODER_CACHE:
-        return _ENCODER_CACHE[mode]
+    if mode not in {"fallback", "fallback-color-histogram", "openclip", "mobileclip", "auto"}:
+        raise ValueError(f"Unknown visual encoder: {mode}")
+    # A long-running UI may select a new checkpoint without restarting Python.
+    cache_key = (mode, *(os.getenv(name) for name in ("QUICKCUT_CLIP_MODEL", "QUICKCUT_CLIP_PRETRAINED",
+                 "QUICKCUT_CLIP_TEXT_MODEL", "QUICKCUT_CLIP_MODEL_REVISION")))
+    if cache_key in _ENCODER_CACHE:
+        return _ENCODER_CACHE[cache_key]
+    fallback_reason = None
     if mode in {"openclip", "mobileclip", "auto"}:
         try:
             encoder = OpenClipEncoder()
-            _ENCODER_CACHE[mode] = encoder
+            _ENCODER_CACHE[cache_key] = encoder
             return encoder
         except Exception as exc:
             if mode != "auto":
                 raise
-            print(f"[quickcut] OpenCLIP unavailable, using fallback encoder: {exc}")
-    encoder = FallbackEncoder()
-    _ENCODER_CACHE[mode] = encoder
+            fallback_reason = str(exc)
+            print(f"[quickcut] OpenCLIP unavailable, using fallback encoder: {exc}", file=sys.stderr)
+    encoder = FallbackEncoder(requested_mode=mode, fallback_reason=fallback_reason)
+    # Do not cache a failed auto attempt: restored dependencies or weights must
+    # be retried, not leave a server permanently stuck on the color encoder.
+    if not fallback_reason:
+        _ENCODER_CACHE[cache_key] = encoder
     return encoder

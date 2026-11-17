@@ -10,19 +10,25 @@ from quickcut import voice_package as v
 
 @pytest.fixture
 def story():
-    return json.loads(Path('examples/voice_package/story.json').read_text())
+    result = json.loads(Path('examples/voice_package/story.json').read_text())
+    # This fixture represents an explicit approval event, not inference from ready.
+    for cue in result['narration_cues']:
+        cue['approved'] = True
+    return result
 
 
 def build(story, root, **kwargs):
     return v.build_voice_package(story, root, fixture=True, **kwargs)
 
 
-@pytest.mark.parametrize('pending', ['status', 'unresolved_gaps', 'pending_reviews', 'cue'])
+@pytest.mark.parametrize('pending', ['status', 'unresolved_gaps', 'pending_reviews', 'cue', 'missing_approval'])
 def test_unapproved_story_stops_before_creating_audio(story, tmp_path, monkeypatch, pending):
     if pending == 'status':
         story['status'] = 'needs_input'
     elif pending == 'cue':
         story['narration_cues'][0]['approved'] = False
+    elif pending == 'missing_approval':
+        story['narration_cues'][0].pop('approved')
     else:
         story[pending] = [{'beat_id': 'beat-open', 'reason': 'awaiting C review'}]
     monkeypatch.setattr(v, 'synthesize', lambda *args: pytest.fail('unapproved script reached TTS'))
@@ -146,6 +152,11 @@ def test_invalid_contract(story, tmp_path, change):
         build(story, tmp_path)
 
 
+def test_boolean_expected_revision_is_not_revision_one(story, tmp_path):
+    with pytest.raises(v.VoiceError):
+        build(story, tmp_path, expected_revision=True)
+
+
 def test_reject_path_escape(tmp_path):
     with pytest.raises(v.VoiceError):
         v.safe_file(tmp_path, '../escape.wav')
@@ -161,6 +172,34 @@ def test_real_profile_capability_validation(monkeypatch):
         v.select_profile({'voice':'Missing'}, 'zh-CN', False)
     with pytest.raises(v.VoiceError):
         v.select_profile({'emotion':'happy'}, 'zh-CN', False)
+
+
+@pytest.mark.parametrize('locale', ['cmn', 'zh', 'zh-cmn', 'zh_CN', 'zh-Hans', 'zh-Hans-CN'])
+def test_mandarin_engine_alias_matches_story_locale(monkeypatch, locale):
+    monkeypatch.setattr(v, 'capabilities', lambda: dict(engine='espeak-ng', version='test',
+        voices=[dict(voice='Mandarin', language=locale)]))
+    profile = v.select_profile({}, 'zh-CN', False)
+    assert profile['voice'] == 'Mandarin'
+    assert profile['language'] == 'zh-CN'
+    assert profile['engine_language'] == locale
+
+
+def test_mandarin_alias_does_not_select_unrequested_region(monkeypatch):
+    monkeypatch.setattr(v, 'capabilities', lambda: dict(engine='espeak-ng', version='test',
+        voices=[dict(voice='Taiwan', language='zh-TW')]))
+    with pytest.raises(v.VoiceError):
+        v.select_profile({}, 'zh-CN', False)
+
+
+@pytest.mark.parametrize('name', ['story.json', 'story-r2.json'])
+def test_fixed_demo_scripts_record_historical_approval(name):
+    sample = json.loads((Path('examples/voice_package') / name).read_text())
+    v.validate_story(sample)
+    assert sample['fixtures_only'] is False
+    for cue in sample['narration_cues']:
+        assert cue['approved'] is True
+        assert cue['approval_record']['method'] == 'historical_example_confirmation'
+        assert cue['approval_record']['confirmed_text'] == cue['text']
 
 
 def test_single_voice_change_invalidates_one_cue(story, tmp_path, monkeypatch):
@@ -248,4 +287,17 @@ def test_indextts2_uses_reference_in_cache_identity(story, tmp_path, monkeypatch
     speaker.write_bytes(b"reference version two")
     third = v.build_voice_package(story, root, config=config, previous=second, revision=3)
     assert third["invalidated_cue_ids"] == ["cue-01", "cue-02", "cue-03"]
+    assert all(not cue["cache_hit"] for cue in third["cues"])
+    assert all(old["cache_key"] != new["cache_key"] for old, new in zip(second["cues"], third["cues"]))
+    assert all(cue["synthesis_profile"]["reference_sha256"] == hashlib.sha256(speaker.read_bytes()).hexdigest()
+               for cue in third["cues"])
     assert len(calls) == 6
+
+    alternate = tmp_path / "男声.wav"
+    alternate.write_bytes(b"new user-selected reference")
+    config["cue_overrides"] = {"cue-02": {"reference_audio": str(alternate)}}
+    fourth = v.build_voice_package(story, root, config=config, previous=third, revision=4)
+    assert [cue["cache_hit"] for cue in fourth["cues"]] == [True, False, True]
+    assert fourth["invalidated_cue_ids"] == ["cue-02"]
+    assert calls[-1][1] == alternate
+    assert len(calls) == 7

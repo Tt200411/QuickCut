@@ -75,6 +75,13 @@ def capabilities():
     raise VoiceError("TTS_FAILED", "No local say/espeak engine available")
 
 
+def _language_key(language):
+    value = language.lower().replace("_", "-")
+    # espeak-ng exposes Mandarin as cmn (aliases zh-cmn/zh), whereas
+    # StoryPlan and macOS voices use the BCP-47 locale zh-CN.
+    return "cmn" if value in {"cmn", "zh", "zh-cmn", "zh-cn", "zh-hans", "zh-hans-cn"} else value
+
+
 def select_profile(config, language, fixture):
     if fixture:
         return {"engine": "fixture-tone", "version": "1", "voice": "tone-not-speech",
@@ -83,16 +90,17 @@ def select_profile(config, language, fixture):
     voice = config.get("voice")
     if not voice:
         preferred = "Reed (中文（中国大陆）)" if info["engine"] == "say" and language == "zh-CN" else None
-        matches = [v for v in info["voices"] if v["language"].lower() == language.lower()]
+        matches = [v for v in info["voices"] if _language_key(v["language"]) == _language_key(language)]
         voice = next((v["voice"] for v in matches if v["voice"] == preferred), None)
         voice = voice or (matches[0]["voice"] if matches else None)
     matching = [v for v in info["voices"] if v["voice"] == voice]
-    if not matching or matching[0]["language"].lower() != language.lower():
+    if not matching or _language_key(matching[0]["language"]) != _language_key(language):
         raise VoiceError("UNSUPPORTED_VOICE", f"Voice {voice!r} is unavailable for {language}; use --capabilities")
     if config.get("emotion"):
         raise VoiceError("UNSUPPORTED_PARAMETER", "Installed engine has no verified emotion control")
     return {"engine": info["engine"], "version": info["version"], "voice": voice,
-            "language": language, "rate": integer(config.get("rate", 145), "rate"),
+            "language": language, "engine_language": matching[0]["language"],
+            "rate": integer(config.get("rate", 145), "rate"),
             "local": True, "emotion_supported": False}
 
 
@@ -171,8 +179,10 @@ def validate_story(story, expected_revision=None):
         if not isinstance(story.get(key), str) or not story[key]:
             raise VoiceError("INVALID_INPUT", f"Missing {key}")
     integer(story.get("revision"), "StoryPlan.revision")
-    if expected_revision is not None and story["revision"] != expected_revision:
-        raise VoiceError("STALE_INPUT_REVISION", "StoryPlan revision differs from requested revision")
+    if expected_revision is not None:
+        integer(expected_revision, "expected StoryPlan revision")
+        if story["revision"] != expected_revision:
+            raise VoiceError("STALE_INPUT_REVISION", "StoryPlan revision differs from requested revision")
     if (story.get("status") != "ready_for_edit" or story.get("unresolved_gaps")
             or story.get("pending_reviews")):
         raise VoiceError("STORY_NOT_READY", "C must approve the StoryPlan and resolve pending gaps before synthesis")
@@ -182,9 +192,7 @@ def validate_story(story, expected_revision=None):
         if not isinstance(cue.get("cue_id"), str) or not cue["cue_id"] or cue["cue_id"] in ids:
             raise VoiceError("INVALID_INPUT", "Missing/duplicate cue_id")
         ids.add(cue["cue_id"])
-        # Legacy 0.1 handoffs express approval at StoryPlan level. If a newer
-        # producer supplies per-cue approval, an explicit rejection is binding.
-        if "approved" in cue and cue["approved"] is not True:
+        if cue.get("approved") is not True:
             raise VoiceError("UNAPPROVED_SCRIPT", "Narration cue has not been approved by C", [cue["cue_id"]])
         if not cue.get("text", "").strip() or cue.get("beat_id") not in beats:
             raise VoiceError("INVALID_INPUT", "Empty text or unknown beat", [cue["cue_id"]])
@@ -218,7 +226,8 @@ def build_voice_package(story, root, *, config=None, mode="measure", request=Non
         raise VoiceError("INVALID_INPUT", "max_tempo must be between 1 and 1.25")
     ranges = {}
     if request is not None:
-        if request.get("project_id") != story["project_id"] or request.get("story_plan") != reference(story):
+        if (request.get("project_id") != story["project_id"] or request.get("story_plan") != reference(story)
+                or type(request.get("story_plan", {}).get("revision")) is not int):
             raise VoiceError("STALE_INPUT_REVISION", "Request project/script does not match StoryPlan")
         ref = request.get("timeline", {})
         if ref.get("kind") != "EditTimeline" or not ref.get("document_id"):
@@ -235,6 +244,21 @@ def build_voice_package(story, root, *, config=None, mode="measure", request=Non
             integer(r.get("end"), "range end")
             if r["end"] <= r["begin"]:
                 raise VoiceError("INVALID_INPUT", "Empty/reversed requested interval")
+        if request.get("kind") == "VoiceFitRequest":
+            from .retiming import content_hash, request_identity
+            expected = {"kind": "VoicePackage", "document_id": "voice-" + story["document_id"], "revision": revision}
+            maximum = request.get("max_iterations")
+            if (mode != "fit" or request.get("schema_version") != SCHEMA or request.get("owner") != "D"
+                    or request.get("request_id") != request_identity(request)
+                    or request.get("story_content_hash") != content_hash(story)
+                    or content_hash(request.get("expected_voice")) != content_hash(expected)
+                    or type(request.get("voice_revision")) is not int or request["voice_revision"] != revision
+                    or type(maximum) is not int or not 1 <= iteration <= maximum <= 2
+                    or set(ranges) != {c["cue_id"] for c in story["narration_cues"]}):
+                raise VoiceError("STALE_INPUT_REVISION", "Fitting request identity, revision or frozen script changed")
+            if previous is not None and (request.get("measured_voice") != reference(previous)
+                    or request.get("measured_voice_content_hash") != content_hash(previous)):
+                raise VoiceError("STALE_INPUT_REVISION", "Fitting request is not based on the supplied previous voice package")
     if previous:
         if previous.get("project_id") != story["project_id"] or previous.get("kind") != "VoicePackage":
             raise VoiceError("STALE_INPUT_REVISION", "Previous voice package belongs to another project")

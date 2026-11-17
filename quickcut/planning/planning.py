@@ -6,6 +6,7 @@ Brief + AssetManifest + CandidateSet -> RetrievalRequest / StoryPlan。
 from __future__ import annotations
 
 import re
+import copy
 from dataclasses import dataclass, field
 from typing import Any, Iterable
 
@@ -25,7 +26,7 @@ from .contracts import (
     require_us,
     split_budget,
 )
-from .selection import RuleSelector, Selector, validate_selection
+from .selection import RuleSelector, Selection, Selector, validate_selection
 
 BEAT_SUFFIXES = ("open", "middle", "close")
 # 2:3:1 对应黄金样例的 6/9/3 秒，且对任意总时长都只用整数微秒运算。
@@ -130,7 +131,7 @@ def build_retrieval_request(
             "beat_id": beat["beat_id"],
             "semantic_text": beat["wish"]["event"],
             "role": "primary",
-            "allowed_origins": ["user"],
+            "allowed_origins": ["user", "external", "generated"] if picture_policy(brief) == THEMATIC_POLICY else ["user"],
             "duration_budget_us": beat["duration_budget_us"],
             "top_k": 4,
             "iteration": iteration,
@@ -247,6 +248,9 @@ def candidates_for_beat(
 ) -> list[dict[str, Any]]:
     """把 B 的候选与 A 的素材事实拼成 C 可判断的证据视图。"""
     assets, segments = _index_manifest(manifest)
+    if candidate_set.get("status") == "error" or any(r.get("status") == "error" for r in candidate_set.get("results", [])):
+        raise PlanningError(NO_CANDIDATE, "B 检索失败，不能把失败作为空候选或继续规划", action_owner="B",
+                            detail={"errors": candidate_set.get("errors", []), "results": candidate_set.get("results", [])})
     results = {r["query_id"]: r for r in candidate_set.get("results", [])}
     query_ids = [q["query_id"] for q in request["queries"]]
     candidate_ids = [c["candidate_id"] for r in candidate_set.get("results", []) for c in r.get("candidates", [])]
@@ -300,6 +304,9 @@ def candidates_for_beat(
                 raise PlanningError(VLM_INVALID_PLAN, "候选违反 allowed_origins 来源限制", retryable=False)
             if not _usable_evidence(candidate, segment, asset):
                 continue
+            transcript_evidence = copy.deepcopy(segment.get("transcript") or {})
+            if "transcript_evidence" in candidate and candidate["transcript_evidence"] != transcript_evidence:
+                raise PlanningError(VLM_INVALID_PLAN, "候选 ASR 证据与素材清单不一致", action_owner="B", retryable=False)
             collected[candidate["candidate_id"]] = {
                 "candidate_id": candidate["candidate_id"],
                 "segment_id": candidate["segment_id"],
@@ -317,6 +324,8 @@ def candidates_for_beat(
                 "evidence": candidate.get("evidence", []),
                 "summary": segment.get("description") or segment.get("summary") or "",
                 "transcript": (segment.get("transcript") or {}).get("text", ""),
+                "transcript_evidence": transcript_evidence,
+                "transcript_review": copy.deepcopy((asset.get("transcript") or {}).get("review") or {}),
                 "keyframes": segment.get("keyframes", []),
                 "keyframe_uris": [k["uri"] for k in segment.get("keyframes", [])],
             }
@@ -404,6 +413,8 @@ def _cue_text(beat: dict[str, Any], approved: dict[str, str] | None) -> tuple[st
 
 
 MONTAGE_POLICY = "authorized_external_montage"
+THEMATIC_POLICY = "thematic_montage"
+MONTAGE_POLICIES = {MONTAGE_POLICY, THEMATIC_POLICY}
 MONTAGE_ROLES = {"beat-open": "establishing", "beat-middle": "detail", "beat-close": "atmosphere"}
 
 
@@ -451,6 +462,7 @@ def plan(
     retrieval_request: dict[str, Any] | None = None,
     selector: Selector | None = None,
     approved_cues: dict[str, str] | None = None,
+    approval_records: dict[str, Any] | None = None,
     reviewed_evidence: dict[str, Any] | None = None,
     broll_queries: bool = True,
     max_iterations: int = 3,
@@ -516,6 +528,7 @@ def plan(
     raw_responses: list[dict[str, Any]] = []
     rule_adjustments: list[str] = []
     human_edits: list[str] = []
+    assistant_edits: list[str] = []
     model_call_ids: list[str] = []
     selected_segments: set[str] = set()
     reviews: list[dict[str, Any]] = []
@@ -537,7 +550,11 @@ def plan(
                     "beat_id": beat["beat_id"], "event": beat["wish"]["event"],
                     "asset_revision": candidate["asset_revision"],
                 })
+        thematic = picture_policy(brief) == THEMATIC_POLICY
         support = classify_beat(beat, candidates)
+        if thematic and candidates:
+            support = {**support, "support": "supported", "broll_only": True,
+                       "reason": "主题画面可用；不证明用户具体经历", "expression_rewrite": None}
         alignment_rows.append(support)
         if support["support"] != "supported":
             pending_reviews.extend(beat_pending_reviews)
@@ -555,50 +572,75 @@ def plan(
             })
             continue
 
-        if picture_policy(brief) == MONTAGE_POLICY and support["broll_only"]:
-            chosen = _pick_montage_candidate(candidates, selected_segments)
+        if picture_policy(brief) in MONTAGE_POLICIES and support["broll_only"]:
+            pool = [c for c in candidates if c["segment_id"] not in selected_segments
+                    and (thematic or c["origin"] == "external")]
+            selection = None
+            if pool and selector.name != "rule":
+                selection = selector.select(beat=beat, candidates=pool, context={
+                    "project_id": project_id, "thematic_montage": True, "require_visual": selector.name == "ollama",
+                    "story_theme": (brief.get("requirements") or {}).get("story", ""),
+                    "previous_selected_segment_ids": sorted(selected_segments),
+                })
+                shot_records, _ = validate_selection(selection, beat=beat, candidates=pool, thematic_montage=True)
+                if selection.raw_response:
+                    raw_responses.append(selection.to_record())
+                    model_call_ids.append(content_hash(selection.to_record()))
+            else:
+                chosen = (pool[0] if thematic and pool else _pick_montage_candidate(pool, selected_segments))
+                shot_records = [] if chosen is None else [{
+                    "candidate_id": chosen["candidate_id"], "segment_id": chosen["segment_id"],
+                    "origin": chosen["origin"], "role": MONTAGE_ROLES.get(beat["beat_id"], "atmosphere"),
+                    "suggested_duration_us": min(chosen["duration_us"], beat["duration_budget_us"]),
+                    "decided_by": f"rule:{picture_policy(brief)}",
+                }]
             approved_text = (approved_cues or {}).get(beat["beat_id"]) if narration_enabled else None
-            if chosen is not None and (not narration_enabled or isinstance(approved_text, str) and approved_text.strip()):
-                duration = min(chosen["duration_us"], beat["duration_budget_us"])
-                role = MONTAGE_ROLES.get(beat["beat_id"], "atmosphere")
-                shot = {
-                    "candidate_id": chosen["candidate_id"],
-                    "segment_id": chosen["segment_id"],
-                    "origin": "external",
-                    "role": role,
-                    "suggested_duration_us": duration,
-                    "decided_by": "rule:authorized_external_montage",
-                    "evidence": chosen["evidence"],
-                    "transcript": chosen["transcript"],
-                    "summary": chosen["summary"],
-                }
-                selected_segments.add(chosen["segment_id"])
+            if shot_records:
+                by_id = {c["candidate_id"]: c for c in pool}
+                for shot in shot_records:
+                    chosen = by_id[shot["candidate_id"]]
+                    shot.update({key: copy.deepcopy(chosen[key]) for key in
+                                 ("evidence", "transcript", "summary", "transcript_evidence", "transcript_review")})
+                    if thematic:
+                        review = (reviewed_evidence or {}).get(chosen["candidate_id"])
+                        if review:
+                            shot["montage_review"] = copy.deepcopy(review)
+                            reviews.append(copy.deepcopy(review))
+                        else:
+                            pending_reviews.append({"type": "montage_picture", "candidate_id": chosen["candidate_id"],
+                                                    "beat_id": beat["beat_id"]})
+                    selected_segments.add(chosen["segment_id"])
                 cue_id = f"cue-{beat['order'] + 1:02d}"
                 if narration_enabled:
+                    approval = (approval_records or {}).get(beat["beat_id"], {})
+                    review_source = "assistant_review" if approval.get("confirmation_kind") == "assistant_review" else "human_editorial"
+                    draft_source = "model_draft" if selection and selection.narration_draft else "template_draft"
                     cues.append({
                         "cue_id": cue_id,
                         "beat_id": beat["beat_id"],
-                        "text": approved_text.strip(),
-                        "text_source": "human_editorial",
-                        "approved": True,
-                        "content_review": "human_editorial",
+                        "text": approved_text.strip() if approved_text else (selection.narration_draft if selection and selection.narration_draft else "等待确认主题旁白。"),
+                        "text_source": review_source if approved_text else draft_source,
+                        "approved": bool(approved_text) and (not thematic or bool(approval)),
+                        "content_review": review_source if approved_text else "pending",
                         "duration_budget_us": max(1, beat["duration_budget_us"] - 200_000),
                         "voice_style": beat["narration_style"],
-                        "expression": "公开素材蒙太奇旁白，不声称这是用户本人的经历",
+                        "expression": "主题蒙太奇旁白，不声称这是用户本人的经历",
                         "evidence_segment_ids": [],
                         "asserts_specific_user_event": False,
                     })
-                    human_edits.append(f"{cue_id}: 文案来自已批准的蒙太奇旁白，不记为用户事件")
-                rule_adjustments.append(f"{beat['beat_id']}: 使用已授权的公开素材作画面，不把它当成用户事件证据")
+                    if approved_text:
+                        edits = assistant_edits if review_source == "assistant_review" else human_edits
+                        edits.append(f"{cue_id}: 文案来自已批准的蒙太奇旁白，不记为用户事件")
+                rule_adjustments.append(f"{beat['beat_id']}: 使用主题画面，不把它当成用户事件证据")
                 beats.append({
                     "beat_id": beat["beat_id"],
                     "order": beat["order"],
                     "purpose": beat["purpose"],
                     "duration_budget_us": beat["duration_budget_us"],
                     "support": "supported",
-                    "shots": [shot],
+                    "shots": shot_records,
                     "alternative_candidate_ids": [
-                        c["candidate_id"] for c in candidates if c["candidate_id"] != chosen["candidate_id"]
+                        c["candidate_id"] for c in candidates if c["candidate_id"] not in {s["candidate_id"] for s in shot_records}
                     ],
                     "cue_ids": [cue_id] if narration_enabled else [],
                 })
@@ -711,6 +753,8 @@ def plan(
             shot["evidence"] = candidate["evidence"]
             shot["transcript"] = candidate["transcript"]
             shot["summary"] = candidate["summary"]
+            shot["transcript_evidence"] = copy.deepcopy(candidate["transcript_evidence"])
+            shot["transcript_review"] = copy.deepcopy(candidate["transcript_review"])
             if candidate.get("event_review"):
                 shot["event_review"] = candidate["event_review"]
             shot.pop("candidate_duration_us", None)
@@ -747,6 +791,8 @@ def plan(
         }),
         "rule_adjustments": rule_adjustments,
         "human_edits": human_edits,
+        "assistant_edits": assistant_edits,
+        "narration_approvals": copy.deepcopy(approval_records or {}),
         "iterations": list(iteration_history or []) + [{
             "iteration": iteration,
             "request_revision": request["revision"],
@@ -755,9 +801,10 @@ def plan(
         }],
         "raw_response_count": len(raw_responses),
         "input_hashes": {
-            "Brief": content_hash(ref(brief)),
-            "AssetManifest": content_hash(ref(manifest)),
-            "CandidateSet": content_hash(ref(candidate_set)),
+            "Brief": content_hash(brief),
+            "AssetManifest": content_hash(manifest),
+            "CandidateSet": content_hash(candidate_set),
+            "RetrievalRequest": content_hash(request),
         },
     }
     status = "needs_input" if gaps or pending_reviews else "ready_for_edit"
@@ -784,6 +831,7 @@ def plan(
         "raw_responses": raw_responses,
         "validation": {"status": status, "gap_count": len(gaps)},
         "human_edits": human_edits,
+        "assistant_edits": assistant_edits,
         "rule_adjustments": rule_adjustments,
     }
     alignment = {

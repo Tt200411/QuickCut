@@ -2,6 +2,8 @@
 
 B 负责检索与外部空镜库。输入是 A 的素材清单和 C 的检索请求，输出是一份候选集，交给 C 挑选。B 不决定故事顺序、精剪、配音或导出。
 
+当前真实入口是 `QuickCut.command`，或在仓库根目录执行 `sh scripts/quickcut_web.sh` 打开工作台。工作台通过独立 `.venv-vision` 环境运行固定版本的 NLLB-CLIP。先执行 `python3 scripts/setup_vision.py --check` 检查已有部署；首次安装及独立 CLI 用法见 [B 本地视觉模型部署](docs/team/B-local-model.md)。下方协议样例和合成演示用于回归，不代表真实模型验收。
+
 ```text
 AssetManifest（A）
 RetrievalRequest（C）
@@ -16,12 +18,15 @@ CandidateSet（交给 C）
 
 一条查询如果没有任何正分候选，返回 `status: "empty"` 和原因，不用零分片段凑满 `top_k`。有字面重合但低于 0.22 的片段仍会返回，并标上 `low_confidence`。`duration_budget_us` 是这一段故事的时长预算，不用来删除更长的原片。画面比例，以及查询里单独写出的 `min_duration_us` / `max_duration_us`，会在打分前剔除不符合的片段。
 
+缺帧、坏图或模型执行失败返回 `status: "error"` 和可定位错误，CLI 以非零状态退出。明确指定 OpenCLIP 时不会静默改用颜色编码器。没有声明关键帧但有成功 ASR 的片段可以产生带诊断的 `text_only` 候选；C 的真实视觉规划会排除纯文本候选。
+
 ## 每个文件做什么
 
 | 文件                                    | 作用                                                                       |
 | ------------------------------------- | ------------------------------------------------------------------------ |
 | `quickcut/retrieval.py`               | B 的管线。`retrieve()` 读取清单和请求，生成 `CandidateSet`；`BRollLibrary` 仅供协议夹具合并 |
-| `quickcut/encoder.py`                 | 视觉打分。默认是颜色直方图；加上 `--encoder openclip` 时使用 OpenCLIP                       |
+| `quickcut/encoder.py`                 | 视觉打分。工作台使用固定版本 OpenCLIP；通用 CLI 默认颜色编码器供离线回归 |
+| `scripts/setup_vision.py`             | 独立环境安装、固定模型下载和只读完整性检查 |
 | `quickcut/cli.py` 的 `retrieve`        | 命令行入口                                                                    |
 | `tests/test_retrieval.py`             | B 的自动化测试                                                                 |
 | `examples/team_contracts/bundle.json` | 六人共用的协议样例。B 用其中的 `AssetManifest` 和 `RetrievalRequest`                    |
@@ -43,11 +48,13 @@ CLI 重跑同一输出文件时，内容相同复用原 revision，输入、配�
 
 `CandidateSet` 交给 C。每条查询都有一条结果。候选带回 `candidate_id`、`segment_id`、`asset_id`、`origin`、源时间、视觉分、文字分、`ranking_score`、`score_profile`、证据和 `flags`。外部空镜在使用 OpenCLIP 时带场景、情绪、光线和运镜标签，方法记为 `openclip-zero-shot`。颜色直方图没有语义标签，这些候选的标签状态是 `not_predicted`。
 
+新候选还保留完整 `transcript_evidence`（含 ASR 时间范围和复核状态）、`visual_status`。`retrieval_profile` 记录模型与 checkpoint 指纹、输入内容指纹及 B 实现指纹，便于区分本次真实重跑和历史冻结输出。
+
 打分取几路信号里的最大值：磁盘上有关键帧时比较画面和查询文字；同时比较查询与字幕、查询与描述的字面重合。`score_profile` 写明编码器、模型、权重和向量维度，并说明分数没有校准。颜色直方图和 CLIP 的分数不能直接互相比较。
 
 ## 如何测试
 
-在 `QuickCut-B` 目录执行：
+在仓库根目录执行：
 
 ```bash
 python3 -m pip install -e '.[dev,ingest]'
@@ -70,11 +77,13 @@ PY
 python3 -m quickcut.cli retrieve outputs/manifest.json outputs/request.json --output outputs/candidates.json
 ```
 
-样例里的视频和关键帧文件不在仓库中，所以这次 `visual_score` 全是 `0.0`，排序来自字幕和描述。有真实关键帧时加上 `--project-root`；默认颜色编码器支持 PPM 和通过 Pillow 解码的 PNG/JPEG，真实图片需安装 `.[ingest]`。要做图文语义检索时再加上 `--encoder openclip`，并先安装 `pip install -e '.[ml]'`。
+样例里的视频和关键帧文件不在仓库中，且明确标为 `fixtures_only`，所以这次 `visual_score` 全是 `0.0`，排序来自字幕和描述。正式图文语义检索按 [部署说明](docs/team/B-local-model.md) 使用 `.venv-vision`、固定本地权重、`--encoder openclip` 和正确的 `--project-root`；仅安装 Python 包不代表模型权重已就绪。
 
 ## 测试结果
 
 初版检索的历史记录为 **17 passed**。2026-11-15 的检索、编码器、蒙太奇与 pipeline demo 联合回归为 **63 passed**，新增长视频后续窗口、PNG关键帧、旧版本拒绝、输出修订及外部库注册边界验证。
+
+2026-11-16 同组定向回归为 **103 passed**，覆盖缺图/坏图、模型和评分失败、显式模式禁止 fallback、ASR 证据与实现指纹等边界。这些自动化用例不计作真实模型推理验收。
 
 样例检索生成的 `outputs/candidates.json` 是合法的 `CandidateSet`：
 

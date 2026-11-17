@@ -113,6 +113,9 @@ def _inspect_media(path: Path, asset: dict, tracks: dict, ffmpeg: str, probe: st
         for stream in info["streams"]:
             if stream["codec_type"] in {"video", "audio"}:
                 streams.setdefault(stream["codec_type"], stream)
+        for kind in kinds | ({"video"} if "video" in streams else set()):
+            if kind in streams:
+                streams[kind] = renderer._measured_stream(probe, path, streams[kind])
         video = streams.get("video")
         origin = renderer._video_origin(probe, path) if video else 0
         if video:

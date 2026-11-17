@@ -3,9 +3,12 @@
 阳山导览和带声的空镜原片不进入这条故事。来源保持 external。
 B 用 OpenCLIP 的 nllb-clip-base 直接比较中文查询和 A 抽出的 PNG 关键帧。
 F 读取 timeline.json、voice-package.json 和 asset-manifest.json，项目根就是本目录。
+默认使用 examples/voice_package/indextts2.config.json；--voice-config 可指定部署配置。
+模型或参考音频缺失时停止；只有显式 --system-voice 才使用系统语音。
 """
 from __future__ import annotations
 
+import argparse
 import json
 import os
 from pathlib import Path
@@ -23,6 +26,7 @@ from quickcut.media import write_json
 from quickcut.planning import build_outline, build_retrieval_request, plan
 from quickcut.planning.contracts import envelope, ref
 from quickcut.retrieval import RetrievalConfig, retrieve
+from scripts.demo_pipeline import load_voice_config
 
 MATERIALS = REPO / "materials" / "A-countryside"
 PROJECT_ID = "project-countryside"
@@ -47,7 +51,7 @@ OUTPUT = {"width": 1280, "height": 720, "fps": {"numerator": 30, "denominator": 
 CLIP_MODEL = "nllb-clip-base"
 CLIP_PRETRAINED = "v1"
 VISUAL_FLOOR = 0.18
-VOICE = {"rate": 145}
+DEFAULT_VOICE_CONFIG = REPO / "examples" / "voice_package" / "indextts2.config.json"
 
 
 def load_sources():
@@ -179,7 +183,10 @@ def summarize(manifest, candidates, story):
     }
 
 
-def main(root: Path):
+def main(root: Path, *, voice_config=DEFAULT_VOICE_CONFIG, system_voice=False):
+    if system_voice and voice_config != DEFAULT_VOICE_CONFIG:
+        raise ValueError("--system-voice 与 --voice-config 不能同时使用")
+    config = {"engine": "auto", "rate": 145} if system_voice else load_voice_config(voice_config)
     root = root.expanduser().resolve()
     if root.exists() and any(root.iterdir()):
         raise SystemExit(f"{root} 必须是空目录或不存在")
@@ -210,17 +217,22 @@ def main(root: Path):
     write_json(root / "alignment.json", result.alignment)
     integration_error = None
     built = None
+    voice_package = None
     try:
         built = build_from_plan(
             result, brief=brief, manifest=manifest, candidate_set=candidates,
-            root=root, output=OUTPUT, fixture=False, config=VOICE, voice_revision=1,
+            root=root, output=OUTPUT, fixture=False, config=config, voice_revision=1,
             expected_story_revision=1, timeline_document_id="timeline-countryside",
         )
+        voice_package = built.voice_package
     except (IntegrationError, VoiceError) as exc:
         integration_error = exc.to_dict(PROJECT_ID) if isinstance(exc, IntegrationError) else {
             "status": "failed", "code": exc.code, "stage": "E", "project_id": PROJECT_ID,
             "message": str(exc), "retryable": False, "affected_ids": exc.ids, "action_owner": "E",
         }
+        if isinstance(exc, IntegrationError) and exc.voice_package is not None:
+            voice_package = exc.voice_package
+            write_json(root / "voice-package.json", exc.voice_package)
     if built is not None:
         write_json(root / "voice-package.json", built.voice_package)
         write_json(root / "timeline.json", built.timeline)
@@ -257,6 +269,13 @@ def main(root: Path):
         "clip_model": CLIP_MODEL,
         "clip_pretrained": CLIP_PRETRAINED,
         "visual_floor": VISUAL_FLOOR,
+        "voice": {
+            "requested_engine": config["engine"],
+            "config": None if system_voice else str(Path(voice_config).expanduser().resolve()),
+            "synthesis_profile": voice_package["synthesis_profile"] if voice_package else None,
+            "status": voice_package["status"] if voice_package else "failed",
+            "error": integration_error,
+        },
         "summary": summarize(manifest, candidates, result.story_plan),
         "f_inputs": f_inputs,
     }
@@ -266,5 +285,22 @@ def main(root: Path):
     return 0 if ready and manifest["processing"]["status"] == "success" else 1
 
 
+def cli(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("root", type=Path, nargs="?", default=REPO / "ABCDE")
+    voice = parser.add_mutually_exclusive_group()
+    voice.add_argument("--voice-config", type=Path, default=DEFAULT_VOICE_CONFIG,
+                       help="IndexTTS2 JSON 配置；其中相对路径按仓库根解析")
+    voice.add_argument("--system-voice", action="store_true", help="显式使用系统语音做对照，不运行 IndexTTS2")
+    args = parser.parse_args(argv)
+    try:
+        return main(args.root, voice_config=args.voice_config, system_voice=args.system_voice)
+    except (OSError, ValueError) as exc:
+        print(json.dumps({"status": "failed", "stage": "setup", "message": str(exc),
+                          "code": getattr(exc, "code", "INVALID_VOICE_CONFIG")}, ensure_ascii=False),
+              file=sys.stderr)
+        return 2
+
+
 if __name__ == "__main__":
-    raise SystemExit(main(Path(sys.argv[1] if len(sys.argv) > 1 else REPO / "ABCDE")))
+    raise SystemExit(cli())

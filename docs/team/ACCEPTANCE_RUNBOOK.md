@@ -1,5 +1,7 @@
 # QuickCut 验收操作手册
 
+**2026-11-16 新生产入口：** [HTML 工作台](WORKBENCH.md)已接入真实 A/B/Qwen/IndexTTS2、人工边界确认、D/E 有限适配和 F 导出/剪映启动。工作台不调用本手册旧合成 demo 的规则或音调路径；旧章节作为独立协议回归与历史验收保留。本轮真实任务记录位于 `outputs/workbench/<job_id>/`，运行完成后的实测结论与旧 902/812 项结果分别记录。
+
 本手册用于复现模块、执行真实链路和记录交付证据；架构及失效规则见 [PIPELINE_ENGINEERING.md](PIPELINE_ENGINEERING.md)。所有命令从 repo 根目录执行，输出目录使用新的 run 标识，避免覆盖既有证据。
 
 **2026-11-15 当前回归：本机 902 passed in 29.29s；提交 `bc80347ebebec539f2ccd3a44affb2f5c25eece1` 的云端 Ubuntu / Python 3.10 与 3.13 两个矩阵均通过，[Actions run 43686548818](https://github.com/Tt200411/QuickCut/actions/runs/43686548818)。** F 已实现 macOS 剪映专业版 **6.1.0 / build 309** 四轨导出；v1 样例编辑保存重开与 v2 真实包搬迁安装、原生打开、成片导出的范围分别见 [F 导出说明](F-export.md)和 [F 实机验收记录](F-acceptance-20261115.md)。这些结果不代表其他编辑器版本、平台或完整产品质量已验收。
