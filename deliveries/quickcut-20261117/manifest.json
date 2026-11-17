@@ -6,7 +6,7 @@
   "excluded": [
     "Model weights, downloaded upstream source, Python virtual environments, Hugging Face caches",
     "Global editor preferences and unrelated user projects",
-    "Transient lock files and .DS_Store"
+    "Model runtime lock files and .DS_Store; native draft internal markers are preserved"
   ],
   "file_count": 1477,
   "total_bytes": 2875694139,

@@ -1,6 +1,6 @@
 # QuickCut MVP
 
-完整共享交付见 [2026-11-17 交付目录](deliveries/quickcut-20261117/README.md)：参考音频、男声成片、剪映工程、历史运行和验收证据均已纳入。克隆后运行 `git lfs pull` 下载媒体；模型权重按部署配置下载。
+完整共享交付见 [2026-11-17 交付目录](deliveries/quickcut-20261117/README.md)：参考音频、男声成片、剪映工程、现存历史运行和验收证据均已纳入。克隆后运行 `git lfs pull` 下载媒体；模型权重按部署配置下载。
 
 ## 本地网页工作台
 
@@ -47,7 +47,7 @@ python scripts/doctor_pipeline.py --require-media \
 
 IndexTTS2 使用 `IndexTeam/IndexTTS-2` 权重 `740dcaf`，通过 `python3 scripts/setup_indextts2.py` 安装到独立 Python 3.11 环境。准备参考 WAV 后，用 `scripts/indextts2_python.sh` 运行 E；doctor 和 demo 均支持 `--voice-config examples/voice_package/indextts2.config.json`。指定模型配置后，缺文件或推理失败会停止，不会回退系统语音。乡村真实链路默认选择 IndexTTS2，系统语音对照需显式传 `--system-voice`。具体命令和其他模块依赖见 [E 部署说明](docs/team/E-local-voice.md#indextts2-narration)。
 
-2026-11-13 的历史集成包含 A PR #4 `cf988d0a0e65dbd63c4174fae83bda77acf86723`、D #2 `38dcb8b`、E #1 `d1c6c95` 和 C #5 `620b24f`。该轮本地全量回归为 **812 passed in 35.50s，无 skip（macOS / Python 3.13.12）**；旧 A 环境的 805 项结果也仅作历史记录。原始证据保存在仓库外 `../outputs/QuickCut-engineering-final-20261113/`（未随 Git 提交）：supported/edit 10 秒成功，unsupported 10 秒退出 2、`needs_input`（A/E/D=1/0/0）；5 秒退出 2，`VOICE_NEEDS_RETIME` 指向 cue-03、owner D（A/E/D=1/1/0）。该轮 supported 预览实测 **10 秒、300 帧、全量解码通过**，输出 MP4 和独立 SRT，未烧字幕。详细报告索引见[验收手册](docs/team/ACCEPTANCE_RUNBOOK.md#54-最终本地证据索引2026-11-13)。当时远端 CI 尚未运行；这份历史记录不代表当前分支或云端 CI 结果。
+2026-11-13 的历史集成包含 A PR #4 `cf988d0a0e65dbd63c4174fae83bda77acf86723`、D #2 `38dcb8b`、E #1 `d1c6c95` 和 C #5 `620b24f`。该轮本地全量回归为 **812 passed in 35.50s，无 skip（macOS / Python 3.13.12）**；旧 A 环境的 805 项结果也仅作历史记录。当时的原始证据记录为仓库外 `../outputs/QuickCut-engineering-final-20261113/`（本次发布时该目录已不在本机，未能补入快照）：supported/edit 10 秒成功，unsupported 10 秒退出 2、`needs_input`（A/E/D=1/0/0）；5 秒退出 2，`VOICE_NEEDS_RETIME` 指向 cue-03、owner D（A/E/D=1/1/0）。该轮 supported 预览实测 **10 秒、300 帧、全量解码通过**，输出 MP4 和独立 SRT，未烧字幕。详细报告索引见[验收手册](docs/team/ACCEPTANCE_RUNBOOK.md#54-最终本地证据索引2026-11-13)。当时远端 CI 尚未运行；这份历史记录不代表当前分支或云端 CI 结果。
 
 proposal 第 1 页 BACKGROUND 的短片验收为约 5 分钟源 → **5–15 秒**；约 45 秒 opening 是愿景，下述旧 MVP 的 5–60 秒（Basic 默认 30 秒）与 18 秒协议 fixture 分别保留，不替代短片验收。
 
