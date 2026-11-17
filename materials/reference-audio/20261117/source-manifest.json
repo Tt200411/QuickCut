@@ -1,0 +1,63 @@
+{
+  "source": "user-provided ref_audio.zip",
+  "archive_sha256": "587e596da48c65828c2b1b227aebb0a7167db93c28fe37b72bc37b6fda58a6cd",
+  "files": [
+    {
+      "path": "inputs/reference-audio-20261116/魅力游移型女1.wav",
+      "sha256": "a44e2a19b3402b43bec9ee86c9cbbaf21f11ce4c0beaba1e19fa7a241fc949ec",
+      "bytes": 121814,
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "pcm_s16le",
+            "sample_rate": "24000",
+            "channels": 1
+          }
+        ],
+        "format": {
+          "duration": "2.536875"
+        }
+      }
+    },
+    {
+      "path": "inputs/reference-audio-20261116/老人女性3.wav",
+      "sha256": "fb26a72bf91810c776fe8aa55597d966e311c9cdd462f33930662cad87d71e15",
+      "bytes": 225494,
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "pcm_s16le",
+            "sample_rate": "24000",
+            "channels": 1
+          }
+        ],
+        "format": {
+          "duration": "4.696875"
+        }
+      }
+    },
+    {
+      "path": "inputs/reference-audio-20261116/男声.wav",
+      "sha256": "f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb",
+      "bytes": 159404,
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "pcm_s16le",
+            "sample_rate": "24000",
+            "channels": 1
+          }
+        ],
+        "format": {
+          "duration": "3.320000"
+        }
+      }
+    }
+  ]
+}

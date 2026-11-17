@@ -1,0 +1,12 @@
+{
+  "status": "needs_retime",
+  "code": "VOICE_NEEDS_RETIME",
+  "stage": "integration",
+  "project_id": "project-pipeline-demo",
+  "message": "E 返回 'needs_retime'，停止编排",
+  "retryable": false,
+  "affected_ids": [
+    "cue-03"
+  ],
+  "action_owner": "D"
+}

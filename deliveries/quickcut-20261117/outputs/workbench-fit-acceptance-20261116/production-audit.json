@@ -1,0 +1,92 @@
+{
+  "audited_at": "2026-11-16T13:17:24.118287+00:00",
+  "scope": "Current production workbench D/E/F wiring; read-only audit followed by authorized trace/cancellation fixes. No neural model execution for this audit.",
+  "primary_job": "ac91f60c01ca",
+  "production_backend_checks": [
+    {
+      "file": "quickcut/pipeline_worker.py",
+      "finding": "retrieve uses encoder_mode=openclip; no fixture/keyword/color production substitute"
+    },
+    {
+      "file": "quickcut/pipeline_worker.py",
+      "finding": "draft invokes generate_draft with local Qwen and evidence archive"
+    },
+    {
+      "file": "quickcut/pipeline_worker.py",
+      "finding": "voice requires engine=indextts2 and fixture=False; system fallback rejected"
+    },
+    {
+      "file": "quickcut/planning/production.py",
+      "finding": "confirmation replays frozen model selections with explicit confirmation_kind and inference_executed_during_confirmation=False; not falsely reported as fresh inference"
+    },
+    {
+      "file": "quickcut/integration.py",
+      "finding": "complete_voice_timeline validates actual complete WAVs and exact current revisions; fit replies retain request and Timeline input with final receipt"
+    }
+  ],
+  "findings": [
+    {
+      "id": "revision-editor",
+      "severity": "P1",
+      "problem": "Subsequent render could reopen previously installed draft",
+      "status": "fixed_by_parent",
+      "resolution": "open_editor binds installation to export revision/package/ref and installs unique revision name"
+    },
+    {
+      "id": "attempt-trace-overwrite",
+      "severity": "P2",
+      "problem": "Retry replaced approval/boundaries/request/fit-rounds, losing prior failed pending evidence",
+      "status": "fixed",
+      "resolution": "revisions/rN archive and fit_observer persist pending before dispatch, replies/states and errors; immutable prior attempts; top-level current aliases preserved"
+    },
+    {
+      "id": "fit-cancel-classification",
+      "severity": "P2",
+      "problem": "Provider CANCELLED wrapped as VOICE_PROVIDER_FAILED",
+      "status": "fixed",
+      "resolution": "CANCELLED preserved with cancelled round and interrupted job"
+    },
+    {
+      "id": "restart-review-resume",
+      "severity": "P2",
+      "problem": "First E-stage restart lost can_review despite completed draft",
+      "status": "fixed_by_parent",
+      "resolution": "Jobs startup recovers review eligibility for completed draft at E/D/F/review stages"
+    },
+    {
+      "id": "approval-label",
+      "severity": "P2",
+      "problem": "human_approval field also described assistant_review",
+      "status": "fixed_by_parent",
+      "resolution": "approval plus confirmation_kind retained in run report"
+    },
+    {
+      "id": "webm-duration",
+      "severity": "P1",
+      "problem": "Primary F rejected WebM stream duration N/A",
+      "status": "handled_by_parallel_media_agent",
+      "resolution": "Parent owns final media-bounds evidence and primary rerun"
+    },
+    {
+      "id": "subtitle-placement",
+      "severity": "P2",
+      "problem": "New subtitles overlapped burned-in source captions; initial top style used centered libass alignment",
+      "status": "handled_by_parallel_media_agent",
+      "resolution": "Top/bottom setting; alignment corrected to 6 and media agent reports 134 targeted tests passed; render archives original D output and presentation transformation hashes"
+    }
+  ],
+  "validation": {
+    "archive_observer_cancel_workbench_group": "56 passed before later media additions",
+    "combined_run": "295 passed, 1 top-caption test failure from concurrent pre-fix media implementation; parallel agent subsequently confirmed 134 media tests passed",
+    "real_cached_fit": "report.json: passed, all three real caches hit, one actual atempo, no neural attempts, torch not imported, source file hashes unchanged"
+  },
+  "remaining_scope": "Primary r2 real HTML UI/F/export/editor and subjective listening acceptance remain parent-owned; cache-fit copy only passes waveform/hash and D/E/F contract checks.",
+  "code_sha256": {
+    "quickcut/production_pipeline.py": "2578be3620245ee553c9cc4ac50bee2470ae4a10eab94e69445e299694586f97",
+    "quickcut/workbench.py": "9655086418342649b64f74061c4556f80c533ae35139eb3bf3dce822127d9d54",
+    "quickcut/integration.py": "75847e0508b27a37e3314269d739bd92bec79288def800c2000866f0e3ab7b8b",
+    "quickcut/retiming.py": "43b03481add9221854156464ddc6940718cc6f781be5a1c4a11bda93b7eebf98",
+    "quickcut/pipeline_worker.py": "7928270d0a6138b387686e66a91f07abca57998f664b380041cc50914092310f",
+    "quickcut/timeline_preview.py": "24f07a1aee8867eb8487b64a82614882adfbea7c4e4c8f44f0541b687fd23eac"
+  }
+}

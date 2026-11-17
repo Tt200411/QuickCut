@@ -1,0 +1,383 @@
+{
+  "job_id": "1c1bb824f8a9",
+  "created_at": "2026-11-16T13:33:28.646411+00:00",
+  "updated_at": "2026-11-16T13:52:26.345966+00:00",
+  "status": "completed",
+  "prompt": "以山林小路和开阔风景为主题，剪一段自然宁静的散步短片。开场展示山林或步道，中段展现道路和自然风景，最后以暖色风景收尾。中文旁白每句简短，不虚构人物经历。",
+  "duration": 30.0,
+  "file_names": [
+    "long-01-mandarin-park-guide.webm",
+    "short-01-trail-back-view.mp4",
+    "broll-02-countryside-aerial.mp4",
+    "long-02-countryside-sunset.mp4"
+  ],
+  "events": [
+    {
+      "at": "2026-11-16T13:33:28.657959+00:00",
+      "stage": "preflight",
+      "message": "检查真实模型与运行环境"
+    },
+    {
+      "at": "2026-11-16T13:33:29.522718+00:00",
+      "stage": "A",
+      "message": "分析真实视频、抽帧并识别原声"
+    },
+    {
+      "at": "2026-11-16T13:34:43.002041+00:00",
+      "stage": "ingest",
+      "message": "完成，用时 73.5 秒"
+    },
+    {
+      "at": "2026-11-16T13:34:43.002548+00:00",
+      "stage": "B",
+      "message": "用真实中文视觉模型检索镜头"
+    },
+    {
+      "at": "2026-11-16T13:35:03.034083+00:00",
+      "stage": "retrieve",
+      "message": "完成，用时 20.0 秒"
+    },
+    {
+      "at": "2026-11-16T13:35:03.034756+00:00",
+      "stage": "C",
+      "message": "Qwen 正在查看候选画面、选择镜头并起草旁白"
+    },
+    {
+      "at": "2026-11-16T13:39:04.958207+00:00",
+      "stage": "preflight",
+      "message": "检查真实模型与运行环境"
+    },
+    {
+      "at": "2026-11-16T13:39:05.969789+00:00",
+      "stage": "A",
+      "message": "分析真实视频、抽帧并识别原声"
+    },
+    {
+      "at": "2026-11-16T13:39:07.056809+00:00",
+      "stage": "ingest",
+      "message": "完成，用时 1.1 秒"
+    },
+    {
+      "at": "2026-11-16T13:39:07.057294+00:00",
+      "stage": "B",
+      "message": "用真实中文视觉模型检索镜头"
+    },
+    {
+      "at": "2026-11-16T13:39:07.058744+00:00",
+      "stage": "B",
+      "message": "素材和实现指纹一致，复用此前真实模型检索结果"
+    },
+    {
+      "at": "2026-11-16T13:39:07.059197+00:00",
+      "stage": "C",
+      "message": "Qwen 正在查看候选画面、选择镜头并起草旁白"
+    },
+    {
+      "at": "2026-11-16T13:46:34.734924+00:00",
+      "stage": "preflight",
+      "message": "检查真实模型与运行环境"
+    },
+    {
+      "at": "2026-11-16T13:46:35.539197+00:00",
+      "stage": "A",
+      "message": "分析真实视频、抽帧并识别原声"
+    },
+    {
+      "at": "2026-11-16T13:46:36.631134+00:00",
+      "stage": "ingest",
+      "message": "完成，用时 1.1 秒"
+    },
+    {
+      "at": "2026-11-16T13:46:36.631638+00:00",
+      "stage": "B",
+      "message": "用真实中文视觉模型检索镜头"
+    },
+    {
+      "at": "2026-11-16T13:46:36.634871+00:00",
+      "stage": "B",
+      "message": "素材和实现指纹一致，复用此前真实模型检索结果"
+    },
+    {
+      "at": "2026-11-16T13:46:36.635249+00:00",
+      "stage": "C",
+      "message": "Qwen 正在查看候选画面、选择镜头并起草旁白"
+    },
+    {
+      "at": "2026-11-16T13:50:10.270361+00:00",
+      "stage": "E",
+      "message": "IndexTTS2 正在用参考音频生成真实旁白"
+    },
+    {
+      "at": "2026-11-16T13:52:06.247833+00:00",
+      "stage": "voice",
+      "message": "完成，用时 116.0 秒"
+    },
+    {
+      "at": "2026-11-16T13:52:06.251486+00:00",
+      "stage": "D",
+      "message": "对齐画面、原声、旁白和字幕"
+    },
+    {
+      "at": "2026-11-16T13:52:06.285139+00:00",
+      "stage": "F",
+      "message": "渲染剪辑视频并打包可编辑剪映工程"
+    },
+    {
+      "at": "2026-11-16T13:52:26.110256+00:00",
+      "stage": "completed",
+      "message": "视频与工程已保存"
+    }
+  ],
+  "message": "剪辑视频与剪映工程已生成",
+  "stage": "completed",
+  "error": null,
+  "can_review": false,
+  "selection_overrides": {
+    "beat-open": [
+      "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+      "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000"
+    ],
+    "beat-middle": [
+      "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+      "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000"
+    ],
+    "beat-close": [
+      "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000"
+    ]
+  },
+  "draft_text_edits": {
+    "beat-open": "沿着林间小路，走进清新的绿意。",
+    "beat-middle": "云雾掠过山头，草木在风中舒展，让脚步慢下来。",
+    "beat-close": "把宁静留在风景里。"
+  },
+  "draft_boundary_edits": {
+    "beat-open": {
+      "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000": {
+        "begin": 0,
+        "end": 5000000
+      },
+      "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000": {
+        "begin": 65000000,
+        "end": 70000000
+      }
+    },
+    "beat-middle": {
+      "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000": {
+        "begin": 94000000,
+        "end": 101500000
+      },
+      "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000": {
+        "begin": 45000000,
+        "end": 52500000
+      }
+    },
+    "beat-close": {
+      "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000": {
+        "begin": 35000000,
+        "end": 40000000
+      }
+    }
+  },
+  "draft_edits_for": "8dfa8632acb57c32",
+  "last_confirmation": {
+    "draft_id": "8dfa8632acb57c32",
+    "reviewer": "Codex 自动验收（用户授权）",
+    "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+    "confirmation_kind": "assistant_review",
+    "approved_text_by_beat": {
+      "beat-open": "沿着林间小路，走进清新的绿意。",
+      "beat-middle": "云雾掠过山头，草木在风中舒展，让脚步慢下来。",
+      "beat-close": "把宁静留在风景里。"
+    },
+    "boundaries": [
+      {
+        "beat_id": "beat-open",
+        "shot_index": 0,
+        "candidate_id": "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+        "segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+        "source_range_us": {
+          "begin": 0,
+          "end": 5000000
+        },
+        "method": "manual",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reason": "助手验收核对真实画面后的源视频入出点"
+      },
+      {
+        "beat_id": "beat-open",
+        "shot_index": 1,
+        "candidate_id": "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+        "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+        "source_range_us": {
+          "begin": 65000000,
+          "end": 70000000
+        },
+        "method": "manual",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reason": "助手验收核对真实画面后的源视频入出点"
+      },
+      {
+        "beat_id": "beat-middle",
+        "shot_index": 0,
+        "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+        "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+        "source_range_us": {
+          "begin": 94000000,
+          "end": 101500000
+        },
+        "method": "manual",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reason": "助手验收核对真实画面后的源视频入出点"
+      },
+      {
+        "beat_id": "beat-middle",
+        "shot_index": 1,
+        "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+        "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+        "source_range_us": {
+          "begin": 45000000,
+          "end": 52500000
+        },
+        "method": "manual",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reason": "助手验收核对真实画面后的源视频入出点"
+      },
+      {
+        "beat_id": "beat-close",
+        "shot_index": 0,
+        "candidate_id": "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+        "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+        "source_range_us": {
+          "begin": 35000000,
+          "end": 40000000
+        },
+        "method": "manual",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reason": "助手验收核对真实画面后的源视频入出点"
+      }
+    ],
+    "revision": 1,
+    "selection_overrides": {
+      "beat-open": [
+        "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+        "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000"
+      ],
+      "beat-middle": [
+        "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+        "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000"
+      ],
+      "beat-close": [
+        "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000"
+      ]
+    }
+  },
+  "review_revision": 4,
+  "render_attempt": 1,
+  "result": {
+    "status": "completed",
+    "completed_at": "2026-11-16T13:52:26.093507+00:00",
+    "fixtures_only": false,
+    "models": {
+      "ASR": "faster-whisper/small",
+      "B": {
+        "config": {
+          "encoder_mode": "openclip",
+          "transcript_weight": 0.35,
+          "description_weight": 0.65,
+          "low_confidence_threshold": 0.22,
+          "minimum_ranking_score": 0.12,
+          "dedup_by_content_hash": true
+        },
+        "input_fingerprints": {
+          "AssetManifest": "sha256:ede54a3c82b58e552afdb92bde6bee21e6b16bd2ce712d11a523e9cbf4c0a226",
+          "RetrievalRequest": "sha256:229153ef064f6a2670aebf2f2437fc6d726ae83d2a3b55968b2460b1682153e5"
+        },
+        "implementation_fingerprints": {
+          "retrieval.py": "sha256:82c8a06a8617a1349571988db8f707b65a317969e3303a32b10c0339a8c3fd99",
+          "encoder.py": "sha256:718ae7811fcdcd3f7c3a6a048888633968b198c2cbd77164deedecbdcedcc8f3"
+        },
+        "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+        "encoder": {
+          "encoder": "openclip",
+          "model": "nllb-clip-base",
+          "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+          "dimension": 512,
+          "visual_score": "cosine",
+          "calibrated": false,
+          "model_revision": "f16398ba58d1d5cff27450ce2fe971b087969444",
+          "checkpoint_sha256": "sha256:55f4101efcb112643c0b62e650dd891dbf7f0b944a587bfd2e2c8e27663f098f",
+          "text_model": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--facebook--nllb-200-distilled-600M/snapshots/f8d333a098d19b4fd9a8b18f94170487ad3f821d",
+          "device": "cpu"
+        },
+        "dedup_by_content_hash": true,
+        "duration_budget_us_applied_as_filter": false,
+        "tag_labels": {
+          "scene": [
+            "小路",
+            "树林",
+            "田野",
+            "夕阳风景",
+            "室内"
+          ],
+          "emotion": [
+            "平静",
+            "温暖",
+            "紧张"
+          ],
+          "light": [
+            "日光",
+            "暖色光线",
+            "阴天"
+          ],
+          "motion": [
+            "人物步行",
+            "航拍",
+            "固定镜头"
+          ]
+        },
+        "tag_method": "openclip-zero-shot"
+      },
+      "C": "qwen2.5vl:3b",
+      "E": {
+        "engine": "indextts2",
+        "version": "2.0.0",
+        "model": "IndexTeam/IndexTTS-2",
+        "model_revision": "740dcaf",
+        "voice": "reference-audio",
+        "reference_sha256": "f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb",
+        "language": "zh-CN",
+        "device": "mps",
+        "seed": 42,
+        "local": true,
+        "emotion_supported": false
+      }
+    },
+    "timeline": {
+      "kind": "EditTimeline",
+      "document_id": "timeline-project-1c1bb824f8a9",
+      "revision": 1
+    },
+    "duration_us": 30000000,
+    "export": {
+      "kind": "ExportManifest",
+      "document_id": "export-E680DE52-F880-48B5-83D5-21E589B2ACBD",
+      "revision": 1
+    },
+    "files": {
+      "video": "export-r1/preview.mp4",
+      "package": "QuickCut-project-r1.zip"
+    },
+    "package_directory": "export-r1",
+    "revision": 1,
+    "editor": {
+      "status": "opened",
+      "draft_name": "QuickCut-1c1bb824f8a9-r1",
+      "draft_directory": "/Users/tangbao/Movies/JianyingPro/User Data/Projects/com.lveditor.draft/QuickCut-1c1bb824f8a9-r1",
+      "message": "剪映已启动，请在草稿列表打开 QuickCut-1c1bb824f8a9-r1",
+      "editor_import_verified": false
+    },
+    "approval": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/1c1bb824f8a9/revisions/r1/approval.json",
+    "confirmation_kind": "assistant_review",
+    "revision_archive": "revisions/r1"
+  }
+}

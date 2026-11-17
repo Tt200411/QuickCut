@@ -1,0 +1,51 @@
+{
+  "kind": "VoiceFitRequest",
+  "schema_version": "0.1.0",
+  "owner": "D",
+  "project_id": "project-ac91f60c01ca",
+  "story_plan": {
+    "kind": "StoryPlan",
+    "document_id": "story-cd68452eea5694ee",
+    "revision": 1
+  },
+  "story_content_hash": "sha256:05ef01ffd19b1a2a8aa14f750fe74b3af3ee16db07b3db0691332063e6dd6ba6",
+  "timeline": {
+    "kind": "EditTimeline",
+    "document_id": "timeline-cache-fit-acceptance-pending-fit",
+    "revision": 1
+  },
+  "timeline_content_hash": "sha256:1eed6436b71da3ce04fecfb4e6a272b72e36803e1785d2329c7ec9a2da2cfc3a",
+  "manifest_content_hash": "sha256:9f74033cc1532d2ecfe2fe9914fdbf3bb9d5daf3d5d6c1d2fc1bd111a942407a",
+  "brief_content_hash": "sha256:9678a00b47d41343e8424fc539ad8f6d21482136c873411b23788c8e0511acde",
+  "boundaries_hash": "sha256:7d9b4e3b977ddc607a7cc11b74de6698b4249a89f8213516e173c722de738d1b",
+  "measured_voice": {
+    "kind": "VoicePackage",
+    "document_id": "voice-story-cd68452eea5694ee",
+    "revision": 1
+  },
+  "measured_voice_content_hash": "sha256:10afdd6cefdd84b26545bb038167b1cfc47ef4e248df1acc9525ab701af3286b",
+  "expected_voice": {
+    "kind": "VoicePackage",
+    "document_id": "voice-story-cd68452eea5694ee",
+    "revision": 2
+  },
+  "voice_revision": 2,
+  "iteration": 1,
+  "max_iterations": 2,
+  "previous_request_id": null,
+  "cue_ranges": {
+    "cue-01": {
+      "begin": 200000,
+      "end": 4833521
+    },
+    "cue-02": {
+      "begin": 10200000,
+      "end": 16368625
+    },
+    "cue-03": {
+      "begin": 25000000,
+      "end": 27427974
+    }
+  },
+  "request_id": "voice-fit-99b5d4714fc699bdb1d769df6629b8100292299763969f44935c1f0c049e61c4"
+}

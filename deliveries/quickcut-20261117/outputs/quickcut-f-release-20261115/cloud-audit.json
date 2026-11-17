@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "head": "bc80347ebebec539f2ccd3a44affb2f5c25eece1",
+  "clone": "/private/tmp/quickcut-cloud-audit.U67vTx/QuickCut",
+  "lfs_cache": "/private/tmp/quickcut-cloud-audit.U67vTx/lfs-cache",
+  "lfs_tracked_paths": 21,
+  "lfs_unique_objects": 15,
+  "asset_originals_verified": 6,
+  "proxy_videos_verified": 6,
+  "derived_hashes_verified": 42,
+  "narration_hashes_and_complete_wav_verified": 3,
+  "frozen_document_refs_verified": 14,
+  "json_files_parsed": 33,
+  "project_relative_files_resolved": 54,
+  "frozen_inputs_production_valid": true,
+  "working_tree_clean": true
+}

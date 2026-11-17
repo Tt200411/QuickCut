@@ -1,0 +1,56 @@
+{
+  "iteration": 1,
+  "max_iterations": 3,
+  "rows": [
+    {
+      "beat_id": "beat-open",
+      "primary_candidate_ids": [],
+      "external_candidate_ids": [
+        "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-15000000-30000000",
+        "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+        "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+        "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+        "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+        "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-15000000-30000000"
+      ],
+      "broll_only": true,
+      "support": "supported",
+      "reason": "主题画面可用；不证明用户具体经历",
+      "expression_rewrite": null
+    },
+    {
+      "beat_id": "beat-middle",
+      "primary_candidate_ids": [],
+      "external_candidate_ids": [
+        "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-15000000-30000000",
+        "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+        "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+        "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+        "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+        "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-0-15000000"
+      ],
+      "broll_only": true,
+      "support": "supported",
+      "reason": "主题画面可用；不证明用户具体经历",
+      "expression_rewrite": null
+    },
+    {
+      "beat_id": "beat-close",
+      "primary_candidate_ids": [],
+      "external_candidate_ids": [
+        "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-105000000-113313000",
+        "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-0-15000000",
+        "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-75000000-90000000",
+        "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+        "candidate-query-close-atmosphere-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+        "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+        "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000"
+      ],
+      "broll_only": true,
+      "support": "supported",
+      "reason": "主题画面可用；不证明用户具体经历",
+      "expression_rewrite": null
+    }
+  ],
+  "next_request": null
+}

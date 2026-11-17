@@ -1,0 +1,56 @@
+[
+  {
+    "file": "review-evidence/native-export-initial.mov",
+    "sha256": "f8a5ac5cac718530f329243003cd9db1644cbf6308c54b7f604faf03623e20ef",
+    "full_decode_verified": true,
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "44100",
+          "channels": 2
+        }
+      ],
+      "format": {
+        "duration": "30.000000",
+        "size": "45475787"
+      }
+    }
+  },
+  {
+    "file": "review-evidence/native-export-reopened.mov",
+    "sha256": "cc2fe5b4092df2ef56b2f0c44c0a491dc67e407fcb6c12d9283bdd96a30a21f0",
+    "full_decode_verified": true,
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "44100",
+          "channels": 2
+        }
+      ],
+      "format": {
+        "duration": "30.000000",
+        "size": "45385451"
+      }
+    }
+  }
+]

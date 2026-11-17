@@ -1,0 +1,272 @@
+{
+  "job_id": "ac91f60c01ca",
+  "created_at": "2026-11-16T11:58:48.788539+00:00",
+  "updated_at": "2026-11-16T13:05:45.841589+00:00",
+  "status": "failed",
+  "prompt": "以山林小路和开阔风景为主题，剪一段自然宁静的散步短片。开场展示山林或步道，中段展现道路和自然风景，最后以暖色风景收尾。中文旁白每句简短，不虚构人物经历。",
+  "duration": 30.0,
+  "file_names": [
+    "long-01-mandarin-park-guide.webm",
+    "short-01-trail-back-view.mp4",
+    "broll-02-countryside-aerial.mp4",
+    "long-02-countryside-sunset.mp4"
+  ],
+  "events": [
+    {
+      "at": "2026-11-16T11:58:48.793718+00:00",
+      "stage": "preflight",
+      "message": "检查真实模型与运行环境"
+    },
+    {
+      "at": "2026-11-16T11:58:49.742581+00:00",
+      "stage": "A",
+      "message": "分析真实视频、抽帧并识别原声"
+    },
+    {
+      "at": "2026-11-16T12:00:00.970063+00:00",
+      "stage": "ingest",
+      "message": "完成，用时 71.2 秒"
+    },
+    {
+      "at": "2026-11-16T12:00:00.970745+00:00",
+      "stage": "B",
+      "message": "用真实中文视觉模型检索镜头"
+    },
+    {
+      "at": "2026-11-16T12:00:21.470675+00:00",
+      "stage": "retrieve",
+      "message": "完成，用时 20.5 秒"
+    },
+    {
+      "at": "2026-11-16T12:00:21.471191+00:00",
+      "stage": "C",
+      "message": "Qwen 正在查看候选画面、选择镜头并起草旁白"
+    },
+    {
+      "at": "2026-11-16T12:04:42.868202+00:00",
+      "stage": "preflight",
+      "message": "检查真实模型与运行环境"
+    },
+    {
+      "at": "2026-11-16T12:04:43.730063+00:00",
+      "stage": "A",
+      "message": "分析真实视频、抽帧并识别原声"
+    },
+    {
+      "at": "2026-11-16T12:04:44.826173+00:00",
+      "stage": "ingest",
+      "message": "完成，用时 1.1 秒"
+    },
+    {
+      "at": "2026-11-16T12:04:44.826775+00:00",
+      "stage": "B",
+      "message": "用真实中文视觉模型检索镜头"
+    },
+    {
+      "at": "2026-11-16T12:04:44.829856+00:00",
+      "stage": "B",
+      "message": "素材和实现指纹一致，复用此前真实模型检索结果"
+    },
+    {
+      "at": "2026-11-16T12:04:44.830290+00:00",
+      "stage": "C",
+      "message": "Qwen 正在查看候选画面、选择镜头并起草旁白"
+    },
+    {
+      "at": "2026-11-16T12:10:03.304567+00:00",
+      "stage": "preflight",
+      "message": "检查真实模型与运行环境"
+    },
+    {
+      "at": "2026-11-16T12:10:04.151132+00:00",
+      "stage": "A",
+      "message": "分析真实视频、抽帧并识别原声"
+    },
+    {
+      "at": "2026-11-16T12:10:05.301937+00:00",
+      "stage": "ingest",
+      "message": "完成，用时 1.2 秒"
+    },
+    {
+      "at": "2026-11-16T12:10:05.302558+00:00",
+      "stage": "B",
+      "message": "用真实中文视觉模型检索镜头"
+    },
+    {
+      "at": "2026-11-16T12:10:05.305342+00:00",
+      "stage": "B",
+      "message": "素材和实现指纹一致，复用此前真实模型检索结果"
+    },
+    {
+      "at": "2026-11-16T12:10:05.305762+00:00",
+      "stage": "C",
+      "message": "Qwen 正在查看候选画面、选择镜头并起草旁白"
+    },
+    {
+      "at": "2026-11-16T12:52:34.429391+00:00",
+      "stage": "preflight",
+      "message": "检查真实模型与运行环境"
+    },
+    {
+      "at": "2026-11-16T12:52:35.343047+00:00",
+      "stage": "A",
+      "message": "分析真实视频、抽帧并识别原声"
+    },
+    {
+      "at": "2026-11-16T12:52:36.548439+00:00",
+      "stage": "ingest",
+      "message": "完成，用时 1.2 秒"
+    },
+    {
+      "at": "2026-11-16T12:52:36.549044+00:00",
+      "stage": "B",
+      "message": "用真实中文视觉模型检索镜头"
+    },
+    {
+      "at": "2026-11-16T12:52:36.552794+00:00",
+      "stage": "B",
+      "message": "素材和实现指纹一致，复用此前真实模型检索结果"
+    },
+    {
+      "at": "2026-11-16T12:52:36.553297+00:00",
+      "stage": "C",
+      "message": "Qwen 正在查看候选画面、选择镜头并起草旁白"
+    },
+    {
+      "at": "2026-11-16T13:02:43.274681+00:00",
+      "stage": "E",
+      "message": "IndexTTS2 正在用参考音频生成真实旁白"
+    },
+    {
+      "at": "2026-11-16T13:05:42.862661+00:00",
+      "stage": "voice",
+      "message": "完成，用时 179.6 秒"
+    },
+    {
+      "at": "2026-11-16T13:05:42.882266+00:00",
+      "stage": "D",
+      "message": "对齐画面、原声、旁白和字幕"
+    },
+    {
+      "at": "2026-11-16T13:05:42.921983+00:00",
+      "stage": "F",
+      "message": "渲染剪辑视频并打包可编辑剪映工程"
+    }
+  ],
+  "message": "asset-72abd30fcd284c44aa0a99b87bde0370: ffprobe 未能测量流时长",
+  "stage": "F",
+  "error": {
+    "code": "MEDIA_UNREADABLE",
+    "message": "asset-72abd30fcd284c44aa0a99b87bde0370: ffprobe 未能测量流时长",
+    "stage": "F",
+    "detail": null
+  },
+  "can_review": true,
+  "selection_overrides": {
+    "beat-open": [
+      "candidate-query-open-asset-5c2707d91a914133a755b964b99ed932-r1-shot-0-15000000",
+      "candidate-query-open-asset-72abd30fcd284c44aa0a99b87bde0370-r1-shot-60000000-75000000"
+    ],
+    "beat-middle": [
+      "candidate-query-middle-asset-72abd30fcd284c44aa0a99b87bde0370-r1-shot-90000000-105000000",
+      "candidate-query-middle-asset-72abd30fcd284c44aa0a99b87bde0370-r1-shot-45000000-60000000"
+    ],
+    "beat-close": [
+      "candidate-query-close-asset-72abd30fcd284c44aa0a99b87bde0370-r1-shot-30000000-45000000"
+    ]
+  },
+  "draft_text_edits": {
+    "beat-open": "沿着林间小路，走进清新的绿意。",
+    "beat-middle": "云雾掠过山头，草木在风中舒展，让脚步慢下来。",
+    "beat-close": "把宁静留在风景里。"
+  },
+  "last_confirmation": {
+    "draft_id": "cd68452eea5694ee",
+    "reviewer": "Codex 自动验收（用户授权）",
+    "reviewed_at": "2026-11-16T13:02:43.233284+00:00",
+    "confirmation_kind": "assistant_review",
+    "approved_text_by_beat": {
+      "beat-open": "沿着林间小路，走进清新的绿意。",
+      "beat-middle": "云雾掠过山头，草木在风中舒展，让脚步慢下来。",
+      "beat-close": "把宁静留在风景里。"
+    },
+    "boundaries": [
+      {
+        "beat_id": "beat-open",
+        "shot_index": 0,
+        "segment_id": "asset-5c2707d91a914133a755b964b99ed932-r1-shot-0-15000000",
+        "source_range_us": {
+          "begin": 0,
+          "end": 5000000
+        },
+        "method": "manual",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reason": "助手验收核对真实画面后的源视频入出点"
+      },
+      {
+        "beat_id": "beat-open",
+        "shot_index": 1,
+        "segment_id": "asset-72abd30fcd284c44aa0a99b87bde0370-r1-shot-60000000-75000000",
+        "source_range_us": {
+          "begin": 65000000,
+          "end": 70000000
+        },
+        "method": "manual",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reason": "助手验收核对真实画面后的源视频入出点"
+      },
+      {
+        "beat_id": "beat-middle",
+        "shot_index": 0,
+        "segment_id": "asset-72abd30fcd284c44aa0a99b87bde0370-r1-shot-90000000-105000000",
+        "source_range_us": {
+          "begin": 94000000,
+          "end": 101500000
+        },
+        "method": "manual",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reason": "助手验收核对真实画面后的源视频入出点"
+      },
+      {
+        "beat_id": "beat-middle",
+        "shot_index": 1,
+        "segment_id": "asset-72abd30fcd284c44aa0a99b87bde0370-r1-shot-45000000-60000000",
+        "source_range_us": {
+          "begin": 45000000,
+          "end": 52500000
+        },
+        "method": "manual",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reason": "助手验收核对真实画面后的源视频入出点"
+      },
+      {
+        "beat_id": "beat-close",
+        "shot_index": 0,
+        "segment_id": "asset-72abd30fcd284c44aa0a99b87bde0370-r1-shot-30000000-45000000",
+        "source_range_us": {
+          "begin": 35000000,
+          "end": 40000000
+        },
+        "method": "manual",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reason": "助手验收核对真实画面后的源视频入出点"
+      }
+    ],
+    "revision": 1,
+    "selection_overrides": {
+      "beat-open": [
+        "candidate-query-open-asset-5c2707d91a914133a755b964b99ed932-r1-shot-0-15000000",
+        "candidate-query-open-asset-72abd30fcd284c44aa0a99b87bde0370-r1-shot-60000000-75000000"
+      ],
+      "beat-middle": [
+        "candidate-query-middle-asset-72abd30fcd284c44aa0a99b87bde0370-r1-shot-90000000-105000000",
+        "candidate-query-middle-asset-72abd30fcd284c44aa0a99b87bde0370-r1-shot-45000000-60000000"
+      ],
+      "beat-close": [
+        "candidate-query-close-asset-72abd30fcd284c44aa0a99b87bde0370-r1-shot-30000000-45000000"
+      ]
+    }
+  },
+  "review_revision": 2,
+  "render_attempt": 1
+}

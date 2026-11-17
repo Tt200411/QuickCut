@@ -1,0 +1,120 @@
+{
+  "source_root": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca",
+  "scope": "Real IndexTTS measured PCM reused from cache, real FFmpeg atempo, isolated D/E/F-contract acceptance",
+  "source_measured_ref": {
+    "kind": "VoicePackage",
+    "document_id": "voice-story-cd68452eea5694ee",
+    "revision": 1
+  },
+  "source_measured_hash": "sha256:10afdd6cefdd84b26545bb038167b1cfc47ef4e248df1acc9525ab701af3286b",
+  "approved_story_ref": {
+    "kind": "StoryPlan",
+    "document_id": "story-cd68452eea5694ee",
+    "revision": 1
+  },
+  "approved_story_hash": "sha256:05ef01ffd19b1a2a8aa14f750fe74b3af3ee16db07b3db0691332063e6dd6ba6",
+  "boundary_change": {
+    "beat_id": "beat-close",
+    "cue_id": "cue-03",
+    "before": {
+      "begin": 35000000,
+      "end": 40000000
+    },
+    "after": {
+      "begin": 35000000,
+      "end": 37427974
+    },
+    "requested_tempo_approx": 1.08
+  },
+  "fixtures_only": false,
+  "neural_inference_permitted": false,
+  "listening_acceptance": "not_run",
+  "status": "passed",
+  "fit_round_count": 1,
+  "f_contract_validation": "passed",
+  "cues": [
+    {
+      "cue_id": "cue-01",
+      "text": "沿着林间小路，走进清新的绿意。",
+      "cache_hit": true,
+      "duration_us": 4633521,
+      "raw_duration_us": 4453521,
+      "speech_end_us": 4453521,
+      "sentence_pause_us": 180000,
+      "duration_budget_us": 4633521,
+      "tempo_ratio": 1.0,
+      "fit_status": "fits"
+    },
+    {
+      "cue_id": "cue-02",
+      "text": "云雾掠过山头，草木在风中舒展，让脚步慢下来。",
+      "cache_hit": true,
+      "duration_us": 6168625,
+      "raw_duration_us": 5988625,
+      "speech_end_us": 5988625,
+      "sentence_pause_us": 180000,
+      "duration_budget_us": 6168625,
+      "tempo_ratio": 1.0,
+      "fit_status": "fits"
+    },
+    {
+      "cue_id": "cue-03",
+      "text": "把宁静留在风景里。",
+      "cache_hit": true,
+      "duration_us": 2419062,
+      "raw_duration_us": 2427812,
+      "speech_end_us": 2239062,
+      "sentence_pause_us": 180000,
+      "duration_budget_us": 2427974,
+      "tempo_ratio": 1.0800000355876003,
+      "fit_status": "fits"
+    }
+  ],
+  "accepted_timeline_ref": {
+    "kind": "EditTimeline",
+    "document_id": "timeline-cache-fit-acceptance",
+    "revision": 1
+  },
+  "accepted_timeline_hash": "sha256:3bd2ba414bd1f199df72d813cb68532752f45630b9da2f9d806d202c5c015751",
+  "neural_inference_attempts": 0,
+  "actual_atempo_commands": [
+    [
+      "ffmpeg",
+      "-v",
+      "error",
+      "-i",
+      "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench-fit-acceptance-20261116/project/audio/cache/3eccf468ba26caedfcadbdc89e04aeeeb9ee1ed64c90b225bfc94a284961c19f.wav",
+      "-af",
+      "atempo=1.080000036",
+      "-c:a",
+      "pcm_s16le",
+      "-y",
+      "/var/folders/5g/6f6q96j97dj59qkx98c9j0m80000gn/T/tmput1c5ey8/fitted.wav"
+    ]
+  ],
+  "source_file_hashes": {
+    "brief.json": "sha256:a2455f03687fd2a078fe50529de253b7d92235060a7666934ccdba965320a25e",
+    "asset-manifest.json": "sha256:e35dbcf7edc95c5f798ac8dee8183fcb260ca2674e8eb737d1be3651de6b6a4b",
+    "candidate-set.json": "sha256:d60ffc7eeacbf0d508d71547f42d698719ebdb193beb79f06881c7cd24cb4e32",
+    "retrieval-request.json": "sha256:5ffe615d6e1a7b925267785db5f2ca37b77344f9e12b15ec71e722f842a5dbb6",
+    "story-plan.json": "sha256:acb5ed6fea9360094942485d26f18b3a953c884b18e12f5a28a53311278a6a6b",
+    "alignment.json": "sha256:f5708c8e2dabf9adffa1fb9055949f1470e76e65c3d51ed5fb5fee4edbfe610e",
+    "planning-run.json": "sha256:9d7eb373eabe5f0f3783176889158b888cb0e4e94aa36d336a57a2454ee80ca1",
+    "boundaries.json": "sha256:270cc01ad690bbad28290f95698e1394aa8dfccea1157670438c53481bf70056",
+    "approval.json": "sha256:9b1b7de3e9f535569384fcb284cee11e59e87558f020b2d7761ece471543891b",
+    "voice-measured-r1.json": "sha256:83d61f77b3ddcf2de54543a645f6ca00368417d3f7fdd6ffd9988dda9346e127",
+    "audio/narration/40fe21c6e78a53047e07039102e9c44ecf7dc3505e8edb1daf12bb0c35879518.wav": "sha256:b4d4cdde203cc89ea1e12373b75a13ed88a039808490e42dd2b45460b2938a5b",
+    "audio/narration/0af02f72921e0245cbe0558c27b5b830cc9ddf0f90d8eda3e2508f667936685f.wav": "sha256:caa1189e4fedc7aae46fe3e4921c3838ad34e28f1fc0a5ff873845d5129eca8b",
+    "audio/narration/69e54a8b07956f0d6addddfb0e57c73d2d6d28d906fbe68e6e840905269be42f.wav": "sha256:4a619e05ae4bd766c668815982a5417e1af797404325401cd7c44a1d3d777d13",
+    "audio/cache/083d4e4dceeaa42d88248afc17f8cfff523673f6738a81d812dc78d4e373d7ce.wav": "sha256:2577eb36ce499b495e8a1c134bc4a1417eb816f5aa5ce2272d2923826dfa7634",
+    "audio/cache/083d4e4dceeaa42d88248afc17f8cfff523673f6738a81d812dc78d4e373d7ce.json": "sha256:6915d18027d470a41268fc553c2f4eb7f14ead6008f63a4aab422562dde8e4e9",
+    "audio/cache/61f0843dfc38512cd9a8384748efac40ec80370d5cf92f9c3dd22c918d515a4c.wav": "sha256:3cb5c663cb785e80b84cb2d32896a5c0605c48c4e1cf1947a31b939789aeb341",
+    "audio/cache/61f0843dfc38512cd9a8384748efac40ec80370d5cf92f9c3dd22c918d515a4c.json": "sha256:04945e5bb1087ffcdec35c0c87e21c85ca55e1dae529ac9a93c9e572ff22eac3",
+    "audio/cache/3eccf468ba26caedfcadbdc89e04aeeeb9ee1ed64c90b225bfc94a284961c19f.wav": "sha256:a21335b25e0d794a9624f63d59ee7ec2b76072320b74aa81e7a38eb4b14cbabc",
+    "audio/cache/3eccf468ba26caedfcadbdc89e04aeeeb9ee1ed64c90b225bfc94a284961c19f.json": "sha256:d2ae973e208c51a3e7ec406469a485c9d01c9dfacd551981c8460d3a3c62db68",
+    "media/external/asset-72abd30fcd284c44aa0a99b87bde0370/r1.webm": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+    "media/external/asset-5c2707d91a914133a755b964b99ed932/r1.mp4": "sha256:ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484"
+  },
+  "source_files_changed_during_acceptance": [],
+  "torch_imported": false
+}

@@ -1,0 +1,29 @@
+DownloadingDownloading DownloadingIndexTeam/IndexTTS-2   config.yamlIndexTeam/IndexTTS-2
+ IndexTeam/IndexTTS-2s2mel.pth 
+gpt.pth
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Ready /Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints/config.yaml 2882
+Downloading IndexTeam/IndexTTS-2 bpe.model
+Ready /Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints/bpe.model 475997
+Downloading IndexTeam/IndexTTS-2 wav2vec2bert_stats.pt
+Ready /Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints/wav2vec2bert_stats.pt 9343
+Downloading IndexTeam/IndexTTS-2 feat1.pt
+Ready /Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints/feat1.pt 57170
+Downloading IndexTeam/IndexTTS-2 feat2.pt
+Ready /Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints/feat2.pt 374866
+Downloading facebook/w2v-bert-2.0 config.json
+Ready /Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints/hf_cache/w2v-bert-2.0/config.json 1874
+Downloading facebook/w2v-bert-2.0 preprocessor_config.json
+Ready /Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints/hf_cache/w2v-bert-2.0/preprocessor_config.json 275
+Downloading facebook/w2v-bert-2.0 model.safetensors
+Ready /Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints/s2mel.pth 1202198223
+Downloading amphion/MaskGCT semantic_codec/model.safetensors
+Ready /Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints/hf_cache/semantic_codec_model.safetensors 177183712
+Downloading funasr/campplus campplus_cn_common.bin
+Ready /Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints/hf_cache/campplus_cn_common.bin 28036335
+Downloading nvidia/bigvgan_v2_22khz_80band_256x config.json
+Ready /Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints/hf_cache/bigvgan/config.json 1405
+Downloading nvidia/bigvgan_v2_22khz_80band_256x bigvgan_generator.pt
+Ready /Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints/hf_cache/bigvgan/bigvgan_generator.pt 449228171
+Ready /Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints/hf_cache/w2v-bert-2.0/model.safetensors 2322063736
+Ready /Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints/gpt.pth 3484663079

@@ -1,0 +1,5393 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "AssetManifest",
+  "document_id": "manifest-6205ab1d1652440d88c01eff10a35f1a",
+  "project_id": "project-1c1bb824f8a9",
+  "revision": 1,
+  "fixtures_only": false,
+  "owner": "A",
+  "inputs": [],
+  "assets": [
+    {
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "revision": 1,
+      "origin": "external",
+      "uri": "media/external/asset-6ed6033cad864a938bc8caca9363777d/r1.webm",
+      "content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+      "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+      "media_kind": "video",
+      "duration_us": 113313000,
+      "video": {
+        "width": 1280,
+        "height": 720,
+        "encoded_width": 1280,
+        "encoded_height": 720,
+        "rotation_degrees": 0,
+        "fps": {
+          "numerator": 30000,
+          "denominator": 1001
+        },
+        "time_base": "1/1000",
+        "start_time_us": 7000,
+        "codec": "vp9",
+        "stream_index": 0,
+        "source_origin_pts": 7,
+        "source_origin_us": 7000,
+        "variable_frame_rate": true
+      },
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 2,
+        "codec": "opus",
+        "start_time_us": 0
+      },
+      "source_pts_uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/probe-8ddc81ceff6ab18eee1c52e3/source-pts.json",
+      "proxy_uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/proxy-25fefcd20eb9cfd13c1cc2d0/proxy.mp4",
+      "proxy_mapping_uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/proxy-25fefcd20eb9cfd13c1cc2d0/proxy-map.json",
+      "proxy_status": "success",
+      "transcript": {
+        "status": "success",
+        "profile": {
+          "asr": "faster-whisper",
+          "asr_model": "small",
+          "asr_language": "zh",
+          "asr_device": "cpu",
+          "asr_compute_type": "int8",
+          "asr_beam_size": 5,
+          "asr_cpu_threads": 2,
+          "asr_num_workers": 1,
+          "asr_vad": true,
+          "asr_condition_on_previous_text": false,
+          "asr_initial_prompt": null,
+          "asr_hotwords": null,
+          "asr_model_revision": null,
+          "packages": {
+            "faster-whisper": "1.2.1",
+            "ctranslate2": "4.8.3",
+            "av": "19.0.1",
+            "tokenizers": "0.23.3",
+            "onnxruntime": "1.31.0",
+            "huggingface-hub": "2.2.0"
+          },
+          "vad_filter": true,
+          "audio_preprocessing": "video-origin-mono-16k-v1",
+          "diagnostics_version": 1,
+          "weight_hashes": {
+            "config.json": "sha256:b55496ac7940a7ae47d2c01eab40edfd8701feec1229d9cce3b40014383fb828",
+            "model.bin": "sha256:3e305921506d8872816023e4c273e75d2419fb89b24da97b4fe7bce14170d671",
+            "tokenizer.json": "sha256:fb7b63191e9bb045082c79fd742a3106a12c99513ab30df4a0d47fa6cb6fd0ab",
+            "vocabulary.txt": "sha256:34ce3fe1c5041027b3f8d42912270993f986dbc4bb34cf27f951e34a1e453913"
+          }
+        },
+        "segments": [
+          {
+            "source_range_us": {
+              "begin": 4940000,
+              "end": 8300000
+            },
+            "text": "我們現在這裡是冷水坑上方的觀景台"
+          },
+          {
+            "source_range_us": {
+              "begin": 8300000,
+              "end": 11780000
+            },
+            "text": "這裡同時也是冷水坑附近最好的眺望點"
+          },
+          {
+            "source_range_us": {
+              "begin": 12900000,
+              "end": 14960000
+            },
+            "text": "請您往東邊看去"
+          },
+          {
+            "source_range_us": {
+              "begin": 14960000,
+              "end": 18600000
+            },
+            "text": "遠景是頂山、石梯裡、秦天鋼"
+          },
+          {
+            "source_range_us": {
+              "begin": 18600000,
+              "end": 21860000
+            },
+            "text": "近景則是基辛倫漢七谷山"
+          },
+          {
+            "source_range_us": {
+              "begin": 22520000,
+              "end": 24340000
+            },
+            "text": "您仔細看看七谷山"
+          },
+          {
+            "source_range_us": {
+              "begin": 24940000,
+              "end": 27980000
+            },
+            "text": "山頭的植被一半是茂密的森林"
+          },
+          {
+            "source_range_us": {
+              "begin": 27980000,
+              "end": 30920000
+            },
+            "text": "另一半則是翠麗的高草原"
+          },
+          {
+            "source_range_us": {
+              "begin": 31440000,
+              "end": 33500000
+            },
+            "text": "似乎是撿了一個螃蟹頭"
+          },
+          {
+            "source_range_us": {
+              "begin": 33500000,
+              "end": 36080000
+            },
+            "text": "这究竟是谁的节奏呢?"
+          },
+          {
+            "source_range_us": {
+              "begin": 36520000,
+              "end": 42180000
+            },
+            "text": "原来呀,每年9月开始吹的东北季风就像李法师一样,"
+          },
+          {
+            "source_range_us": {
+              "begin": 42660000,
+              "end": 46140000
+            },
+            "text": "每天刮牙刮得几乎刮了半年,"
+          },
+          {
+            "source_range_us": {
+              "begin": 46560000,
+              "end": 50420000
+            },
+            "text": "所以北向的坡面就长不出高大的树木,"
+          },
+          {
+            "source_range_us": {
+              "begin": 50740000,
+              "end": 53860000
+            },
+            "text": "只剩下生命力强烈的芒草与建筑。"
+          },
+          {
+            "source_range_us": {
+              "begin": 54800000,
+              "end": 57780000
+            },
+            "text": "而南向坡面因为于被封面,"
+          },
+          {
+            "source_range_us": {
+              "begin": 58180000,
+              "end": 60060000
+            },
+            "text": "所以植物生长旺盛,"
+          },
+          {
+            "source_range_us": {
+              "begin": 60060000,
+              "end": 63280000
+            },
+            "text": "而呈现比较完整的森林面貌"
+          },
+          {
+            "source_range_us": {
+              "begin": 63980000,
+              "end": 66560000
+            },
+            "text": "在阳明山国家公园的迎风面"
+          },
+          {
+            "source_range_us": {
+              "begin": 66560000,
+              "end": 69960000
+            },
+            "text": "你们都可以看到树木受到封压作用"
+          },
+          {
+            "source_range_us": {
+              "begin": 69960000,
+              "end": 72000000
+            },
+            "text": "枝条向一边倾斜"
+          },
+          {
+            "source_range_us": {
+              "begin": 72000000,
+              "end": 75760000
+            },
+            "text": "或是一边枝牙干凸的风险现象"
+          },
+          {
+            "source_range_us": {
+              "begin": 76480000,
+              "end": 79200000
+            },
+            "text": "在这里我们可以看到东北季风"
+          },
+          {
+            "source_range_us": {
+              "begin": 79200000,
+              "end": 81460000
+            },
+            "text": "在七谷山留下鲜明的主机"
+          },
+          {
+            "source_range_us": {
+              "begin": 81460000,
+              "end": 84780000
+            },
+            "text": "也同时见证了季风对植物生长的印象"
+          },
+          {
+            "source_range_us": {
+              "begin": 85480000,
+              "end": 86960000
+            },
+            "text": "台湾是个海岛"
+          },
+          {
+            "source_range_us": {
+              "begin": 86960000,
+              "end": 89620000
+            },
+            "text": "冬季时强劲的东北季风"
+          },
+          {
+            "source_range_us": {
+              "begin": 89620000,
+              "end": 91900000
+            },
+            "text": "帶來又濕又冷的天氣"
+          },
+          {
+            "source_range_us": {
+              "begin": 91900000,
+              "end": 93820000
+            },
+            "text": "陽明山國家公園"
+          },
+          {
+            "source_range_us": {
+              "begin": 93820000,
+              "end": 95920000
+            },
+            "text": "各個山頭首當其衝"
+          },
+          {
+            "source_range_us": {
+              "begin": 96620000,
+              "end": 99440000
+            },
+            "text": "因為地理和氣候因素的影響"
+          },
+          {
+            "source_range_us": {
+              "begin": 99440000,
+              "end": 101500000
+            },
+            "text": "氣溫明顯降低"
+          },
+          {
+            "source_range_us": {
+              "begin": 101500000,
+              "end": 103560000
+            },
+            "text": "造就了陽明山地區"
+          },
+          {
+            "source_range_us": {
+              "begin": 103560000,
+              "end": 105580000
+            },
+            "text": "特殊的生態景觀"
+          },
+          {
+            "source_range_us": {
+              "begin": 106440000,
+              "end": 108780000
+            },
+            "text": "秋冬季節登山見行賞景"
+          },
+          {
+            "source_range_us": {
+              "begin": 108780000,
+              "end": 111320000
+            },
+            "text": "也別忘了多帶幾件衣物保暖哦"
+          }
+        ],
+        "diagnostics": {
+          "language": "zh",
+          "language_probability": 1.0,
+          "warnings": [],
+          "duration_us": 113313000,
+          "duration_after_vad_us": 108369000,
+          "speech_ranges_us": [
+            {
+              "begin": 4944000,
+              "end": 113313000
+            }
+          ],
+          "segments": [
+            {
+              "segment_id": "segment-0000",
+              "avg_logprob": -0.2527842042329428,
+              "no_speech_prob": 0.010665821842849255,
+              "compression_ratio": 1.308641975308642,
+              "words": [
+                {
+                  "text": "我們",
+                  "source_range_us": {
+                    "begin": 4940000,
+                    "end": 5480000
+                  },
+                  "probability": 0.41870859265327454
+                },
+                {
+                  "text": "現在",
+                  "source_range_us": {
+                    "begin": 5480000,
+                    "end": 5820000
+                  },
+                  "probability": 0.938485324382782
+                },
+                {
+                  "text": "這裡",
+                  "source_range_us": {
+                    "begin": 5820000,
+                    "end": 6280000
+                  },
+                  "probability": 0.9450591802597046
+                },
+                {
+                  "text": "是",
+                  "source_range_us": {
+                    "begin": 6280000,
+                    "end": 6760000
+                  },
+                  "probability": 0.8936288356781006
+                },
+                {
+                  "text": "冷",
+                  "source_range_us": {
+                    "begin": 6760000,
+                    "end": 6940000
+                  },
+                  "probability": 0.8829060792922974
+                },
+                {
+                  "text": "水",
+                  "source_range_us": {
+                    "begin": 6940000,
+                    "end": 7080000
+                  },
+                  "probability": 0.9991768002510071
+                },
+                {
+                  "text": "坑",
+                  "source_range_us": {
+                    "begin": 7080000,
+                    "end": 7200000
+                  },
+                  "probability": 0.9873862862586975
+                },
+                {
+                  "text": "上",
+                  "source_range_us": {
+                    "begin": 7200000,
+                    "end": 7400000
+                  },
+                  "probability": 0.9599871635437012
+                },
+                {
+                  "text": "方",
+                  "source_range_us": {
+                    "begin": 7400000,
+                    "end": 7600000
+                  },
+                  "probability": 0.996745228767395
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 7600000,
+                    "end": 7720000
+                  },
+                  "probability": 0.9945319890975952
+                },
+                {
+                  "text": "觀",
+                  "source_range_us": {
+                    "begin": 7720000,
+                    "end": 7860000
+                  },
+                  "probability": 0.9845156669616699
+                },
+                {
+                  "text": "景",
+                  "source_range_us": {
+                    "begin": 7860000,
+                    "end": 8060000
+                  },
+                  "probability": 0.9948999285697937
+                },
+                {
+                  "text": "台",
+                  "source_range_us": {
+                    "begin": 8060000,
+                    "end": 8300000
+                  },
+                  "probability": 0.8277196288108826
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0001",
+              "avg_logprob": -0.2527842042329428,
+              "no_speech_prob": 0.010665821842849255,
+              "compression_ratio": 1.308641975308642,
+              "words": [
+                {
+                  "text": "這裡",
+                  "source_range_us": {
+                    "begin": 8300000,
+                    "end": 8840000
+                  },
+                  "probability": 0.9703536033630371
+                },
+                {
+                  "text": "同",
+                  "source_range_us": {
+                    "begin": 8840000,
+                    "end": 9100000
+                  },
+                  "probability": 0.9906037449836731
+                },
+                {
+                  "text": "時",
+                  "source_range_us": {
+                    "begin": 9100000,
+                    "end": 9280000
+                  },
+                  "probability": 0.9951046705245972
+                },
+                {
+                  "text": "也是",
+                  "source_range_us": {
+                    "begin": 9280000,
+                    "end": 9540000
+                  },
+                  "probability": 0.9773016571998596
+                },
+                {
+                  "text": "冷",
+                  "source_range_us": {
+                    "begin": 9540000,
+                    "end": 9780000
+                  },
+                  "probability": 0.9867059588432312
+                },
+                {
+                  "text": "水",
+                  "source_range_us": {
+                    "begin": 9780000,
+                    "end": 9940000
+                  },
+                  "probability": 0.9997270703315735
+                },
+                {
+                  "text": "坑",
+                  "source_range_us": {
+                    "begin": 9940000,
+                    "end": 10140000
+                  },
+                  "probability": 0.9997285902500153
+                },
+                {
+                  "text": "附",
+                  "source_range_us": {
+                    "begin": 10140000,
+                    "end": 10300000
+                  },
+                  "probability": 0.9950541257858276
+                },
+                {
+                  "text": "近",
+                  "source_range_us": {
+                    "begin": 10300000,
+                    "end": 10500000
+                  },
+                  "probability": 0.9999179840087891
+                },
+                {
+                  "text": "最",
+                  "source_range_us": {
+                    "begin": 10500000,
+                    "end": 10720000
+                  },
+                  "probability": 0.9773234724998474
+                },
+                {
+                  "text": "好的",
+                  "source_range_us": {
+                    "begin": 10720000,
+                    "end": 11060000
+                  },
+                  "probability": 0.9830052256584167
+                },
+                {
+                  "text": "眺",
+                  "source_range_us": {
+                    "begin": 11060000,
+                    "end": 11340000
+                  },
+                  "probability": 0.6405632942914963
+                },
+                {
+                  "text": "望",
+                  "source_range_us": {
+                    "begin": 11340000,
+                    "end": 11520000
+                  },
+                  "probability": 0.997097373008728
+                },
+                {
+                  "text": "點",
+                  "source_range_us": {
+                    "begin": 11520000,
+                    "end": 11780000
+                  },
+                  "probability": 0.9928467869758606
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0002",
+              "avg_logprob": -0.2527842042329428,
+              "no_speech_prob": 0.010665821842849255,
+              "compression_ratio": 1.308641975308642,
+              "words": [
+                {
+                  "text": "請",
+                  "source_range_us": {
+                    "begin": 12900000,
+                    "end": 13340000
+                  },
+                  "probability": 0.8959808349609375
+                },
+                {
+                  "text": "您",
+                  "source_range_us": {
+                    "begin": 13340000,
+                    "end": 13500000
+                  },
+                  "probability": 0.6828643083572388
+                },
+                {
+                  "text": "往",
+                  "source_range_us": {
+                    "begin": 13500000,
+                    "end": 13700000
+                  },
+                  "probability": 0.9917873740196228
+                },
+                {
+                  "text": "東",
+                  "source_range_us": {
+                    "begin": 13700000,
+                    "end": 13920000
+                  },
+                  "probability": 0.9575173258781433
+                },
+                {
+                  "text": "邊",
+                  "source_range_us": {
+                    "begin": 13920000,
+                    "end": 14100000
+                  },
+                  "probability": 0.9522855281829834
+                },
+                {
+                  "text": "看",
+                  "source_range_us": {
+                    "begin": 14100000,
+                    "end": 14300000
+                  },
+                  "probability": 0.9956032037734985
+                },
+                {
+                  "text": "去",
+                  "source_range_us": {
+                    "begin": 14300000,
+                    "end": 14960000
+                  },
+                  "probability": 0.9918501973152161
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0003",
+              "avg_logprob": -0.2527842042329428,
+              "no_speech_prob": 0.010665821842849255,
+              "compression_ratio": 1.308641975308642,
+              "words": [
+                {
+                  "text": "遠",
+                  "source_range_us": {
+                    "begin": 14960000,
+                    "end": 15260000
+                  },
+                  "probability": 0.747387170791626
+                },
+                {
+                  "text": "景",
+                  "source_range_us": {
+                    "begin": 15260000,
+                    "end": 15480000
+                  },
+                  "probability": 0.9929152727127075
+                },
+                {
+                  "text": "是",
+                  "source_range_us": {
+                    "begin": 15480000,
+                    "end": 15740000
+                  },
+                  "probability": 0.23603980243206024
+                },
+                {
+                  "text": "頂",
+                  "source_range_us": {
+                    "begin": 15740000,
+                    "end": 16200000
+                  },
+                  "probability": 0.7640653550624847
+                },
+                {
+                  "text": "山、",
+                  "source_range_us": {
+                    "begin": 16200000,
+                    "end": 16520000
+                  },
+                  "probability": 0.9891253709793091
+                },
+                {
+                  "text": "石",
+                  "source_range_us": {
+                    "begin": 17000000,
+                    "end": 17140000
+                  },
+                  "probability": 0.9048581719398499
+                },
+                {
+                  "text": "梯",
+                  "source_range_us": {
+                    "begin": 17140000,
+                    "end": 17300000
+                  },
+                  "probability": 0.8399178981781006
+                },
+                {
+                  "text": "裡、",
+                  "source_range_us": {
+                    "begin": 17300000,
+                    "end": 17580000
+                  },
+                  "probability": 0.42370861768722534
+                },
+                {
+                  "text": "秦",
+                  "source_range_us": {
+                    "begin": 18020000,
+                    "end": 18100000
+                  },
+                  "probability": 0.7558265924453735
+                },
+                {
+                  "text": "天",
+                  "source_range_us": {
+                    "begin": 18100000,
+                    "end": 18300000
+                  },
+                  "probability": 0.9961756467819214
+                },
+                {
+                  "text": "鋼",
+                  "source_range_us": {
+                    "begin": 18300000,
+                    "end": 18600000
+                  },
+                  "probability": 0.7547639509042104
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0004",
+              "avg_logprob": -0.2527842042329428,
+              "no_speech_prob": 0.010665821842849255,
+              "compression_ratio": 1.308641975308642,
+              "words": [
+                {
+                  "text": "近",
+                  "source_range_us": {
+                    "begin": 18600000,
+                    "end": 19280000
+                  },
+                  "probability": 0.36599940061569214
+                },
+                {
+                  "text": "景",
+                  "source_range_us": {
+                    "begin": 19280000,
+                    "end": 19460000
+                  },
+                  "probability": 0.9993108510971069
+                },
+                {
+                  "text": "則",
+                  "source_range_us": {
+                    "begin": 19460000,
+                    "end": 19640000
+                  },
+                  "probability": 0.9987670183181763
+                },
+                {
+                  "text": "是",
+                  "source_range_us": {
+                    "begin": 19640000,
+                    "end": 19980000
+                  },
+                  "probability": 0.9990662932395935
+                },
+                {
+                  "text": "基",
+                  "source_range_us": {
+                    "begin": 19980000,
+                    "end": 20340000
+                  },
+                  "probability": 0.4194607734680176
+                },
+                {
+                  "text": "辛",
+                  "source_range_us": {
+                    "begin": 20340000,
+                    "end": 20560000
+                  },
+                  "probability": 0.8456517457962036
+                },
+                {
+                  "text": "倫",
+                  "source_range_us": {
+                    "begin": 20560000,
+                    "end": 20740000
+                  },
+                  "probability": 0.7932558059692383
+                },
+                {
+                  "text": "漢",
+                  "source_range_us": {
+                    "begin": 20740000,
+                    "end": 21040000
+                  },
+                  "probability": 0.7448774725198746
+                },
+                {
+                  "text": "七",
+                  "source_range_us": {
+                    "begin": 21040000,
+                    "end": 21380000
+                  },
+                  "probability": 0.49883121252059937
+                },
+                {
+                  "text": "谷",
+                  "source_range_us": {
+                    "begin": 21380000,
+                    "end": 21600000
+                  },
+                  "probability": 0.7861604988574982
+                },
+                {
+                  "text": "山",
+                  "source_range_us": {
+                    "begin": 21600000,
+                    "end": 21860000
+                  },
+                  "probability": 0.9981422424316406
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0005",
+              "avg_logprob": -0.2527842042329428,
+              "no_speech_prob": 0.010665821842849255,
+              "compression_ratio": 1.308641975308642,
+              "words": [
+                {
+                  "text": "您",
+                  "source_range_us": {
+                    "begin": 22520000,
+                    "end": 22960000
+                  },
+                  "probability": 0.9135976433753967
+                },
+                {
+                  "text": "仔",
+                  "source_range_us": {
+                    "begin": 22960000,
+                    "end": 23160000
+                  },
+                  "probability": 0.9987232089042664
+                },
+                {
+                  "text": "細",
+                  "source_range_us": {
+                    "begin": 23160000,
+                    "end": 23300000
+                  },
+                  "probability": 0.9988623857498169
+                },
+                {
+                  "text": "看看",
+                  "source_range_us": {
+                    "begin": 23300000,
+                    "end": 23540000
+                  },
+                  "probability": 0.8885835409164429
+                },
+                {
+                  "text": "七",
+                  "source_range_us": {
+                    "begin": 23540000,
+                    "end": 23900000
+                  },
+                  "probability": 0.9923142790794373
+                },
+                {
+                  "text": "谷",
+                  "source_range_us": {
+                    "begin": 23900000,
+                    "end": 24060000
+                  },
+                  "probability": 0.9999168515205383
+                },
+                {
+                  "text": "山",
+                  "source_range_us": {
+                    "begin": 24060000,
+                    "end": 24340000
+                  },
+                  "probability": 0.9995461106300354
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0006",
+              "avg_logprob": -0.2527842042329428,
+              "no_speech_prob": 0.010665821842849255,
+              "compression_ratio": 1.308641975308642,
+              "words": [
+                {
+                  "text": "山",
+                  "source_range_us": {
+                    "begin": 24940000,
+                    "end": 25200000
+                  },
+                  "probability": 0.9267923831939697
+                },
+                {
+                  "text": "頭",
+                  "source_range_us": {
+                    "begin": 25200000,
+                    "end": 25380000
+                  },
+                  "probability": 0.9904550909996033
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 25380000,
+                    "end": 25540000
+                  },
+                  "probability": 0.9928029179573059
+                },
+                {
+                  "text": "植",
+                  "source_range_us": {
+                    "begin": 25540000,
+                    "end": 25720000
+                  },
+                  "probability": 0.8068479895591736
+                },
+                {
+                  "text": "被",
+                  "source_range_us": {
+                    "begin": 25720000,
+                    "end": 25960000
+                  },
+                  "probability": 0.6070170402526855
+                },
+                {
+                  "text": "一",
+                  "source_range_us": {
+                    "begin": 25960000,
+                    "end": 26600000
+                  },
+                  "probability": 0.9400331974029541
+                },
+                {
+                  "text": "半",
+                  "source_range_us": {
+                    "begin": 26600000,
+                    "end": 26760000
+                  },
+                  "probability": 0.9756847620010376
+                },
+                {
+                  "text": "是",
+                  "source_range_us": {
+                    "begin": 26760000,
+                    "end": 26960000
+                  },
+                  "probability": 0.9952908754348755
+                },
+                {
+                  "text": "茂",
+                  "source_range_us": {
+                    "begin": 26960000,
+                    "end": 27160000
+                  },
+                  "probability": 0.8926330506801605
+                },
+                {
+                  "text": "密",
+                  "source_range_us": {
+                    "begin": 27160000,
+                    "end": 27380000
+                  },
+                  "probability": 0.9566951394081116
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 27380000,
+                    "end": 27560000
+                  },
+                  "probability": 0.9901254177093506
+                },
+                {
+                  "text": "森",
+                  "source_range_us": {
+                    "begin": 27560000,
+                    "end": 27740000
+                  },
+                  "probability": 0.9991728067398071
+                },
+                {
+                  "text": "林",
+                  "source_range_us": {
+                    "begin": 27740000,
+                    "end": 27980000
+                  },
+                  "probability": 0.9990983009338379
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0007",
+              "avg_logprob": -0.2527842042329428,
+              "no_speech_prob": 0.010665821842849255,
+              "compression_ratio": 1.308641975308642,
+              "words": [
+                {
+                  "text": "另",
+                  "source_range_us": {
+                    "begin": 27980000,
+                    "end": 28580000
+                  },
+                  "probability": 0.9865458011627197
+                },
+                {
+                  "text": "一",
+                  "source_range_us": {
+                    "begin": 28580000,
+                    "end": 28740000
+                  },
+                  "probability": 0.9992161989212036
+                },
+                {
+                  "text": "半",
+                  "source_range_us": {
+                    "begin": 28740000,
+                    "end": 28980000
+                  },
+                  "probability": 0.9988161325454712
+                },
+                {
+                  "text": "則",
+                  "source_range_us": {
+                    "begin": 28980000,
+                    "end": 29440000
+                  },
+                  "probability": 0.9980942606925964
+                },
+                {
+                  "text": "是",
+                  "source_range_us": {
+                    "begin": 29440000,
+                    "end": 29700000
+                  },
+                  "probability": 0.9985080361366272
+                },
+                {
+                  "text": "翠",
+                  "source_range_us": {
+                    "begin": 29700000,
+                    "end": 29960000
+                  },
+                  "probability": 0.7675935924053192
+                },
+                {
+                  "text": "麗",
+                  "source_range_us": {
+                    "begin": 29960000,
+                    "end": 30120000
+                  },
+                  "probability": 0.755336344242096
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 30120000,
+                    "end": 30300000
+                  },
+                  "probability": 0.9824255704879761
+                },
+                {
+                  "text": "高",
+                  "source_range_us": {
+                    "begin": 30300000,
+                    "end": 30480000
+                  },
+                  "probability": 0.9960631728172302
+                },
+                {
+                  "text": "草",
+                  "source_range_us": {
+                    "begin": 30480000,
+                    "end": 30640000
+                  },
+                  "probability": 0.9894342124462128
+                },
+                {
+                  "text": "原",
+                  "source_range_us": {
+                    "begin": 30640000,
+                    "end": 30920000
+                  },
+                  "probability": 0.6739293932914734
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0008",
+              "avg_logprob": -0.2527842042329428,
+              "no_speech_prob": 0.010665821842849255,
+              "compression_ratio": 1.308641975308642,
+              "words": [
+                {
+                  "text": "似",
+                  "source_range_us": {
+                    "begin": 31440000,
+                    "end": 31700000
+                  },
+                  "probability": 0.9868703186511993
+                },
+                {
+                  "text": "乎",
+                  "source_range_us": {
+                    "begin": 31700000,
+                    "end": 31880000
+                  },
+                  "probability": 0.9973912239074707
+                },
+                {
+                  "text": "是",
+                  "source_range_us": {
+                    "begin": 31880000,
+                    "end": 32100000
+                  },
+                  "probability": 0.9835577607154846
+                },
+                {
+                  "text": "撿",
+                  "source_range_us": {
+                    "begin": 32100000,
+                    "end": 32280000
+                  },
+                  "probability": 0.8740502893924713
+                },
+                {
+                  "text": "了",
+                  "source_range_us": {
+                    "begin": 32280000,
+                    "end": 32440000
+                  },
+                  "probability": 0.9970224499702454
+                },
+                {
+                  "text": "一個",
+                  "source_range_us": {
+                    "begin": 32440000,
+                    "end": 32720000
+                  },
+                  "probability": 0.9839168190956116
+                },
+                {
+                  "text": "螃",
+                  "source_range_us": {
+                    "begin": 32720000,
+                    "end": 33080000
+                  },
+                  "probability": 0.6442484557628632
+                },
+                {
+                  "text": "蟹",
+                  "source_range_us": {
+                    "begin": 33080000,
+                    "end": 33260000
+                  },
+                  "probability": 0.8557448387145996
+                },
+                {
+                  "text": "頭",
+                  "source_range_us": {
+                    "begin": 33260000,
+                    "end": 33500000
+                  },
+                  "probability": 0.9706341028213501
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0009",
+              "avg_logprob": -0.1813735791930446,
+              "no_speech_prob": 0.13973233103752136,
+              "compression_ratio": 1.1932773109243697,
+              "words": [
+                {
+                  "text": "这",
+                  "source_range_us": {
+                    "begin": 33500000,
+                    "end": 34460000
+                  },
+                  "probability": 0.36817029118537903
+                },
+                {
+                  "text": "究",
+                  "source_range_us": {
+                    "begin": 34460000,
+                    "end": 34700000
+                  },
+                  "probability": 0.994522213935852
+                },
+                {
+                  "text": "竟",
+                  "source_range_us": {
+                    "begin": 34700000,
+                    "end": 34860000
+                  },
+                  "probability": 0.9998264908790588
+                },
+                {
+                  "text": "是",
+                  "source_range_us": {
+                    "begin": 34860000,
+                    "end": 35020000
+                  },
+                  "probability": 0.9882625937461853
+                },
+                {
+                  "text": "谁",
+                  "source_range_us": {
+                    "begin": 35020000,
+                    "end": 35240000
+                  },
+                  "probability": 0.9965506792068481
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 35240000,
+                    "end": 35400000
+                  },
+                  "probability": 0.9942294359207153
+                },
+                {
+                  "text": "节",
+                  "source_range_us": {
+                    "begin": 35400000,
+                    "end": 35560000
+                  },
+                  "probability": 0.6187384128570557
+                },
+                {
+                  "text": "奏",
+                  "source_range_us": {
+                    "begin": 35560000,
+                    "end": 35720000
+                  },
+                  "probability": 0.7976122498512268
+                },
+                {
+                  "text": "呢?",
+                  "source_range_us": {
+                    "begin": 35720000,
+                    "end": 36080000
+                  },
+                  "probability": 0.9181478023529053
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0010",
+              "avg_logprob": -0.1813735791930446,
+              "no_speech_prob": 0.13973233103752136,
+              "compression_ratio": 1.1932773109243697,
+              "words": [
+                {
+                  "text": "原",
+                  "source_range_us": {
+                    "begin": 36520000,
+                    "end": 36820000
+                  },
+                  "probability": 0.9577586650848389
+                },
+                {
+                  "text": "来",
+                  "source_range_us": {
+                    "begin": 36820000,
+                    "end": 37120000
+                  },
+                  "probability": 0.9980964064598083
+                },
+                {
+                  "text": "呀,",
+                  "source_range_us": {
+                    "begin": 37120000,
+                    "end": 37420000
+                  },
+                  "probability": 0.38615232706069946
+                },
+                {
+                  "text": "每",
+                  "source_range_us": {
+                    "begin": 37900000,
+                    "end": 38040000
+                  },
+                  "probability": 0.9482006430625916
+                },
+                {
+                  "text": "年",
+                  "source_range_us": {
+                    "begin": 38040000,
+                    "end": 38280000
+                  },
+                  "probability": 0.9967016577720642
+                },
+                {
+                  "text": "9",
+                  "source_range_us": {
+                    "begin": 38280000,
+                    "end": 38500000
+                  },
+                  "probability": 0.5186796188354492
+                },
+                {
+                  "text": "月",
+                  "source_range_us": {
+                    "begin": 38500000,
+                    "end": 38680000
+                  },
+                  "probability": 0.9945129156112671
+                },
+                {
+                  "text": "开始",
+                  "source_range_us": {
+                    "begin": 38680000,
+                    "end": 38920000
+                  },
+                  "probability": 0.9816970229148865
+                },
+                {
+                  "text": "吹",
+                  "source_range_us": {
+                    "begin": 38920000,
+                    "end": 39260000
+                  },
+                  "probability": 0.9917918741703033
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 39260000,
+                    "end": 39440000
+                  },
+                  "probability": 0.931477427482605
+                },
+                {
+                  "text": "东",
+                  "source_range_us": {
+                    "begin": 39440000,
+                    "end": 39620000
+                  },
+                  "probability": 0.9809625148773193
+                },
+                {
+                  "text": "北",
+                  "source_range_us": {
+                    "begin": 39620000,
+                    "end": 39800000
+                  },
+                  "probability": 0.999517560005188
+                },
+                {
+                  "text": "季",
+                  "source_range_us": {
+                    "begin": 39800000,
+                    "end": 40000000
+                  },
+                  "probability": 0.8170219361782074
+                },
+                {
+                  "text": "风",
+                  "source_range_us": {
+                    "begin": 40000000,
+                    "end": 40240000
+                  },
+                  "probability": 0.9682102203369141
+                },
+                {
+                  "text": "就",
+                  "source_range_us": {
+                    "begin": 40240000,
+                    "end": 40740000
+                  },
+                  "probability": 0.6655620336532593
+                },
+                {
+                  "text": "像",
+                  "source_range_us": {
+                    "begin": 40740000,
+                    "end": 41000000
+                  },
+                  "probability": 0.9974910020828247
+                },
+                {
+                  "text": "李",
+                  "source_range_us": {
+                    "begin": 41000000,
+                    "end": 41220000
+                  },
+                  "probability": 0.46386218070983887
+                },
+                {
+                  "text": "法",
+                  "source_range_us": {
+                    "begin": 41220000,
+                    "end": 41480000
+                  },
+                  "probability": 0.9373810291290283
+                },
+                {
+                  "text": "师",
+                  "source_range_us": {
+                    "begin": 41480000,
+                    "end": 41680000
+                  },
+                  "probability": 0.9794718027114868
+                },
+                {
+                  "text": "一",
+                  "source_range_us": {
+                    "begin": 41680000,
+                    "end": 41940000
+                  },
+                  "probability": 0.9875284433364868
+                },
+                {
+                  "text": "样,",
+                  "source_range_us": {
+                    "begin": 41940000,
+                    "end": 42180000
+                  },
+                  "probability": 0.9999305009841919
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0011",
+              "avg_logprob": -0.1813735791930446,
+              "no_speech_prob": 0.13973233103752136,
+              "compression_ratio": 1.1932773109243697,
+              "words": [
+                {
+                  "text": "每",
+                  "source_range_us": {
+                    "begin": 42660000,
+                    "end": 42860000
+                  },
+                  "probability": 0.9856049418449402
+                },
+                {
+                  "text": "天",
+                  "source_range_us": {
+                    "begin": 42860000,
+                    "end": 43180000
+                  },
+                  "probability": 0.9938511848449707
+                },
+                {
+                  "text": "刮",
+                  "source_range_us": {
+                    "begin": 43180000,
+                    "end": 43560000
+                  },
+                  "probability": 0.8921124637126923
+                },
+                {
+                  "text": "牙",
+                  "source_range_us": {
+                    "begin": 43560000,
+                    "end": 43820000
+                  },
+                  "probability": 0.6862148493528366
+                },
+                {
+                  "text": "刮",
+                  "source_range_us": {
+                    "begin": 43820000,
+                    "end": 44060000
+                  },
+                  "probability": 0.9867180585861206
+                },
+                {
+                  "text": "得",
+                  "source_range_us": {
+                    "begin": 44060000,
+                    "end": 44380000
+                  },
+                  "probability": 0.5955214500427246
+                },
+                {
+                  "text": "几",
+                  "source_range_us": {
+                    "begin": 44380000,
+                    "end": 44980000
+                  },
+                  "probability": 0.9576022624969482
+                },
+                {
+                  "text": "乎",
+                  "source_range_us": {
+                    "begin": 44980000,
+                    "end": 45180000
+                  },
+                  "probability": 0.9999211430549622
+                },
+                {
+                  "text": "刮",
+                  "source_range_us": {
+                    "begin": 45180000,
+                    "end": 45420000
+                  },
+                  "probability": 0.9929002225399017
+                },
+                {
+                  "text": "了",
+                  "source_range_us": {
+                    "begin": 45420000,
+                    "end": 45620000
+                  },
+                  "probability": 0.9962658286094666
+                },
+                {
+                  "text": "半",
+                  "source_range_us": {
+                    "begin": 45620000,
+                    "end": 45820000
+                  },
+                  "probability": 0.9959469437599182
+                },
+                {
+                  "text": "年,",
+                  "source_range_us": {
+                    "begin": 45820000,
+                    "end": 46140000
+                  },
+                  "probability": 0.996658205986023
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0012",
+              "avg_logprob": -0.1813735791930446,
+              "no_speech_prob": 0.13973233103752136,
+              "compression_ratio": 1.1932773109243697,
+              "words": [
+                {
+                  "text": "所以",
+                  "source_range_us": {
+                    "begin": 46560000,
+                    "end": 46940000
+                  },
+                  "probability": 0.9869564771652222
+                },
+                {
+                  "text": "北",
+                  "source_range_us": {
+                    "begin": 46940000,
+                    "end": 47560000
+                  },
+                  "probability": 0.956322431564331
+                },
+                {
+                  "text": "向",
+                  "source_range_us": {
+                    "begin": 47560000,
+                    "end": 47740000
+                  },
+                  "probability": 0.5218321681022644
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 47740000,
+                    "end": 47920000
+                  },
+                  "probability": 0.9730120301246643
+                },
+                {
+                  "text": "坡",
+                  "source_range_us": {
+                    "begin": 47920000,
+                    "end": 48080000
+                  },
+                  "probability": 0.8071486055850983
+                },
+                {
+                  "text": "面",
+                  "source_range_us": {
+                    "begin": 48080000,
+                    "end": 48320000
+                  },
+                  "probability": 0.997215747833252
+                },
+                {
+                  "text": "就",
+                  "source_range_us": {
+                    "begin": 48320000,
+                    "end": 48740000
+                  },
+                  "probability": 0.9679564833641052
+                },
+                {
+                  "text": "长",
+                  "source_range_us": {
+                    "begin": 48740000,
+                    "end": 48980000
+                  },
+                  "probability": 0.9046691656112671
+                },
+                {
+                  "text": "不",
+                  "source_range_us": {
+                    "begin": 48980000,
+                    "end": 49160000
+                  },
+                  "probability": 0.9884601831436157
+                },
+                {
+                  "text": "出",
+                  "source_range_us": {
+                    "begin": 49160000,
+                    "end": 49380000
+                  },
+                  "probability": 0.9981439113616943
+                },
+                {
+                  "text": "高",
+                  "source_range_us": {
+                    "begin": 49380000,
+                    "end": 49640000
+                  },
+                  "probability": 0.990678071975708
+                },
+                {
+                  "text": "大的",
+                  "source_range_us": {
+                    "begin": 49640000,
+                    "end": 49880000
+                  },
+                  "probability": 0.9856016039848328
+                },
+                {
+                  "text": "树",
+                  "source_range_us": {
+                    "begin": 49880000,
+                    "end": 50160000
+                  },
+                  "probability": 0.8501318693161011
+                },
+                {
+                  "text": "木,",
+                  "source_range_us": {
+                    "begin": 50160000,
+                    "end": 50420000
+                  },
+                  "probability": 0.9659803509712219
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0013",
+              "avg_logprob": -0.1813735791930446,
+              "no_speech_prob": 0.13973233103752136,
+              "compression_ratio": 1.1932773109243697,
+              "words": [
+                {
+                  "text": "只",
+                  "source_range_us": {
+                    "begin": 50740000,
+                    "end": 50940000
+                  },
+                  "probability": 0.9795656204223633
+                },
+                {
+                  "text": "剩",
+                  "source_range_us": {
+                    "begin": 50940000,
+                    "end": 51100000
+                  },
+                  "probability": 0.9999169707298279
+                },
+                {
+                  "text": "下",
+                  "source_range_us": {
+                    "begin": 51100000,
+                    "end": 51340000
+                  },
+                  "probability": 0.9993786811828613
+                },
+                {
+                  "text": "生",
+                  "source_range_us": {
+                    "begin": 51340000,
+                    "end": 51640000
+                  },
+                  "probability": 0.9463120698928833
+                },
+                {
+                  "text": "命",
+                  "source_range_us": {
+                    "begin": 51640000,
+                    "end": 51800000
+                  },
+                  "probability": 0.9979075193405151
+                },
+                {
+                  "text": "力",
+                  "source_range_us": {
+                    "begin": 51800000,
+                    "end": 51960000
+                  },
+                  "probability": 0.9360220432281494
+                },
+                {
+                  "text": "强",
+                  "source_range_us": {
+                    "begin": 51960000,
+                    "end": 52180000
+                  },
+                  "probability": 0.9926745593547821
+                },
+                {
+                  "text": "烈",
+                  "source_range_us": {
+                    "begin": 52180000,
+                    "end": 52340000
+                  },
+                  "probability": 0.3360469117760658
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 52340000,
+                    "end": 52580000
+                  },
+                  "probability": 0.9911869168281555
+                },
+                {
+                  "text": "芒",
+                  "source_range_us": {
+                    "begin": 52580000,
+                    "end": 52920000
+                  },
+                  "probability": 0.706612691283226
+                },
+                {
+                  "text": "草",
+                  "source_range_us": {
+                    "begin": 52920000,
+                    "end": 53140000
+                  },
+                  "probability": 0.9979085028171539
+                },
+                {
+                  "text": "与",
+                  "source_range_us": {
+                    "begin": 53140000,
+                    "end": 53400000
+                  },
+                  "probability": 0.9903528392314911
+                },
+                {
+                  "text": "建",
+                  "source_range_us": {
+                    "begin": 53400000,
+                    "end": 53640000
+                  },
+                  "probability": 0.8772334456443787
+                },
+                {
+                  "text": "筑。",
+                  "source_range_us": {
+                    "begin": 53640000,
+                    "end": 53860000
+                  },
+                  "probability": 0.9690203964710236
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0014",
+              "avg_logprob": -0.1813735791930446,
+              "no_speech_prob": 0.13973233103752136,
+              "compression_ratio": 1.1932773109243697,
+              "words": [
+                {
+                  "text": "而",
+                  "source_range_us": {
+                    "begin": 54800000,
+                    "end": 55000000
+                  },
+                  "probability": 0.9955169558525085
+                },
+                {
+                  "text": "南",
+                  "source_range_us": {
+                    "begin": 55000000,
+                    "end": 55200000
+                  },
+                  "probability": 0.9989284873008728
+                },
+                {
+                  "text": "向",
+                  "source_range_us": {
+                    "begin": 55200000,
+                    "end": 55400000
+                  },
+                  "probability": 0.9950815439224243
+                },
+                {
+                  "text": "坡",
+                  "source_range_us": {
+                    "begin": 55400000,
+                    "end": 55600000
+                  },
+                  "probability": 0.9775933623313904
+                },
+                {
+                  "text": "面",
+                  "source_range_us": {
+                    "begin": 55600000,
+                    "end": 55900000
+                  },
+                  "probability": 0.9968048334121704
+                },
+                {
+                  "text": "因为",
+                  "source_range_us": {
+                    "begin": 55900000,
+                    "end": 56500000
+                  },
+                  "probability": 0.8205647468566895
+                },
+                {
+                  "text": "于",
+                  "source_range_us": {
+                    "begin": 56500000,
+                    "end": 56880000
+                  },
+                  "probability": 0.6175829172134399
+                },
+                {
+                  "text": "被",
+                  "source_range_us": {
+                    "begin": 56880000,
+                    "end": 57240000
+                  },
+                  "probability": 0.4934331476688385
+                },
+                {
+                  "text": "封",
+                  "source_range_us": {
+                    "begin": 57240000,
+                    "end": 57500000
+                  },
+                  "probability": 0.943651020526886
+                },
+                {
+                  "text": "面,",
+                  "source_range_us": {
+                    "begin": 57500000,
+                    "end": 57780000
+                  },
+                  "probability": 0.997553288936615
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0015",
+              "avg_logprob": -0.1813735791930446,
+              "no_speech_prob": 0.13973233103752136,
+              "compression_ratio": 1.1932773109243697,
+              "words": [
+                {
+                  "text": "所以",
+                  "source_range_us": {
+                    "begin": 58180000,
+                    "end": 58500000
+                  },
+                  "probability": 0.9458704590797424
+                },
+                {
+                  "text": "植",
+                  "source_range_us": {
+                    "begin": 58500000,
+                    "end": 58880000
+                  },
+                  "probability": 0.9950059056282043
+                },
+                {
+                  "text": "物",
+                  "source_range_us": {
+                    "begin": 58880000,
+                    "end": 59120000
+                  },
+                  "probability": 0.9989808201789856
+                },
+                {
+                  "text": "生",
+                  "source_range_us": {
+                    "begin": 59120000,
+                    "end": 59360000
+                  },
+                  "probability": 0.9370389580726624
+                },
+                {
+                  "text": "长",
+                  "source_range_us": {
+                    "begin": 59360000,
+                    "end": 59620000
+                  },
+                  "probability": 0.9887746572494507
+                },
+                {
+                  "text": "旺",
+                  "source_range_us": {
+                    "begin": 59620000,
+                    "end": 59820000
+                  },
+                  "probability": 0.8314261138439178
+                },
+                {
+                  "text": "盛,",
+                  "source_range_us": {
+                    "begin": 59820000,
+                    "end": 60060000
+                  },
+                  "probability": 0.9934530854225159
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0016",
+              "avg_logprob": -0.184918874502182,
+              "no_speech_prob": 0.12972509860992432,
+              "compression_ratio": 1.311787072243346,
+              "words": [
+                {
+                  "text": "而",
+                  "source_range_us": {
+                    "begin": 60060000,
+                    "end": 60780000
+                  },
+                  "probability": 0.7256585359573364
+                },
+                {
+                  "text": "呈",
+                  "source_range_us": {
+                    "begin": 60780000,
+                    "end": 60980000
+                  },
+                  "probability": 0.9978823959827423
+                },
+                {
+                  "text": "现",
+                  "source_range_us": {
+                    "begin": 60980000,
+                    "end": 61180000
+                  },
+                  "probability": 0.4775535762310028
+                },
+                {
+                  "text": "比",
+                  "source_range_us": {
+                    "begin": 61180000,
+                    "end": 61420000
+                  },
+                  "probability": 0.9642668962478638
+                },
+                {
+                  "text": "较",
+                  "source_range_us": {
+                    "begin": 61420000,
+                    "end": 61600000
+                  },
+                  "probability": 0.9998442232608795
+                },
+                {
+                  "text": "完",
+                  "source_range_us": {
+                    "begin": 61600000,
+                    "end": 61820000
+                  },
+                  "probability": 0.992660403251648
+                },
+                {
+                  "text": "整",
+                  "source_range_us": {
+                    "begin": 61820000,
+                    "end": 62060000
+                  },
+                  "probability": 0.9996732473373413
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 62060000,
+                    "end": 62300000
+                  },
+                  "probability": 0.9924752116203308
+                },
+                {
+                  "text": "森",
+                  "source_range_us": {
+                    "begin": 62300000,
+                    "end": 62580000
+                  },
+                  "probability": 0.9991291761398315
+                },
+                {
+                  "text": "林",
+                  "source_range_us": {
+                    "begin": 62580000,
+                    "end": 62840000
+                  },
+                  "probability": 0.9983300566673279
+                },
+                {
+                  "text": "面",
+                  "source_range_us": {
+                    "begin": 62840000,
+                    "end": 63040000
+                  },
+                  "probability": 0.9850457310676575
+                },
+                {
+                  "text": "貌",
+                  "source_range_us": {
+                    "begin": 63040000,
+                    "end": 63280000
+                  },
+                  "probability": 0.9942957162857056
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0017",
+              "avg_logprob": -0.184918874502182,
+              "no_speech_prob": 0.12972509860992432,
+              "compression_ratio": 1.311787072243346,
+              "words": [
+                {
+                  "text": "在",
+                  "source_range_us": {
+                    "begin": 63980000,
+                    "end": 64420000
+                  },
+                  "probability": 0.8509140014648438
+                },
+                {
+                  "text": "阳",
+                  "source_range_us": {
+                    "begin": 64420000,
+                    "end": 64700000
+                  },
+                  "probability": 0.6562667489051819
+                },
+                {
+                  "text": "明",
+                  "source_range_us": {
+                    "begin": 64700000,
+                    "end": 64840000
+                  },
+                  "probability": 0.6082490682601929
+                },
+                {
+                  "text": "山",
+                  "source_range_us": {
+                    "begin": 64840000,
+                    "end": 65040000
+                  },
+                  "probability": 0.9919158816337585
+                },
+                {
+                  "text": "国",
+                  "source_range_us": {
+                    "begin": 65040000,
+                    "end": 65280000
+                  },
+                  "probability": 0.9603182077407837
+                },
+                {
+                  "text": "家",
+                  "source_range_us": {
+                    "begin": 65280000,
+                    "end": 65480000
+                  },
+                  "probability": 0.9989414811134338
+                },
+                {
+                  "text": "公",
+                  "source_range_us": {
+                    "begin": 65480000,
+                    "end": 65640000
+                  },
+                  "probability": 0.9797805547714233
+                },
+                {
+                  "text": "园",
+                  "source_range_us": {
+                    "begin": 65640000,
+                    "end": 65820000
+                  },
+                  "probability": 0.9895510971546173
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 65820000,
+                    "end": 65980000
+                  },
+                  "probability": 0.9940683841705322
+                },
+                {
+                  "text": "迎",
+                  "source_range_us": {
+                    "begin": 65980000,
+                    "end": 66160000
+                  },
+                  "probability": 0.34072569012641907
+                },
+                {
+                  "text": "风",
+                  "source_range_us": {
+                    "begin": 66160000,
+                    "end": 66280000
+                  },
+                  "probability": 0.6154476404190063
+                },
+                {
+                  "text": "面",
+                  "source_range_us": {
+                    "begin": 66280000,
+                    "end": 66560000
+                  },
+                  "probability": 0.994034469127655
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0018",
+              "avg_logprob": -0.184918874502182,
+              "no_speech_prob": 0.12972509860992432,
+              "compression_ratio": 1.311787072243346,
+              "words": [
+                {
+                  "text": "你们",
+                  "source_range_us": {
+                    "begin": 66560000,
+                    "end": 67200000
+                  },
+                  "probability": 0.6865587830543518
+                },
+                {
+                  "text": "都",
+                  "source_range_us": {
+                    "begin": 67200000,
+                    "end": 67380000
+                  },
+                  "probability": 0.9940690994262695
+                },
+                {
+                  "text": "可以",
+                  "source_range_us": {
+                    "begin": 67380000,
+                    "end": 67620000
+                  },
+                  "probability": 0.973077118396759
+                },
+                {
+                  "text": "看到",
+                  "source_range_us": {
+                    "begin": 67620000,
+                    "end": 67980000
+                  },
+                  "probability": 0.9930589199066162
+                },
+                {
+                  "text": "树",
+                  "source_range_us": {
+                    "begin": 67980000,
+                    "end": 68340000
+                  },
+                  "probability": 0.8821682035923004
+                },
+                {
+                  "text": "木",
+                  "source_range_us": {
+                    "begin": 68340000,
+                    "end": 68540000
+                  },
+                  "probability": 0.9704485535621643
+                },
+                {
+                  "text": "受",
+                  "source_range_us": {
+                    "begin": 68540000,
+                    "end": 68740000
+                  },
+                  "probability": 0.9831876158714294
+                },
+                {
+                  "text": "到",
+                  "source_range_us": {
+                    "begin": 68740000,
+                    "end": 68960000
+                  },
+                  "probability": 0.9840643405914307
+                },
+                {
+                  "text": "封",
+                  "source_range_us": {
+                    "begin": 68960000,
+                    "end": 69180000
+                  },
+                  "probability": 0.8311659395694733
+                },
+                {
+                  "text": "压",
+                  "source_range_us": {
+                    "begin": 69180000,
+                    "end": 69400000
+                  },
+                  "probability": 0.9418676793575287
+                },
+                {
+                  "text": "作",
+                  "source_range_us": {
+                    "begin": 69400000,
+                    "end": 69640000
+                  },
+                  "probability": 0.9973081350326538
+                },
+                {
+                  "text": "用",
+                  "source_range_us": {
+                    "begin": 69640000,
+                    "end": 69960000
+                  },
+                  "probability": 0.9991545677185059
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0019",
+              "avg_logprob": -0.184918874502182,
+              "no_speech_prob": 0.12972509860992432,
+              "compression_ratio": 1.311787072243346,
+              "words": [
+                {
+                  "text": "枝",
+                  "source_range_us": {
+                    "begin": 69960000,
+                    "end": 70460000
+                  },
+                  "probability": 0.657018169760704
+                },
+                {
+                  "text": "条",
+                  "source_range_us": {
+                    "begin": 70460000,
+                    "end": 70720000
+                  },
+                  "probability": 0.9978646636009216
+                },
+                {
+                  "text": "向",
+                  "source_range_us": {
+                    "begin": 70720000,
+                    "end": 71100000
+                  },
+                  "probability": 0.7896950840950012
+                },
+                {
+                  "text": "一",
+                  "source_range_us": {
+                    "begin": 71100000,
+                    "end": 71340000
+                  },
+                  "probability": 0.9943252205848694
+                },
+                {
+                  "text": "边",
+                  "source_range_us": {
+                    "begin": 71340000,
+                    "end": 71540000
+                  },
+                  "probability": 0.9956666231155396
+                },
+                {
+                  "text": "倾",
+                  "source_range_us": {
+                    "begin": 71540000,
+                    "end": 71740000
+                  },
+                  "probability": 0.7984737157821655
+                },
+                {
+                  "text": "斜",
+                  "source_range_us": {
+                    "begin": 71740000,
+                    "end": 72000000
+                  },
+                  "probability": 0.9986127316951752
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0020",
+              "avg_logprob": -0.184918874502182,
+              "no_speech_prob": 0.12972509860992432,
+              "compression_ratio": 1.311787072243346,
+              "words": [
+                {
+                  "text": "或",
+                  "source_range_us": {
+                    "begin": 72000000,
+                    "end": 72780000
+                  },
+                  "probability": 0.9679485559463501
+                },
+                {
+                  "text": "是",
+                  "source_range_us": {
+                    "begin": 72780000,
+                    "end": 72980000
+                  },
+                  "probability": 0.9255099892616272
+                },
+                {
+                  "text": "一",
+                  "source_range_us": {
+                    "begin": 72980000,
+                    "end": 73240000
+                  },
+                  "probability": 0.9957066178321838
+                },
+                {
+                  "text": "边",
+                  "source_range_us": {
+                    "begin": 73240000,
+                    "end": 73520000
+                  },
+                  "probability": 0.9942107200622559
+                },
+                {
+                  "text": "枝",
+                  "source_range_us": {
+                    "begin": 73520000,
+                    "end": 73800000
+                  },
+                  "probability": 0.9069982469081879
+                },
+                {
+                  "text": "牙",
+                  "source_range_us": {
+                    "begin": 73800000,
+                    "end": 74040000
+                  },
+                  "probability": 0.7663614451885223
+                },
+                {
+                  "text": "干",
+                  "source_range_us": {
+                    "begin": 74040000,
+                    "end": 74300000
+                  },
+                  "probability": 0.7063869833946228
+                },
+                {
+                  "text": "凸",
+                  "source_range_us": {
+                    "begin": 74300000,
+                    "end": 74500000
+                  },
+                  "probability": 0.6080643087625504
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 74500000,
+                    "end": 74700000
+                  },
+                  "probability": 0.9891786575317383
+                },
+                {
+                  "text": "风",
+                  "source_range_us": {
+                    "begin": 74700000,
+                    "end": 74900000
+                  },
+                  "probability": 0.8914942741394043
+                },
+                {
+                  "text": "险",
+                  "source_range_us": {
+                    "begin": 74900000,
+                    "end": 75100000
+                  },
+                  "probability": 0.6485076397657394
+                },
+                {
+                  "text": "现",
+                  "source_range_us": {
+                    "begin": 75100000,
+                    "end": 75300000
+                  },
+                  "probability": 0.9017677307128906
+                },
+                {
+                  "text": "象",
+                  "source_range_us": {
+                    "begin": 75300000,
+                    "end": 75760000
+                  },
+                  "probability": 0.9935417175292969
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0021",
+              "avg_logprob": -0.184918874502182,
+              "no_speech_prob": 0.12972509860992432,
+              "compression_ratio": 1.311787072243346,
+              "words": [
+                {
+                  "text": "在",
+                  "source_range_us": {
+                    "begin": 76480000,
+                    "end": 76920000
+                  },
+                  "probability": 0.5077275633811951
+                },
+                {
+                  "text": "这里",
+                  "source_range_us": {
+                    "begin": 76920000,
+                    "end": 77360000
+                  },
+                  "probability": 0.9679608345031738
+                },
+                {
+                  "text": "我们",
+                  "source_range_us": {
+                    "begin": 77360000,
+                    "end": 77820000
+                  },
+                  "probability": 0.9018246531486511
+                },
+                {
+                  "text": "可以",
+                  "source_range_us": {
+                    "begin": 77820000,
+                    "end": 78100000
+                  },
+                  "probability": 0.9839679002761841
+                },
+                {
+                  "text": "看到",
+                  "source_range_us": {
+                    "begin": 78100000,
+                    "end": 78380000
+                  },
+                  "probability": 0.9940312504768372
+                },
+                {
+                  "text": "东",
+                  "source_range_us": {
+                    "begin": 78380000,
+                    "end": 78660000
+                  },
+                  "probability": 0.9803456664085388
+                },
+                {
+                  "text": "北",
+                  "source_range_us": {
+                    "begin": 78660000,
+                    "end": 78800000
+                  },
+                  "probability": 0.9997544884681702
+                },
+                {
+                  "text": "季",
+                  "source_range_us": {
+                    "begin": 78800000,
+                    "end": 78980000
+                  },
+                  "probability": 0.7035796493291855
+                },
+                {
+                  "text": "风",
+                  "source_range_us": {
+                    "begin": 78980000,
+                    "end": 79200000
+                  },
+                  "probability": 0.4802994728088379
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0022",
+              "avg_logprob": -0.184918874502182,
+              "no_speech_prob": 0.12972509860992432,
+              "compression_ratio": 1.311787072243346,
+              "words": [
+                {
+                  "text": "在",
+                  "source_range_us": {
+                    "begin": 79200000,
+                    "end": 79520000
+                  },
+                  "probability": 0.9955065250396729
+                },
+                {
+                  "text": "七",
+                  "source_range_us": {
+                    "begin": 79520000,
+                    "end": 79880000
+                  },
+                  "probability": 0.4227171242237091
+                },
+                {
+                  "text": "谷",
+                  "source_range_us": {
+                    "begin": 79880000,
+                    "end": 80040000
+                  },
+                  "probability": 0.8455744981765747
+                },
+                {
+                  "text": "山",
+                  "source_range_us": {
+                    "begin": 80040000,
+                    "end": 80220000
+                  },
+                  "probability": 0.9939332604408264
+                },
+                {
+                  "text": "留",
+                  "source_range_us": {
+                    "begin": 80220000,
+                    "end": 80400000
+                  },
+                  "probability": 0.9027533531188965
+                },
+                {
+                  "text": "下",
+                  "source_range_us": {
+                    "begin": 80400000,
+                    "end": 80580000
+                  },
+                  "probability": 0.9992998838424683
+                },
+                {
+                  "text": "鲜",
+                  "source_range_us": {
+                    "begin": 80580000,
+                    "end": 80780000
+                  },
+                  "probability": 0.902943750222524
+                },
+                {
+                  "text": "明",
+                  "source_range_us": {
+                    "begin": 80780000,
+                    "end": 80940000
+                  },
+                  "probability": 0.9088122844696045
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 80940000,
+                    "end": 81080000
+                  },
+                  "probability": 0.99094158411026
+                },
+                {
+                  "text": "主",
+                  "source_range_us": {
+                    "begin": 81080000,
+                    "end": 81240000
+                  },
+                  "probability": 0.6365934610366821
+                },
+                {
+                  "text": "机",
+                  "source_range_us": {
+                    "begin": 81240000,
+                    "end": 81460000
+                  },
+                  "probability": 0.8594566583633423
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0023",
+              "avg_logprob": -0.184918874502182,
+              "no_speech_prob": 0.12972509860992432,
+              "compression_ratio": 1.311787072243346,
+              "words": [
+                {
+                  "text": "也",
+                  "source_range_us": {
+                    "begin": 81460000,
+                    "end": 81860000
+                  },
+                  "probability": 0.9861837029457092
+                },
+                {
+                  "text": "同",
+                  "source_range_us": {
+                    "begin": 81860000,
+                    "end": 82000000
+                  },
+                  "probability": 0.9982006549835205
+                },
+                {
+                  "text": "时",
+                  "source_range_us": {
+                    "begin": 82000000,
+                    "end": 82180000
+                  },
+                  "probability": 0.9946333169937134
+                },
+                {
+                  "text": "见",
+                  "source_range_us": {
+                    "begin": 82180000,
+                    "end": 82360000
+                  },
+                  "probability": 0.8219785690307617
+                },
+                {
+                  "text": "证",
+                  "source_range_us": {
+                    "begin": 82360000,
+                    "end": 82580000
+                  },
+                  "probability": 0.9980276525020599
+                },
+                {
+                  "text": "了",
+                  "source_range_us": {
+                    "begin": 82580000,
+                    "end": 82800000
+                  },
+                  "probability": 0.9909260272979736
+                },
+                {
+                  "text": "季",
+                  "source_range_us": {
+                    "begin": 82800000,
+                    "end": 83120000
+                  },
+                  "probability": 0.9881614446640015
+                },
+                {
+                  "text": "风",
+                  "source_range_us": {
+                    "begin": 83120000,
+                    "end": 83340000
+                  },
+                  "probability": 0.9940449595451355
+                },
+                {
+                  "text": "对",
+                  "source_range_us": {
+                    "begin": 83340000,
+                    "end": 83540000
+                  },
+                  "probability": 0.9935032725334167
+                },
+                {
+                  "text": "植",
+                  "source_range_us": {
+                    "begin": 83540000,
+                    "end": 83760000
+                  },
+                  "probability": 0.997612327337265
+                },
+                {
+                  "text": "物",
+                  "source_range_us": {
+                    "begin": 83760000,
+                    "end": 83940000
+                  },
+                  "probability": 0.9981533885002136
+                },
+                {
+                  "text": "生",
+                  "source_range_us": {
+                    "begin": 83940000,
+                    "end": 84120000
+                  },
+                  "probability": 0.9705290794372559
+                },
+                {
+                  "text": "长",
+                  "source_range_us": {
+                    "begin": 84120000,
+                    "end": 84300000
+                  },
+                  "probability": 0.995973527431488
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 84300000,
+                    "end": 84420000
+                  },
+                  "probability": 0.9978470802307129
+                },
+                {
+                  "text": "印",
+                  "source_range_us": {
+                    "begin": 84420000,
+                    "end": 84580000
+                  },
+                  "probability": 0.6721882820129395
+                },
+                {
+                  "text": "象",
+                  "source_range_us": {
+                    "begin": 84580000,
+                    "end": 84780000
+                  },
+                  "probability": 0.9983043670654297
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0024",
+              "avg_logprob": -0.184918874502182,
+              "no_speech_prob": 0.12972509860992432,
+              "compression_ratio": 1.311787072243346,
+              "words": [
+                {
+                  "text": "台",
+                  "source_range_us": {
+                    "begin": 85480000,
+                    "end": 85920000
+                  },
+                  "probability": 0.9106667041778564
+                },
+                {
+                  "text": "湾",
+                  "source_range_us": {
+                    "begin": 85920000,
+                    "end": 86140000
+                  },
+                  "probability": 0.9993025362491608
+                },
+                {
+                  "text": "是",
+                  "source_range_us": {
+                    "begin": 86140000,
+                    "end": 86360000
+                  },
+                  "probability": 0.9847789406776428
+                },
+                {
+                  "text": "个",
+                  "source_range_us": {
+                    "begin": 86360000,
+                    "end": 86500000
+                  },
+                  "probability": 0.9214428067207336
+                },
+                {
+                  "text": "海",
+                  "source_range_us": {
+                    "begin": 86500000,
+                    "end": 86720000
+                  },
+                  "probability": 0.9960551261901855
+                },
+                {
+                  "text": "岛",
+                  "source_range_us": {
+                    "begin": 86720000,
+                    "end": 86960000
+                  },
+                  "probability": 0.974146842956543
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0025",
+              "avg_logprob": -0.184918874502182,
+              "no_speech_prob": 0.12972509860992432,
+              "compression_ratio": 1.311787072243346,
+              "words": [
+                {
+                  "text": "冬",
+                  "source_range_us": {
+                    "begin": 86960000,
+                    "end": 87480000
+                  },
+                  "probability": 0.8386208415031433
+                },
+                {
+                  "text": "季",
+                  "source_range_us": {
+                    "begin": 87480000,
+                    "end": 87700000
+                  },
+                  "probability": 0.9929356575012207
+                },
+                {
+                  "text": "时",
+                  "source_range_us": {
+                    "begin": 87700000,
+                    "end": 87980000
+                  },
+                  "probability": 0.9851863980293274
+                },
+                {
+                  "text": "强",
+                  "source_range_us": {
+                    "begin": 87980000,
+                    "end": 88440000
+                  },
+                  "probability": 0.6894037127494812
+                },
+                {
+                  "text": "劲",
+                  "source_range_us": {
+                    "begin": 88440000,
+                    "end": 88640000
+                  },
+                  "probability": 0.7998049557209015
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 88640000,
+                    "end": 88820000
+                  },
+                  "probability": 0.9597139358520508
+                },
+                {
+                  "text": "东",
+                  "source_range_us": {
+                    "begin": 88820000,
+                    "end": 89000000
+                  },
+                  "probability": 0.99382084608078
+                },
+                {
+                  "text": "北",
+                  "source_range_us": {
+                    "begin": 89000000,
+                    "end": 89160000
+                  },
+                  "probability": 0.9999390840530396
+                },
+                {
+                  "text": "季",
+                  "source_range_us": {
+                    "begin": 89160000,
+                    "end": 89360000
+                  },
+                  "probability": 0.9980213940143585
+                },
+                {
+                  "text": "风",
+                  "source_range_us": {
+                    "begin": 89360000,
+                    "end": 89620000
+                  },
+                  "probability": 0.9977686405181885
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0026",
+              "avg_logprob": -0.21306914229083945,
+              "no_speech_prob": 0.21101655066013336,
+              "compression_ratio": 1.188118811881188,
+              "words": [
+                {
+                  "text": "帶",
+                  "source_range_us": {
+                    "begin": 89620000,
+                    "end": 90040000
+                  },
+                  "probability": 0.915159285068512
+                },
+                {
+                  "text": "來",
+                  "source_range_us": {
+                    "begin": 90040000,
+                    "end": 90260000
+                  },
+                  "probability": 0.9949912428855896
+                },
+                {
+                  "text": "又",
+                  "source_range_us": {
+                    "begin": 90260000,
+                    "end": 90460000
+                  },
+                  "probability": 0.9915156364440918
+                },
+                {
+                  "text": "濕",
+                  "source_range_us": {
+                    "begin": 90460000,
+                    "end": 90740000
+                  },
+                  "probability": 0.9138140380382538
+                },
+                {
+                  "text": "又",
+                  "source_range_us": {
+                    "begin": 90740000,
+                    "end": 91080000
+                  },
+                  "probability": 0.9907534122467041
+                },
+                {
+                  "text": "冷",
+                  "source_range_us": {
+                    "begin": 91080000,
+                    "end": 91280000
+                  },
+                  "probability": 0.9952900409698486
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 91280000,
+                    "end": 91440000
+                  },
+                  "probability": 0.9959218502044678
+                },
+                {
+                  "text": "天",
+                  "source_range_us": {
+                    "begin": 91440000,
+                    "end": 91620000
+                  },
+                  "probability": 0.9994513392448425
+                },
+                {
+                  "text": "氣",
+                  "source_range_us": {
+                    "begin": 91620000,
+                    "end": 91900000
+                  },
+                  "probability": 0.9988635778427124
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0027",
+              "avg_logprob": -0.21306914229083945,
+              "no_speech_prob": 0.21101655066013336,
+              "compression_ratio": 1.188118811881188,
+              "words": [
+                {
+                  "text": "陽",
+                  "source_range_us": {
+                    "begin": 91900000,
+                    "end": 92720000
+                  },
+                  "probability": 0.4712578356266022
+                },
+                {
+                  "text": "明",
+                  "source_range_us": {
+                    "begin": 92720000,
+                    "end": 92880000
+                  },
+                  "probability": 0.9748709797859192
+                },
+                {
+                  "text": "山",
+                  "source_range_us": {
+                    "begin": 92880000,
+                    "end": 93040000
+                  },
+                  "probability": 0.996692419052124
+                },
+                {
+                  "text": "國家",
+                  "source_range_us": {
+                    "begin": 93040000,
+                    "end": 93280000
+                  },
+                  "probability": 0.9855175614356995
+                },
+                {
+                  "text": "公",
+                  "source_range_us": {
+                    "begin": 93280000,
+                    "end": 93560000
+                  },
+                  "probability": 0.9861099720001221
+                },
+                {
+                  "text": "園",
+                  "source_range_us": {
+                    "begin": 93560000,
+                    "end": 93820000
+                  },
+                  "probability": 0.9930144846439362
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0028",
+              "avg_logprob": -0.21306914229083945,
+              "no_speech_prob": 0.21101655066013336,
+              "compression_ratio": 1.188118811881188,
+              "words": [
+                {
+                  "text": "各",
+                  "source_range_us": {
+                    "begin": 93820000,
+                    "end": 94120000
+                  },
+                  "probability": 0.7747819423675537
+                },
+                {
+                  "text": "個",
+                  "source_range_us": {
+                    "begin": 94120000,
+                    "end": 94340000
+                  },
+                  "probability": 0.8517657518386841
+                },
+                {
+                  "text": "山",
+                  "source_range_us": {
+                    "begin": 94340000,
+                    "end": 94540000
+                  },
+                  "probability": 0.9809885621070862
+                },
+                {
+                  "text": "頭",
+                  "source_range_us": {
+                    "begin": 94540000,
+                    "end": 94780000
+                  },
+                  "probability": 0.9838841557502747
+                },
+                {
+                  "text": "首",
+                  "source_range_us": {
+                    "begin": 94780000,
+                    "end": 95040000
+                  },
+                  "probability": 0.968065083026886
+                },
+                {
+                  "text": "當",
+                  "source_range_us": {
+                    "begin": 95040000,
+                    "end": 95340000
+                  },
+                  "probability": 0.9846560955047607
+                },
+                {
+                  "text": "其",
+                  "source_range_us": {
+                    "begin": 95340000,
+                    "end": 95560000
+                  },
+                  "probability": 0.8449593186378479
+                },
+                {
+                  "text": "衝",
+                  "source_range_us": {
+                    "begin": 95560000,
+                    "end": 95920000
+                  },
+                  "probability": 0.9315213561058044
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0029",
+              "avg_logprob": -0.21306914229083945,
+              "no_speech_prob": 0.21101655066013336,
+              "compression_ratio": 1.188118811881188,
+              "words": [
+                {
+                  "text": "因為",
+                  "source_range_us": {
+                    "begin": 96620000,
+                    "end": 97060000
+                  },
+                  "probability": 0.9796727895736694
+                },
+                {
+                  "text": "地",
+                  "source_range_us": {
+                    "begin": 97060000,
+                    "end": 97400000
+                  },
+                  "probability": 0.9973329305648804
+                },
+                {
+                  "text": "理",
+                  "source_range_us": {
+                    "begin": 97400000,
+                    "end": 97600000
+                  },
+                  "probability": 0.9324214458465576
+                },
+                {
+                  "text": "和",
+                  "source_range_us": {
+                    "begin": 97600000,
+                    "end": 97900000
+                  },
+                  "probability": 0.9834981560707092
+                },
+                {
+                  "text": "氣",
+                  "source_range_us": {
+                    "begin": 97900000,
+                    "end": 98240000
+                  },
+                  "probability": 0.9914795160293579
+                },
+                {
+                  "text": "候",
+                  "source_range_us": {
+                    "begin": 98240000,
+                    "end": 98460000
+                  },
+                  "probability": 0.9968156218528748
+                },
+                {
+                  "text": "因",
+                  "source_range_us": {
+                    "begin": 98460000,
+                    "end": 98660000
+                  },
+                  "probability": 0.925349235534668
+                },
+                {
+                  "text": "素",
+                  "source_range_us": {
+                    "begin": 98660000,
+                    "end": 98840000
+                  },
+                  "probability": 0.9985983967781067
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 98840000,
+                    "end": 98980000
+                  },
+                  "probability": 0.9458179473876953
+                },
+                {
+                  "text": "影",
+                  "source_range_us": {
+                    "begin": 98980000,
+                    "end": 99140000
+                  },
+                  "probability": 0.9996131062507629
+                },
+                {
+                  "text": "響",
+                  "source_range_us": {
+                    "begin": 99140000,
+                    "end": 99440000
+                  },
+                  "probability": 0.9994146525859833
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0030",
+              "avg_logprob": -0.21306914229083945,
+              "no_speech_prob": 0.21101655066013336,
+              "compression_ratio": 1.188118811881188,
+              "words": [
+                {
+                  "text": "氣",
+                  "source_range_us": {
+                    "begin": 99440000,
+                    "end": 100120000
+                  },
+                  "probability": 0.9468215703964233
+                },
+                {
+                  "text": "溫",
+                  "source_range_us": {
+                    "begin": 100120000,
+                    "end": 100400000
+                  },
+                  "probability": 0.9792660474777222
+                },
+                {
+                  "text": "明",
+                  "source_range_us": {
+                    "begin": 100400000,
+                    "end": 100700000
+                  },
+                  "probability": 0.9897608160972595
+                },
+                {
+                  "text": "顯",
+                  "source_range_us": {
+                    "begin": 100700000,
+                    "end": 100980000
+                  },
+                  "probability": 0.9985872507095337
+                },
+                {
+                  "text": "降",
+                  "source_range_us": {
+                    "begin": 100980000,
+                    "end": 101200000
+                  },
+                  "probability": 0.9961775541305542
+                },
+                {
+                  "text": "低",
+                  "source_range_us": {
+                    "begin": 101200000,
+                    "end": 101500000
+                  },
+                  "probability": 0.9997677206993103
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0031",
+              "avg_logprob": -0.21306914229083945,
+              "no_speech_prob": 0.21101655066013336,
+              "compression_ratio": 1.188118811881188,
+              "words": [
+                {
+                  "text": "造",
+                  "source_range_us": {
+                    "begin": 101500000,
+                    "end": 102260000
+                  },
+                  "probability": 0.9757329225540161
+                },
+                {
+                  "text": "就",
+                  "source_range_us": {
+                    "begin": 102260000,
+                    "end": 102440000
+                  },
+                  "probability": 0.9699641466140747
+                },
+                {
+                  "text": "了",
+                  "source_range_us": {
+                    "begin": 102440000,
+                    "end": 102620000
+                  },
+                  "probability": 0.9919043183326721
+                },
+                {
+                  "text": "陽",
+                  "source_range_us": {
+                    "begin": 102620000,
+                    "end": 102800000
+                  },
+                  "probability": 0.9815540313720703
+                },
+                {
+                  "text": "明",
+                  "source_range_us": {
+                    "begin": 102800000,
+                    "end": 102940000
+                  },
+                  "probability": 0.9994400143623352
+                },
+                {
+                  "text": "山",
+                  "source_range_us": {
+                    "begin": 102940000,
+                    "end": 103120000
+                  },
+                  "probability": 0.9993459582328796
+                },
+                {
+                  "text": "地",
+                  "source_range_us": {
+                    "begin": 103120000,
+                    "end": 103320000
+                  },
+                  "probability": 0.997530996799469
+                },
+                {
+                  "text": "區",
+                  "source_range_us": {
+                    "begin": 103320000,
+                    "end": 103560000
+                  },
+                  "probability": 0.9986365437507629
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0032",
+              "avg_logprob": -0.21306914229083945,
+              "no_speech_prob": 0.21101655066013336,
+              "compression_ratio": 1.188118811881188,
+              "words": [
+                {
+                  "text": "特",
+                  "source_range_us": {
+                    "begin": 103560000,
+                    "end": 103880000
+                  },
+                  "probability": 0.9649936556816101
+                },
+                {
+                  "text": "殊",
+                  "source_range_us": {
+                    "begin": 103880000,
+                    "end": 104120000
+                  },
+                  "probability": 0.9995279908180237
+                },
+                {
+                  "text": "的",
+                  "source_range_us": {
+                    "begin": 104120000,
+                    "end": 104320000
+                  },
+                  "probability": 0.9901443719863892
+                },
+                {
+                  "text": "生",
+                  "source_range_us": {
+                    "begin": 104320000,
+                    "end": 104600000
+                  },
+                  "probability": 0.9932695031166077
+                },
+                {
+                  "text": "態",
+                  "source_range_us": {
+                    "begin": 104600000,
+                    "end": 104780000
+                  },
+                  "probability": 0.9970560073852539
+                },
+                {
+                  "text": "景",
+                  "source_range_us": {
+                    "begin": 104780000,
+                    "end": 105000000
+                  },
+                  "probability": 0.9872701168060303
+                },
+                {
+                  "text": "觀",
+                  "source_range_us": {
+                    "begin": 105000000,
+                    "end": 105580000
+                  },
+                  "probability": 0.9996403455734253
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0033",
+              "avg_logprob": -0.21306914229083945,
+              "no_speech_prob": 0.21101655066013336,
+              "compression_ratio": 1.188118811881188,
+              "words": [
+                {
+                  "text": "秋",
+                  "source_range_us": {
+                    "begin": 106440000,
+                    "end": 106880000
+                  },
+                  "probability": 0.972558319568634
+                },
+                {
+                  "text": "冬",
+                  "source_range_us": {
+                    "begin": 106880000,
+                    "end": 107040000
+                  },
+                  "probability": 0.9979057312011719
+                },
+                {
+                  "text": "季",
+                  "source_range_us": {
+                    "begin": 107040000,
+                    "end": 107260000
+                  },
+                  "probability": 0.9959755539894104
+                },
+                {
+                  "text": "節",
+                  "source_range_us": {
+                    "begin": 107260000,
+                    "end": 107440000
+                  },
+                  "probability": 0.9994367957115173
+                },
+                {
+                  "text": "登",
+                  "source_range_us": {
+                    "begin": 107440000,
+                    "end": 107660000
+                  },
+                  "probability": 0.9077271819114685
+                },
+                {
+                  "text": "山",
+                  "source_range_us": {
+                    "begin": 107660000,
+                    "end": 107840000
+                  },
+                  "probability": 0.9997726082801819
+                },
+                {
+                  "text": "見",
+                  "source_range_us": {
+                    "begin": 107840000,
+                    "end": 108080000
+                  },
+                  "probability": 0.6303653120994568
+                },
+                {
+                  "text": "行",
+                  "source_range_us": {
+                    "begin": 108080000,
+                    "end": 108320000
+                  },
+                  "probability": 0.5000491738319397
+                },
+                {
+                  "text": "賞",
+                  "source_range_us": {
+                    "begin": 108320000,
+                    "end": 108540000
+                  },
+                  "probability": 0.921831876039505
+                },
+                {
+                  "text": "景",
+                  "source_range_us": {
+                    "begin": 108540000,
+                    "end": 108780000
+                  },
+                  "probability": 0.9903565049171448
+                }
+              ]
+            },
+            {
+              "segment_id": "segment-0034",
+              "avg_logprob": -0.21306914229083945,
+              "no_speech_prob": 0.21101655066013336,
+              "compression_ratio": 1.188118811881188,
+              "words": [
+                {
+                  "text": "也",
+                  "source_range_us": {
+                    "begin": 108780000,
+                    "end": 109200000
+                  },
+                  "probability": 0.9808434844017029
+                },
+                {
+                  "text": "別",
+                  "source_range_us": {
+                    "begin": 109200000,
+                    "end": 109380000
+                  },
+                  "probability": 0.9973593354225159
+                },
+                {
+                  "text": "忘",
+                  "source_range_us": {
+                    "begin": 109380000,
+                    "end": 109580000
+                  },
+                  "probability": 0.9977145195007324
+                },
+                {
+                  "text": "了",
+                  "source_range_us": {
+                    "begin": 109580000,
+                    "end": 109740000
+                  },
+                  "probability": 0.9929746389389038
+                },
+                {
+                  "text": "多",
+                  "source_range_us": {
+                    "begin": 109740000,
+                    "end": 109880000
+                  },
+                  "probability": 0.994175910949707
+                },
+                {
+                  "text": "帶",
+                  "source_range_us": {
+                    "begin": 109880000,
+                    "end": 110060000
+                  },
+                  "probability": 0.9642239809036255
+                },
+                {
+                  "text": "幾",
+                  "source_range_us": {
+                    "begin": 110060000,
+                    "end": 110240000
+                  },
+                  "probability": 0.9756309986114502
+                },
+                {
+                  "text": "件",
+                  "source_range_us": {
+                    "begin": 110240000,
+                    "end": 110400000
+                  },
+                  "probability": 0.9511386156082153
+                },
+                {
+                  "text": "衣",
+                  "source_range_us": {
+                    "begin": 110400000,
+                    "end": 110580000
+                  },
+                  "probability": 0.7039597034454346
+                },
+                {
+                  "text": "物",
+                  "source_range_us": {
+                    "begin": 110580000,
+                    "end": 110720000
+                  },
+                  "probability": 0.9442787766456604
+                },
+                {
+                  "text": "保",
+                  "source_range_us": {
+                    "begin": 110720000,
+                    "end": 110880000
+                  },
+                  "probability": 0.9883329272270203
+                },
+                {
+                  "text": "暖",
+                  "source_range_us": {
+                    "begin": 110880000,
+                    "end": 111100000
+                  },
+                  "probability": 0.9990336000919342
+                },
+                {
+                  "text": "哦",
+                  "source_range_us": {
+                    "begin": 111100000,
+                    "end": 111320000
+                  },
+                  "probability": 0.4506511092185974
+                }
+              ]
+            }
+          ]
+        },
+        "source_content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+        "review": {
+          "status": "needs_review",
+          "reasons": [
+            "UNVERIFIED_TRANSCRIPT",
+            "SPEECH_TAIL_REVIEW_RECOMMENDED"
+          ],
+          "flagged_segments": [],
+          "last_transcript_end_us": 111320000,
+          "last_vad_speech_end_us": 113313000,
+          "policy": {
+            "version": 1,
+            "calibrated": false,
+            "min_avg_logprob": -1.0,
+            "max_no_speech_prob": 0.6,
+            "max_compression_ratio": 2.4,
+            "tail_tolerance_us": 500000
+          }
+        },
+        "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json"
+      },
+      "processing_status": "success"
+    },
+    {
+      "asset_id": "asset-ede352464981473abfb1309ac3415694",
+      "revision": 1,
+      "origin": "external",
+      "uri": "media/external/asset-ede352464981473abfb1309ac3415694/r1.mp4",
+      "content_hash": "sha256:b11de2acb26d6de3d3985ae5ae95d56051b08e993cfe28c6be31f9004a5f4a86",
+      "provenance_note": "工作台导入：short-01-trail-back-view.mp4；来源由提交者选择为 external",
+      "media_kind": "video",
+      "duration_us": 28611916,
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "encoded_width": 1920,
+        "encoded_height": 1080,
+        "rotation_degrees": 0,
+        "fps": {
+          "numerator": 24000,
+          "denominator": 1001
+        },
+        "time_base": "1/24000",
+        "start_time_us": 0,
+        "codec": "h264",
+        "stream_index": 0,
+        "source_origin_pts": 0,
+        "source_origin_us": 0,
+        "variable_frame_rate": false
+      },
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 2,
+        "codec": "aac",
+        "start_time_us": 0
+      },
+      "source_pts_uri": "derived/asset-ede352464981473abfb1309ac3415694/r1/probe-42daada9d6247b1c153e6885/source-pts.json",
+      "proxy_uri": "derived/asset-ede352464981473abfb1309ac3415694/r1/proxy-d1dc3aec6b0a50a31d958fb0/proxy.mp4",
+      "proxy_mapping_uri": "derived/asset-ede352464981473abfb1309ac3415694/r1/proxy-d1dc3aec6b0a50a31d958fb0/proxy-map.json",
+      "proxy_status": "success",
+      "transcript": {
+        "status": "no_speech",
+        "profile": {
+          "asr": "faster-whisper",
+          "asr_model": "small",
+          "asr_language": "zh",
+          "asr_device": "cpu",
+          "asr_compute_type": "int8",
+          "asr_beam_size": 5,
+          "asr_cpu_threads": 2,
+          "asr_num_workers": 1,
+          "asr_vad": true,
+          "asr_condition_on_previous_text": false,
+          "asr_initial_prompt": null,
+          "asr_hotwords": null,
+          "asr_model_revision": null,
+          "packages": {
+            "faster-whisper": "1.2.1",
+            "ctranslate2": "4.8.3",
+            "av": "19.0.1",
+            "tokenizers": "0.23.3",
+            "onnxruntime": "1.31.0",
+            "huggingface-hub": "2.2.0"
+          },
+          "vad_filter": true,
+          "audio_preprocessing": "video-origin-mono-16k-v1",
+          "diagnostics_version": 1,
+          "weight_hashes": {
+            "config.json": "sha256:b55496ac7940a7ae47d2c01eab40edfd8701feec1229d9cce3b40014383fb828",
+            "model.bin": "sha256:3e305921506d8872816023e4c273e75d2419fb89b24da97b4fe7bce14170d671",
+            "tokenizer.json": "sha256:fb7b63191e9bb045082c79fd742a3106a12c99513ab30df4a0d47fa6cb6fd0ab",
+            "vocabulary.txt": "sha256:34ce3fe1c5041027b3f8d42912270993f986dbc4bb34cf27f951e34a1e453913"
+          }
+        },
+        "segments": [],
+        "diagnostics": {
+          "language": "zh",
+          "language_probability": 1.0,
+          "warnings": [],
+          "duration_us": 28611938,
+          "duration_after_vad_us": 0,
+          "speech_ranges_us": [],
+          "segments": []
+        },
+        "source_content_hash": "sha256:b11de2acb26d6de3d3985ae5ae95d56051b08e993cfe28c6be31f9004a5f4a86",
+        "review": {
+          "status": "needs_review",
+          "reasons": [
+            "UNVERIFIED_TRANSCRIPT"
+          ],
+          "flagged_segments": [],
+          "last_transcript_end_us": 0,
+          "last_vad_speech_end_us": 0,
+          "policy": {
+            "version": 1,
+            "calibrated": false,
+            "min_avg_logprob": -1.0,
+            "max_no_speech_prob": 0.6,
+            "max_compression_ratio": 2.4,
+            "tail_tolerance_us": 500000
+          }
+        },
+        "uri": "derived/asset-ede352464981473abfb1309ac3415694/r1/asr-8badd14889183fc3cd2fc158/transcript.json"
+      },
+      "processing_status": "success"
+    },
+    {
+      "asset_id": "asset-ea01edc0b20b45858d5a9fda754769e5",
+      "revision": 1,
+      "origin": "external",
+      "uri": "media/external/asset-ea01edc0b20b45858d5a9fda754769e5/r1.mp4",
+      "content_hash": "sha256:ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484",
+      "provenance_note": "工作台导入：broll-02-countryside-aerial.mp4；来源由提交者选择为 external",
+      "media_kind": "video",
+      "duration_us": 44461083,
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "encoded_width": 1920,
+        "encoded_height": 1080,
+        "rotation_degrees": 0,
+        "fps": {
+          "numerator": 24000,
+          "denominator": 1001
+        },
+        "time_base": "1/24000",
+        "start_time_us": 0,
+        "codec": "h264",
+        "stream_index": 0,
+        "source_origin_pts": 0,
+        "source_origin_us": 0,
+        "variable_frame_rate": false
+      },
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 2,
+        "codec": "aac",
+        "start_time_us": 0
+      },
+      "source_pts_uri": "derived/asset-ea01edc0b20b45858d5a9fda754769e5/r1/probe-eabce15c6ffce73592c8eadc/source-pts.json",
+      "proxy_uri": "derived/asset-ea01edc0b20b45858d5a9fda754769e5/r1/proxy-9810f562b2fc877419c0eca6/proxy.mp4",
+      "proxy_mapping_uri": "derived/asset-ea01edc0b20b45858d5a9fda754769e5/r1/proxy-9810f562b2fc877419c0eca6/proxy-map.json",
+      "proxy_status": "success",
+      "transcript": {
+        "status": "no_speech",
+        "profile": {
+          "asr": "faster-whisper",
+          "asr_model": "small",
+          "asr_language": "zh",
+          "asr_device": "cpu",
+          "asr_compute_type": "int8",
+          "asr_beam_size": 5,
+          "asr_cpu_threads": 2,
+          "asr_num_workers": 1,
+          "asr_vad": true,
+          "asr_condition_on_previous_text": false,
+          "asr_initial_prompt": null,
+          "asr_hotwords": null,
+          "asr_model_revision": null,
+          "packages": {
+            "faster-whisper": "1.2.1",
+            "ctranslate2": "4.8.3",
+            "av": "19.0.1",
+            "tokenizers": "0.23.3",
+            "onnxruntime": "1.31.0",
+            "huggingface-hub": "2.2.0"
+          },
+          "vad_filter": true,
+          "audio_preprocessing": "video-origin-mono-16k-v1",
+          "diagnostics_version": 1,
+          "weight_hashes": {
+            "config.json": "sha256:b55496ac7940a7ae47d2c01eab40edfd8701feec1229d9cce3b40014383fb828",
+            "model.bin": "sha256:3e305921506d8872816023e4c273e75d2419fb89b24da97b4fe7bce14170d671",
+            "tokenizer.json": "sha256:fb7b63191e9bb045082c79fd742a3106a12c99513ab30df4a0d47fa6cb6fd0ab",
+            "vocabulary.txt": "sha256:34ce3fe1c5041027b3f8d42912270993f986dbc4bb34cf27f951e34a1e453913"
+          }
+        },
+        "segments": [],
+        "diagnostics": {
+          "language": "zh",
+          "language_probability": 1.0,
+          "warnings": [],
+          "duration_us": 44461062,
+          "duration_after_vad_us": 0,
+          "speech_ranges_us": [],
+          "segments": []
+        },
+        "source_content_hash": "sha256:ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484",
+        "review": {
+          "status": "needs_review",
+          "reasons": [
+            "UNVERIFIED_TRANSCRIPT"
+          ],
+          "flagged_segments": [],
+          "last_transcript_end_us": 0,
+          "last_vad_speech_end_us": 0,
+          "policy": {
+            "version": 1,
+            "calibrated": false,
+            "min_avg_logprob": -1.0,
+            "max_no_speech_prob": 0.6,
+            "max_compression_ratio": 2.4,
+            "tail_tolerance_us": 500000
+          }
+        },
+        "uri": "derived/asset-ea01edc0b20b45858d5a9fda754769e5/r1/asr-391cc7f4cdfca6367615db36/transcript.json"
+      },
+      "processing_status": "success"
+    },
+    {
+      "asset_id": "asset-490d77063c004f939abc6e0bc7a02091",
+      "revision": 1,
+      "origin": "external",
+      "uri": "media/external/asset-490d77063c004f939abc6e0bc7a02091/r1.mp4",
+      "content_hash": "sha256:cc7f159dce98ff4af051f73f108863aa00db5d01f923e8ffa07ba3fadd07eb55",
+      "provenance_note": "工作台导入：long-02-countryside-sunset.mp4；来源由提交者选择为 external",
+      "media_kind": "video",
+      "duration_us": 77327250,
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "encoded_width": 3840,
+        "encoded_height": 2160,
+        "rotation_degrees": 0,
+        "fps": {
+          "numerator": 24000,
+          "denominator": 1001
+        },
+        "time_base": "1/24000",
+        "start_time_us": 0,
+        "codec": "h264",
+        "stream_index": 0,
+        "source_origin_pts": 0,
+        "source_origin_us": 0,
+        "variable_frame_rate": false
+      },
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 2,
+        "codec": "aac",
+        "start_time_us": 0
+      },
+      "source_pts_uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/probe-6b6d1ddbfc9568d04c5bb434/source-pts.json",
+      "proxy_uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/proxy-590007bbbba988b466ff015a/proxy.mp4",
+      "proxy_mapping_uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/proxy-590007bbbba988b466ff015a/proxy-map.json",
+      "proxy_status": "success",
+      "transcript": {
+        "status": "no_speech",
+        "profile": {
+          "asr": "faster-whisper",
+          "asr_model": "small",
+          "asr_language": "zh",
+          "asr_device": "cpu",
+          "asr_compute_type": "int8",
+          "asr_beam_size": 5,
+          "asr_cpu_threads": 2,
+          "asr_num_workers": 1,
+          "asr_vad": true,
+          "asr_condition_on_previous_text": false,
+          "asr_initial_prompt": null,
+          "asr_hotwords": null,
+          "asr_model_revision": null,
+          "packages": {
+            "faster-whisper": "1.2.1",
+            "ctranslate2": "4.8.3",
+            "av": "19.0.1",
+            "tokenizers": "0.23.3",
+            "onnxruntime": "1.31.0",
+            "huggingface-hub": "2.2.0"
+          },
+          "vad_filter": true,
+          "audio_preprocessing": "video-origin-mono-16k-v1",
+          "diagnostics_version": 1,
+          "weight_hashes": {
+            "config.json": "sha256:b55496ac7940a7ae47d2c01eab40edfd8701feec1229d9cce3b40014383fb828",
+            "model.bin": "sha256:3e305921506d8872816023e4c273e75d2419fb89b24da97b4fe7bce14170d671",
+            "tokenizer.json": "sha256:fb7b63191e9bb045082c79fd742a3106a12c99513ab30df4a0d47fa6cb6fd0ab",
+            "vocabulary.txt": "sha256:34ce3fe1c5041027b3f8d42912270993f986dbc4bb34cf27f951e34a1e453913"
+          }
+        },
+        "segments": [],
+        "diagnostics": {
+          "language": "zh",
+          "language_probability": 1.0,
+          "warnings": [],
+          "duration_us": 77327250,
+          "duration_after_vad_us": 0,
+          "speech_ranges_us": [],
+          "segments": []
+        },
+        "source_content_hash": "sha256:cc7f159dce98ff4af051f73f108863aa00db5d01f923e8ffa07ba3fadd07eb55",
+        "review": {
+          "status": "needs_review",
+          "reasons": [
+            "UNVERIFIED_TRANSCRIPT"
+          ],
+          "flagged_segments": [],
+          "last_transcript_end_us": 0,
+          "last_vad_speech_end_us": 0,
+          "policy": {
+            "version": 1,
+            "calibrated": false,
+            "min_avg_logprob": -1.0,
+            "max_no_speech_prob": 0.6,
+            "max_compression_ratio": 2.4,
+            "tail_tolerance_us": 500000
+          }
+        },
+        "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/asr-00b09a8ec7e4901a76aa178c/transcript.json"
+      },
+      "processing_status": "success"
+    }
+  ],
+  "segments": [
+    {
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-coarse-0-30000000",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 30000000
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "success",
+        "text": "我們現在這裡是冷水坑上方的觀景台 這裡同時也是冷水坑附近最好的眺望點 請您往東邊看去 遠景是頂山、石梯裡、秦天鋼 近景則是基辛倫漢七谷山 您仔細看看七谷山 山頭的植被一半是茂密的森林 另一半則是翠麗的高草原",
+        "segments": [
+          {
+            "source_range_us": {
+              "begin": 4940000,
+              "end": 8300000
+            },
+            "text": "我們現在這裡是冷水坑上方的觀景台"
+          },
+          {
+            "source_range_us": {
+              "begin": 8300000,
+              "end": 11780000
+            },
+            "text": "這裡同時也是冷水坑附近最好的眺望點"
+          },
+          {
+            "source_range_us": {
+              "begin": 12900000,
+              "end": 14960000
+            },
+            "text": "請您往東邊看去"
+          },
+          {
+            "source_range_us": {
+              "begin": 14960000,
+              "end": 18600000
+            },
+            "text": "遠景是頂山、石梯裡、秦天鋼"
+          },
+          {
+            "source_range_us": {
+              "begin": 18600000,
+              "end": 21860000
+            },
+            "text": "近景則是基辛倫漢七谷山"
+          },
+          {
+            "source_range_us": {
+              "begin": 22520000,
+              "end": 24340000
+            },
+            "text": "您仔細看看七谷山"
+          },
+          {
+            "source_range_us": {
+              "begin": 24940000,
+              "end": 27980000
+            },
+            "text": "山頭的植被一半是茂密的森林"
+          },
+          {
+            "source_range_us": {
+              "begin": 27980000,
+              "end": 30920000
+            },
+            "text": "另一半則是翠麗的高草原"
+          }
+        ],
+        "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-coarse-30000000-60000000",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 30000000,
+        "end": 60000000
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "success",
+        "text": "另一半則是翠麗的高草原 似乎是撿了一個螃蟹頭 这究竟是谁的节奏呢? 原来呀,每年9月开始吹的东北季风就像李法师一样, 每天刮牙刮得几乎刮了半年, 所以北向的坡面就长不出高大的树木, 只剩下生命力强烈的芒草与建筑。 而南向坡面因为于被封面, 所以植物生长旺盛,",
+        "segments": [
+          {
+            "source_range_us": {
+              "begin": 27980000,
+              "end": 30920000
+            },
+            "text": "另一半則是翠麗的高草原"
+          },
+          {
+            "source_range_us": {
+              "begin": 31440000,
+              "end": 33500000
+            },
+            "text": "似乎是撿了一個螃蟹頭"
+          },
+          {
+            "source_range_us": {
+              "begin": 33500000,
+              "end": 36080000
+            },
+            "text": "这究竟是谁的节奏呢?"
+          },
+          {
+            "source_range_us": {
+              "begin": 36520000,
+              "end": 42180000
+            },
+            "text": "原来呀,每年9月开始吹的东北季风就像李法师一样,"
+          },
+          {
+            "source_range_us": {
+              "begin": 42660000,
+              "end": 46140000
+            },
+            "text": "每天刮牙刮得几乎刮了半年,"
+          },
+          {
+            "source_range_us": {
+              "begin": 46560000,
+              "end": 50420000
+            },
+            "text": "所以北向的坡面就长不出高大的树木,"
+          },
+          {
+            "source_range_us": {
+              "begin": 50740000,
+              "end": 53860000
+            },
+            "text": "只剩下生命力强烈的芒草与建筑。"
+          },
+          {
+            "source_range_us": {
+              "begin": 54800000,
+              "end": 57780000
+            },
+            "text": "而南向坡面因为于被封面,"
+          },
+          {
+            "source_range_us": {
+              "begin": 58180000,
+              "end": 60060000
+            },
+            "text": "所以植物生长旺盛,"
+          }
+        ],
+        "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-coarse-60000000-90000000",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 60000000,
+        "end": 90000000
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "success",
+        "text": "所以植物生长旺盛, 而呈现比较完整的森林面貌 在阳明山国家公园的迎风面 你们都可以看到树木受到封压作用 枝条向一边倾斜 或是一边枝牙干凸的风险现象 在这里我们可以看到东北季风 在七谷山留下鲜明的主机 也同时见证了季风对植物生长的印象 台湾是个海岛 冬季时强劲的东北季风 帶來又濕又冷的天氣",
+        "segments": [
+          {
+            "source_range_us": {
+              "begin": 58180000,
+              "end": 60060000
+            },
+            "text": "所以植物生长旺盛,"
+          },
+          {
+            "source_range_us": {
+              "begin": 60060000,
+              "end": 63280000
+            },
+            "text": "而呈现比较完整的森林面貌"
+          },
+          {
+            "source_range_us": {
+              "begin": 63980000,
+              "end": 66560000
+            },
+            "text": "在阳明山国家公园的迎风面"
+          },
+          {
+            "source_range_us": {
+              "begin": 66560000,
+              "end": 69960000
+            },
+            "text": "你们都可以看到树木受到封压作用"
+          },
+          {
+            "source_range_us": {
+              "begin": 69960000,
+              "end": 72000000
+            },
+            "text": "枝条向一边倾斜"
+          },
+          {
+            "source_range_us": {
+              "begin": 72000000,
+              "end": 75760000
+            },
+            "text": "或是一边枝牙干凸的风险现象"
+          },
+          {
+            "source_range_us": {
+              "begin": 76480000,
+              "end": 79200000
+            },
+            "text": "在这里我们可以看到东北季风"
+          },
+          {
+            "source_range_us": {
+              "begin": 79200000,
+              "end": 81460000
+            },
+            "text": "在七谷山留下鲜明的主机"
+          },
+          {
+            "source_range_us": {
+              "begin": 81460000,
+              "end": 84780000
+            },
+            "text": "也同时见证了季风对植物生长的印象"
+          },
+          {
+            "source_range_us": {
+              "begin": 85480000,
+              "end": 86960000
+            },
+            "text": "台湾是个海岛"
+          },
+          {
+            "source_range_us": {
+              "begin": 86960000,
+              "end": 89620000
+            },
+            "text": "冬季时强劲的东北季风"
+          },
+          {
+            "source_range_us": {
+              "begin": 89620000,
+              "end": 91900000
+            },
+            "text": "帶來又濕又冷的天氣"
+          }
+        ],
+        "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-coarse-90000000-113313000",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 90000000,
+        "end": 113313000
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "success",
+        "text": "帶來又濕又冷的天氣 陽明山國家公園 各個山頭首當其衝 因為地理和氣候因素的影響 氣溫明顯降低 造就了陽明山地區 特殊的生態景觀 秋冬季節登山見行賞景 也別忘了多帶幾件衣物保暖哦",
+        "segments": [
+          {
+            "source_range_us": {
+              "begin": 89620000,
+              "end": 91900000
+            },
+            "text": "帶來又濕又冷的天氣"
+          },
+          {
+            "source_range_us": {
+              "begin": 91900000,
+              "end": 93820000
+            },
+            "text": "陽明山國家公園"
+          },
+          {
+            "source_range_us": {
+              "begin": 93820000,
+              "end": 95920000
+            },
+            "text": "各個山頭首當其衝"
+          },
+          {
+            "source_range_us": {
+              "begin": 96620000,
+              "end": 99440000
+            },
+            "text": "因為地理和氣候因素的影響"
+          },
+          {
+            "source_range_us": {
+              "begin": 99440000,
+              "end": 101500000
+            },
+            "text": "氣溫明顯降低"
+          },
+          {
+            "source_range_us": {
+              "begin": 101500000,
+              "end": 103560000
+            },
+            "text": "造就了陽明山地區"
+          },
+          {
+            "source_range_us": {
+              "begin": 103560000,
+              "end": 105580000
+            },
+            "text": "特殊的生態景觀"
+          },
+          {
+            "source_range_us": {
+              "begin": 106440000,
+              "end": 108780000
+            },
+            "text": "秋冬季節登山見行賞景"
+          },
+          {
+            "source_range_us": {
+              "begin": 108780000,
+              "end": 111320000
+            },
+            "text": "也別忘了多帶幾件衣物保暖哦"
+          }
+        ],
+        "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-0-15000000",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 15000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-coarse-0-30000000",
+      "keyframes": [
+        {
+          "source_time_us": 7508000,
+          "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/keyframes-c1061980ddc26dd6a6bf4672/00000000.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "success",
+        "text": "我們現在這裡是冷水坑上方的觀景台 這裡同時也是冷水坑附近最好的眺望點 請您往東邊看去 遠景是頂山、石梯裡、秦天鋼",
+        "segments": [
+          {
+            "source_range_us": {
+              "begin": 4940000,
+              "end": 8300000
+            },
+            "text": "我們現在這裡是冷水坑上方的觀景台"
+          },
+          {
+            "source_range_us": {
+              "begin": 8300000,
+              "end": 11780000
+            },
+            "text": "這裡同時也是冷水坑附近最好的眺望點"
+          },
+          {
+            "source_range_us": {
+              "begin": 12900000,
+              "end": 14960000
+            },
+            "text": "請您往東邊看去"
+          },
+          {
+            "source_range_us": {
+              "begin": 14960000,
+              "end": 18600000
+            },
+            "text": "遠景是頂山、石梯裡、秦天鋼"
+          }
+        ],
+        "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-15000000-30000000",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 15000000,
+        "end": 30000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-coarse-0-30000000",
+      "keyframes": [
+        {
+          "source_time_us": 22523000,
+          "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/keyframes-c1061980ddc26dd6a6bf4672/00000001.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "success",
+        "text": "遠景是頂山、石梯裡、秦天鋼 近景則是基辛倫漢七谷山 您仔細看看七谷山 山頭的植被一半是茂密的森林 另一半則是翠麗的高草原",
+        "segments": [
+          {
+            "source_range_us": {
+              "begin": 14960000,
+              "end": 18600000
+            },
+            "text": "遠景是頂山、石梯裡、秦天鋼"
+          },
+          {
+            "source_range_us": {
+              "begin": 18600000,
+              "end": 21860000
+            },
+            "text": "近景則是基辛倫漢七谷山"
+          },
+          {
+            "source_range_us": {
+              "begin": 22520000,
+              "end": 24340000
+            },
+            "text": "您仔細看看七谷山"
+          },
+          {
+            "source_range_us": {
+              "begin": 24940000,
+              "end": 27980000
+            },
+            "text": "山頭的植被一半是茂密的森林"
+          },
+          {
+            "source_range_us": {
+              "begin": 27980000,
+              "end": 30920000
+            },
+            "text": "另一半則是翠麗的高草原"
+          }
+        ],
+        "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 30000000,
+        "end": 45000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-coarse-30000000-60000000",
+      "keyframes": [
+        {
+          "source_time_us": 37504000,
+          "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/keyframes-c1061980ddc26dd6a6bf4672/00000002.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "success",
+        "text": "另一半則是翠麗的高草原 似乎是撿了一個螃蟹頭 这究竟是谁的节奏呢? 原来呀,每年9月开始吹的东北季风就像李法师一样, 每天刮牙刮得几乎刮了半年,",
+        "segments": [
+          {
+            "source_range_us": {
+              "begin": 27980000,
+              "end": 30920000
+            },
+            "text": "另一半則是翠麗的高草原"
+          },
+          {
+            "source_range_us": {
+              "begin": 31440000,
+              "end": 33500000
+            },
+            "text": "似乎是撿了一個螃蟹頭"
+          },
+          {
+            "source_range_us": {
+              "begin": 33500000,
+              "end": 36080000
+            },
+            "text": "这究竟是谁的节奏呢?"
+          },
+          {
+            "source_range_us": {
+              "begin": 36520000,
+              "end": 42180000
+            },
+            "text": "原来呀,每年9月开始吹的东北季风就像李法师一样,"
+          },
+          {
+            "source_range_us": {
+              "begin": 42660000,
+              "end": 46140000
+            },
+            "text": "每天刮牙刮得几乎刮了半年,"
+          }
+        ],
+        "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 45000000,
+        "end": 60000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-coarse-30000000-60000000",
+      "keyframes": [
+        {
+          "source_time_us": 52519000,
+          "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/keyframes-c1061980ddc26dd6a6bf4672/00000003.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "success",
+        "text": "每天刮牙刮得几乎刮了半年, 所以北向的坡面就长不出高大的树木, 只剩下生命力强烈的芒草与建筑。 而南向坡面因为于被封面, 所以植物生长旺盛,",
+        "segments": [
+          {
+            "source_range_us": {
+              "begin": 42660000,
+              "end": 46140000
+            },
+            "text": "每天刮牙刮得几乎刮了半年,"
+          },
+          {
+            "source_range_us": {
+              "begin": 46560000,
+              "end": 50420000
+            },
+            "text": "所以北向的坡面就长不出高大的树木,"
+          },
+          {
+            "source_range_us": {
+              "begin": 50740000,
+              "end": 53860000
+            },
+            "text": "只剩下生命力强烈的芒草与建筑。"
+          },
+          {
+            "source_range_us": {
+              "begin": 54800000,
+              "end": 57780000
+            },
+            "text": "而南向坡面因为于被封面,"
+          },
+          {
+            "source_range_us": {
+              "begin": 58180000,
+              "end": 60060000
+            },
+            "text": "所以植物生长旺盛,"
+          }
+        ],
+        "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 60000000,
+        "end": 75000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-coarse-60000000-90000000",
+      "keyframes": [
+        {
+          "source_time_us": 67501000,
+          "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/keyframes-c1061980ddc26dd6a6bf4672/00000004.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "success",
+        "text": "所以植物生长旺盛, 而呈现比较完整的森林面貌 在阳明山国家公园的迎风面 你们都可以看到树木受到封压作用 枝条向一边倾斜 或是一边枝牙干凸的风险现象",
+        "segments": [
+          {
+            "source_range_us": {
+              "begin": 58180000,
+              "end": 60060000
+            },
+            "text": "所以植物生长旺盛,"
+          },
+          {
+            "source_range_us": {
+              "begin": 60060000,
+              "end": 63280000
+            },
+            "text": "而呈现比较完整的森林面貌"
+          },
+          {
+            "source_range_us": {
+              "begin": 63980000,
+              "end": 66560000
+            },
+            "text": "在阳明山国家公园的迎风面"
+          },
+          {
+            "source_range_us": {
+              "begin": 66560000,
+              "end": 69960000
+            },
+            "text": "你们都可以看到树木受到封压作用"
+          },
+          {
+            "source_range_us": {
+              "begin": 69960000,
+              "end": 72000000
+            },
+            "text": "枝条向一边倾斜"
+          },
+          {
+            "source_range_us": {
+              "begin": 72000000,
+              "end": 75760000
+            },
+            "text": "或是一边枝牙干凸的风险现象"
+          }
+        ],
+        "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-75000000-90000000",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 75000000,
+        "end": 90000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-coarse-60000000-90000000",
+      "keyframes": [
+        {
+          "source_time_us": 82516000,
+          "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/keyframes-c1061980ddc26dd6a6bf4672/00000005.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "success",
+        "text": "或是一边枝牙干凸的风险现象 在这里我们可以看到东北季风 在七谷山留下鲜明的主机 也同时见证了季风对植物生长的印象 台湾是个海岛 冬季时强劲的东北季风 帶來又濕又冷的天氣",
+        "segments": [
+          {
+            "source_range_us": {
+              "begin": 72000000,
+              "end": 75760000
+            },
+            "text": "或是一边枝牙干凸的风险现象"
+          },
+          {
+            "source_range_us": {
+              "begin": 76480000,
+              "end": 79200000
+            },
+            "text": "在这里我们可以看到东北季风"
+          },
+          {
+            "source_range_us": {
+              "begin": 79200000,
+              "end": 81460000
+            },
+            "text": "在七谷山留下鲜明的主机"
+          },
+          {
+            "source_range_us": {
+              "begin": 81460000,
+              "end": 84780000
+            },
+            "text": "也同时见证了季风对植物生长的印象"
+          },
+          {
+            "source_range_us": {
+              "begin": 85480000,
+              "end": 86960000
+            },
+            "text": "台湾是个海岛"
+          },
+          {
+            "source_range_us": {
+              "begin": 86960000,
+              "end": 89620000
+            },
+            "text": "冬季时强劲的东北季风"
+          },
+          {
+            "source_range_us": {
+              "begin": 89620000,
+              "end": 91900000
+            },
+            "text": "帶來又濕又冷的天氣"
+          }
+        ],
+        "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 90000000,
+        "end": 105000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-coarse-90000000-113313000",
+      "keyframes": [
+        {
+          "source_time_us": 97531000,
+          "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/keyframes-c1061980ddc26dd6a6bf4672/00000006.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "success",
+        "text": "帶來又濕又冷的天氣 陽明山國家公園 各個山頭首當其衝 因為地理和氣候因素的影響 氣溫明顯降低 造就了陽明山地區 特殊的生態景觀",
+        "segments": [
+          {
+            "source_range_us": {
+              "begin": 89620000,
+              "end": 91900000
+            },
+            "text": "帶來又濕又冷的天氣"
+          },
+          {
+            "source_range_us": {
+              "begin": 91900000,
+              "end": 93820000
+            },
+            "text": "陽明山國家公園"
+          },
+          {
+            "source_range_us": {
+              "begin": 93820000,
+              "end": 95920000
+            },
+            "text": "各個山頭首當其衝"
+          },
+          {
+            "source_range_us": {
+              "begin": 96620000,
+              "end": 99440000
+            },
+            "text": "因為地理和氣候因素的影響"
+          },
+          {
+            "source_range_us": {
+              "begin": 99440000,
+              "end": 101500000
+            },
+            "text": "氣溫明顯降低"
+          },
+          {
+            "source_range_us": {
+              "begin": 101500000,
+              "end": 103560000
+            },
+            "text": "造就了陽明山地區"
+          },
+          {
+            "source_range_us": {
+              "begin": 103560000,
+              "end": 105580000
+            },
+            "text": "特殊的生態景觀"
+          }
+        ],
+        "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-105000000-113313000",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 105000000,
+        "end": 113313000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-coarse-90000000-113313000",
+      "keyframes": [
+        {
+          "source_time_us": 109176000,
+          "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/keyframes-c1061980ddc26dd6a6bf4672/00000007.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "success",
+        "text": "特殊的生態景觀 秋冬季節登山見行賞景 也別忘了多帶幾件衣物保暖哦",
+        "segments": [
+          {
+            "source_range_us": {
+              "begin": 103560000,
+              "end": 105580000
+            },
+            "text": "特殊的生態景觀"
+          },
+          {
+            "source_range_us": {
+              "begin": 106440000,
+              "end": 108780000
+            },
+            "text": "秋冬季節登山見行賞景"
+          },
+          {
+            "source_range_us": {
+              "begin": 108780000,
+              "end": 111320000
+            },
+            "text": "也別忘了多帶幾件衣物保暖哦"
+          }
+        ],
+        "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-ede352464981473abfb1309ac3415694-r1-coarse-0-28611916",
+      "asset_id": "asset-ede352464981473abfb1309ac3415694",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 28611916
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-ede352464981473abfb1309ac3415694/r1/asr-8badd14889183fc3cd2fc158/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-ede352464981473abfb1309ac3415694-r1-shot-0-15000000",
+      "asset_id": "asset-ede352464981473abfb1309ac3415694",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 15000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-ede352464981473abfb1309ac3415694-r1-coarse-0-28611916",
+      "keyframes": [
+        {
+          "source_time_us": 7507500,
+          "uri": "derived/asset-ede352464981473abfb1309ac3415694/r1/keyframes-2e52ade3af81d5482b3e61df/00000000.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-ede352464981473abfb1309ac3415694/r1/asr-8badd14889183fc3cd2fc158/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-ede352464981473abfb1309ac3415694-r1-shot-15000000-28611916",
+      "asset_id": "asset-ede352464981473abfb1309ac3415694",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 15000000,
+        "end": 28611916
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-ede352464981473abfb1309ac3415694-r1-coarse-0-28611916",
+      "keyframes": [
+        {
+          "source_time_us": 21813458,
+          "uri": "derived/asset-ede352464981473abfb1309ac3415694/r1/keyframes-2e52ade3af81d5482b3e61df/00000001.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-ede352464981473abfb1309ac3415694/r1/asr-8badd14889183fc3cd2fc158/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-coarse-0-30000000",
+      "asset_id": "asset-ea01edc0b20b45858d5a9fda754769e5",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 30000000
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-ea01edc0b20b45858d5a9fda754769e5/r1/asr-391cc7f4cdfca6367615db36/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-coarse-30000000-44461083",
+      "asset_id": "asset-ea01edc0b20b45858d5a9fda754769e5",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 30000000,
+        "end": 44461083
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-ea01edc0b20b45858d5a9fda754769e5/r1/asr-391cc7f4cdfca6367615db36/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+      "asset_id": "asset-ea01edc0b20b45858d5a9fda754769e5",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 15000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-coarse-0-30000000",
+      "keyframes": [
+        {
+          "source_time_us": 7507500,
+          "uri": "derived/asset-ea01edc0b20b45858d5a9fda754769e5/r1/keyframes-ed8b33706b2f4f8c878ce291/00000000.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-ea01edc0b20b45858d5a9fda754769e5/r1/asr-391cc7f4cdfca6367615db36/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-15000000-30000000",
+      "asset_id": "asset-ea01edc0b20b45858d5a9fda754769e5",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 15000000,
+        "end": 30000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-coarse-0-30000000",
+      "keyframes": [
+        {
+          "source_time_us": 22522500,
+          "uri": "derived/asset-ea01edc0b20b45858d5a9fda754769e5/r1/keyframes-ed8b33706b2f4f8c878ce291/00000001.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-ea01edc0b20b45858d5a9fda754769e5/r1/asr-391cc7f4cdfca6367615db36/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-30000000-44461083",
+      "asset_id": "asset-ea01edc0b20b45858d5a9fda754769e5",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 30000000,
+        "end": 44461083
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-coarse-30000000-44461083",
+      "keyframes": [
+        {
+          "source_time_us": 37245542,
+          "uri": "derived/asset-ea01edc0b20b45858d5a9fda754769e5/r1/keyframes-ed8b33706b2f4f8c878ce291/00000002.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-ea01edc0b20b45858d5a9fda754769e5/r1/asr-391cc7f4cdfca6367615db36/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-490d77063c004f939abc6e0bc7a02091-r1-coarse-0-30000000",
+      "asset_id": "asset-490d77063c004f939abc6e0bc7a02091",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 30000000
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/asr-00b09a8ec7e4901a76aa178c/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-490d77063c004f939abc6e0bc7a02091-r1-coarse-30000000-60000000",
+      "asset_id": "asset-490d77063c004f939abc6e0bc7a02091",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 30000000,
+        "end": 60000000
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/asr-00b09a8ec7e4901a76aa178c/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-490d77063c004f939abc6e0bc7a02091-r1-coarse-60000000-77327250",
+      "asset_id": "asset-490d77063c004f939abc6e0bc7a02091",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 60000000,
+        "end": 77327250
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 30000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/asr-00b09a8ec7e4901a76aa178c/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-490d77063c004f939abc6e0bc7a02091-r1-shot-0-15000000",
+      "asset_id": "asset-490d77063c004f939abc6e0bc7a02091",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 15000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-490d77063c004f939abc6e0bc7a02091-r1-coarse-0-30000000",
+      "keyframes": [
+        {
+          "source_time_us": 7507500,
+          "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/keyframes-d3e46fc27e578fb9a6c58580/00000000.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/asr-00b09a8ec7e4901a76aa178c/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-490d77063c004f939abc6e0bc7a02091-r1-shot-15000000-30000000",
+      "asset_id": "asset-490d77063c004f939abc6e0bc7a02091",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 15000000,
+        "end": 30000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-490d77063c004f939abc6e0bc7a02091-r1-coarse-0-30000000",
+      "keyframes": [
+        {
+          "source_time_us": 22522500,
+          "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/keyframes-d3e46fc27e578fb9a6c58580/00000001.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/asr-00b09a8ec7e4901a76aa178c/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-490d77063c004f939abc6e0bc7a02091-r1-shot-30000000-45000000",
+      "asset_id": "asset-490d77063c004f939abc6e0bc7a02091",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 30000000,
+        "end": 45000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-490d77063c004f939abc6e0bc7a02091-r1-coarse-30000000-60000000",
+      "keyframes": [
+        {
+          "source_time_us": 37537500,
+          "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/keyframes-d3e46fc27e578fb9a6c58580/00000002.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/asr-00b09a8ec7e4901a76aa178c/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-490d77063c004f939abc6e0bc7a02091-r1-shot-45000000-60000000",
+      "asset_id": "asset-490d77063c004f939abc6e0bc7a02091",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 45000000,
+        "end": 60000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-490d77063c004f939abc6e0bc7a02091-r1-coarse-30000000-60000000",
+      "keyframes": [
+        {
+          "source_time_us": 52510792,
+          "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/keyframes-d3e46fc27e578fb9a6c58580/00000003.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/asr-00b09a8ec7e4901a76aa178c/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-490d77063c004f939abc6e0bc7a02091-r1-shot-60000000-75000000",
+      "asset_id": "asset-490d77063c004f939abc6e0bc7a02091",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 60000000,
+        "end": 75000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-490d77063c004f939abc6e0bc7a02091-r1-coarse-60000000-77327250",
+      "keyframes": [
+        {
+          "source_time_us": 67525792,
+          "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/keyframes-d3e46fc27e578fb9a6c58580/00000004.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/asr-00b09a8ec7e4901a76aa178c/transcript.json",
+        "review_status": "needs_review"
+      }
+    },
+    {
+      "segment_id": "asset-490d77063c004f939abc6e0bc7a02091-r1-shot-75000000-77327250",
+      "asset_id": "asset-490d77063c004f939abc6e0bc7a02091",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 75000000,
+        "end": 77327250
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-490d77063c004f939abc6e0bc7a02091-r1-coarse-60000000-77327250",
+      "keyframes": [
+        {
+          "source_time_us": 76201125,
+          "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/keyframes-d3e46fc27e578fb9a6c58580/00000005.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 15000000
+      },
+      "transcript": {
+        "status": "no_speech",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-490d77063c004f939abc6e0bc7a02091/r1/asr-00b09a8ec7e4901a76aa178c/transcript.json",
+        "review_status": "needs_review"
+      }
+    }
+  ],
+  "embedding_profile": {
+    "status": "not_indexed",
+    "owner": "B"
+  },
+  "processing": {
+    "status": "success",
+    "errors": []
+  }
+}

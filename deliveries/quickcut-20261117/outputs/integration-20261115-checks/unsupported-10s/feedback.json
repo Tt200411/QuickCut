@@ -1,0 +1,12 @@
+{
+  "status": "needs_input",
+  "code": "UNSUPPORTED_STORY_BEAT",
+  "stage": "C",
+  "project_id": "project-pipeline-demo",
+  "action_owner": "C",
+  "retryable": false,
+  "affected_ids": [
+    "beat-middle"
+  ],
+  "message": "B 的中段候选被演示用例清空；未调用 E/D"
+}

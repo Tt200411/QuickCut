@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "path": "ref_audio.zip",
+      "size_bytes": 339020,
+      "sha256": "587e596da48c65828c2b1b227aebb0a7167db93c28fe37b72bc37b6fda58a6cd"
+    },
+    {
+      "path": "source-manifest.json",
+      "size_bytes": 1605,
+      "sha256": "b1a3de68451ba7e882766760f0c2c46ac3d9113c5fc2b207ddef1f27040538f6"
+    },
+    {
+      "path": "男声.wav",
+      "size_bytes": 159404,
+      "sha256": "f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb"
+    },
+    {
+      "path": "老人女性3.wav",
+      "size_bytes": 225494,
+      "sha256": "fb26a72bf91810c776fe8aa55597d966e311c9cdd462f33930662cad87d71e15"
+    },
+    {
+      "path": "魅力游移型女1.wav",
+      "size_bytes": 121814,
+      "sha256": "a44e2a19b3402b43bec9ee86c9cbbaf21f11ce4c0beaba1e19fa7a241fc949ec"
+    }
+  ]
+}

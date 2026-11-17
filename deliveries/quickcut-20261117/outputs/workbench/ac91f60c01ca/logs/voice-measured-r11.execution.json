@@ -1,0 +1,13 @@
+{
+  "started_at": "2026-11-16T13:14:59.660946+00:00",
+  "action": "voice",
+  "python": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/upstream/.venv/bin/python",
+  "code_sha256": {
+    "voice_package.py": "ff926857d73e4b03d577c380c47d31f10521609c148b8ba1824da4500ac55f51",
+    "indextts2.py": "200614066a4ee8c309cfa5ad1f249e5465fa7ac1fd7104e4fe14218798ca71e8"
+  },
+  "local_models_only": true,
+  "exit_code": 0,
+  "elapsed_seconds": 0.13515970797743648,
+  "finished_at": "2026-11-16T13:14:59.796109+00:00"
+}

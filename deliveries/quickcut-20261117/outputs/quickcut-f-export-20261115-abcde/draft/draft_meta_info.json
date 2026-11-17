@@ -1,0 +1,232 @@
+{
+  "cloud_package_completed_time": "",
+  "draft_cloud_capcut_purchase_info": "",
+  "draft_cloud_last_action_download": false,
+  "draft_cloud_materials": [],
+  "draft_cloud_purchase_info": "",
+  "draft_cloud_template_id": "",
+  "draft_cloud_tutorial_info": "",
+  "draft_cloud_videocut_purchase_info": "",
+  "draft_cover": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft/draft_cover.jpg",
+  "draft_deeplink_url": "",
+  "draft_enterprise_info": {
+    "draft_enterprise_extra": "",
+    "draft_enterprise_id": "",
+    "draft_enterprise_name": "",
+    "enterprise_material": []
+  },
+  "draft_fold_path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft",
+  "draft_id": "7C582ED3-FF5A-4BE5-AC1E-D1F0E91B98D6",
+  "draft_is_ai_packaging_used": false,
+  "draft_is_ai_shorts": false,
+  "draft_is_ai_translate": false,
+  "draft_is_article_video_draft": false,
+  "draft_is_from_deeplink": "false",
+  "draft_is_invisible": false,
+  "draft_materials": [
+    {
+      "type": 0,
+      "value": [
+        {
+          "id": "366434A3-282E-5CCA-9E9C-F1AD5CE32B1D",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft/Resources/26f2c90001ade7bd3009278b94d11dba69048ea4947360ab1dc18e7d95d7b36f.mp4",
+          "duration": 18000000,
+          "extra_info": "r1.mp4",
+          "width": 320,
+          "height": 180,
+          "metetype": "video",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794723763,
+          "import_time": 1794723763,
+          "import_time_ms": 1794723763831666,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        },
+        {
+          "id": "4941E00E-B185-5D3F-AA77-F802728D1DEB",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft/Resources/36a4152eace2c6a685809bb88d1685f8d9b002965b677754ee91fe62e7cc5987.wav",
+          "duration": 1180000,
+          "extra_info": "01d58f283a77172e5600419a0b634f2c5f3cf0099e5719a531851ec6c5af46a4.wav",
+          "width": 0,
+          "height": 0,
+          "metetype": "music",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794723763,
+          "import_time": 1794723763,
+          "import_time_ms": 1794723763831666,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        },
+        {
+          "id": "BC03839A-4DA7-57A3-9CD9-A5004EEA3527",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft/Resources/36a4152eace2c6a685809bb88d1685f8d9b002965b677754ee91fe62e7cc5987.wav",
+          "duration": 1180000,
+          "extra_info": "f4c98ba58e4e428c0ff13f6571f807cc633d5aebf42ef0e7eb093ce95d98f477.wav",
+          "width": 0,
+          "height": 0,
+          "metetype": "music",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794723763,
+          "import_time": 1794723763,
+          "import_time_ms": 1794723763831666,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        },
+        {
+          "id": "08D31AF7-5E00-5A19-A929-09AA1ADEACBD",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft/Resources/36a4152eace2c6a685809bb88d1685f8d9b002965b677754ee91fe62e7cc5987.wav",
+          "duration": 1180000,
+          "extra_info": "b1880f650fb30e3d40b0db81862d92eb2bbbf2a0b90f30ad4d7a4ae20262babe.wav",
+          "width": 0,
+          "height": 0,
+          "metetype": "music",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794723763,
+          "import_time": 1794723763,
+          "import_time_ms": 1794723763831666,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        },
+        {
+          "id": "955D1110-4512-5608-B65B-A67FD6BFF100",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft/Resources/source-audio-9e0202c7dd76eb340c8289bf.wav",
+          "duration": 3333333,
+          "extra_info": "原声-clip-original-1.wav",
+          "width": 0,
+          "height": 0,
+          "metetype": "music",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794723763,
+          "import_time": 1794723763,
+          "import_time_ms": 1794723763831666,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        },
+        {
+          "id": "4980F5C2-5D1C-5186-A368-1838BC846CBF",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft/Resources/source-audio-43fbcda85c7c9cbf5eea4f7c.wav",
+          "duration": 5000000,
+          "extra_info": "原声-clip-original-2.wav",
+          "width": 0,
+          "height": 0,
+          "metetype": "music",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794723763,
+          "import_time": 1794723763,
+          "import_time_ms": 1794723763831666,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        },
+        {
+          "id": "0B539635-C431-5701-9F2B-60AF5A530B43",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft/Resources/source-audio-9cd2846db78db5289c016203.wav",
+          "duration": 1666667,
+          "extra_info": "原声-clip-original-3.wav",
+          "width": 0,
+          "height": 0,
+          "metetype": "music",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794723763,
+          "import_time": 1794723763,
+          "import_time_ms": 1794723763831666,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        }
+      ]
+    },
+    {
+      "type": 1,
+      "value": []
+    },
+    {
+      "type": 2,
+      "value": []
+    },
+    {
+      "type": 3,
+      "value": []
+    },
+    {
+      "type": 6,
+      "value": []
+    },
+    {
+      "type": 7,
+      "value": []
+    },
+    {
+      "type": 8,
+      "value": []
+    }
+  ],
+  "draft_materials_copied_info": [],
+  "draft_name": "QuickCut-ABCDE-10s-验收",
+  "draft_new_version": "",
+  "draft_removable_storage_device": "",
+  "draft_root_path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde",
+  "draft_segment_extra_info": [],
+  "draft_type": "",
+  "tm_draft_cloud_completed": "",
+  "tm_draft_cloud_modified": 0,
+  "tm_draft_removed": 0,
+  "tm_duration": 10000000,
+  "tm_draft_create": 1794723763831666,
+  "tm_draft_modified": 1794723763831666,
+  "draft_timeline_materials_size_": 4122089
+}

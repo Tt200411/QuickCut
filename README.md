@@ -1,5 +1,7 @@
 # QuickCut MVP
 
+完整共享交付见 [2026-11-17 交付目录](deliveries/quickcut-20261117/README.md)：参考音频、男声成片、剪映工程、历史运行和验收证据均已纳入。克隆后运行 `git lfs pull` 下载媒体；模型权重按部署配置下载。
+
 ## 本地网页工作台
 
 双击 [QuickCut.command](QuickCut.command)，或执行 `./scripts/quickcut_web.sh`，打开 `http://127.0.0.1:8765`。

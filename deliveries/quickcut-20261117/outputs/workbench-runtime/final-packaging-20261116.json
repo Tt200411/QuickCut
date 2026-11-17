@@ -1,0 +1,37 @@
+{
+  "status": "passed",
+  "checked_at": "2026-11-16T13:47:53.959270+00:00",
+  "wheel": "quickcut-0.1.0-py3-none-any.whl",
+  "build": "pip wheel --no-deps in a temporary source copy",
+  "resources": [
+    {
+      "path": "quickcut/web/index.html",
+      "bytes": 36012,
+      "sha256": "1dfe1ea3eaa1329e992ba8a136f565da4b69f0aa82d19ab2e5fa697ee1e4e960"
+    },
+    {
+      "path": "quickcut/templates/jianying/draft_content.json",
+      "bytes": 3316,
+      "sha256": "f3b9036da3a0bce68145657bb3fa9b0147e0fe39f7082e43590fb91b63f99d94"
+    },
+    {
+      "path": "quickcut/templates/jianying/draft_meta_info.json",
+      "bytes": 1374,
+      "sha256": "8bbc602f00a61a31ee16059a7a4525aa5d97a06cde509930a159f0f5ed1a77f6"
+    },
+    {
+      "path": "quickcut/templates/jianying/LICENSE.txt",
+      "bytes": 11339,
+      "sha256": "308aaff89f5e69a7d715885bc8cc5f0001bfed9db7e5c056496be559c6e27455"
+    },
+    {
+      "path": "quickcut/templates/jianying/NOTICE.txt",
+      "bytes": 545,
+      "sha256": "d4570ca2d32ab09ff1827fa0831330af7e6838b55752e580321da56f67d28195"
+    }
+  ],
+  "python310_syntax_files": 37,
+  "web_entrypoint": "quickcut.workbench:main",
+  "git_diff_check": "passed",
+  "model_inference_run": false
+}

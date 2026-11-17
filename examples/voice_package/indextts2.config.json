@@ -2,7 +2,7 @@
   "engine": "indextts2",
   "model_dir": "outputs/indextts2-runtime/checkpoints",
   "model_revision": "740dcaf",
-  "reference_audio": "inputs/reference-audio-20261116/男声.wav",
+  "reference_audio": "materials/reference-audio/20261117/男声.wav",
   "voice_label": "男声",
   "device": "mps",
   "seed": 42,

@@ -1,0 +1,87 @@
+{
+  "kind": "TimelinePreviewReport",
+  "schema_version": "0.1.0",
+  "status": "preview_rendered",
+  "project_id": "project-pipeline-demo",
+  "inputs": [
+    {
+      "kind": "EditTimeline",
+      "document_id": "timeline-001",
+      "revision": 1
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-68a8d6b2750845a79500436bb18523b2",
+      "revision": 1
+    },
+    {
+      "kind": "VoicePackage",
+      "document_id": "voice-story-001",
+      "revision": 1
+    }
+  ],
+  "fixtures_only": true,
+  "expected_duration_us": 10000000,
+  "measured_duration_us": 10000000,
+  "measured_stream_durations_us": {
+    "video": 10000000,
+    "audio": 10000000
+  },
+  "source_measurements_us": {
+    "asset-a8f8c84d6a1a467587f9fbc00db5cd2e": {
+      "audio": 18000000,
+      "video": 18000000
+    },
+    "generated-voice-8c2d9e79143dce926e984f433e025897": {
+      "audio": 1180000
+    },
+    "generated-voice-a39d11a7994e3c1cadc1ae2889142fbf": {
+      "audio": 1180000
+    },
+    "generated-voice-b9d8ee11b6c29dec688cf47b32a67424": {
+      "audio": 1180000
+    }
+  },
+  "duration_tolerance_us": 35334,
+  "duration_validation": "ffprobe",
+  "video_frame_quantization": "ceil_global_timeline_boundaries",
+  "video_frame_ranges": [
+    {
+      "clip_id": "clip-video-1",
+      "begin_frame": 0,
+      "end_frame": 100
+    },
+    {
+      "clip_id": "clip-video-2",
+      "begin_frame": 100,
+      "end_frame": 250
+    },
+    {
+      "clip_id": "clip-video-3",
+      "begin_frame": 250,
+      "end_frame": 300
+    }
+  ],
+  "measured_video_frames": 300,
+  "full_decode_verified": true,
+  "subtitles_burned": true,
+  "subtitles_editable": true,
+  "subtitle_policy_requested": true,
+  "subtitle_font": "Hiragino Sans GB",
+  "ffmpeg_binary": "/Users/tangbao/Documents/ChatGPT/CV Project/.venv/lib/python3.14/site-packages/imageio_ffmpeg/binaries/ffmpeg-macos-aarch64-v7.1",
+  "subtitle_frame_quantization": "ceil_global_timeline_boundaries",
+  "srt_time_quantization": "floor_to_millisecond",
+  "audio_mix": "source_audio_and_narration_with_timeline_offsets_and_gains",
+  "editor_project_exported": false,
+  "editor_import_verified": false,
+  "f_acceptance_completed": false,
+  "notes": [
+    "按时间线要求烧录预览字幕，同时保留独立全局 SRT。",
+    "这是媒体预览，不是剪辑工程导出，未完成 F 验收。"
+  ],
+  "files": {
+    "preview": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/preview.mp4",
+    "subtitles": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/preview.srt",
+    "report": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/preview.preview.json"
+  }
+}

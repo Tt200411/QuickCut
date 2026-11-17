@@ -1,0 +1,45 @@
+{
+  "asset_id": "asset-72abd30fcd284c44aa0a99b87bde0370",
+  "source": "outputs/workbench/ac91f60c01ca/uploads/00.webm",
+  "status": "passed",
+  "measurement": {
+    "origin_us": 7000,
+    "duration_us": 113313000,
+    "width": 1280,
+    "height": 720
+  },
+  "selected_bounds": [
+    {
+      "begin": 65000000,
+      "end": 70000000
+    },
+    {
+      "begin": 94000000,
+      "end": 101500000
+    },
+    {
+      "begin": 45000000,
+      "end": 52500000
+    },
+    {
+      "begin": 35000000,
+      "end": 40000000
+    },
+    {
+      "begin": 65000000,
+      "end": 70000000
+    },
+    {
+      "begin": 94000000,
+      "end": 101500000
+    },
+    {
+      "begin": 45000000,
+      "end": 52500000
+    },
+    {
+      "begin": 35000000,
+      "end": 40000000
+    }
+  ]
+}

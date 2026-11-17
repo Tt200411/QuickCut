@@ -1,0 +1,1929 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "CandidateSet",
+  "document_id": "candidates-project-1c1bb824f8a9",
+  "project_id": "project-1c1bb824f8a9",
+  "revision": 1,
+  "fixtures_only": false,
+  "owner": "B",
+  "inputs": [
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-6205ab1d1652440d88c01eff10a35f1a",
+      "revision": 1
+    },
+    {
+      "kind": "RetrievalRequest",
+      "document_id": "request-project-1c1bb824f8a9",
+      "revision": 1
+    }
+  ],
+  "status": "ok",
+  "results": [
+    {
+      "query_id": "query-open",
+      "status": "ok",
+      "reason": "",
+      "allowed_origins": [
+        "external"
+      ],
+      "constraints": {
+        "aspect_ratio": null,
+        "min_duration_us": null,
+        "max_duration_us": null,
+        "duration_budget_us_applied_as_filter": false,
+        "rejected": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-15000000-30000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-15000000-30000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.3551,
+          "transcript_score": 0.2308,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "遠景是頂山、石梯裡、秦天鋼 近景則是基辛倫漢七谷山 您仔細看看七谷山 山頭的植被一半是茂密的森林 另一半則是翠麗的高草原",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 14960000,
+                  "end": 18600000
+                },
+                "text": "遠景是頂山、石梯裡、秦天鋼"
+              },
+              {
+                "source_range_us": {
+                  "begin": 18600000,
+                  "end": 21860000
+                },
+                "text": "近景則是基辛倫漢七谷山"
+              },
+              {
+                "source_range_us": {
+                  "begin": 22520000,
+                  "end": 24340000
+                },
+                "text": "您仔細看看七谷山"
+              },
+              {
+                "source_range_us": {
+                  "begin": 24940000,
+                  "end": 27980000
+                },
+                "text": "山頭的植被一半是茂密的森林"
+              },
+              {
+                "source_range_us": {
+                  "begin": 27980000,
+                  "end": 30920000
+                },
+                "text": "另一半則是翠麗的高草原"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.3551,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 15000000,
+            "end": 30000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "小路",
+              "score": 0.2779
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.1529
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.2469
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.2114
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2781,
+          "transcript_score": 0.3077,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "所以植物生长旺盛, 而呈现比较完整的森林面貌 在阳明山国家公园的迎风面 你们都可以看到树木受到封压作用 枝条向一边倾斜 或是一边枝牙干凸的风险现象",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 58180000,
+                  "end": 60060000
+                },
+                "text": "所以植物生长旺盛,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 60060000,
+                  "end": 63280000
+                },
+                "text": "而呈现比较完整的森林面貌"
+              },
+              {
+                "source_range_us": {
+                  "begin": 63980000,
+                  "end": 66560000
+                },
+                "text": "在阳明山国家公园的迎风面"
+              },
+              {
+                "source_range_us": {
+                  "begin": 66560000,
+                  "end": 69960000
+                },
+                "text": "你们都可以看到树木受到封压作用"
+              },
+              {
+                "source_range_us": {
+                  "begin": 69960000,
+                  "end": 72000000
+                },
+                "text": "枝条向一边倾斜"
+              },
+              {
+                "source_range_us": {
+                  "begin": 72000000,
+                  "end": 75760000
+                },
+                "text": "或是一边枝牙干凸的风险现象"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.2781,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 60000000,
+            "end": 75000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "树林",
+              "score": 0.238
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.1488
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.2119
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.17
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2558,
+          "transcript_score": 0.1538,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "每天刮牙刮得几乎刮了半年, 所以北向的坡面就长不出高大的树木, 只剩下生命力强烈的芒草与建筑。 而南向坡面因为于被封面, 所以植物生长旺盛,",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 42660000,
+                  "end": 46140000
+                },
+                "text": "每天刮牙刮得几乎刮了半年,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 46560000,
+                  "end": 50420000
+                },
+                "text": "所以北向的坡面就长不出高大的树木,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 50740000,
+                  "end": 53860000
+                },
+                "text": "只剩下生命力强烈的芒草与建筑。"
+              },
+              {
+                "source_range_us": {
+                  "begin": 54800000,
+                  "end": 57780000
+                },
+                "text": "而南向坡面因为于被封面,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 58180000,
+                  "end": 60060000
+                },
+                "text": "所以植物生长旺盛,"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.2558,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 45000000,
+            "end": 60000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "田野",
+              "score": 0.2264
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.1275
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.2104
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.1626
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2402,
+          "transcript_score": 0.2308,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "帶來又濕又冷的天氣 陽明山國家公園 各個山頭首當其衝 因為地理和氣候因素的影響 氣溫明顯降低 造就了陽明山地區 特殊的生態景觀",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 89620000,
+                  "end": 91900000
+                },
+                "text": "帶來又濕又冷的天氣"
+              },
+              {
+                "source_range_us": {
+                  "begin": 91900000,
+                  "end": 93820000
+                },
+                "text": "陽明山國家公園"
+              },
+              {
+                "source_range_us": {
+                  "begin": 93820000,
+                  "end": 95920000
+                },
+                "text": "各個山頭首當其衝"
+              },
+              {
+                "source_range_us": {
+                  "begin": 96620000,
+                  "end": 99440000
+                },
+                "text": "因為地理和氣候因素的影響"
+              },
+              {
+                "source_range_us": {
+                  "begin": 99440000,
+                  "end": 101500000
+                },
+                "text": "氣溫明顯降低"
+              },
+              {
+                "source_range_us": {
+                  "begin": 101500000,
+                  "end": 103560000
+                },
+                "text": "造就了陽明山地區"
+              },
+              {
+                "source_range_us": {
+                  "begin": 103560000,
+                  "end": 105580000
+                },
+                "text": "特殊的生態景觀"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.2402,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 90000000,
+            "end": 105000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "小路",
+              "score": 0.1978
+            },
+            "emotion": {
+              "label": "温暖",
+              "score": 0.177
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.2171
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.1719
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+          "segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+          "asset_id": "asset-ea01edc0b20b45858d5a9fda754769e5",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2389,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "no_speech",
+            "text": "",
+            "segments": [],
+            "uri": "derived/asset-ea01edc0b20b45858d5a9fda754769e5/r1/asr-391cc7f4cdfca6367615db36/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.2389,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "工作台导入：broll-02-countryside-aerial.mp4；来源由提交者选择为 external",
+          "flags": [
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "小路",
+              "score": 0.239
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.0418
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.1121
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.0721
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-15000000-30000000",
+          "segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-15000000-30000000",
+          "asset_id": "asset-ea01edc0b20b45858d5a9fda754769e5",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2365,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "no_speech",
+            "text": "",
+            "segments": [],
+            "uri": "derived/asset-ea01edc0b20b45858d5a9fda754769e5/r1/asr-391cc7f4cdfca6367615db36/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.2365,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 15000000,
+            "end": 30000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "工作台导入：broll-02-countryside-aerial.mp4；来源由提交者选择为 external",
+          "flags": [
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "小路",
+              "score": 0.237
+            },
+            "emotion": {
+              "label": "平静",
+              "score": 0.0448
+            },
+            "light": {
+              "label": "阴天",
+              "score": 0.1114
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.058
+            }
+          }
+        }
+      ],
+      "diagnostics": []
+    },
+    {
+      "query_id": "query-middle",
+      "status": "ok",
+      "reason": "",
+      "allowed_origins": [
+        "external"
+      ],
+      "constraints": {
+        "aspect_ratio": null,
+        "min_duration_us": null,
+        "max_duration_us": null,
+        "duration_budget_us_applied_as_filter": false,
+        "rejected": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-15000000-30000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-15000000-30000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.3337,
+          "transcript_score": 0.1351,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "遠景是頂山、石梯裡、秦天鋼 近景則是基辛倫漢七谷山 您仔細看看七谷山 山頭的植被一半是茂密的森林 另一半則是翠麗的高草原",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 14960000,
+                  "end": 18600000
+                },
+                "text": "遠景是頂山、石梯裡、秦天鋼"
+              },
+              {
+                "source_range_us": {
+                  "begin": 18600000,
+                  "end": 21860000
+                },
+                "text": "近景則是基辛倫漢七谷山"
+              },
+              {
+                "source_range_us": {
+                  "begin": 22520000,
+                  "end": 24340000
+                },
+                "text": "您仔細看看七谷山"
+              },
+              {
+                "source_range_us": {
+                  "begin": 24940000,
+                  "end": 27980000
+                },
+                "text": "山頭的植被一半是茂密的森林"
+              },
+              {
+                "source_range_us": {
+                  "begin": 27980000,
+                  "end": 30920000
+                },
+                "text": "另一半則是翠麗的高草原"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.3337,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 15000000,
+            "end": 30000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "小路",
+              "score": 0.2779
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.1529
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.2469
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.2114
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.3099,
+          "transcript_score": 0.2162,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "所以植物生长旺盛, 而呈现比较完整的森林面貌 在阳明山国家公园的迎风面 你们都可以看到树木受到封压作用 枝条向一边倾斜 或是一边枝牙干凸的风险现象",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 58180000,
+                  "end": 60060000
+                },
+                "text": "所以植物生长旺盛,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 60060000,
+                  "end": 63280000
+                },
+                "text": "而呈现比较完整的森林面貌"
+              },
+              {
+                "source_range_us": {
+                  "begin": 63980000,
+                  "end": 66560000
+                },
+                "text": "在阳明山国家公园的迎风面"
+              },
+              {
+                "source_range_us": {
+                  "begin": 66560000,
+                  "end": 69960000
+                },
+                "text": "你们都可以看到树木受到封压作用"
+              },
+              {
+                "source_range_us": {
+                  "begin": 69960000,
+                  "end": 72000000
+                },
+                "text": "枝条向一边倾斜"
+              },
+              {
+                "source_range_us": {
+                  "begin": 72000000,
+                  "end": 75760000
+                },
+                "text": "或是一边枝牙干凸的风险现象"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.3099,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 60000000,
+            "end": 75000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "树林",
+              "score": 0.238
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.1488
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.2119
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.17
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.3058,
+          "transcript_score": 0.1081,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "帶來又濕又冷的天氣 陽明山國家公園 各個山頭首當其衝 因為地理和氣候因素的影響 氣溫明顯降低 造就了陽明山地區 特殊的生態景觀",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 89620000,
+                  "end": 91900000
+                },
+                "text": "帶來又濕又冷的天氣"
+              },
+              {
+                "source_range_us": {
+                  "begin": 91900000,
+                  "end": 93820000
+                },
+                "text": "陽明山國家公園"
+              },
+              {
+                "source_range_us": {
+                  "begin": 93820000,
+                  "end": 95920000
+                },
+                "text": "各個山頭首當其衝"
+              },
+              {
+                "source_range_us": {
+                  "begin": 96620000,
+                  "end": 99440000
+                },
+                "text": "因為地理和氣候因素的影響"
+              },
+              {
+                "source_range_us": {
+                  "begin": 99440000,
+                  "end": 101500000
+                },
+                "text": "氣溫明顯降低"
+              },
+              {
+                "source_range_us": {
+                  "begin": 101500000,
+                  "end": 103560000
+                },
+                "text": "造就了陽明山地區"
+              },
+              {
+                "source_range_us": {
+                  "begin": 103560000,
+                  "end": 105580000
+                },
+                "text": "特殊的生態景觀"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.3058,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 90000000,
+            "end": 105000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "小路",
+              "score": 0.1978
+            },
+            "emotion": {
+              "label": "温暖",
+              "score": 0.177
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.2171
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.1719
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2724,
+          "transcript_score": 0.0811,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "每天刮牙刮得几乎刮了半年, 所以北向的坡面就长不出高大的树木, 只剩下生命力强烈的芒草与建筑。 而南向坡面因为于被封面, 所以植物生长旺盛,",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 42660000,
+                  "end": 46140000
+                },
+                "text": "每天刮牙刮得几乎刮了半年,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 46560000,
+                  "end": 50420000
+                },
+                "text": "所以北向的坡面就长不出高大的树木,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 50740000,
+                  "end": 53860000
+                },
+                "text": "只剩下生命力强烈的芒草与建筑。"
+              },
+              {
+                "source_range_us": {
+                  "begin": 54800000,
+                  "end": 57780000
+                },
+                "text": "而南向坡面因为于被封面,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 58180000,
+                  "end": 60060000
+                },
+                "text": "所以植物生长旺盛,"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.2724,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 45000000,
+            "end": 60000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "田野",
+              "score": 0.2264
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.1275
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.2104
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.1626
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.264,
+          "transcript_score": 0.1351,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "另一半則是翠麗的高草原 似乎是撿了一個螃蟹頭 这究竟是谁的节奏呢? 原来呀,每年9月开始吹的东北季风就像李法师一样, 每天刮牙刮得几乎刮了半年,",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 27980000,
+                  "end": 30920000
+                },
+                "text": "另一半則是翠麗的高草原"
+              },
+              {
+                "source_range_us": {
+                  "begin": 31440000,
+                  "end": 33500000
+                },
+                "text": "似乎是撿了一個螃蟹頭"
+              },
+              {
+                "source_range_us": {
+                  "begin": 33500000,
+                  "end": 36080000
+                },
+                "text": "这究竟是谁的节奏呢?"
+              },
+              {
+                "source_range_us": {
+                  "begin": 36520000,
+                  "end": 42180000
+                },
+                "text": "原来呀,每年9月开始吹的东北季风就像李法师一样,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 42660000,
+                  "end": 46140000
+                },
+                "text": "每天刮牙刮得几乎刮了半年,"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.264,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 30000000,
+            "end": 45000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "树林",
+              "score": 0.2585
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.1337
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.2339
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.1656
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-0-15000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-0-15000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.2422,
+          "transcript_score": 0.0811,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "我們現在這裡是冷水坑上方的觀景台 這裡同時也是冷水坑附近最好的眺望點 請您往東邊看去 遠景是頂山、石梯裡、秦天鋼",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 4940000,
+                  "end": 8300000
+                },
+                "text": "我們現在這裡是冷水坑上方的觀景台"
+              },
+              {
+                "source_range_us": {
+                  "begin": 8300000,
+                  "end": 11780000
+                },
+                "text": "這裡同時也是冷水坑附近最好的眺望點"
+              },
+              {
+                "source_range_us": {
+                  "begin": 12900000,
+                  "end": 14960000
+                },
+                "text": "請您往東邊看去"
+              },
+              {
+                "source_range_us": {
+                  "begin": 14960000,
+                  "end": 18600000
+                },
+                "text": "遠景是頂山、石梯裡、秦天鋼"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.2422,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "田野",
+              "score": 0.2338
+            },
+            "emotion": {
+              "label": "温暖",
+              "score": 0.0615
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.1613
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.1085
+            }
+          }
+        }
+      ],
+      "diagnostics": []
+    },
+    {
+      "query_id": "query-close",
+      "status": "ok",
+      "reason": "all candidates below low_confidence_threshold",
+      "allowed_origins": [
+        "external"
+      ],
+      "constraints": {
+        "aspect_ratio": null,
+        "min_duration_us": null,
+        "max_duration_us": null,
+        "duration_budget_us_applied_as_filter": false,
+        "rejected": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-105000000-113313000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-105000000-113313000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.1354,
+          "transcript_score": 0.1429,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "特殊的生態景觀 秋冬季節登山見行賞景 也別忘了多帶幾件衣物保暖哦",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 103560000,
+                  "end": 105580000
+                },
+                "text": "特殊的生態景觀"
+              },
+              {
+                "source_range_us": {
+                  "begin": 106440000,
+                  "end": 108780000
+                },
+                "text": "秋冬季節登山見行賞景"
+              },
+              {
+                "source_range_us": {
+                  "begin": 108780000,
+                  "end": 111320000
+                },
+                "text": "也別忘了多帶幾件衣物保暖哦"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.1354,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 105000000,
+            "end": 113313000
+          },
+          "duration_us": 8313000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "low_confidence",
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "田野",
+              "score": 0.2129
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.0666
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.1892
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.1566
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-0-15000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-0-15000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.1326,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "我們現在這裡是冷水坑上方的觀景台 這裡同時也是冷水坑附近最好的眺望點 請您往東邊看去 遠景是頂山、石梯裡、秦天鋼",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 4940000,
+                  "end": 8300000
+                },
+                "text": "我們現在這裡是冷水坑上方的觀景台"
+              },
+              {
+                "source_range_us": {
+                  "begin": 8300000,
+                  "end": 11780000
+                },
+                "text": "這裡同時也是冷水坑附近最好的眺望點"
+              },
+              {
+                "source_range_us": {
+                  "begin": 12900000,
+                  "end": 14960000
+                },
+                "text": "請您往東邊看去"
+              },
+              {
+                "source_range_us": {
+                  "begin": 14960000,
+                  "end": 18600000
+                },
+                "text": "遠景是頂山、石梯裡、秦天鋼"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.1326,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 15000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "low_confidence",
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "田野",
+              "score": 0.2338
+            },
+            "emotion": {
+              "label": "温暖",
+              "score": 0.0615
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.1613
+            },
+            "motion": {
+              "label": "人物步行",
+              "score": 0.1085
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-75000000-90000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-75000000-90000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.1261,
+          "transcript_score": 0.1429,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "或是一边枝牙干凸的风险现象 在这里我们可以看到东北季风 在七谷山留下鲜明的主机 也同时见证了季风对植物生长的印象 台湾是个海岛 冬季时强劲的东北季风 帶來又濕又冷的天氣",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 72000000,
+                  "end": 75760000
+                },
+                "text": "或是一边枝牙干凸的风险现象"
+              },
+              {
+                "source_range_us": {
+                  "begin": 76480000,
+                  "end": 79200000
+                },
+                "text": "在这里我们可以看到东北季风"
+              },
+              {
+                "source_range_us": {
+                  "begin": 79200000,
+                  "end": 81460000
+                },
+                "text": "在七谷山留下鲜明的主机"
+              },
+              {
+                "source_range_us": {
+                  "begin": 81460000,
+                  "end": 84780000
+                },
+                "text": "也同时见证了季风对植物生长的印象"
+              },
+              {
+                "source_range_us": {
+                  "begin": 85480000,
+                  "end": 86960000
+                },
+                "text": "台湾是个海岛"
+              },
+              {
+                "source_range_us": {
+                  "begin": 86960000,
+                  "end": 89620000
+                },
+                "text": "冬季时强劲的东北季风"
+              },
+              {
+                "source_range_us": {
+                  "begin": 89620000,
+                  "end": 91900000
+                },
+                "text": "帶來又濕又冷的天氣"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.1261,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 75000000,
+            "end": 90000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "low_confidence",
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "田野",
+              "score": 0.2016
+            },
+            "emotion": {
+              "label": "温暖",
+              "score": 0.0827
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.1979
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.1328
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.1254,
+          "transcript_score": 0.2857,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "每天刮牙刮得几乎刮了半年, 所以北向的坡面就长不出高大的树木, 只剩下生命力强烈的芒草与建筑。 而南向坡面因为于被封面, 所以植物生长旺盛,",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 42660000,
+                  "end": 46140000
+                },
+                "text": "每天刮牙刮得几乎刮了半年,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 46560000,
+                  "end": 50420000
+                },
+                "text": "所以北向的坡面就长不出高大的树木,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 50740000,
+                  "end": 53860000
+                },
+                "text": "只剩下生命力强烈的芒草与建筑。"
+              },
+              {
+                "source_range_us": {
+                  "begin": 54800000,
+                  "end": 57780000
+                },
+                "text": "而南向坡面因为于被封面,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 58180000,
+                  "end": 60060000
+                },
+                "text": "所以植物生长旺盛,"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.1254,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 45000000,
+            "end": 60000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "low_confidence",
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "田野",
+              "score": 0.2264
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.1275
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.2104
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.1626
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.1246,
+          "transcript_score": 0.1429,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "所以植物生长旺盛, 而呈现比较完整的森林面貌 在阳明山国家公园的迎风面 你们都可以看到树木受到封压作用 枝条向一边倾斜 或是一边枝牙干凸的风险现象",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 58180000,
+                  "end": 60060000
+                },
+                "text": "所以植物生长旺盛,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 60060000,
+                  "end": 63280000
+                },
+                "text": "而呈现比较完整的森林面貌"
+              },
+              {
+                "source_range_us": {
+                  "begin": 63980000,
+                  "end": 66560000
+                },
+                "text": "在阳明山国家公园的迎风面"
+              },
+              {
+                "source_range_us": {
+                  "begin": 66560000,
+                  "end": 69960000
+                },
+                "text": "你们都可以看到树木受到封压作用"
+              },
+              {
+                "source_range_us": {
+                  "begin": 69960000,
+                  "end": 72000000
+                },
+                "text": "枝条向一边倾斜"
+              },
+              {
+                "source_range_us": {
+                  "begin": 72000000,
+                  "end": 75760000
+                },
+                "text": "或是一边枝牙干凸的风险现象"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.1246,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 60000000,
+            "end": 75000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "low_confidence",
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "树林",
+              "score": 0.238
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.1488
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.2119
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.17
+            }
+          }
+        },
+        {
+          "candidate_id": "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.1227,
+          "transcript_score": 0.0,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "另一半則是翠麗的高草原 似乎是撿了一個螃蟹頭 这究竟是谁的节奏呢? 原来呀,每年9月开始吹的东北季风就像李法师一样, 每天刮牙刮得几乎刮了半年,",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 27980000,
+                  "end": 30920000
+                },
+                "text": "另一半則是翠麗的高草原"
+              },
+              {
+                "source_range_us": {
+                  "begin": 31440000,
+                  "end": 33500000
+                },
+                "text": "似乎是撿了一個螃蟹頭"
+              },
+              {
+                "source_range_us": {
+                  "begin": 33500000,
+                  "end": 36080000
+                },
+                "text": "这究竟是谁的节奏呢?"
+              },
+              {
+                "source_range_us": {
+                  "begin": 36520000,
+                  "end": 42180000
+                },
+                "text": "原来呀,每年9月开始吹的东北季风就像李法师一样,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 42660000,
+                  "end": 46140000
+                },
+                "text": "每天刮牙刮得几乎刮了半年,"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.1227,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 30000000,
+            "end": 45000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "low_confidence",
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "树林",
+              "score": 0.2585
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.1337
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.2339
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.1656
+            }
+          }
+        }
+      ],
+      "diagnostics": []
+    },
+    {
+      "query_id": "query-middle-establishing",
+      "status": "empty",
+      "reason": "No segment had a positive match for the query",
+      "allowed_origins": [
+        "external"
+      ],
+      "constraints": {
+        "aspect_ratio": null,
+        "min_duration_us": null,
+        "max_duration_us": null,
+        "duration_budget_us_applied_as_filter": false,
+        "rejected": 0
+      },
+      "candidates": [],
+      "diagnostics": []
+    },
+    {
+      "query_id": "query-middle-detail",
+      "status": "empty",
+      "reason": "No segment had a positive match for the query",
+      "allowed_origins": [
+        "external"
+      ],
+      "constraints": {
+        "aspect_ratio": null,
+        "min_duration_us": null,
+        "max_duration_us": null,
+        "duration_budget_us_applied_as_filter": false,
+        "rejected": 0
+      },
+      "candidates": [],
+      "diagnostics": []
+    },
+    {
+      "query_id": "query-close-atmosphere",
+      "status": "ok",
+      "reason": "all candidates below low_confidence_threshold",
+      "allowed_origins": [
+        "external"
+      ],
+      "constraints": {
+        "aspect_ratio": null,
+        "min_duration_us": null,
+        "max_duration_us": null,
+        "duration_budget_us_applied_as_filter": false,
+        "rejected": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "candidate-query-close-atmosphere-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "origin": "external",
+          "visual_score": 0.03,
+          "transcript_score": 0.3571,
+          "description_score": 0.0,
+          "visual_status": "scored",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "所以植物生长旺盛, 而呈现比较完整的森林面貌 在阳明山国家公园的迎风面 你们都可以看到树木受到封压作用 枝条向一边倾斜 或是一边枝牙干凸的风险现象",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 58180000,
+                  "end": 60060000
+                },
+                "text": "所以植物生长旺盛,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 60060000,
+                  "end": 63280000
+                },
+                "text": "而呈现比较完整的森林面貌"
+              },
+              {
+                "source_range_us": {
+                  "begin": 63980000,
+                  "end": 66560000
+                },
+                "text": "在阳明山国家公园的迎风面"
+              },
+              {
+                "source_range_us": {
+                  "begin": 66560000,
+                  "end": 69960000
+                },
+                "text": "你们都可以看到树木受到封压作用"
+              },
+              {
+                "source_range_us": {
+                  "begin": 69960000,
+                  "end": 72000000
+                },
+                "text": "枝条向一边倾斜"
+              },
+              {
+                "source_range_us": {
+                  "begin": 72000000,
+                  "end": 75760000
+                },
+                "text": "或是一边枝牙干凸的风险现象"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "ranking_score": 0.125,
+          "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "atmosphere",
+          "source_range_us": {
+            "begin": 60000000,
+            "end": 75000000
+          },
+          "duration_us": 15000000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external",
+          "flags": [
+            "low_confidence",
+            "transcript_needs_review"
+          ],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "predicted",
+            "method": "openclip-zero-shot",
+            "model": "nllb-clip-base",
+            "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+            "scene": {
+              "label": "树林",
+              "score": 0.238
+            },
+            "emotion": {
+              "label": "紧张",
+              "score": 0.1488
+            },
+            "light": {
+              "label": "日光",
+              "score": 0.2119
+            },
+            "motion": {
+              "label": "航拍",
+              "score": 0.17
+            }
+          }
+        }
+      ],
+      "diagnostics": []
+    }
+  ],
+  "errors": [],
+  "retrieval_profile": {
+    "config": {
+      "encoder_mode": "openclip",
+      "transcript_weight": 0.35,
+      "description_weight": 0.65,
+      "low_confidence_threshold": 0.22,
+      "minimum_ranking_score": 0.12,
+      "dedup_by_content_hash": true
+    },
+    "input_fingerprints": {
+      "AssetManifest": "sha256:ede54a3c82b58e552afdb92bde6bee21e6b16bd2ce712d11a523e9cbf4c0a226",
+      "RetrievalRequest": "sha256:229153ef064f6a2670aebf2f2437fc6d726ae83d2a3b55968b2460b1682153e5"
+    },
+    "implementation_fingerprints": {
+      "retrieval.py": "sha256:82c8a06a8617a1349571988db8f707b65a317969e3303a32b10c0339a8c3fd99",
+      "encoder.py": "sha256:718ae7811fcdcd3f7c3a6a048888633968b198c2cbd77164deedecbdcedcc8f3"
+    },
+    "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+    "encoder": {
+      "encoder": "openclip",
+      "model": "nllb-clip-base",
+      "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+      "dimension": 512,
+      "visual_score": "cosine",
+      "calibrated": false,
+      "model_revision": "f16398ba58d1d5cff27450ce2fe971b087969444",
+      "checkpoint_sha256": "sha256:55f4101efcb112643c0b62e650dd891dbf7f0b944a587bfd2e2c8e27663f098f",
+      "text_model": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--facebook--nllb-200-distilled-600M/snapshots/f8d333a098d19b4fd9a8b18f94170487ad3f821d",
+      "device": "cpu"
+    },
+    "dedup_by_content_hash": true,
+    "duration_budget_us_applied_as_filter": false,
+    "tag_labels": {
+      "scene": [
+        "小路",
+        "树林",
+        "田野",
+        "夕阳风景",
+        "室内"
+      ],
+      "emotion": [
+        "平静",
+        "温暖",
+        "紧张"
+      ],
+      "light": [
+        "日光",
+        "暖色光线",
+        "阴天"
+      ],
+      "motion": [
+        "人物步行",
+        "航拍",
+        "固定镜头"
+      ]
+    },
+    "tag_method": "openclip-zero-shot"
+  }
+}

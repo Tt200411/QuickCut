@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "index_id": "448613958352795f",
+  "source_video": "/Users/tangbao/Documents/ChatGPT/CV Project/inputs/aqz-KE-bpKQ.mp4",
+  "source_size": 81554084,
+  "source_mtime": 1792252119.2333875,
+  "backend": "faster-whisper",
+  "model": "tiny",
+  "language": null,
+  "segments": []
+}

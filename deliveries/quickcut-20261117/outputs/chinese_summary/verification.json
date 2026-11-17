@@ -1,0 +1,119 @@
+{
+  "video": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/final_chinese_summary.mp4",
+  "format_duration": 58.5,
+  "streams": [
+    {
+      "codec_type": "video",
+      "codec_name": "h264",
+      "time_base": "1/15360",
+      "start_time": "0.000000",
+      "duration": "58.500000",
+      "width": 1280,
+      "height": 720,
+      "avg_frame_rate": "60/1",
+      "first_decoded_frame_pts": 0.0
+    },
+    {
+      "codec_type": "audio",
+      "codec_name": "aac",
+      "time_base": "1/48000",
+      "start_time": "0.000000",
+      "duration": "58.500000",
+      "sample_rate": "48000",
+      "channels": 2,
+      "avg_frame_rate": "0/0",
+      "first_decoded_frame_pts": 0.0
+    }
+  ],
+  "errors": [],
+  "full_decode": {
+    "returncode": 0,
+    "diagnostics": ""
+  },
+  "subtitles": {
+    "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/final_chinese_summary.srt",
+    "count": 11,
+    "last_end": 58.5,
+    "cues": [
+      {
+        "start": 0.0,
+        "end": 3.0,
+        "text": "树林里，大白兔守在树下。"
+      },
+      {
+        "start": 3.0,
+        "end": 9.0,
+        "text": "它的对手爬上高处，沿着枝干步步逼近。"
+      },
+      {
+        "start": 9.0,
+        "end": 15.0,
+        "text": "这只飞鼠盯紧目标，准备亮出滑翔的本领。"
+      },
+      {
+        "start": 15.0,
+        "end": 21.0,
+        "text": "四肢一展，它纵身跃起，从树梢飞向林间。"
+      },
+      {
+        "start": 21.0,
+        "end": 27.0,
+        "text": "一颗果实也从高处坠落，危险渐渐显露。"
+      },
+      {
+        "start": 27.0,
+        "end": 33.0,
+        "text": "地面露出一排尖桩，轻松的滑翔顿时变成险境。"
+      },
+      {
+        "start": 33.0,
+        "end": 39.0,
+        "text": "飞鼠贴着尖桩掠过，及时抓住树枝，躲开了一劫。"
+      },
+      {
+        "start": 39.0,
+        "end": 45.0,
+        "text": "可它刚站稳脚步，才发现大白兔已经等在眼前。"
+      },
+      {
+        "start": 45.0,
+        "end": 51.0,
+        "text": "大手一伸，这位空中高手，只能乖乖束手就擒。"
+      },
+      {
+        "start": 51.0,
+        "end": 55.5,
+        "text": "再飞起来时，它已成了兔子手中的风筝。"
+      },
+      {
+        "start": 55.5,
+        "end": 58.5,
+        "text": "风波平息，大白兔终于笑了。"
+      }
+    ]
+  },
+  "timeline": {
+    "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/final_chinese_summary.json",
+    "narration_matches_subtitles": true
+  },
+  "source_audio": {
+    "method": "least_squares_on_decoded_stereo_samples",
+    "sample_rate": 12000,
+    "compared_duration": 58.5,
+    "original_only": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/original_only_captioned.mp4",
+    "narration": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/narration.wav",
+    "narration_filter": "loudnorm=I=-18:TP=-2:LRA=7",
+    "source_gain": 0.2983453700606855,
+    "source_rms": 0.06361326816425382,
+    "source_correlation_after_removing_narration": 0.952908355505888,
+    "reconstruction_correlation": 0.997923829488051,
+    "residual_rms": 0.006039885920828209,
+    "relative_residual_rms": 0.06440520584474006,
+    "explained_energy_fraction": 0.9958519694600967,
+    "matrix_rank": 2,
+    "narration_gain": 1.0138616764345132,
+    "source_partial_r_squared": 0.9080342405056849,
+    "source_retained": true
+  },
+  "passed": true
+}

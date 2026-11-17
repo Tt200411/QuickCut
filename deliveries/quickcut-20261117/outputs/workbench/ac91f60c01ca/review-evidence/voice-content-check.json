@@ -1,0 +1,44 @@
+{
+  "checked_at": "2026-11-16T13:09:29.982386+00:00",
+  "method": "independent faster-whisper/small cpu/int8 on actual generated WAV through QuickCut ASR adapter",
+  "voice_package_revision": 1,
+  "not_a_human_listening_review": true,
+  "checks": [
+    {
+      "cue_id": "cue-01",
+      "expected": "沿着林间小路，走进清新的绿意。",
+      "recognized": "沿着林间小路走近清新的绿蚁。",
+      "spans": [
+        {
+          "start": 0.0,
+          "end": 4.48,
+          "text": "沿着林间小路走近清新的绿蚁。"
+        }
+      ]
+    },
+    {
+      "cue_id": "cue-02",
+      "expected": "云雾掠过山头，草木在风中舒展，让脚步慢下来。",
+      "recognized": "雲霧掠過山頭,草木在風中疏展,讓腳步慢下來。",
+      "spans": [
+        {
+          "start": 0.0,
+          "end": 6.0,
+          "text": "雲霧掠過山頭,草木在風中疏展,讓腳步慢下來。"
+        }
+      ]
+    },
+    {
+      "cue_id": "cue-03",
+      "expected": "把宁静留在风景里。",
+      "recognized": "把您敬留在風景裡",
+      "spans": [
+        {
+          "start": 0.0,
+          "end": 2.56,
+          "text": "把您敬留在風景裡"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,939 @@
+{
+  "canvas_config": {
+    "width": 320,
+    "height": 180,
+    "ratio": "original",
+    "background": null
+  },
+  "color_space": 0,
+  "config": {
+    "adjust_max_index": 1,
+    "attachment_info": [],
+    "combination_max_index": 1,
+    "export_range": null,
+    "extract_audio_last_index": 1,
+    "lyrics_recognition_id": "",
+    "lyrics_sync": true,
+    "lyrics_taskinfo": [],
+    "maintrack_adsorb": false,
+    "material_save_mode": 0,
+    "multi_language_current": "none",
+    "multi_language_list": [],
+    "multi_language_main": "none",
+    "multi_language_mode": "none",
+    "original_sound_last_index": 1,
+    "record_audio_last_index": 1,
+    "sticker_max_index": 1,
+    "subtitle_keywords_config": null,
+    "subtitle_recognition_id": "",
+    "subtitle_sync": true,
+    "subtitle_taskinfo": [],
+    "system_font_list": [],
+    "video_mute": false,
+    "zoom_info_params": null
+  },
+  "cover": null,
+  "create_time": 1794723763831666,
+  "duration": 10000000,
+  "extra_info": null,
+  "fps": 30.0,
+  "free_render_index_mode_on": false,
+  "group_container": null,
+  "id": "7C582ED3-FF5A-4BE5-AC1E-D1F0E91B98D6",
+  "keyframe_graph_list": [],
+  "keyframes": {
+    "adjusts": [],
+    "audios": [],
+    "effects": [],
+    "filters": [],
+    "handwrites": [],
+    "stickers": [],
+    "texts": [],
+    "videos": []
+  },
+  "last_modified_platform": {
+    "app_id": 3704,
+    "app_source": "lv",
+    "app_version": "6.1.0",
+    "os": "mac"
+  },
+  "platform": {
+    "app_id": 3704,
+    "app_source": "lv",
+    "app_version": "6.1.0",
+    "os": "mac"
+  },
+  "materials": {
+    "ai_translates": [],
+    "audio_balances": [],
+    "audio_effects": [],
+    "audio_fades": [],
+    "audio_track_indexes": [],
+    "audios": [
+      {
+        "id": "4941E00E-B185-5D3F-AA77-F802728D1DEB",
+        "local_material_id": "4941E00E-B185-5D3F-AA77-F802728D1DEB",
+        "music_id": "4941E00E-B185-5D3F-AA77-F802728D1DEB",
+        "type": "extract_music",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft/Resources/36a4152eace2c6a685809bb88d1685f8d9b002965b677754ee91fe62e7cc5987.wav",
+        "name": "01d58f283a77172e5600419a0b634f2c5f3cf0099e5719a531851ec6c5af46a4.wav",
+        "duration": 1180000,
+        "app_id": 0,
+        "category_id": "",
+        "category_name": "local",
+        "check_flag": 3,
+        "copyright_limit_type": "none",
+        "effect_id": "",
+        "formula_id": "",
+        "source_platform": 0,
+        "wave_points": []
+      },
+      {
+        "id": "BC03839A-4DA7-57A3-9CD9-A5004EEA3527",
+        "local_material_id": "BC03839A-4DA7-57A3-9CD9-A5004EEA3527",
+        "music_id": "BC03839A-4DA7-57A3-9CD9-A5004EEA3527",
+        "type": "extract_music",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft/Resources/36a4152eace2c6a685809bb88d1685f8d9b002965b677754ee91fe62e7cc5987.wav",
+        "name": "f4c98ba58e4e428c0ff13f6571f807cc633d5aebf42ef0e7eb093ce95d98f477.wav",
+        "duration": 1180000,
+        "app_id": 0,
+        "category_id": "",
+        "category_name": "local",
+        "check_flag": 3,
+        "copyright_limit_type": "none",
+        "effect_id": "",
+        "formula_id": "",
+        "source_platform": 0,
+        "wave_points": []
+      },
+      {
+        "id": "08D31AF7-5E00-5A19-A929-09AA1ADEACBD",
+        "local_material_id": "08D31AF7-5E00-5A19-A929-09AA1ADEACBD",
+        "music_id": "08D31AF7-5E00-5A19-A929-09AA1ADEACBD",
+        "type": "extract_music",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft/Resources/36a4152eace2c6a685809bb88d1685f8d9b002965b677754ee91fe62e7cc5987.wav",
+        "name": "b1880f650fb30e3d40b0db81862d92eb2bbbf2a0b90f30ad4d7a4ae20262babe.wav",
+        "duration": 1180000,
+        "app_id": 0,
+        "category_id": "",
+        "category_name": "local",
+        "check_flag": 3,
+        "copyright_limit_type": "none",
+        "effect_id": "",
+        "formula_id": "",
+        "source_platform": 0,
+        "wave_points": []
+      },
+      {
+        "id": "955D1110-4512-5608-B65B-A67FD6BFF100",
+        "local_material_id": "955D1110-4512-5608-B65B-A67FD6BFF100",
+        "music_id": "955D1110-4512-5608-B65B-A67FD6BFF100",
+        "type": "extract_music",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft/Resources/source-audio-9e0202c7dd76eb340c8289bf.wav",
+        "name": "原声-clip-original-1.wav",
+        "duration": 3333333,
+        "app_id": 0,
+        "category_id": "",
+        "category_name": "local",
+        "check_flag": 3,
+        "copyright_limit_type": "none",
+        "effect_id": "",
+        "formula_id": "",
+        "source_platform": 0,
+        "wave_points": []
+      },
+      {
+        "id": "4980F5C2-5D1C-5186-A368-1838BC846CBF",
+        "local_material_id": "4980F5C2-5D1C-5186-A368-1838BC846CBF",
+        "music_id": "4980F5C2-5D1C-5186-A368-1838BC846CBF",
+        "type": "extract_music",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft/Resources/source-audio-43fbcda85c7c9cbf5eea4f7c.wav",
+        "name": "原声-clip-original-2.wav",
+        "duration": 5000000,
+        "app_id": 0,
+        "category_id": "",
+        "category_name": "local",
+        "check_flag": 3,
+        "copyright_limit_type": "none",
+        "effect_id": "",
+        "formula_id": "",
+        "source_platform": 0,
+        "wave_points": []
+      },
+      {
+        "id": "0B539635-C431-5701-9F2B-60AF5A530B43",
+        "local_material_id": "0B539635-C431-5701-9F2B-60AF5A530B43",
+        "music_id": "0B539635-C431-5701-9F2B-60AF5A530B43",
+        "type": "extract_music",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft/Resources/source-audio-9cd2846db78db5289c016203.wav",
+        "name": "原声-clip-original-3.wav",
+        "duration": 1666667,
+        "app_id": 0,
+        "category_id": "",
+        "category_name": "local",
+        "check_flag": 3,
+        "copyright_limit_type": "none",
+        "effect_id": "",
+        "formula_id": "",
+        "source_platform": 0,
+        "wave_points": []
+      }
+    ],
+    "beats": [],
+    "canvases": [],
+    "chromas": [],
+    "color_curves": [],
+    "digital_humans": [],
+    "drafts": [],
+    "effects": [],
+    "flowers": [],
+    "green_screens": [],
+    "handwrites": [],
+    "hsl": [],
+    "images": [],
+    "log_color_wheels": [],
+    "loudnesses": [],
+    "manual_deformations": [],
+    "masks": [],
+    "material_animations": [],
+    "material_colors": [],
+    "multi_language_refs": [],
+    "placeholders": [],
+    "plugin_effects": [],
+    "primary_color_wheels": [],
+    "realtime_denoises": [],
+    "shapes": [],
+    "smart_crops": [],
+    "smart_relights": [],
+    "sound_channel_mappings": [],
+    "speeds": [
+      {
+        "id": "FA78F8EA-F38D-5797-8307-C1E2EFF21167",
+        "type": "speed",
+        "mode": 0,
+        "speed": 1.0,
+        "curve_speed": null
+      },
+      {
+        "id": "28D58301-C76B-5155-860E-EE12E117DCF5",
+        "type": "speed",
+        "mode": 0,
+        "speed": 1.0,
+        "curve_speed": null
+      },
+      {
+        "id": "EBE8E824-EA94-5B71-8944-55EE450FBFF2",
+        "type": "speed",
+        "mode": 0,
+        "speed": 1.0,
+        "curve_speed": null
+      },
+      {
+        "id": "02B5CAB2-C590-53C8-9D8A-CB53682F5CB0",
+        "type": "speed",
+        "mode": 0,
+        "speed": 1.0,
+        "curve_speed": null
+      },
+      {
+        "id": "6F366F45-FBD9-5D66-A80B-B8995B5CBC11",
+        "type": "speed",
+        "mode": 0,
+        "speed": 1.0,
+        "curve_speed": null
+      },
+      {
+        "id": "F8FB82F5-E491-598B-A9D0-B1C80B1B07D3",
+        "type": "speed",
+        "mode": 0,
+        "speed": 1.0,
+        "curve_speed": null
+      },
+      {
+        "id": "C70A16A3-C71F-5498-8C1A-8B3D8DA7E0B5",
+        "type": "speed",
+        "mode": 0,
+        "speed": 1.0,
+        "curve_speed": null
+      },
+      {
+        "id": "3F571272-B122-5077-B29F-3486D214BBB8",
+        "type": "speed",
+        "mode": 0,
+        "speed": 1.0,
+        "curve_speed": null
+      },
+      {
+        "id": "A6FA3963-0A7E-5F46-8BE6-FF7272D2F70C",
+        "type": "speed",
+        "mode": 0,
+        "speed": 1.0,
+        "curve_speed": null
+      },
+      {
+        "id": "4EF53E06-6F2E-5EC8-BFDB-05B06695D776",
+        "type": "speed",
+        "mode": 0,
+        "speed": 1.0,
+        "curve_speed": null
+      },
+      {
+        "id": "82EDEB05-0799-566B-92F3-A6283E0CFEEF",
+        "type": "speed",
+        "mode": 0,
+        "speed": 1.0,
+        "curve_speed": null
+      },
+      {
+        "id": "DF0FAE1A-52BA-5D2A-8CA6-4174B3F2CC1C",
+        "type": "speed",
+        "mode": 0,
+        "speed": 1.0,
+        "curve_speed": null
+      }
+    ],
+    "stickers": [],
+    "tail_leaders": [],
+    "text_templates": [],
+    "texts": [
+      {
+        "id": "2D5A6A8C-608B-5795-801C-2B4508BDD0C0",
+        "content": "{\"text\": \"第一段测试画面。\", \"styles\": [{\"fill\": {\"alpha\": 1.0, \"content\": {\"render_type\": \"solid\", \"solid\": {\"alpha\": 1.0, \"color\": [1.0, 1.0, 1.0]}}}, \"range\": [0, 8], \"size\": 8.0, \"bold\": false, \"italic\": false, \"underline\": false, \"strokes\": []}]}",
+        "typesetting": 0,
+        "alignment": 1,
+        "letter_spacing": 0.0,
+        "line_spacing": 0.02,
+        "line_feed": 1,
+        "line_max_width": 0.82,
+        "force_apply_line_max_width": false,
+        "check_flag": 7,
+        "type": "subtitle",
+        "global_alpha": 1.0
+      },
+      {
+        "id": "C11CEA1C-3D10-5009-BE0F-550C29139A9B",
+        "content": "{\"text\": \"第二段测试画面。\", \"styles\": [{\"fill\": {\"alpha\": 1.0, \"content\": {\"render_type\": \"solid\", \"solid\": {\"alpha\": 1.0, \"color\": [1.0, 1.0, 1.0]}}}, \"range\": [0, 8], \"size\": 8.0, \"bold\": false, \"italic\": false, \"underline\": false, \"strokes\": []}]}",
+        "typesetting": 0,
+        "alignment": 1,
+        "letter_spacing": 0.0,
+        "line_spacing": 0.02,
+        "line_feed": 1,
+        "line_max_width": 0.82,
+        "force_apply_line_max_width": false,
+        "check_flag": 7,
+        "type": "subtitle",
+        "global_alpha": 1.0
+      },
+      {
+        "id": "07CE87C4-B7CD-5C62-AC74-68E4BDF173D6",
+        "content": "{\"text\": \"第三段测试画面。\", \"styles\": [{\"fill\": {\"alpha\": 1.0, \"content\": {\"render_type\": \"solid\", \"solid\": {\"alpha\": 1.0, \"color\": [1.0, 1.0, 1.0]}}}, \"range\": [0, 8], \"size\": 8.0, \"bold\": false, \"italic\": false, \"underline\": false, \"strokes\": []}]}",
+        "typesetting": 0,
+        "alignment": 1,
+        "letter_spacing": 0.0,
+        "line_spacing": 0.02,
+        "line_feed": 1,
+        "line_max_width": 0.82,
+        "force_apply_line_max_width": false,
+        "check_flag": 7,
+        "type": "subtitle",
+        "global_alpha": 1.0
+      }
+    ],
+    "time_marks": [],
+    "transitions": [],
+    "video_effects": [],
+    "video_trackings": [],
+    "videos": [
+      {
+        "id": "366434A3-282E-5CCA-9E9C-F1AD5CE32B1D",
+        "material_id": "366434A3-282E-5CCA-9E9C-F1AD5CE32B1D",
+        "local_material_id": "",
+        "type": "video",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-export-20261115-abcde/draft/Resources/26f2c90001ade7bd3009278b94d11dba69048ea4947360ab1dc18e7d95d7b36f.mp4",
+        "media_path": "",
+        "material_name": "r1.mp4",
+        "duration": 18000000,
+        "width": 320,
+        "height": 180,
+        "category_id": "",
+        "category_name": "local",
+        "check_flag": 63487,
+        "crop_ratio": "free",
+        "crop_scale": 1.0,
+        "audio_fade": null,
+        "crop": {
+          "upper_left_x": 0.0,
+          "upper_left_y": 0.0,
+          "upper_right_x": 1.0,
+          "upper_right_y": 0.0,
+          "lower_left_x": 0.0,
+          "lower_left_y": 1.0,
+          "lower_right_x": 1.0,
+          "lower_right_y": 1.0
+        }
+      }
+    ],
+    "vocal_beautifys": [],
+    "vocal_separations": []
+  },
+  "mutable_config": null,
+  "name": "QuickCut-ABCDE-10s-验收",
+  "new_version": "75.0.0",
+  "relationships": [],
+  "render_index_track_mode_on": false,
+  "retouch_cover": null,
+  "source": "default",
+  "static_cover_image_path": "",
+  "time_marks": null,
+  "tracks": [
+    {
+      "id": "4B3EDEC8-6703-5A1B-B4FE-B931DE3B438D",
+      "type": "video",
+      "name": "QuickCut 画面与空镜",
+      "is_default_name": false,
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "656BE23C-4952-52AB-B785-B0898E815D88",
+          "target_timerange": {
+            "start": 0,
+            "duration": 3333333
+          },
+          "source_timerange": {
+            "start": 0,
+            "duration": 3333333
+          },
+          "speed": 1.0,
+          "volume": 0.0,
+          "last_nonzero_volume": 1.0,
+          "reverse": false,
+          "visible": true,
+          "track_attribute": 0,
+          "track_render_index": 0,
+          "render_index": 0,
+          "common_keyframes": [],
+          "keyframe_refs": [],
+          "extra_material_refs": [
+            "FA78F8EA-F38D-5797-8307-C1E2EFF21167"
+          ],
+          "is_tone_modify": false,
+          "enable_adjust": true,
+          "enable_color_correct_adjust": false,
+          "enable_color_curves": true,
+          "enable_color_match_adjust": false,
+          "enable_color_wheels": true,
+          "enable_lut": true,
+          "enable_smart_color_adjust": false,
+          "material_id": "366434A3-282E-5CCA-9E9C-F1AD5CE32B1D",
+          "clip": {
+            "alpha": 1.0,
+            "flip": {
+              "horizontal": false,
+              "vertical": false
+            },
+            "rotation": 0.0,
+            "scale": {
+              "x": 1.0,
+              "y": 1.0
+            },
+            "transform": {
+              "x": 0.0,
+              "y": 0.0
+            }
+          },
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          }
+        },
+        {
+          "id": "9AA3DF98-D6BF-52B7-9741-8774C8E589B4",
+          "target_timerange": {
+            "start": 3333333,
+            "duration": 5000000
+          },
+          "source_timerange": {
+            "start": 6000000,
+            "duration": 5000000
+          },
+          "speed": 1.0,
+          "volume": 0.0,
+          "last_nonzero_volume": 1.0,
+          "reverse": false,
+          "visible": true,
+          "track_attribute": 0,
+          "track_render_index": 0,
+          "render_index": 0,
+          "common_keyframes": [],
+          "keyframe_refs": [],
+          "extra_material_refs": [
+            "28D58301-C76B-5155-860E-EE12E117DCF5"
+          ],
+          "is_tone_modify": false,
+          "enable_adjust": true,
+          "enable_color_correct_adjust": false,
+          "enable_color_curves": true,
+          "enable_color_match_adjust": false,
+          "enable_color_wheels": true,
+          "enable_lut": true,
+          "enable_smart_color_adjust": false,
+          "material_id": "366434A3-282E-5CCA-9E9C-F1AD5CE32B1D",
+          "clip": {
+            "alpha": 1.0,
+            "flip": {
+              "horizontal": false,
+              "vertical": false
+            },
+            "rotation": 0.0,
+            "scale": {
+              "x": 1.0,
+              "y": 1.0
+            },
+            "transform": {
+              "x": 0.0,
+              "y": 0.0
+            }
+          },
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          }
+        },
+        {
+          "id": "8745645B-8823-558E-8BD5-0E05B8ACFE16",
+          "target_timerange": {
+            "start": 8333333,
+            "duration": 1666667
+          },
+          "source_timerange": {
+            "start": 12000000,
+            "duration": 1666667
+          },
+          "speed": 1.0,
+          "volume": 0.0,
+          "last_nonzero_volume": 1.0,
+          "reverse": false,
+          "visible": true,
+          "track_attribute": 0,
+          "track_render_index": 0,
+          "render_index": 0,
+          "common_keyframes": [],
+          "keyframe_refs": [],
+          "extra_material_refs": [
+            "EBE8E824-EA94-5B71-8944-55EE450FBFF2"
+          ],
+          "is_tone_modify": false,
+          "enable_adjust": true,
+          "enable_color_correct_adjust": false,
+          "enable_color_curves": true,
+          "enable_color_match_adjust": false,
+          "enable_color_wheels": true,
+          "enable_lut": true,
+          "enable_smart_color_adjust": false,
+          "material_id": "366434A3-282E-5CCA-9E9C-F1AD5CE32B1D",
+          "clip": {
+            "alpha": 1.0,
+            "flip": {
+              "horizontal": false,
+              "vertical": false
+            },
+            "rotation": 0.0,
+            "scale": {
+              "x": 1.0,
+              "y": 1.0
+            },
+            "transform": {
+              "x": 0.0,
+              "y": 0.0
+            }
+          },
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "97330389-6A51-5C06-A901-5122FBC0B8F6",
+      "type": "audio",
+      "name": "QuickCut 原声",
+      "is_default_name": false,
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "75A0350E-0A96-575E-A7AD-6D7630E0C04E",
+          "target_timerange": {
+            "start": 0,
+            "duration": 3333333
+          },
+          "source_timerange": {
+            "start": 0,
+            "duration": 3333333
+          },
+          "speed": 1.0,
+          "volume": 0.3,
+          "last_nonzero_volume": 0.3,
+          "reverse": false,
+          "visible": true,
+          "track_attribute": 0,
+          "track_render_index": 0,
+          "render_index": 1,
+          "common_keyframes": [],
+          "keyframe_refs": [],
+          "extra_material_refs": [
+            "02B5CAB2-C590-53C8-9D8A-CB53682F5CB0"
+          ],
+          "is_tone_modify": false,
+          "enable_adjust": true,
+          "enable_color_correct_adjust": false,
+          "enable_color_curves": true,
+          "enable_color_match_adjust": false,
+          "enable_color_wheels": true,
+          "enable_lut": true,
+          "enable_smart_color_adjust": false,
+          "material_id": "955D1110-4512-5608-B65B-A67FD6BFF100"
+        },
+        {
+          "id": "F0633CAD-A02E-55A4-A5F4-F30B8D608098",
+          "target_timerange": {
+            "start": 3333333,
+            "duration": 5000000
+          },
+          "source_timerange": {
+            "start": 0,
+            "duration": 5000000
+          },
+          "speed": 1.0,
+          "volume": 0.3,
+          "last_nonzero_volume": 0.3,
+          "reverse": false,
+          "visible": true,
+          "track_attribute": 0,
+          "track_render_index": 0,
+          "render_index": 1,
+          "common_keyframes": [],
+          "keyframe_refs": [],
+          "extra_material_refs": [
+            "6F366F45-FBD9-5D66-A80B-B8995B5CBC11"
+          ],
+          "is_tone_modify": false,
+          "enable_adjust": true,
+          "enable_color_correct_adjust": false,
+          "enable_color_curves": true,
+          "enable_color_match_adjust": false,
+          "enable_color_wheels": true,
+          "enable_lut": true,
+          "enable_smart_color_adjust": false,
+          "material_id": "4980F5C2-5D1C-5186-A368-1838BC846CBF"
+        },
+        {
+          "id": "0DA50E7A-CEA2-5BA5-B3EF-82941A798EC4",
+          "target_timerange": {
+            "start": 8333333,
+            "duration": 1666667
+          },
+          "source_timerange": {
+            "start": 0,
+            "duration": 1666667
+          },
+          "speed": 1.0,
+          "volume": 0.3,
+          "last_nonzero_volume": 0.3,
+          "reverse": false,
+          "visible": true,
+          "track_attribute": 0,
+          "track_render_index": 0,
+          "render_index": 1,
+          "common_keyframes": [],
+          "keyframe_refs": [],
+          "extra_material_refs": [
+            "F8FB82F5-E491-598B-A9D0-B1C80B1B07D3"
+          ],
+          "is_tone_modify": false,
+          "enable_adjust": true,
+          "enable_color_correct_adjust": false,
+          "enable_color_curves": true,
+          "enable_color_match_adjust": false,
+          "enable_color_wheels": true,
+          "enable_lut": true,
+          "enable_smart_color_adjust": false,
+          "material_id": "0B539635-C431-5701-9F2B-60AF5A530B43"
+        }
+      ]
+    },
+    {
+      "id": "B45B5015-0A7F-513D-954D-A254B6113C84",
+      "type": "audio",
+      "name": "QuickCut 配音",
+      "is_default_name": false,
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "23D4F2AD-1758-5774-8A31-A3AC6C763635",
+          "target_timerange": {
+            "start": 200000,
+            "duration": 1180000
+          },
+          "source_timerange": {
+            "start": 0,
+            "duration": 1180000
+          },
+          "speed": 1.0,
+          "volume": 1.0,
+          "last_nonzero_volume": 1.0,
+          "reverse": false,
+          "visible": true,
+          "track_attribute": 0,
+          "track_render_index": 0,
+          "render_index": 2,
+          "common_keyframes": [],
+          "keyframe_refs": [],
+          "extra_material_refs": [
+            "C70A16A3-C71F-5498-8C1A-8B3D8DA7E0B5"
+          ],
+          "is_tone_modify": false,
+          "enable_adjust": true,
+          "enable_color_correct_adjust": false,
+          "enable_color_curves": true,
+          "enable_color_match_adjust": false,
+          "enable_color_wheels": true,
+          "enable_lut": true,
+          "enable_smart_color_adjust": false,
+          "material_id": "BC03839A-4DA7-57A3-9CD9-A5004EEA3527"
+        },
+        {
+          "id": "FDF36DBE-2FDD-59BE-9C50-80EA7DE504E0",
+          "target_timerange": {
+            "start": 3533333,
+            "duration": 1180000
+          },
+          "source_timerange": {
+            "start": 0,
+            "duration": 1180000
+          },
+          "speed": 1.0,
+          "volume": 1.0,
+          "last_nonzero_volume": 1.0,
+          "reverse": false,
+          "visible": true,
+          "track_attribute": 0,
+          "track_render_index": 0,
+          "render_index": 2,
+          "common_keyframes": [],
+          "keyframe_refs": [],
+          "extra_material_refs": [
+            "3F571272-B122-5077-B29F-3486D214BBB8"
+          ],
+          "is_tone_modify": false,
+          "enable_adjust": true,
+          "enable_color_correct_adjust": false,
+          "enable_color_curves": true,
+          "enable_color_match_adjust": false,
+          "enable_color_wheels": true,
+          "enable_lut": true,
+          "enable_smart_color_adjust": false,
+          "material_id": "08D31AF7-5E00-5A19-A929-09AA1ADEACBD"
+        },
+        {
+          "id": "5198638C-FD56-5F89-8A5F-A68F4E2139E1",
+          "target_timerange": {
+            "start": 8533333,
+            "duration": 1180000
+          },
+          "source_timerange": {
+            "start": 0,
+            "duration": 1180000
+          },
+          "speed": 1.0,
+          "volume": 1.0,
+          "last_nonzero_volume": 1.0,
+          "reverse": false,
+          "visible": true,
+          "track_attribute": 0,
+          "track_render_index": 0,
+          "render_index": 2,
+          "common_keyframes": [],
+          "keyframe_refs": [],
+          "extra_material_refs": [
+            "A6FA3963-0A7E-5F46-8BE6-FF7272D2F70C"
+          ],
+          "is_tone_modify": false,
+          "enable_adjust": true,
+          "enable_color_correct_adjust": false,
+          "enable_color_curves": true,
+          "enable_color_match_adjust": false,
+          "enable_color_wheels": true,
+          "enable_lut": true,
+          "enable_smart_color_adjust": false,
+          "material_id": "4941E00E-B185-5D3F-AA77-F802728D1DEB"
+        }
+      ]
+    },
+    {
+      "id": "F9B85B39-E7E8-5984-AA7D-981C3AE4D782",
+      "type": "text",
+      "name": "QuickCut 字幕",
+      "is_default_name": false,
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "808F0B3A-A111-5835-8C03-C645EB525F7C",
+          "target_timerange": {
+            "start": 200000,
+            "duration": 1000000
+          },
+          "source_timerange": null,
+          "speed": 1.0,
+          "volume": 1.0,
+          "last_nonzero_volume": 1.0,
+          "reverse": false,
+          "visible": true,
+          "track_attribute": 0,
+          "track_render_index": 0,
+          "render_index": 3,
+          "common_keyframes": [],
+          "keyframe_refs": [],
+          "extra_material_refs": [
+            "4EF53E06-6F2E-5EC8-BFDB-05B06695D776"
+          ],
+          "is_tone_modify": false,
+          "enable_adjust": true,
+          "enable_color_correct_adjust": false,
+          "enable_color_curves": true,
+          "enable_color_match_adjust": false,
+          "enable_color_wheels": true,
+          "enable_lut": true,
+          "enable_smart_color_adjust": false,
+          "material_id": "2D5A6A8C-608B-5795-801C-2B4508BDD0C0",
+          "clip": {
+            "alpha": 1.0,
+            "flip": {
+              "horizontal": false,
+              "vertical": false
+            },
+            "rotation": 0.0,
+            "scale": {
+              "x": 1.0,
+              "y": 1.0
+            },
+            "transform": {
+              "x": 0.0,
+              "y": -0.8
+            }
+          },
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          }
+        },
+        {
+          "id": "DD925197-6218-5F97-BD7B-B8FB9EC8A7C1",
+          "target_timerange": {
+            "start": 3533333,
+            "duration": 1000000
+          },
+          "source_timerange": null,
+          "speed": 1.0,
+          "volume": 1.0,
+          "last_nonzero_volume": 1.0,
+          "reverse": false,
+          "visible": true,
+          "track_attribute": 0,
+          "track_render_index": 0,
+          "render_index": 3,
+          "common_keyframes": [],
+          "keyframe_refs": [],
+          "extra_material_refs": [
+            "82EDEB05-0799-566B-92F3-A6283E0CFEEF"
+          ],
+          "is_tone_modify": false,
+          "enable_adjust": true,
+          "enable_color_correct_adjust": false,
+          "enable_color_curves": true,
+          "enable_color_match_adjust": false,
+          "enable_color_wheels": true,
+          "enable_lut": true,
+          "enable_smart_color_adjust": false,
+          "material_id": "C11CEA1C-3D10-5009-BE0F-550C29139A9B",
+          "clip": {
+            "alpha": 1.0,
+            "flip": {
+              "horizontal": false,
+              "vertical": false
+            },
+            "rotation": 0.0,
+            "scale": {
+              "x": 1.0,
+              "y": 1.0
+            },
+            "transform": {
+              "x": 0.0,
+              "y": -0.8
+            }
+          },
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          }
+        },
+        {
+          "id": "E4C1F8AA-8CA2-570D-9006-E46B9F32EC42",
+          "target_timerange": {
+            "start": 8533333,
+            "duration": 1000000
+          },
+          "source_timerange": null,
+          "speed": 1.0,
+          "volume": 1.0,
+          "last_nonzero_volume": 1.0,
+          "reverse": false,
+          "visible": true,
+          "track_attribute": 0,
+          "track_render_index": 0,
+          "render_index": 3,
+          "common_keyframes": [],
+          "keyframe_refs": [],
+          "extra_material_refs": [
+            "DF0FAE1A-52BA-5D2A-8CA6-4174B3F2CC1C"
+          ],
+          "is_tone_modify": false,
+          "enable_adjust": true,
+          "enable_color_correct_adjust": false,
+          "enable_color_curves": true,
+          "enable_color_match_adjust": false,
+          "enable_color_wheels": true,
+          "enable_lut": true,
+          "enable_smart_color_adjust": false,
+          "material_id": "07CE87C4-B7CD-5C62-AC74-68E4BDF173D6",
+          "clip": {
+            "alpha": 1.0,
+            "flip": {
+              "horizontal": false,
+              "vertical": false
+            },
+            "rotation": 0.0,
+            "scale": {
+              "x": 1.0,
+              "y": 1.0
+            },
+            "transform": {
+              "x": 0.0,
+              "y": -0.8
+            }
+          },
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          }
+        }
+      ]
+    }
+  ],
+  "update_time": 1794723763831666,
+  "version": 360000
+}

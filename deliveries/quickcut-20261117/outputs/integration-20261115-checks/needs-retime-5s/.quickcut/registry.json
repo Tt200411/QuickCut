@@ -1,0 +1,201 @@
+{
+  "version": 1,
+  "project_id": "project-pipeline-demo",
+  "document_id": "manifest-87b5ddd01dd54fb8b3317073ed66429a",
+  "assets": {
+    "asset-d0bd09708d53461f9d4fcecc7e45c415": {
+      "asset_id": "asset-d0bd09708d53461f9d4fcecc7e45c415",
+      "revision": 1,
+      "origin": "user",
+      "content_hash": "sha256:257c0ac9174a4f58b749c7c65159dfdd6699346a4417d2a0245c64d2aa3f5fc6",
+      "uri": "media/user/asset-d0bd09708d53461f9d4fcecc7e45c415/r1.mp4",
+      "stages": {
+        "probe": {
+          "key": "e0a0d47fce05a53827f041bc",
+          "result": {
+            "metadata": {
+              "duration_us": 10500000,
+              "video": {
+                "width": 320,
+                "height": 180,
+                "fps": {
+                  "numerator": 30,
+                  "denominator": 1
+                },
+                "time_base": "1/15360",
+                "start_time_us": 0,
+                "codec": "h264",
+                "stream_index": 0,
+                "source_origin_pts": 0,
+                "source_origin_us": 0,
+                "variable_frame_rate": false
+              },
+              "audio": {
+                "present": true,
+                "sample_rate": 48000,
+                "channels": 1,
+                "codec": "aac",
+                "start_time_us": 0
+              }
+            },
+            "frames_uri": "derived/asset-d0bd09708d53461f9d4fcecc7e45c415/r1/probe-e0a0d47fce05a53827f041bc/source-pts.json"
+          },
+          "files": {
+            "derived/asset-d0bd09708d53461f9d4fcecc7e45c415/r1/probe-e0a0d47fce05a53827f041bc/source-pts.json": "sha256:c8858ab695128a86c6243d2b7fc692a971bd7664e3259bd3bca463d9f5f6a1ce"
+          }
+        },
+        "keyframes": {
+          "key": "6219b2cac3e0d88d2d464f01",
+          "result": [
+            {
+              "segment_id": "asset-d0bd09708d53461f9d4fcecc7e45c415-r1-shot-0-3500000",
+              "asset_id": "asset-d0bd09708d53461f9d4fcecc7e45c415",
+              "asset_revision": 1,
+              "source_range_us": {
+                "begin": 0,
+                "end": 3500000
+              },
+              "granularity": "coarse_shot",
+              "parent_segment_id": "asset-d0bd09708d53461f9d4fcecc7e45c415-r1-coarse-0-10500000",
+              "keyframes": [
+                {
+                  "source_time_us": 1766667,
+                  "uri": "derived/asset-d0bd09708d53461f9d4fcecc7e45c415/r1/keyframes-6219b2cac3e0d88d2d464f01/00000000.png"
+                }
+              ],
+              "quality": {
+                "usable": true,
+                "flags": []
+              },
+              "segmentation": {
+                "method": "fixed_window",
+                "window_us": 3500000
+              }
+            },
+            {
+              "segment_id": "asset-d0bd09708d53461f9d4fcecc7e45c415-r1-shot-3500000-7000000",
+              "asset_id": "asset-d0bd09708d53461f9d4fcecc7e45c415",
+              "asset_revision": 1,
+              "source_range_us": {
+                "begin": 3500000,
+                "end": 7000000
+              },
+              "granularity": "coarse_shot",
+              "parent_segment_id": "asset-d0bd09708d53461f9d4fcecc7e45c415-r1-coarse-0-10500000",
+              "keyframes": [
+                {
+                  "source_time_us": 5266667,
+                  "uri": "derived/asset-d0bd09708d53461f9d4fcecc7e45c415/r1/keyframes-6219b2cac3e0d88d2d464f01/00000001.png"
+                }
+              ],
+              "quality": {
+                "usable": true,
+                "flags": []
+              },
+              "segmentation": {
+                "method": "fixed_window",
+                "window_us": 3500000
+              }
+            },
+            {
+              "segment_id": "asset-d0bd09708d53461f9d4fcecc7e45c415-r1-shot-7000000-10500000",
+              "asset_id": "asset-d0bd09708d53461f9d4fcecc7e45c415",
+              "asset_revision": 1,
+              "source_range_us": {
+                "begin": 7000000,
+                "end": 10500000
+              },
+              "granularity": "coarse_shot",
+              "parent_segment_id": "asset-d0bd09708d53461f9d4fcecc7e45c415-r1-coarse-0-10500000",
+              "keyframes": [
+                {
+                  "source_time_us": 8766667,
+                  "uri": "derived/asset-d0bd09708d53461f9d4fcecc7e45c415/r1/keyframes-6219b2cac3e0d88d2d464f01/00000002.png"
+                }
+              ],
+              "quality": {
+                "usable": true,
+                "flags": []
+              },
+              "segmentation": {
+                "method": "fixed_window",
+                "window_us": 3500000
+              }
+            }
+          ],
+          "files": {
+            "derived/asset-d0bd09708d53461f9d4fcecc7e45c415/r1/keyframes-6219b2cac3e0d88d2d464f01/00000000.png": "sha256:b6e97e57ea84e478679300329675d6bfeef0c941f28f7160c0732a2431f40350",
+            "derived/asset-d0bd09708d53461f9d4fcecc7e45c415/r1/keyframes-6219b2cac3e0d88d2d464f01/00000001.png": "sha256:8e5722f8db2bb2834a355758750474ed0c804ce98af92cf1fd8820d879bd8059",
+            "derived/asset-d0bd09708d53461f9d4fcecc7e45c415/r1/keyframes-6219b2cac3e0d88d2d464f01/00000002.png": "sha256:9aa4f3539d44c592a43d7d53e1496c0badacc5b52ef5132d7940bd33a3f845ee"
+          }
+        },
+        "proxy": {
+          "key": "9f4df537e9ed5f8fa3c056c3",
+          "result": {
+            "proxy_uri": "derived/asset-d0bd09708d53461f9d4fcecc7e45c415/r1/proxy-9f4df537e9ed5f8fa3c056c3/proxy.mp4",
+            "proxy_mapping_uri": "derived/asset-d0bd09708d53461f9d4fcecc7e45c415/r1/proxy-9f4df537e9ed5f8fa3c056c3/proxy-map.json"
+          },
+          "files": {
+            "derived/asset-d0bd09708d53461f9d4fcecc7e45c415/r1/proxy-9f4df537e9ed5f8fa3c056c3/proxy.mp4": "sha256:4b6419cf8e9bcb0528969bb9328eb07807b576727b8944129b45a9fe892f142d",
+            "derived/asset-d0bd09708d53461f9d4fcecc7e45c415/r1/proxy-9f4df537e9ed5f8fa3c056c3/proxy-map.json": "sha256:9f8350378f2712db9134eed84c831a5e9f45a1ed8794ce8b862a15c10e9d14e8"
+          }
+        },
+        "asr": {
+          "key": "45d0e65aa495601f92c1e5c8",
+          "result": {
+            "status": "disabled",
+            "profile": {
+              "asr": "none",
+              "asr_model": "tiny",
+              "asr_language": null,
+              "asr_device": "cpu",
+              "asr_compute_type": "int8",
+              "asr_beam_size": 5,
+              "asr_cpu_threads": 2,
+              "asr_num_workers": 1,
+              "asr_vad": true,
+              "asr_condition_on_previous_text": false,
+              "asr_initial_prompt": null,
+              "asr_hotwords": null,
+              "asr_model_revision": null,
+              "packages": {
+                "faster-whisper": "1.2.1",
+                "ctranslate2": "4.8.3",
+                "av": "19.0.1",
+                "tokenizers": "0.23.3",
+                "onnxruntime": "1.31.0",
+                "huggingface-hub": "2.2.0"
+              },
+              "vad_filter": true,
+              "audio_preprocessing": "video-origin-mono-16k-v1",
+              "diagnostics_version": 1
+            },
+            "segments": [],
+            "diagnostics": {},
+            "source_content_hash": "sha256:257c0ac9174a4f58b749c7c65159dfdd6699346a4417d2a0245c64d2aa3f5fc6",
+            "review": {
+              "status": "not_applicable",
+              "reasons": [],
+              "policy": {
+                "version": 1,
+                "calibrated": false,
+                "min_avg_logprob": -1.0,
+                "max_no_speech_prob": 0.6,
+                "max_compression_ratio": 2.4,
+                "tail_tolerance_us": 500000
+              }
+            },
+            "uri": "derived/asset-d0bd09708d53461f9d4fcecc7e45c415/r1/asr-45d0e65aa495601f92c1e5c8/transcript.json"
+          },
+          "files": {
+            "derived/asset-d0bd09708d53461f9d4fcecc7e45c415/r1/asr-45d0e65aa495601f92c1e5c8/transcript.json": "sha256:5fd624d7cdded731d3766c22e09e063411935eca2236e45370d8a7b06b0d6bfe"
+          }
+        }
+      },
+      "provenance_note": "实际合成测试图案；非实拍"
+    }
+  },
+  "aliases": {
+    "user:synthetic-demo": "asset-d0bd09708d53461f9d4fcecc7e45c415"
+  }
+}

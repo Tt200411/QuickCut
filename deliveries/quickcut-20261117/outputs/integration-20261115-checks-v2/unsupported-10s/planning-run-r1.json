@@ -1,0 +1,16 @@
+{
+  "project_id": "project-pipeline-demo",
+  "stage": "C",
+  "revision": 1,
+  "selector": "rule",
+  "raw_responses": [],
+  "validation": {
+    "status": "needs_input",
+    "gap_count": 1
+  },
+  "human_edits": [
+    "cue-01: 文案来自人工审阅，不记为模型输出",
+    "cue-03: 文案来自人工审阅，不记为模型输出"
+  ],
+  "rule_adjustments": []
+}

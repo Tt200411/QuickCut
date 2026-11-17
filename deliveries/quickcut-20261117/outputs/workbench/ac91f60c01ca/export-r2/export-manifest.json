@@ -1,0 +1,353 @@
+{
+  "kind": "ExportManifest",
+  "schema_version": "0.1.0",
+  "document_id": "export-FF5D4743-FED1-4AC2-91F5-D446025FF51C",
+  "project_id": "project-ac91f60c01ca",
+  "revision": 1,
+  "owner": "F",
+  "status": "generated",
+  "fixtures_only": false,
+  "inputs": [
+    {
+      "kind": "EditTimeline",
+      "document_id": "timeline-project-ac91f60c01ca",
+      "revision": 11
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-d8819914e7b84e5ba42c52a5615cdf9b",
+      "revision": 1
+    },
+    {
+      "kind": "VoicePackage",
+      "document_id": "voice-story-cd68452eea5694ee",
+      "revision": 11
+    }
+  ],
+  "input_files": {
+    "EditTimeline": "inputs/timeline.json",
+    "AssetManifest": "inputs/asset-manifest.json",
+    "VoicePackage": "inputs/voice-package.json"
+  },
+  "input_hashes": {
+    "EditTimeline": "sha256:7c483b24267d53d6548e55bdf75fc3ccd0561a2cd9d4287f3e8d2319d1bd37f3",
+    "AssetManifest": "sha256:9f74033cc1532d2ecfe2fe9914fdbf3bb9d5daf3d5d6c1d2fc1bd111a942407a",
+    "VoicePackage": "sha256:1fe1cf5e52a7ea8c149d5addd46d5999c10c1c1f8ba302bb847ac62124fb7e42"
+  },
+  "target": {
+    "editor": "JianyingPro",
+    "platform": "macOS",
+    "version": "6.1.0",
+    "adapter_version": "quickcut-jianying-mac-0.1.0"
+  },
+  "draft_name": "QuickCut-ac91f60c01ca",
+  "draft_id": "FF5D4743-FED1-4AC2-91F5-D446025FF51C",
+  "project_root": ".",
+  "editor_project": "draft/draft_info.json",
+  "preview": "preview.mp4",
+  "subtitles": "captions.srt",
+  "resources": [
+    {
+      "resource_key": "asset-5c2707d91a914133a755b964b99ed932",
+      "asset_id": "asset-5c2707d91a914133a755b964b99ed932",
+      "asset_revision": 1,
+      "original_uri": "media/external/asset-5c2707d91a914133a755b964b99ed932/r1.mp4",
+      "draft_uri": "Resources/ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484.mp4",
+      "packaged_uri": "draft/Resources/ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484.mp4",
+      "content_hash": "sha256:ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484",
+      "name": "r1.mp4",
+      "media_kind": "video",
+      "size_bytes": 32345199,
+      "origin_us": 0,
+      "duration_us": 44460000,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "resource_key": "asset-72abd30fcd284c44aa0a99b87bde0370",
+      "asset_id": "asset-72abd30fcd284c44aa0a99b87bde0370",
+      "asset_revision": 1,
+      "original_uri": "media/external/asset-72abd30fcd284c44aa0a99b87bde0370/r1.webm",
+      "draft_uri": "Resources/30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58.webm",
+      "packaged_uri": "draft/Resources/30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58.webm",
+      "content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+      "name": "r1.webm",
+      "media_kind": "video",
+      "size_bytes": 21554223,
+      "origin_us": 7000,
+      "duration_us": 113313000,
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "resource_key": "generated-voice-55d04cb70aec16a2a2e889f1196ab943",
+      "asset_id": "generated-voice-55d04cb70aec16a2a2e889f1196ab943",
+      "asset_revision": 1,
+      "original_uri": "audio/narration/40fe21c6e78a53047e07039102e9c44ecf7dc3505e8edb1daf12bb0c35879518.wav",
+      "draft_uri": "Resources/b4d4cdde203cc89ea1e12373b75a13ed88a039808490e42dd2b45460b2938a5b.wav",
+      "packaged_uri": "draft/Resources/b4d4cdde203cc89ea1e12373b75a13ed88a039808490e42dd2b45460b2938a5b.wav",
+      "content_hash": "sha256:b4d4cdde203cc89ea1e12373b75a13ed88a039808490e42dd2b45460b2938a5b",
+      "name": "40fe21c6e78a53047e07039102e9c44ecf7dc3505e8edb1daf12bb0c35879518.wav",
+      "media_kind": "audio",
+      "size_bytes": 444862,
+      "origin_us": 0,
+      "duration_us": 4633521
+    },
+    {
+      "resource_key": "generated-voice-9cde895d85bc93478ed50a8f4d54110e",
+      "asset_id": "generated-voice-9cde895d85bc93478ed50a8f4d54110e",
+      "asset_revision": 1,
+      "original_uri": "audio/narration/69e54a8b07956f0d6addddfb0e57c73d2d6d28d906fbe68e6e840905269be42f.wav",
+      "draft_uri": "Resources/4a619e05ae4bd766c668815982a5417e1af797404325401cd7c44a1d3d777d13.wav",
+      "packaged_uri": "draft/Resources/4a619e05ae4bd766c668815982a5417e1af797404325401cd7c44a1d3d777d13.wav",
+      "content_hash": "sha256:4a619e05ae4bd766c668815982a5417e1af797404325401cd7c44a1d3d777d13",
+      "name": "69e54a8b07956f0d6addddfb0e57c73d2d6d28d906fbe68e6e840905269be42f.wav",
+      "media_kind": "audio",
+      "size_bytes": 250394,
+      "origin_us": 0,
+      "duration_us": 2607813
+    },
+    {
+      "resource_key": "generated-voice-d776966fc7a99e9f0379177683a00758",
+      "asset_id": "generated-voice-d776966fc7a99e9f0379177683a00758",
+      "asset_revision": 1,
+      "original_uri": "audio/narration/0af02f72921e0245cbe0558c27b5b830cc9ddf0f90d8eda3e2508f667936685f.wav",
+      "draft_uri": "Resources/caa1189e4fedc7aae46fe3e4921c3838ad34e28f1fc0a5ff873845d5129eca8b.wav",
+      "packaged_uri": "draft/Resources/caa1189e4fedc7aae46fe3e4921c3838ad34e28f1fc0a5ff873845d5129eca8b.wav",
+      "content_hash": "sha256:caa1189e4fedc7aae46fe3e4921c3838ad34e28f1fc0a5ff873845d5129eca8b",
+      "name": "0af02f72921e0245cbe0558c27b5b830cc9ddf0f90d8eda3e2508f667936685f.wav",
+      "media_kind": "audio",
+      "size_bytes": 592232,
+      "origin_us": 0,
+      "duration_us": 6168625
+    },
+    {
+      "resource_key": "source_audio:clip-original-1",
+      "asset_id": "asset-5c2707d91a914133a755b964b99ed932",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 5000000
+      },
+      "derived_for_clip_id": "clip-original-1",
+      "draft_uri": "Resources/source-audio-1ee431f5509ccc26ab2d306d.wav",
+      "packaged_uri": "draft/Resources/source-audio-1ee431f5509ccc26ab2d306d.wav",
+      "name": "原声-clip-original-1.wav",
+      "media_kind": "audio",
+      "content_hash": "sha256:3e09c8f71b897ddd3d09a9b76f3a6a55fee9564ea3e85ed4543f652424ea0260",
+      "size_bytes": 960078,
+      "duration_us": 5000000,
+      "sample_rate": 48000,
+      "sample_rounding_error_us": 0.0
+    },
+    {
+      "resource_key": "source_audio:clip-original-2",
+      "asset_id": "asset-72abd30fcd284c44aa0a99b87bde0370",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 65000000,
+        "end": 70000000
+      },
+      "derived_for_clip_id": "clip-original-2",
+      "draft_uri": "Resources/source-audio-0f489f52c2d1ae81672f5ff1.wav",
+      "packaged_uri": "draft/Resources/source-audio-0f489f52c2d1ae81672f5ff1.wav",
+      "name": "原声-clip-original-2.wav",
+      "media_kind": "audio",
+      "content_hash": "sha256:7cd429c094fdb6e0519d6b0f26cb5c7f88fc8f917770998cad3a4f6a6f44f40c",
+      "size_bytes": 960078,
+      "duration_us": 5000000,
+      "sample_rate": 48000,
+      "sample_rounding_error_us": 0.0
+    },
+    {
+      "resource_key": "source_audio:clip-original-3",
+      "asset_id": "asset-72abd30fcd284c44aa0a99b87bde0370",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 94000000,
+        "end": 101500000
+      },
+      "derived_for_clip_id": "clip-original-3",
+      "draft_uri": "Resources/source-audio-6e7012516145f3b5cb2f51c3.wav",
+      "packaged_uri": "draft/Resources/source-audio-6e7012516145f3b5cb2f51c3.wav",
+      "name": "原声-clip-original-3.wav",
+      "media_kind": "audio",
+      "content_hash": "sha256:2d5ba555ae0360e83283e37e76c116903652644e2970dd8e56cf708f2478d3dd",
+      "size_bytes": 1440078,
+      "duration_us": 7500000,
+      "sample_rate": 48000,
+      "sample_rounding_error_us": 0.0
+    },
+    {
+      "resource_key": "source_audio:clip-original-4",
+      "asset_id": "asset-72abd30fcd284c44aa0a99b87bde0370",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 45000000,
+        "end": 52500000
+      },
+      "derived_for_clip_id": "clip-original-4",
+      "draft_uri": "Resources/source-audio-5c1b0d439ed6b59a63bbdcda.wav",
+      "packaged_uri": "draft/Resources/source-audio-5c1b0d439ed6b59a63bbdcda.wav",
+      "name": "原声-clip-original-4.wav",
+      "media_kind": "audio",
+      "content_hash": "sha256:3a1a4b10d1b62ba2341ba17669fe32bd1369b28ce5452b59dfcbea2a0cb56213",
+      "size_bytes": 1440078,
+      "duration_us": 7500000,
+      "sample_rate": 48000,
+      "sample_rounding_error_us": 0.0
+    },
+    {
+      "resource_key": "source_audio:clip-original-5",
+      "asset_id": "asset-72abd30fcd284c44aa0a99b87bde0370",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 35000000,
+        "end": 40000000
+      },
+      "derived_for_clip_id": "clip-original-5",
+      "draft_uri": "Resources/source-audio-66b0f4a38202e7570fabadd3.wav",
+      "packaged_uri": "draft/Resources/source-audio-66b0f4a38202e7570fabadd3.wav",
+      "name": "原声-clip-original-5.wav",
+      "media_kind": "audio",
+      "content_hash": "sha256:f89009a2da026f6fdc4ac79cf8b347508117971804355aa75bc235c3c3cff3da",
+      "size_bytes": 960078,
+      "duration_us": 5000000,
+      "sample_rate": 48000,
+      "sample_rounding_error_us": 0.0
+    }
+  ],
+  "capabilities": {
+    "video": "hard cuts, one picture track, 1x speed",
+    "source_audio": "independent PCM clips with timeline gains",
+    "narration": "independent unchanged WAV clips with timeline gains",
+    "subtitle": "independent editable text segments",
+    "media_relocation": "install regenerates private absolute paths from package URIs",
+    "unsupported": [
+      "music",
+      "sound_effect",
+      "transitions",
+      "effects",
+      "speed changes",
+      "gain envelopes",
+      "ducking",
+      "overlapping picture clips"
+    ]
+  },
+  "unsupported_features": [],
+  "validation": {
+    "source_hashes": "passed",
+    "source_full_decode": "passed",
+    "timeline_contract": "passed",
+    "source_audio_extraction": "passed",
+    "editor_import": "not_run",
+    "editor_edit_save_reopen": "not_run",
+    "preview": "passed"
+  },
+  "warnings": [
+    "工程已生成；剪映实际打开、编辑、保存和重开尚未由此命令验证。",
+    "包移动后请用 install_jianying_draft 重新定位媒体；不要直接打开旧的绝对路径草稿。"
+  ],
+  "files": [
+    {
+      "uri": "captions.srt",
+      "content_hash": "sha256:c25f7e73b77a4c8afa26c0a96a6e0158cc1390929b4e212c0ef43e27bff01338",
+      "size_bytes": 239
+    },
+    {
+      "uri": "draft/Resources/30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58.webm",
+      "content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+      "size_bytes": 21554223
+    },
+    {
+      "uri": "draft/Resources/4a619e05ae4bd766c668815982a5417e1af797404325401cd7c44a1d3d777d13.wav",
+      "content_hash": "sha256:4a619e05ae4bd766c668815982a5417e1af797404325401cd7c44a1d3d777d13",
+      "size_bytes": 250394
+    },
+    {
+      "uri": "draft/Resources/b4d4cdde203cc89ea1e12373b75a13ed88a039808490e42dd2b45460b2938a5b.wav",
+      "content_hash": "sha256:b4d4cdde203cc89ea1e12373b75a13ed88a039808490e42dd2b45460b2938a5b",
+      "size_bytes": 444862
+    },
+    {
+      "uri": "draft/Resources/caa1189e4fedc7aae46fe3e4921c3838ad34e28f1fc0a5ff873845d5129eca8b.wav",
+      "content_hash": "sha256:caa1189e4fedc7aae46fe3e4921c3838ad34e28f1fc0a5ff873845d5129eca8b",
+      "size_bytes": 592232
+    },
+    {
+      "uri": "draft/Resources/ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484.mp4",
+      "content_hash": "sha256:ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484",
+      "size_bytes": 32345199
+    },
+    {
+      "uri": "draft/Resources/source-audio-0f489f52c2d1ae81672f5ff1.wav",
+      "content_hash": "sha256:7cd429c094fdb6e0519d6b0f26cb5c7f88fc8f917770998cad3a4f6a6f44f40c",
+      "size_bytes": 960078
+    },
+    {
+      "uri": "draft/Resources/source-audio-1ee431f5509ccc26ab2d306d.wav",
+      "content_hash": "sha256:3e09c8f71b897ddd3d09a9b76f3a6a55fee9564ea3e85ed4543f652424ea0260",
+      "size_bytes": 960078
+    },
+    {
+      "uri": "draft/Resources/source-audio-5c1b0d439ed6b59a63bbdcda.wav",
+      "content_hash": "sha256:3a1a4b10d1b62ba2341ba17669fe32bd1369b28ce5452b59dfcbea2a0cb56213",
+      "size_bytes": 1440078
+    },
+    {
+      "uri": "draft/Resources/source-audio-66b0f4a38202e7570fabadd3.wav",
+      "content_hash": "sha256:f89009a2da026f6fdc4ac79cf8b347508117971804355aa75bc235c3c3cff3da",
+      "size_bytes": 960078
+    },
+    {
+      "uri": "draft/Resources/source-audio-6e7012516145f3b5cb2f51c3.wav",
+      "content_hash": "sha256:2d5ba555ae0360e83283e37e76c116903652644e2970dd8e56cf708f2478d3dd",
+      "size_bytes": 1440078
+    },
+    {
+      "uri": "draft/draft_cover.jpg",
+      "content_hash": "sha256:28ecf6423d7b85713eec8bc154a193847d5db340b74871667ae2bd742a5d1582",
+      "size_bytes": 199982
+    },
+    {
+      "uri": "draft/draft_info.json",
+      "content_hash": "sha256:73ae73143cf896bf52e3c927f1a700ce5b882b2440e66bf63bd3a7436d6e56a7",
+      "size_bytes": 37110
+    },
+    {
+      "uri": "draft/draft_meta_info.json",
+      "content_hash": "sha256:77f4696ef7992f1e3c39d82fb7be396365a3236271a9f69d0013adf20fd8bcf5",
+      "size_bytes": 10072
+    },
+    {
+      "uri": "inputs/asset-manifest.json",
+      "content_hash": "sha256:e35dbcf7edc95c5f798ac8dee8183fcb260ca2674e8eb737d1be3651de6b6a4b",
+      "size_bytes": 173559
+    },
+    {
+      "uri": "inputs/timeline.json",
+      "content_hash": "sha256:18ee0c78f5317b15472bad9b9a3a33c65f45380c69f3a6ad121adeb3f22a3052",
+      "size_bytes": 12518
+    },
+    {
+      "uri": "inputs/voice-package.json",
+      "content_hash": "sha256:e21f9e4eafc40a1d81d080d5083b8edd0fd27d63b4e76956888f5d0a5b34d8bb",
+      "size_bytes": 7654
+    },
+    {
+      "uri": "preview.mp4",
+      "content_hash": "sha256:3745457621653cf32f7c40338577529f1a1903eec135937953d659162398f5d3",
+      "size_bytes": 14837983
+    },
+    {
+      "uri": "preview.preview.json",
+      "content_hash": "sha256:1d1fa37de946dd09322dc64dceaf1fed639fba1b165f9ace7b6b34cfb1dd4c40",
+      "size_bytes": 3076
+    },
+    {
+      "uri": "preview.srt",
+      "content_hash": "sha256:c25f7e73b77a4c8afa26c0a96a6e0158cc1390929b4e212c0ef43e27bff01338",
+      "size_bytes": 239
+    }
+  ]
+}

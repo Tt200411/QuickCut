@@ -1,0 +1,301 @@
+{
+  "kind": "ReadOnlyImplementationPathAudit",
+  "date": "2026-11-15",
+  "head": "0d4c2337580b7377825aa336fc1e9f8508c48f7d",
+  "scope": "D/E 编排、fit 返回链、边界处理、默认演示与证据；IndexTTS 资产缺失问题不重复展开",
+  "source_hashes": {
+    "quickcut/timeline.py": "sha256:9662c2e30cfcf908d93d607447347dd166e7eee3b1363428a55af21073e66fed",
+    "quickcut/integration.py": "sha256:807c7e73b4a0d79d4d4f8e67ee98f7e059105bdc2be44b99d6bc9e5ad1ba8a13",
+    "quickcut/voice_package.py": "sha256:4a5f61f2edf07f76693128dbbf1e32e89480190d962df3c0d5ce0b18eae169eb",
+    "scripts/run_countryside_handoff.py": "sha256:ecb9d9f92cbc2ee990a1dc0a322885b2987dbdcd7456603d61f0a5545a7dc130",
+    "scripts/demo_pipeline.py": "sha256:98c0db4b3c45ff82d39c6c0e101e128a040634d20dd38dcd97532f6c4789994d",
+    "quickcut/cli.py": "sha256:441a48a79deee502a698982b7b0d22018cb4831f279dc1d6e8149cc651b532c7",
+    "quickcut/ui.py": "sha256:d73e621a5f3cc3a3422ce97aace728ebd82adbf223c5a662850d45d04d85e3a5",
+    "tests/test_timeline.py": "sha256:e179c699c453f48adc70c6b62a969fb2201e0af7e9273de5fa9122541f512b82",
+    "tests/test_integration.py": "sha256:a8b3b72a13b176e8d493fecf32526a2869915d18fa5d102bb5ca9f853f2789cc",
+    "tests/test_voice_package.py": "sha256:bc0178a5b5eb2e5678249c9c4b785d013db86a673c25e2e00e13d4f42605b773"
+  },
+  "findings": [
+    {
+      "id": "DE-FIT-RETURN",
+      "priority": "P1",
+      "summary": "E 有 fit 单模块，当前集成只有初次编排；没有 D→E→D 适配返回入口",
+      "implementation": [
+        {
+          "file": "quickcut/voice_package.py",
+          "line": 202
+        },
+        {
+          "file": "quickcut/voice_package.py",
+          "line": 220
+        },
+        {
+          "file": "quickcut/voice_package.py",
+          "line": 266
+        },
+        {
+          "file": "quickcut/voice_package.py",
+          "line": 310
+        }
+      ],
+      "active_path": [
+        {
+          "file": "quickcut/integration.py",
+          "line": 73
+        },
+        {
+          "file": "quickcut/integration.py",
+          "line": 78
+        },
+        {
+          "file": "quickcut/integration.py",
+          "line": 117
+        },
+        {
+          "file": "quickcut/timeline.py",
+          "line": 61
+        }
+      ],
+      "consequence": "E 返回 needs_retime 时桥接停止；即便 timeline-specific fit 回复已 ready，当前 D 编译器仍拒绝其 Timeline ref。安全停止存在，自动恢复闭环尚不存在。",
+      "minimum_acceptance": "用一条真实中文稍超预算句跑 measure→D pending revision→fit request→E ready→D 接收并重编→F；另测过期回复和第二轮仍超时。"
+    },
+    {
+      "id": "D-BOUNDARY",
+      "priority": "P1",
+      "summary": "D 是确定性四轨编译和有限尾部延长，未实现媒体驱动局部边界精剪",
+      "implementation": [
+        {
+          "file": "quickcut/timeline.py",
+          "line": 144
+        },
+        {
+          "file": "quickcut/timeline.py",
+          "line": 148
+        },
+        {
+          "file": "quickcut/timeline.py",
+          "line": 153
+        },
+        {
+          "file": "quickcut/timeline.py",
+          "line": 196
+        },
+        {
+          "file": "quickcut/timeline.py",
+          "line": 208
+        },
+        {
+          "file": "quickcut/timeline.py",
+          "line": 216
+        }
+      ],
+      "test_scope": [
+        {
+          "file": "tests/test_timeline.py",
+          "line": 32
+        },
+        {
+          "file": "tests/test_integration.py",
+          "line": 83
+        }
+      ],
+      "consequence": "每个入选镜头从 A segment.begin 开始，只按 suggested_duration_us 截尾；延长仅消耗同一已选segment尾部/beat预算/全片余量，没有动作、停顿或镜头边界观测。ABC三镜实际是源0–10s、0–15s、0–5s。",
+      "minimum_acceptance": "选关键动作不在粗窗口起点的真实片段，冻结人工边界，检验D能否产生不同于segment.begin的合法入出点；当前需新增边界决策入口/算法，不能仅补一条现有预算测试。"
+    },
+    {
+      "id": "D-EDIT-ROUTE",
+      "priority": "P1",
+      "summary": "已有 replace/trim/reorder 入口仍消费旧单源 Timeline，未接新四轨 EditTimeline",
+      "implementation": [
+        {
+          "file": "quickcut/cli.py",
+          "line": 25
+        },
+        {
+          "file": "quickcut/cli.py",
+          "line": 194
+        },
+        {
+          "file": "quickcut/ui.py",
+          "line": 27
+        },
+        {
+          "file": "quickcut/core.py",
+          "line": 380
+        }
+      ],
+      "demo_scope": [
+        {
+          "file": "scripts/demo_pipeline.py",
+          "line": 339
+        },
+        {
+          "file": "scripts/demo_pipeline.py",
+          "line": 370
+        }
+      ],
+      "consequence": "新ABCDE时间线不能直接载入旧编辑入口；demo edit只是改第二句文案、复用其他E缓存并重新初编，不覆盖新IR镜头trim/replace后的音轨字幕重对齐。",
+      "minimum_acceptance": "对真实新IR镜头trim/replace，验证原声联动、旁白字幕位置、revision失效、只重做受影响声音、重新导出且保留未变素材。"
+    },
+    {
+      "id": "E-DEFAULT-PATH",
+      "priority": "P2",
+      "summary": "真实乡村演示固定使用 measure 和系统默认声音；独立fit/单句配置能力未进入同一默认用户回路",
+      "implementation": [
+        {
+          "file": "scripts/run_countryside_handoff.py",
+          "line": 40
+        },
+        {
+          "file": "scripts/run_countryside_handoff.py",
+          "line": 50
+        },
+        {
+          "file": "scripts/run_countryside_handoff.py",
+          "line": 202
+        },
+        {
+          "file": "scripts/run_countryside_handoff.py",
+          "line": 214
+        },
+        {
+          "file": "quickcut/integration.py",
+          "line": 120
+        },
+        {
+          "file": "quickcut/voice_package.py",
+          "line": 78
+        },
+        {
+          "file": "quickcut/voice_package.py",
+          "line": 277
+        }
+      ],
+      "evidence": [
+        {
+          "file": "ABCDE/voice-package.json",
+          "line": 18
+        },
+        {
+          "file": "ABCDE/voice-package.json",
+          "line": 21
+        },
+        {
+          "file": "ABCDE/approved-cues.json",
+          "line": 2
+        }
+      ],
+      "consequence": "现有ABCDE是预设三句、macOS say/Reed、145语速、measure、tempo=1，不证明自动语速适配、逐句选音色或情绪控制已用于真实演示。",
+      "minimum_acceptance": "提供显式声音配置与逐句批准入口；在真实演示中修改一句音色或时长预算，核对所选后端/voice、实际音频与缓存失效。"
+    },
+    {
+      "id": "E-APPROVAL-BOUNDARY",
+      "priority": "P2",
+      "summary": "集成层检查逐句approved；独立E仍允许旧版仅StoryPlan级ready审批",
+      "implementation": [
+        {
+          "file": "quickcut/voice_package.py",
+          "line": 176
+        },
+        {
+          "file": "quickcut/voice_package.py",
+          "line": 185
+        },
+        {
+          "file": "quickcut/planning/validator.py",
+          "line": 210
+        },
+        {
+          "file": "quickcut/integration.py",
+          "line": 60
+        }
+      ],
+      "consequence": "不能把独立E CLI接受一个ready文件等同于执行了逐句人工审批。当前脚本用APPROVED常量直接提供批准文案，审批流程本身未演示。",
+      "minimum_acceptance": "经产品入口提交未批准、明确拒绝和删除approved字段三个版本，验证选定的审批策略与revision记录；保留legacy兼容时清晰区分入口。"
+    },
+    {
+      "id": "E-ESPEAK-LOCALE",
+      "priority": "P2",
+      "summary": "espeak默认中文语言标识尚未适配zh-CN的严格匹配",
+      "implementation": [
+        {
+          "file": "quickcut/voice_package.py",
+          "line": 68
+        },
+        {
+          "file": "quickcut/voice_package.py",
+          "line": 86
+        },
+        {
+          "file": "quickcut/voice_package.py",
+          "line": 90
+        }
+      ],
+      "primary_source": "https://raw.githubusercontent.com/espeak-ng/espeak-ng/master/espeak-ng-data/lang/sit/cmn",
+      "confidence": "上游Mandarin配置为cmn/zh-cmn/zh；以这些能力值替代capabilities完成了本地代码复现。未声称已在Ubuntu实际合成验证。",
+      "consequence": "默认story语言zh-CN可能找不到已安装的Mandarin voice，显式voice=cmn也被语言精确比较拒绝；CI安装espeak但声音用fixture，不能覆盖此生产路径。",
+      "minimum_acceptance": "Ubuntu保存espeak-ng --voices真实输出，用生产E CLI合成一条zh-CN短句并核对所选语言；随后补语言alias映射与非mock媒体回归。"
+    }
+  ],
+  "observed_reproductions": {
+    "fit_reply": {
+      "method": "当前ABCDE StoryPlan + 实际 build_voice_package(mode=fit, fixture=True, request=当前Timeline引用)，临时目录中的诊断音调；不代表真实语音质量测试",
+      "status": "ready",
+      "all_cues_fit": true,
+      "mode": "fit",
+      "inputs": [
+        "StoryPlan/story-countryside/r1",
+        "EditTimeline/timeline-countryside/r1"
+      ]
+    },
+    "d_accept_fit_reply": {
+      "exception": "TimelineError",
+      "code": "STALE_INPUT_REVISION",
+      "message": "Initial compilation requires voice measurements without a timeline-specific request"
+    },
+    "legacy_edit_load_new_ir": {
+      "entry": "quickcut.cli._load_timeline('ABCDE/timeline.json')",
+      "exception": "TypeError",
+      "message": "Timeline.__init__() got an unexpected keyword argument 'schema_version'"
+    },
+    "standalone_e_missing_per_cue_approved": "validate_story accepted ready_for_edit with approved keys removed; C integrated validator remains strict",
+    "espeak_locale": {
+      "capabilities_stub_languages": [
+        "cmn",
+        "zh-cmn",
+        "zh"
+      ],
+      "story_language": "zh-CN",
+      "default_result": "UNSUPPORTED_VOICE",
+      "explicit_voice_cmn_result": "UNSUPPORTED_VOICE"
+    }
+  },
+  "existing_real_e_fit_evidence": {
+    "package": "examples/voice_package/real/voice_package-fit.json",
+    "verification_command": "python scripts/verify_voice_package.py --story examples/voice_package/story.json --package examples/voice_package/real/voice_package-fit.json --root examples/voice_package/real",
+    "observed_result": "media_validation passed; actual WAV hashes and sample durations verified",
+    "cues": [
+      {
+        "cue_id": "cue-01",
+        "duration_us": 841667,
+        "fit_status": "fits"
+      },
+      {
+        "cue_id": "cue-02",
+        "duration_us": 2862729,
+        "fit_status": "fits"
+      },
+      {
+        "cue_id": "cue-03",
+        "duration_us": 11782479,
+        "fit_status": "needs_retime"
+      }
+    ],
+    "interpretation": "系统say真实语音及单句fit证据确实存在，不应把E全模块说成只有mock；但整包仍needs_retime，没有进入D完成返程。"
+  },
+  "limitations": [
+    "未改实现、未下载模型、未进行主观听感验收。",
+    "预算延长、四轨编译、E缓存和真实say媒体均已有实现；本报告区分这些能力与尚未接入的完整闭环。",
+    "诊断音调只用于复现契约路由，临时目录已清理。"
+  ]
+}

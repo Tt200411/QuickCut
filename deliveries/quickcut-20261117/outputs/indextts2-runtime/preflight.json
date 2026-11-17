@@ -1,0 +1,200 @@
+{
+  "schema_version": "1",
+  "status": "ok",
+  "require_media": true,
+  "exit_code": 0,
+  "environment": {
+    "python": "3.11.15",
+    "executable": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/upstream/.venv/bin/python",
+    "platform": "Darwin-25.6.0-arm64",
+    "system": "Darwin",
+    "machine": "arm64"
+  },
+  "required": {
+    "status": "ok",
+    "enforced": true,
+    "checks": [
+      {
+        "name": "python",
+        "status": "ok",
+        "version": "3.11.15",
+        "minimum": "3.10"
+      },
+      {
+        "name": "A.core.ffmpeg",
+        "status": "ok",
+        "path": "/opt/homebrew/bin/ffmpeg",
+        "returncode": 0,
+        "version": "ffmpeg version 9.0.2 Copyright (c) 2000-2026 the FFmpeg developers"
+      },
+      {
+        "name": "A.media.ffprobe",
+        "status": "ok",
+        "path": "/opt/homebrew/bin/ffprobe",
+        "returncode": 0,
+        "version": "ffprobe version 9.0.2 Copyright (c) 2007-2026 the FFmpeg developers"
+      },
+      {
+        "name": "E.ffmpeg_path",
+        "status": "ok",
+        "path": "/opt/homebrew/bin/ffmpeg",
+        "returncode": 0,
+        "version": "ffmpeg version 9.0.2 Copyright (c) 2000-2026 the FFmpeg developers"
+      },
+      {
+        "name": "E.local_tts",
+        "status": "ok",
+        "selected": "indextts2",
+        "configuration": "examples/voice_package/indextts2.config.json",
+        "real_inference": "not_run",
+        "scope": "检查指定 IndexTTS2 的本地模型文件、运行环境、参考 WAV 和设备；不加载权重、不执行推理。",
+        "reference_audio": {
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/inputs/indextts2-reference.wav",
+          "sample_rate": 48000,
+          "channels": 1,
+          "frames": 565559,
+          "sha256": "da1f00d4ca84680174cad16b9db0c4d7a2f21e7545bacce583cf83be06a6ed95"
+        },
+        "model_dir": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints",
+        "model_revision": "740dcaf",
+        "runtime_version": "2.0.0",
+        "device": "mps"
+      }
+    ]
+  },
+  "optional": {
+    "status": "incomplete",
+    "checks": [
+      {
+        "name": "packages",
+        "status": "incomplete",
+        "checks": [
+          {
+            "name": "quickcut",
+            "status": "ok",
+            "version": "0.1.0"
+          },
+          {
+            "name": "imageio-ffmpeg",
+            "status": "ok",
+            "version": "0.8.1"
+          },
+          {
+            "name": "pillow",
+            "status": "ok",
+            "version": "11.3.0"
+          },
+          {
+            "name": "fastapi",
+            "status": "missing",
+            "version": null
+          },
+          {
+            "name": "uvicorn",
+            "status": "missing",
+            "version": null
+          },
+          {
+            "name": "python-multipart",
+            "status": "missing",
+            "version": null
+          },
+          {
+            "name": "gradio",
+            "status": "missing",
+            "version": null
+          },
+          {
+            "name": "open_clip_torch",
+            "status": "missing",
+            "version": null
+          },
+          {
+            "name": "torch",
+            "status": "ok",
+            "version": "2.8.0"
+          },
+          {
+            "name": "torchvision",
+            "status": "missing",
+            "version": null
+          },
+          {
+            "name": "faster-whisper",
+            "status": "missing",
+            "version": null
+          },
+          {
+            "name": "ctranslate2",
+            "status": "missing",
+            "version": null
+          },
+          {
+            "name": "av",
+            "status": "missing",
+            "version": null
+          },
+          {
+            "name": "tokenizers",
+            "status": "ok",
+            "version": "0.21.0"
+          },
+          {
+            "name": "onnxruntime",
+            "status": "missing",
+            "version": null
+          },
+          {
+            "name": "huggingface-hub",
+            "status": "ok",
+            "version": "0.35.0"
+          },
+          {
+            "name": "yt-dlp",
+            "status": "missing",
+            "version": null
+          },
+          {
+            "name": "pytest",
+            "status": "missing",
+            "version": null
+          },
+          {
+            "name": "httpx",
+            "status": "missing",
+            "version": null
+          }
+        ],
+        "scope": "仅读取安装元数据；extras 按实际引擎需要启用，未导入模型包。"
+      },
+      {
+        "name": "ollama",
+        "status": "not_checked",
+        "configuration": {
+          "QUICKCUT_VLM_MODEL": "qwen2.5vl:3b",
+          "QUICKCUT_OLLAMA_URL": "http://127.0.0.1:11434",
+          "QUICKCUT_VLM_TIMEOUT": "120"
+        },
+        "scope": "仅说明配置；未访问端点、未运行 Ollama、未下载模型、未验证真实推理。"
+      },
+      {
+        "name": "A.asset_manifest",
+        "status": "skipped",
+        "path_safety": "not_checked",
+        "validation": "not_run",
+        "reason": "未提供 --project-root"
+      }
+    ]
+  },
+  "policy": {
+    "read_only": true,
+    "network_access": false,
+    "install": false,
+    "download": false
+  },
+  "evidence": {
+    "fixtures": "rule/fixed、fixture-tone 与 mock 仅验证协议或工程行为，不代表真实视觉/语音推理。",
+    "real_inference": "not_run",
+    "limits": "-version 和 PATH 不证明编码器/滤镜、中文 voice、模型权重、成片或编辑器验收通过。"
+  }
+}

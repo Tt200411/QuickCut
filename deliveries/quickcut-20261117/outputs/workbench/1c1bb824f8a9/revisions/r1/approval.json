@@ -1,0 +1,92 @@
+{
+  "draft_id": "8dfa8632acb57c32",
+  "reviewer": "Codex 自动验收（用户授权）",
+  "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+  "confirmation_kind": "assistant_review",
+  "approved_text_by_beat": {
+    "beat-open": "沿着林间小路，走进清新的绿意。",
+    "beat-middle": "云雾掠过山头，草木在风中舒展，让脚步慢下来。",
+    "beat-close": "把宁静留在风景里。"
+  },
+  "boundaries": [
+    {
+      "beat_id": "beat-open",
+      "shot_index": 0,
+      "candidate_id": "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+      "segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+      "source_range_us": {
+        "begin": 0,
+        "end": 5000000
+      },
+      "method": "manual",
+      "reviewer": "Codex 自动验收（用户授权）",
+      "reason": "助手验收核对真实画面后的源视频入出点"
+    },
+    {
+      "beat_id": "beat-open",
+      "shot_index": 1,
+      "candidate_id": "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+      "source_range_us": {
+        "begin": 65000000,
+        "end": 70000000
+      },
+      "method": "manual",
+      "reviewer": "Codex 自动验收（用户授权）",
+      "reason": "助手验收核对真实画面后的源视频入出点"
+    },
+    {
+      "beat_id": "beat-middle",
+      "shot_index": 0,
+      "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+      "source_range_us": {
+        "begin": 94000000,
+        "end": 101500000
+      },
+      "method": "manual",
+      "reviewer": "Codex 自动验收（用户授权）",
+      "reason": "助手验收核对真实画面后的源视频入出点"
+    },
+    {
+      "beat_id": "beat-middle",
+      "shot_index": 1,
+      "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+      "source_range_us": {
+        "begin": 45000000,
+        "end": 52500000
+      },
+      "method": "manual",
+      "reviewer": "Codex 自动验收（用户授权）",
+      "reason": "助手验收核对真实画面后的源视频入出点"
+    },
+    {
+      "beat_id": "beat-close",
+      "shot_index": 0,
+      "candidate_id": "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+      "source_range_us": {
+        "begin": 35000000,
+        "end": 40000000
+      },
+      "method": "manual",
+      "reviewer": "Codex 自动验收（用户授权）",
+      "reason": "助手验收核对真实画面后的源视频入出点"
+    }
+  ],
+  "revision": 1,
+  "selection_overrides": {
+    "beat-open": [
+      "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+      "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000"
+    ],
+    "beat-middle": [
+      "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+      "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000"
+    ],
+    "beat-close": [
+      "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000"
+    ]
+  }
+}

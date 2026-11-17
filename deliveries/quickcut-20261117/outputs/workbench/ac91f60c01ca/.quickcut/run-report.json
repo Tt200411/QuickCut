@@ -1,0 +1,126 @@
+{
+  "project_id": "project-ac91f60c01ca",
+  "manifest_revision": 1,
+  "stages": [
+    {
+      "asset_id": "asset-72abd30fcd284c44aa0a99b87bde0370",
+      "stage": "probe",
+      "cache_hit": true,
+      "attempts": 0
+    },
+    {
+      "asset_id": "asset-72abd30fcd284c44aa0a99b87bde0370",
+      "stage": "keyframes",
+      "cache_hit": true,
+      "attempts": 0
+    },
+    {
+      "asset_id": "asset-72abd30fcd284c44aa0a99b87bde0370",
+      "stage": "proxy",
+      "cache_hit": true,
+      "attempts": 0
+    },
+    {
+      "asset_id": "asset-72abd30fcd284c44aa0a99b87bde0370",
+      "stage": "asr",
+      "cache_hit": true,
+      "attempts": 0
+    },
+    {
+      "asset_id": "asset-b885f93fdb544bed8fd0752424073c38",
+      "stage": "probe",
+      "cache_hit": true,
+      "attempts": 0
+    },
+    {
+      "asset_id": "asset-b885f93fdb544bed8fd0752424073c38",
+      "stage": "keyframes",
+      "cache_hit": true,
+      "attempts": 0
+    },
+    {
+      "asset_id": "asset-b885f93fdb544bed8fd0752424073c38",
+      "stage": "proxy",
+      "cache_hit": true,
+      "attempts": 0
+    },
+    {
+      "asset_id": "asset-b885f93fdb544bed8fd0752424073c38",
+      "stage": "asr",
+      "cache_hit": true,
+      "attempts": 0
+    },
+    {
+      "asset_id": "asset-5c2707d91a914133a755b964b99ed932",
+      "stage": "probe",
+      "cache_hit": true,
+      "attempts": 0
+    },
+    {
+      "asset_id": "asset-5c2707d91a914133a755b964b99ed932",
+      "stage": "keyframes",
+      "cache_hit": true,
+      "attempts": 0
+    },
+    {
+      "asset_id": "asset-5c2707d91a914133a755b964b99ed932",
+      "stage": "proxy",
+      "cache_hit": true,
+      "attempts": 0
+    },
+    {
+      "asset_id": "asset-5c2707d91a914133a755b964b99ed932",
+      "stage": "asr",
+      "cache_hit": true,
+      "attempts": 0
+    },
+    {
+      "asset_id": "asset-e5cc79b8cc784c91ac6de0ef1cd037f9",
+      "stage": "probe",
+      "cache_hit": true,
+      "attempts": 0
+    },
+    {
+      "asset_id": "asset-e5cc79b8cc784c91ac6de0ef1cd037f9",
+      "stage": "keyframes",
+      "cache_hit": true,
+      "attempts": 0
+    },
+    {
+      "asset_id": "asset-e5cc79b8cc784c91ac6de0ef1cd037f9",
+      "stage": "proxy",
+      "cache_hit": true,
+      "attempts": 0
+    },
+    {
+      "asset_id": "asset-e5cc79b8cc784c91ac6de0ef1cd037f9",
+      "stage": "asr",
+      "cache_hit": true,
+      "attempts": 0
+    }
+  ],
+  "errors": [],
+  "config": {
+    "window_us": 15000000,
+    "coarse_window_us": 30000000,
+    "proxy_width": 640,
+    "asr": "faster-whisper",
+    "asr_model": "small",
+    "asr_language": "zh",
+    "asr_device": "cpu",
+    "asr_compute_type": "int8",
+    "asr_beam_size": 5,
+    "asr_cpu_threads": 2,
+    "asr_num_workers": 1,
+    "asr_vad": true,
+    "asr_condition_on_previous_text": false,
+    "asr_initial_prompt": null,
+    "asr_hotwords": null,
+    "asr_model_revision": null,
+    "max_attempts": 1
+  },
+  "tools": {
+    "ffmpeg": "ffmpeg version 9.0.2 Copyright (c) 2000-2026 the FFmpeg developers",
+    "ffprobe": "ffprobe version 9.0.2 Copyright (c) 2007-2026 the FFmpeg developers"
+  }
+}

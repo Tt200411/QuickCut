@@ -1,0 +1,56 @@
+{
+  "normalization": "NFKC + OpenCC t2s + letters/numbers only",
+  "source": "asr-small.json",
+  "scope": "ASR corroboration only; does not grade naturalness or imply exact speaker reproduction",
+  "note": "cue-03 ASR writes the homophone 散布 for 散步; approved subtitle unchanged",
+  "cues": [
+    {
+      "cue_id": "cue-01",
+      "reference": "沿着郊外的小路看看路边的风景",
+      "hypothesis": "沿着郊外的小路看看路边的风景",
+      "metrics": {
+        "reference_characters": 14,
+        "hypothesis_characters": 14,
+        "substitutions": 0,
+        "deletions": 0,
+        "insertions": 0,
+        "edit_distance": 0,
+        "cer": 0.0
+      },
+      "closing_text_found": true,
+      "tail_gap_us": 419750
+    },
+    {
+      "cue_id": "cue-02",
+      "reference": "放慢脚步留一点时间给身边的自然",
+      "hypothesis": "放慢脚步留一点时间给身边的自然",
+      "metrics": {
+        "reference_characters": 15,
+        "hypothesis_characters": 15,
+        "substitutions": 0,
+        "deletions": 0,
+        "insertions": 0,
+        "edit_distance": 0,
+        "cer": 0.0
+      },
+      "closing_text_found": true,
+      "tail_gap_us": 392312
+    },
+    {
+      "cue_id": "cue-03",
+      "reference": "让这段散步在柔和的光线里收尾",
+      "hypothesis": "让这段散布在柔和的光线里收尾",
+      "metrics": {
+        "reference_characters": 14,
+        "hypothesis_characters": 14,
+        "substitutions": 1,
+        "deletions": 0,
+        "insertions": 0,
+        "edit_distance": 1,
+        "cer": 0.07142857142857142
+      },
+      "closing_text_found": true,
+      "tail_gap_us": 268375
+    }
+  ]
+}

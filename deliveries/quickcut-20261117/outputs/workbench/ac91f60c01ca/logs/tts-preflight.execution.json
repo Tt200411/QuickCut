@@ -1,0 +1,12 @@
+{
+  "started_at": "2026-11-16T12:52:34.444351+00:00",
+  "action": "probe_tts",
+  "python": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/upstream/.venv/bin/python",
+  "code_sha256": {
+    "indextts2.py": "200614066a4ee8c309cfa5ad1f249e5465fa7ac1fd7104e4fe14218798ca71e8"
+  },
+  "local_models_only": true,
+  "exit_code": 0,
+  "elapsed_seconds": 0.8979781670495868,
+  "finished_at": "2026-11-16T12:52:35.342339+00:00"
+}

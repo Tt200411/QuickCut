@@ -1,0 +1,719 @@
+{
+  "theme": "森林中的追逐与滑翔",
+  "narration": "在一片宁静的森林中，一只狡猾的松鼠和一只大白兔展开了一场紧张的追逐。松鼠利用树上的树枝和尖桩巧妙地躲避，而大白兔则紧追不舍。最终，松鼠成功抓住了大白兔，而大白兔则在空中滑翔，留下了一片美丽的草地和蝴蝶。",
+  "shot_order": [
+    "shot-0126",
+    "shot-0127",
+    "shot-0128",
+    "shot-0129",
+    "shot-0130",
+    "shot-0131",
+    "shot-0132",
+    "shot-0133",
+    "shot-0134",
+    "shot-0135",
+    "shot-0136",
+    "shot-0137",
+    "shot-0138",
+    "shot-0139",
+    "shot-0140",
+    "shot-0141",
+    "shot-0142",
+    "shot-0143",
+    "shot-0144",
+    "shot-0145",
+    "shot-0146",
+    "shot-0147",
+    "shot-0148",
+    "shot-0149",
+    "shot-0150",
+    "shot-0151",
+    "shot-0152",
+    "shot-0153",
+    "shot-0154",
+    "shot-0155",
+    "shot-0156",
+    "shot-0157",
+    "shot-0158",
+    "shot-0159",
+    "shot-0160",
+    "shot-0161",
+    "shot-0162",
+    "shot-0163",
+    "shot-0164"
+  ],
+  "beats": [
+    {
+      "id": "hook",
+      "label": "森林中的追逐开始",
+      "text": "在一片宁静的森林中，一只狡猾的松鼠和一只大白兔展开了一场紧张的追逐。松鼠利用树上的树枝和尖桩巧妙地躲避，而大白兔则紧追不舍。",
+      "source": "prompt|transcript|source",
+      "source_shot_ids": [
+        "shot-0126",
+        "shot-0127",
+        "shot-0128",
+        "shot-0129",
+        "shot-0130",
+        "shot-0131",
+        "shot-0132",
+        "shot-0133",
+        "shot-0134",
+        "shot-0135",
+        "shot-0136",
+        "shot-0137",
+        "shot-0138"
+      ]
+    },
+    {
+      "id": "journey",
+      "label": "松鼠的巧妙躲避",
+      "text": "松鼠利用树上的树枝和尖桩巧妙地躲避，而大白兔则紧追不舍。松鼠在树上跳跃，利用树枝的缝隙，巧妙地躲避大白兔的追捕。",
+      "source": "prompt|transcript|source",
+      "source_shot_ids": [
+        "shot-0139",
+        "shot-0140",
+        "shot-0141",
+        "shot-0142",
+        "shot-0143",
+        "shot-0144",
+        "shot-0145",
+        "shot-0146",
+        "shot-0147",
+        "shot-0148",
+        "shot-0149",
+        "shot-0150",
+        "shot-0151"
+      ]
+    },
+    {
+      "id": "close",
+      "label": "松鼠成功抓住大白兔",
+      "text": "最终，松鼠成功抓住了大白兔，而大白兔则在空中滑翔，留下了一片美丽的草地和蝴蝶。",
+      "source": "prompt|transcript|source",
+      "source_shot_ids": [
+        "shot-0152",
+        "shot-0153",
+        "shot-0154",
+        "shot-0155",
+        "shot-0156",
+        "shot-0157",
+        "shot-0158",
+        "shot-0159",
+        "shot-0160",
+        "shot-0161",
+        "shot-0162",
+        "shot-0163",
+        "shot-0164"
+      ]
+    }
+  ],
+  "selected_shot_ids": [
+    "shot-0126",
+    "shot-0127",
+    "shot-0128",
+    "shot-0129",
+    "shot-0130",
+    "shot-0131",
+    "shot-0132",
+    "shot-0133",
+    "shot-0134",
+    "shot-0135",
+    "shot-0136",
+    "shot-0137",
+    "shot-0138",
+    "shot-0139",
+    "shot-0140",
+    "shot-0141",
+    "shot-0142",
+    "shot-0143",
+    "shot-0144",
+    "shot-0145",
+    "shot-0146",
+    "shot-0147",
+    "shot-0148",
+    "shot-0149",
+    "shot-0150",
+    "shot-0151",
+    "shot-0152",
+    "shot-0153",
+    "shot-0154",
+    "shot-0155",
+    "shot-0156",
+    "shot-0157",
+    "shot-0158",
+    "shot-0159",
+    "shot-0160",
+    "shot-0161",
+    "shot-0162",
+    "shot-0163",
+    "shot-0164"
+  ],
+  "shot_selection": true,
+  "inference": {
+    "model": "qwen2.5vl:3b",
+    "endpoint": "http://127.0.0.1:11434",
+    "request_prompt": "{\"prompt\": \"请把提供的真实连续源窗口剪成不超过六十秒的完整中文故事，严格按源时间正序排列二十个不同镜头，不能重复，不得加入片尾。你必须亲自选择镜头并分配三幕。先从全景和大白兔建立森林环境、主角与对手；中段展示树上的小动物跃起滑翔、橙色果实坠落、地面尖桩的障碍与躲避；结尾要看见兔子抓住对手，最后回到明亮草地、蝴蝶和风筝般的滑翔动物，完整交代结果。请根据接触表修正上述初步观察，不要编造图上没有的事件。必须覆盖因果和结局，避免所有镜头都从前半段取。优先保留源时间378到414秒的建立与起跳、417到456秒的危险与躲避、459到493.5秒的抓住与平静收束。最后两三个镜头必须来自486到493.5秒，露出被兔子牵线的滑翔动物和草地远景，再收在兔子满足的表情。每幕分别命名开头、中段、结尾，用清晰中文写可听的故事内容。旁白用约一百八十个汉字，自然沉稳的动物纪录片叙述，不要说开场交代环境、中段呈现变化、镜头推进之类创作说明。不要英文、不要英文角色名。提供三幕各自实际对应的镜头ID，遵循最终shot_order，三幕不要交叉。\", \"shots\": [{\"shot_id\": \"shot-0126\", \"start\": 378.0, \"end\": 381.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0127\", \"start\": 381.0, \"end\": 384.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0128\", \"start\": 384.0, \"end\": 387.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0129\", \"start\": 387.0, \"end\": 390.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0130\", \"start\": 390.0, \"end\": 393.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0131\", \"start\": 393.0, \"end\": 396.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0132\", \"start\": 396.0, \"end\": 399.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0133\", \"start\": 399.0, \"end\": 402.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0134\", \"start\": 402.0, \"end\": 405.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0135\", \"start\": 405.0, \"end\": 408.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0136\", \"start\": 408.0, \"end\": 411.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0137\", \"start\": 411.0, \"end\": 414.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0138\", \"start\": 414.0, \"end\": 417.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0139\", \"start\": 417.0, \"end\": 420.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0140\", \"start\": 420.0, \"end\": 423.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0141\", \"start\": 423.0, \"end\": 426.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0142\", \"start\": 426.0, \"end\": 429.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0143\", \"start\": 429.0, \"end\": 432.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0144\", \"start\": 432.0, \"end\": 435.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0145\", \"start\": 435.0, \"end\": 438.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0146\", \"start\": 438.0, \"end\": 441.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0147\", \"start\": 441.0, \"end\": 444.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0148\", \"start\": 444.0, \"end\": 447.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0149\", \"start\": 447.0, \"end\": 450.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0150\", \"start\": 450.0, \"end\": 453.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0151\", \"start\": 453.0, \"end\": 456.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0152\", \"start\": 456.0, \"end\": 459.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0153\", \"start\": 459.0, \"end\": 462.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0154\", \"start\": 462.0, \"end\": 465.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0155\", \"start\": 465.0, \"end\": 468.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0156\", \"start\": 468.0, \"end\": 471.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0157\", \"start\": 471.0, \"end\": 474.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0158\", \"start\": 474.0, \"end\": 477.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0159\", \"start\": 477.0, \"end\": 480.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0160\", \"start\": 480.0, \"end\": 483.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0161\", \"start\": 483.0, \"end\": 486.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0162\", \"start\": 486.0, \"end\": 489.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0163\", \"start\": 489.0, \"end\": 492.0, \"transcript\": \"\", \"image_available\": true}, {\"shot_id\": \"shot-0164\", \"start\": 492.0, \"end\": 493.5, \"transcript\": \"\", \"image_available\": true}], \"image_slots\": [{\"image_index\": 0, \"layout\": \"row-major, left to right, top to bottom\", \"shot_ids\": [\"shot-0126\", \"shot-0127\", \"shot-0128\", \"shot-0129\", \"shot-0130\", \"shot-0131\", \"shot-0132\", \"shot-0133\", \"shot-0134\", \"shot-0135\", \"shot-0136\", \"shot-0137\"], \"sha256\": \"8a0e0950185efc2384717bbc8bba018d0335d388b75936eafd94c86bad89e361\", \"width\": 1280, \"height\": 612}, {\"image_index\": 1, \"layout\": \"row-major, left to right, top to bottom\", \"shot_ids\": [\"shot-0138\", \"shot-0139\", \"shot-0140\", \"shot-0141\", \"shot-0142\", \"shot-0143\", \"shot-0144\", \"shot-0145\", \"shot-0146\", \"shot-0147\", \"shot-0148\", \"shot-0149\"], \"sha256\": \"ba3203b5228d1763ee462d9dad3a109414cfce00b1c1e1523cf5ba1a50b69edc\", \"width\": 1280, \"height\": 612}, {\"image_index\": 2, \"layout\": \"row-major, left to right, top to bottom\", \"shot_ids\": [\"shot-0150\", \"shot-0151\", \"shot-0152\", \"shot-0153\", \"shot-0154\", \"shot-0155\", \"shot-0156\", \"shot-0157\", \"shot-0158\", \"shot-0159\", \"shot-0160\", \"shot-0161\"], \"sha256\": \"ae338509e10a4fa6ee90078e9e687da0e329d81b5b0624ca987afb711b9f7667\", \"width\": 1280, \"height\": 612}, {\"image_index\": 3, \"layout\": \"row-major, left to right, top to bottom\", \"shot_ids\": [\"shot-0162\", \"shot-0163\", \"shot-0164\"], \"sha256\": \"fc9c8c272c210565788ab359ca17a01c2d24f8365f37cc6421e71c3a8b1b9483\", \"width\": 960, \"height\": 204}], \"visual_format\": \"contact_sheet\", \"image_reading_instruction\": \"Each supplied image contains labeled keyframes. Read every tile using its exact shot_id. Tile order is row-major, left to right then top to bottom. All candidates have a real frame; do not infer a shot solely from neighboring timestamps.\", \"duration_seconds\": 60.0, \"target_shot_count\": 20, \"task\": \"Act as the video editor. Respond entirely in Simplified Chinese: theme, narration, beat labels, and beat text must all be Chinese. Build a complete story for about 60 seconds. Choose enough distinct source shots to cover that duration (target 20) and put them in a purposeful montage order. Then write exactly three beats in hook, journey, close order. Write a coherent local voiceover with at least 90 words or Chinese characters, covering the hook, journey, and close instead of a single summary sentence. You MUST copy exact shot_id strings from shots into shot_order and each beat's source_shot_ids. Every beat source_shot_id must also appear in shot_order. Do not leave these arrays empty or repeat a shot. Use different shots when they show different moments. Ground every sentence in what is visibly present in the supplied frames or transcript: when transcript is empty, describe only observable composition, characters, movement, and setting. Do not name an animal, object, action, outcome, time of day, or emotion unless the frames clearly support it. Never invent a chase, sunset, return home, dialogue, or other concrete event absent from the prompt, transcript, or images.\", \"schema\": {\"theme\": \"string\", \"narration\": \"string\", \"shot_order\": [\"shot-0000\"], \"beats\": [{\"id\": \"hook|journey|close\", \"label\": \"string\", \"text\": \"string\", \"source\": \"prompt|transcript|source\", \"source_shot_ids\": [\"shot-0000\"]}]}}",
+    "response": "{ \"theme\": \"森林中的追逐与滑翔\", \"narration\": \"在一片宁静的森林中，一只狡猾的松鼠和一只大白兔展开了一场紧张的追逐。松鼠利用树上的树枝和尖桩巧妙地躲避，而大白兔则紧追不舍。最终，松鼠成功抓住了大白兔，而大白兔则在空中滑翔，留下了一片美丽的草地和蝴蝶。\", \"shot_order\": [\"shot-0126\", \"shot-0127\", \"shot-0128\", \"shot-0129\", \"shot-0130\", \"shot-0131\", \"shot-0132\", \"shot-0133\", \"shot-0134\", \"shot-0135\", \"shot-0136\", \"shot-0137\", \"shot-0138\", \"shot-0139\", \"shot-0140\", \"shot-0141\", \"shot-0142\", \"shot-0143\", \"shot-0144\", \"shot-0145\"], \"beats\": [{\"id\": \"hook\", \"label\": \"森林中的追逐开始\", \"text\": \"在一片宁静的森林中，一只狡猾的松鼠和一只大白兔展开了一场紧张的追逐。松鼠利用树上的树枝和尖桩巧妙地躲避，而大白兔则紧追不舍。\", \"source\": \"prompt|transcript|source\", \"source_shot_ids\": [\"shot-0126\", \"shot-0127\", \"shot-0128\", \"shot-0129\", \"shot-0130\", \"shot-0131\", \"shot-0132\", \"shot-0133\", \"shot-0134\", \"shot-0135\", \"shot-0136\", \"shot-0137\", \"shot-0138\", \"shot-0139\", \"shot-0140\", \"shot-0141\", \"shot-0142\", \"shot-0143\", \"shot-0144\", \"shot-0145\"]}, {\"id\": \"journey\", \"label\": \"松鼠的巧妙躲避\", \"text\": \"松鼠利用树上的树枝和尖桩巧妙地躲避，而大白兔则紧追不舍。松鼠在树上跳跃，利用树枝的缝隙，巧妙地躲避大白兔的追捕。\", \"source\": \"prompt|transcript|source\", \"source_shot_ids\": [\"shot-0130\", \"shot-0131\", \"shot-0132\", \"shot-0133\", \"shot-0134\", \"shot-0135\", \"shot-0136\", \"shot-0137\", \"shot-0138\", \"shot-0139\", \"shot-0140\", \"shot-0141\", \"shot-0142\", \"shot-0143\", \"shot-0144\", \"shot-0145\"]}, {\"id\": \"close\", \"label\": \"松鼠成功抓住大白兔\", \"text\": \"最终，松鼠成功抓住了大白兔，而大白兔则在空中滑翔，留下了一片美丽的草地和蝴蝶。\", \"source\": \"prompt|transcript|source\", \"source_shot_ids\": [\"shot-0142\", \"shot-0143\", \"shot-0144\", \"shot-0145\", \"shot-0146\", \"shot-0147\", \"shot-0148\", \"shot-0149\", \"shot-0150\", \"shot-0151\", \"shot-0152\", \"shot-0153\", \"shot-0154\", \"shot-0155\", \"shot-0156\", \"shot-0157\", \"shot-0158\", \"shot-0159\", \"shot-0160\", \"shot-0161\", \"shot-0162\", \"shot-0163\", \"shot-0164\"]}]}",
+    "model_plan": {
+      "theme": "森林中的追逐与滑翔",
+      "narration": "在一片宁静的森林中，一只狡猾的松鼠和一只大白兔展开了一场紧张的追逐。松鼠利用树上的树枝和尖桩巧妙地躲避，而大白兔则紧追不舍。最终，松鼠成功抓住了大白兔，而大白兔则在空中滑翔，留下了一片美丽的草地和蝴蝶。",
+      "shot_order": [
+        "shot-0126",
+        "shot-0127",
+        "shot-0128",
+        "shot-0129",
+        "shot-0130",
+        "shot-0131",
+        "shot-0132",
+        "shot-0133",
+        "shot-0134",
+        "shot-0135",
+        "shot-0136",
+        "shot-0137",
+        "shot-0138",
+        "shot-0139",
+        "shot-0140",
+        "shot-0141",
+        "shot-0142",
+        "shot-0143",
+        "shot-0144",
+        "shot-0145"
+      ],
+      "beats": [
+        {
+          "id": "hook",
+          "label": "森林中的追逐开始",
+          "text": "在一片宁静的森林中，一只狡猾的松鼠和一只大白兔展开了一场紧张的追逐。松鼠利用树上的树枝和尖桩巧妙地躲避，而大白兔则紧追不舍。",
+          "source": "prompt|transcript|source",
+          "source_shot_ids": [
+            "shot-0126",
+            "shot-0127",
+            "shot-0128",
+            "shot-0129",
+            "shot-0130",
+            "shot-0131",
+            "shot-0132",
+            "shot-0133",
+            "shot-0134",
+            "shot-0135",
+            "shot-0136",
+            "shot-0137",
+            "shot-0138",
+            "shot-0139",
+            "shot-0140",
+            "shot-0141",
+            "shot-0142",
+            "shot-0143",
+            "shot-0144",
+            "shot-0145"
+          ]
+        },
+        {
+          "id": "journey",
+          "label": "松鼠的巧妙躲避",
+          "text": "松鼠利用树上的树枝和尖桩巧妙地躲避，而大白兔则紧追不舍。松鼠在树上跳跃，利用树枝的缝隙，巧妙地躲避大白兔的追捕。",
+          "source": "prompt|transcript|source",
+          "source_shot_ids": [
+            "shot-0130",
+            "shot-0131",
+            "shot-0132",
+            "shot-0133",
+            "shot-0134",
+            "shot-0135",
+            "shot-0136",
+            "shot-0137",
+            "shot-0138",
+            "shot-0139",
+            "shot-0140",
+            "shot-0141",
+            "shot-0142",
+            "shot-0143",
+            "shot-0144",
+            "shot-0145"
+          ]
+        },
+        {
+          "id": "close",
+          "label": "松鼠成功抓住大白兔",
+          "text": "最终，松鼠成功抓住了大白兔，而大白兔则在空中滑翔，留下了一片美丽的草地和蝴蝶。",
+          "source": "prompt|transcript|source",
+          "source_shot_ids": [
+            "shot-0142",
+            "shot-0143",
+            "shot-0144",
+            "shot-0145",
+            "shot-0146",
+            "shot-0147",
+            "shot-0148",
+            "shot-0149",
+            "shot-0150",
+            "shot-0151",
+            "shot-0152",
+            "shot-0153",
+            "shot-0154",
+            "shot-0155",
+            "shot-0156",
+            "shot-0157",
+            "shot-0158",
+            "shot-0159",
+            "shot-0160",
+            "shot-0161",
+            "shot-0162",
+            "shot-0163",
+            "shot-0164"
+          ]
+        }
+      ]
+    },
+    "normalization_changed": true,
+    "input_image_count": 4,
+    "image_slots": [
+      {
+        "image_index": 0,
+        "layout": "row-major, left to right, top to bottom",
+        "shot_ids": [
+          "shot-0126",
+          "shot-0127",
+          "shot-0128",
+          "shot-0129",
+          "shot-0130",
+          "shot-0131",
+          "shot-0132",
+          "shot-0133",
+          "shot-0134",
+          "shot-0135",
+          "shot-0136",
+          "shot-0137"
+        ],
+        "sha256": "8a0e0950185efc2384717bbc8bba018d0335d388b75936eafd94c86bad89e361",
+        "width": 1280,
+        "height": 612
+      },
+      {
+        "image_index": 1,
+        "layout": "row-major, left to right, top to bottom",
+        "shot_ids": [
+          "shot-0138",
+          "shot-0139",
+          "shot-0140",
+          "shot-0141",
+          "shot-0142",
+          "shot-0143",
+          "shot-0144",
+          "shot-0145",
+          "shot-0146",
+          "shot-0147",
+          "shot-0148",
+          "shot-0149"
+        ],
+        "sha256": "ba3203b5228d1763ee462d9dad3a109414cfce00b1c1e1523cf5ba1a50b69edc",
+        "width": 1280,
+        "height": 612
+      },
+      {
+        "image_index": 2,
+        "layout": "row-major, left to right, top to bottom",
+        "shot_ids": [
+          "shot-0150",
+          "shot-0151",
+          "shot-0152",
+          "shot-0153",
+          "shot-0154",
+          "shot-0155",
+          "shot-0156",
+          "shot-0157",
+          "shot-0158",
+          "shot-0159",
+          "shot-0160",
+          "shot-0161"
+        ],
+        "sha256": "ae338509e10a4fa6ee90078e9e687da0e329d81b5b0624ca987afb711b9f7667",
+        "width": 1280,
+        "height": 612
+      },
+      {
+        "image_index": 3,
+        "layout": "row-major, left to right, top to bottom",
+        "shot_ids": [
+          "shot-0162",
+          "shot-0163",
+          "shot-0164"
+        ],
+        "sha256": "fc9c8c272c210565788ab359ca17a01c2d24f8365f37cc6421e71c3a8b1b9483",
+        "width": 960,
+        "height": 204
+      }
+    ],
+    "visual_mode": "contact_sheet",
+    "require_visual": true,
+    "grounded_shot_ids": [
+      "shot-0126",
+      "shot-0127",
+      "shot-0128",
+      "shot-0129",
+      "shot-0130",
+      "shot-0131",
+      "shot-0132",
+      "shot-0133",
+      "shot-0134",
+      "shot-0135",
+      "shot-0136",
+      "shot-0137",
+      "shot-0138",
+      "shot-0139",
+      "shot-0140",
+      "shot-0141",
+      "shot-0142",
+      "shot-0143",
+      "shot-0144",
+      "shot-0145",
+      "shot-0146",
+      "shot-0147",
+      "shot-0148",
+      "shot-0149",
+      "shot-0150",
+      "shot-0151",
+      "shot-0152",
+      "shot-0153",
+      "shot-0154",
+      "shot-0155",
+      "shot-0156",
+      "shot-0157",
+      "shot-0158",
+      "shot-0159",
+      "shot-0160",
+      "shot-0161",
+      "shot-0162",
+      "shot-0163",
+      "shot-0164"
+    ],
+    "candidate_shot_ids": [
+      "shot-0126",
+      "shot-0127",
+      "shot-0128",
+      "shot-0129",
+      "shot-0130",
+      "shot-0131",
+      "shot-0132",
+      "shot-0133",
+      "shot-0134",
+      "shot-0135",
+      "shot-0136",
+      "shot-0137",
+      "shot-0138",
+      "shot-0139",
+      "shot-0140",
+      "shot-0141",
+      "shot-0142",
+      "shot-0143",
+      "shot-0144",
+      "shot-0145",
+      "shot-0146",
+      "shot-0147",
+      "shot-0148",
+      "shot-0149",
+      "shot-0150",
+      "shot-0151",
+      "shot-0152",
+      "shot-0153",
+      "shot-0154",
+      "shot-0155",
+      "shot-0156",
+      "shot-0157",
+      "shot-0158",
+      "shot-0159",
+      "shot-0160",
+      "shot-0161",
+      "shot-0162",
+      "shot-0163",
+      "shot-0164"
+    ],
+    "keyframes": [
+      {
+        "shot_id": "shot-0126",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0126.png",
+        "sha256": "61ac72bae15d16b4ee4b05bc070ecc1b875d9f1171b6a05ebfacc47679b517a9",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0127",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0127.png",
+        "sha256": "9c7a72381ba659dc957fdc6af10c88ab7bd04e92c0dd48b9246fb4044bb2ddb6",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0128",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0128.png",
+        "sha256": "a3058bd1da5d852dde0b05593c691a1e179ce5abdbb7ba00e6092ea6678ca869",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0129",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0129.png",
+        "sha256": "0f5e5c553616ed4bc66cb4e1dd85a582ab519f44068d20df21fb6e63ede60a75",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0130",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0130.png",
+        "sha256": "97c541683350dc00cf053a142caddb9c49dffe16b1f09a6a80b54ffbf5147902",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0131",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0131.png",
+        "sha256": "27394b0c857a304fc49e9ad2c978ef1d9b91e25ac124d4eca5541482a6ef819a",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0132",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0132.png",
+        "sha256": "05b594ae8796964ce0868c5ef4b89e3581a26f89924d9f7a535f819d88e5a5cb",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0133",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0133.png",
+        "sha256": "543d440e21049178bc9d8eb98d169588c9b5b4c97b97cdcc2fe84ac0ad2f2a27",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0134",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0134.png",
+        "sha256": "a41ca78a04c87856e916e4ba876a90eedd1a994f53d8379accf0a5f7c9e316d6",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0135",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0135.png",
+        "sha256": "82f07371ea95c29feeeed8c2b4c3d2756f10ec597718e0270daefa87e662c97c",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0136",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0136.png",
+        "sha256": "8c887f8a70a6f32167677323a3c2174905077b292338cb5d4a2f3ba318dce3cc",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0137",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0137.png",
+        "sha256": "211c799e9e51659580e5720d0981d4a2c5e29ba41a025242effeb4bb097a2faa",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0138",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0138.png",
+        "sha256": "6539530a1e09e2b64f18d9ca8b5d1ec797e26678d509b2b637de66d2ab555820",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0139",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0139.png",
+        "sha256": "6139f4b8e5e5736c8c576e76e4be5a3de96521e546c68882342bc607f8f0717e",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0140",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0140.png",
+        "sha256": "6c04e29c7e93d13a2234beb8b16e1bb7921b239546ff28b592762a3d8625743b",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0141",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0141.png",
+        "sha256": "0b85dab77bc6eea1639a19be83962d5d5a4561eca8e9ee35dc5fd8082dcbe960",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0142",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0142.png",
+        "sha256": "f23caed90243da2c62a2114d12bd964090aadeefd94df0db07f80be1702af632",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0143",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0143.png",
+        "sha256": "8952103dc53bda24bd641facac9bf6bba2530e2303dfb5336f059cfc7a89b4a0",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0144",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0144.png",
+        "sha256": "2491d641d083fafa52b69e66d77d942d06acfe5597d527fb03aa7f207f5cd678",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0145",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0145.png",
+        "sha256": "f843901fed2c32acea429fad8065cc6d30cd94ec892f50c3ffbf97b8e6a4fae6",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0146",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0146.png",
+        "sha256": "79c6c5a94673637a55819a151f36f939b6518de04d49abbcd62a03389c47511b",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0147",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0147.png",
+        "sha256": "d01a385b04b267cc4056ab6603d890925a574a424f226ba2598f83f0d67bbf99",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0148",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0148.png",
+        "sha256": "eb652e386b19f984d25289b870e70136dcae7858e496e34245b0e64f14b6d796",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0149",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0149.png",
+        "sha256": "55ad0c82e5127ce8e5c22fbc1fee0df8c9111484a54972d7e21f346e20e6d328",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0150",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0150.png",
+        "sha256": "5dfb19fc82214d0114ec20dc646ebb358a67add140c0614397391b3a78030949",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0151",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0151.png",
+        "sha256": "6fb8aa0fbf80e3c3db3f2533f1294b7c1aa11f7ae9f9c3380f07623bc056000f",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0152",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0152.png",
+        "sha256": "3befccedd0a84ebd248c46cfc54a824afb20c21ba3f4028858fc2ad8f8968972",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0153",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0153.png",
+        "sha256": "f9a7bb46f491788942d6a80dbfaa9742cc84ab31e0cc12f79dd800ec04e702e2",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0154",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0154.png",
+        "sha256": "0724bf2e2ebf66fe966d6fbdd5b819583b02cff2df6e93e6029ec8de7cb6f827",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0155",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0155.png",
+        "sha256": "14f986d442e2a706f87bd92fe48b19c2f1c23fab81e5fa1f90d495941c2d8f86",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0156",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0156.png",
+        "sha256": "83f96addfc3fe4fc75ee8a7cb945ebb5d032bbcbb5986774399f3d2ab5fda056",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0157",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0157.png",
+        "sha256": "8d96d4ccb97b415297306477c380d076ee067a14375c737ac1d76402075165c0",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0158",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0158.png",
+        "sha256": "c654e6ee4f77fdf1e20d67eb2310bab15d93ff61f2bb710b5f1d76afdd42f967",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0159",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0159.png",
+        "sha256": "6b4e822750b0ea927f83dc729905c63400cbedfc96990de8053ac3dfd11207a5",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0160",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0160.png",
+        "sha256": "63734937a01596768fbe03226df996b6df8048237d9f1f79ed16638ae597558d",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0161",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0161.png",
+        "sha256": "fd00b9d3c47de20c116342f96ebaafad2e61eff1ca98ed5cedede6495e90f6f2",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0162",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0162.png",
+        "sha256": "5440005e937fcdd63fbc733a727b0da93f619764d85376667280f661999940ff",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0163",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0163.png",
+        "sha256": "acf0f5e689bdff3c14720bb480b51ff247dabe8f1a29bab0a7f1a1d960f6badf",
+        "width": 256,
+        "height": 144
+      },
+      {
+        "shot_id": "shot-0164",
+        "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/fresh_index/448613958352795f.keyframes/shot-0164.png",
+        "sha256": "197ffc38eaee80c277dc44f68cfd4bb5e7f26ea6efdb6319ee5f733472565747",
+        "width": 256,
+        "height": 144
+      }
+    ],
+    "metrics": {
+      "created_at": "2026-10-18T05:09:43.948197Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 36221882583,
+      "load_duration": 2590072333,
+      "prompt_eval_count": 7474,
+      "prompt_eval_duration": 13491377000,
+      "eval_count": 970,
+      "eval_duration": 20039813000
+    }
+  },
+  "planner": "ollama:qwen2.5vl:3b"
+}

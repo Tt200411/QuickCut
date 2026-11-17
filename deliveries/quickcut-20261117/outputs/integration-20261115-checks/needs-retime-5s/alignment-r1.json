@@ -1,0 +1,46 @@
+{
+  "iteration": 1,
+  "max_iterations": 3,
+  "rows": [
+    {
+      "beat_id": "beat-open",
+      "primary_candidate_ids": [
+        "candidate-query-open-asset-d0bd09708d53461f9d4fcecc7e45c415-r1-shot-0-3500000",
+        "candidate-query-open-asset-d0bd09708d53461f9d4fcecc7e45c415-r1-shot-3500000-7000000",
+        "candidate-query-open-asset-d0bd09708d53461f9d4fcecc7e45c415-r1-shot-7000000-10500000"
+      ],
+      "external_candidate_ids": [],
+      "broll_only": false,
+      "support": "supported",
+      "reason": "存在可作为事件证据的用户主镜头",
+      "expression_rewrite": null
+    },
+    {
+      "beat_id": "beat-middle",
+      "primary_candidate_ids": [
+        "candidate-query-middle-asset-d0bd09708d53461f9d4fcecc7e45c415-r1-shot-3500000-7000000",
+        "candidate-query-middle-asset-d0bd09708d53461f9d4fcecc7e45c415-r1-shot-0-3500000",
+        "candidate-query-middle-asset-d0bd09708d53461f9d4fcecc7e45c415-r1-shot-7000000-10500000"
+      ],
+      "external_candidate_ids": [],
+      "broll_only": false,
+      "support": "supported",
+      "reason": "存在可作为事件证据的用户主镜头",
+      "expression_rewrite": null
+    },
+    {
+      "beat_id": "beat-close",
+      "primary_candidate_ids": [
+        "candidate-query-close-asset-d0bd09708d53461f9d4fcecc7e45c415-r1-shot-7000000-10500000",
+        "candidate-query-close-asset-d0bd09708d53461f9d4fcecc7e45c415-r1-shot-0-3500000",
+        "candidate-query-close-asset-d0bd09708d53461f9d4fcecc7e45c415-r1-shot-3500000-7000000"
+      ],
+      "external_candidate_ids": [],
+      "broll_only": false,
+      "support": "supported",
+      "reason": "存在可作为事件证据的用户主镜头",
+      "expression_rewrite": null
+    }
+  ],
+  "next_request": null
+}

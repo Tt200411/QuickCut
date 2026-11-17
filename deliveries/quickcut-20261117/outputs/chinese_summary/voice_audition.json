@@ -1,0 +1,176 @@
+[
+  {
+    "voice": "Reed (中文（中国大陆）)",
+    "rate": 145,
+    "path": "/Users/tangbao/Documents/ChatGPT/CV Project/tmp/voice_audition/Reed_145.wav",
+    "duration": 12.89,
+    "text": "清晨的森林，阳光洒在草地上。大兔子本想享受安宁，却遇上三个调皮的邻居。短暂的沉默之后，一场反击悄然开始。",
+    "sha256": "43569c7798f8802b98b358369060c16fc4536d15293ce3c2d7f9422aab1526c2",
+    "pitch_estimate_hz": {
+      "median": 109.70149253731343,
+      "p10": 86.06683451590753,
+      "p90": 130.47337278106508,
+      "voiced_frames": 235,
+      "method": "windowed autocorrelation; approximate, not a subjective listening assessment"
+    },
+    "rms_dbfs": -22.495484177064412,
+    "whisper_tiny": {
+      "language": "zh",
+      "beam_size": 5,
+      "offline": true,
+      "text": "成的森林牙瓜撒在草地上造图子跟其他想受安努却遇上三个调屁的铃居短暂的沉默之后一双三鸡要染开时",
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 1.46,
+          "text": "成的森林"
+        },
+        {
+          "start": 1.46,
+          "end": 3.54,
+          "text": "牙瓜撒在草地上"
+        },
+        {
+          "start": 3.54,
+          "end": 5.84,
+          "text": "造图子跟其他想受安努"
+        },
+        {
+          "start": 5.84,
+          "end": 8.5,
+          "text": "却遇上三个调屁的铃居"
+        },
+        {
+          "start": 8.5,
+          "end": 10.3,
+          "text": "短暂的沉默之后"
+        },
+        {
+          "start": 10.3,
+          "end": 12.58,
+          "text": "一双三鸡要染开时"
+        }
+      ],
+      "reference_chars": 46,
+      "edit_distance": 20,
+      "raw_chinese_CER": 0.43478260869565216,
+      "note": "Raw simplified/traditional differences counted; tiny ASR is not a listening assessment."
+    }
+  },
+  {
+    "voice": "Rocko (中文（中国大陆）)",
+    "rate": 145,
+    "path": "/Users/tangbao/Documents/ChatGPT/CV Project/tmp/voice_audition/Rocko_145.wav",
+    "duration": 12.89,
+    "text": "清晨的森林，阳光洒在草地上。大兔子本想享受安宁，却遇上三个调皮的邻居。短暂的沉默之后，一场反击悄然开始。",
+    "sha256": "59f4a34b1101c41346b68088025f994c987556d09fce6959bf969d7a5baef4ff",
+    "pitch_estimate_hz": {
+      "median": 103.03738317757009,
+      "p10": 78.91996402877697,
+      "p90": 116.11979166666667,
+      "voiced_frames": 134,
+      "method": "windowed autocorrelation; approximate, not a subjective listening assessment"
+    },
+    "rms_dbfs": -22.774246648622338,
+    "whisper_tiny": {
+      "language": "zh",
+      "beam_size": 5,
+      "offline": true,
+      "text": "青春的森林楊光 傻傻傻傻既傻既傻在凸子根西安想收安既成日爽三個條平的零局短暫的城幕之後一爽三基 邀想開始",
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 1.48,
+          "text": "青春的森林"
+        },
+        {
+          "start": 1.48,
+          "end": 3.58,
+          "text": "楊光 傻傻傻傻既傻既傻"
+        },
+        {
+          "start": 3.58,
+          "end": 5.88,
+          "text": "在凸子根西安想收安既"
+        },
+        {
+          "start": 5.88,
+          "end": 8.58,
+          "text": "成日爽三個條平的零局"
+        },
+        {
+          "start": 8.58,
+          "end": 10.36,
+          "text": "短暫的城幕之後"
+        },
+        {
+          "start": 10.36,
+          "end": 12.54,
+          "text": "一爽三基 邀想開始"
+        }
+      ],
+      "reference_chars": 46,
+      "edit_distance": 37,
+      "raw_chinese_CER": 0.8043478260869565,
+      "note": "Raw simplified/traditional differences counted; tiny ASR is not a listening assessment."
+    }
+  },
+  {
+    "voice": "Grandpa (中文（中国大陆）)",
+    "rate": 145,
+    "path": "/Users/tangbao/Documents/ChatGPT/CV Project/tmp/voice_audition/Grandpa_145.wav",
+    "duration": 12.89,
+    "text": "清晨的森林，阳光洒在草地上。大兔子本想享受安宁，却遇上三个调皮的邻居。短暂的沉默之后，一场反击悄然开始。",
+    "sha256": "3b7b67457a1fe94d773c7805ce6c7178cac682b7e3185eebcbfbb6f53218934b",
+    "pitch_estimate_hz": {
+      "median": 110.80681818181819,
+      "p10": 79.86246272170774,
+      "p90": 131.25,
+      "voiced_frames": 130,
+      "method": "windowed autocorrelation; approximate, not a subjective listening assessment"
+    },
+    "rms_dbfs": -23.96279894729675,
+    "whisper_tiny": {
+      "language": "zh",
+      "beam_size": 5,
+      "offline": true,
+      "text": "清晨的森林羊挖撒在潮激上要凸的本期按下手按旅却率爽三个小提子林居软站在沉默之后一场反击邀想开始",
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 1.6,
+          "text": "清晨的森林"
+        },
+        {
+          "start": 1.6,
+          "end": 3.6,
+          "text": "羊挖撒在潮激上"
+        },
+        {
+          "start": 3.6,
+          "end": 6.0,
+          "text": "要凸的本期按下手按旅"
+        },
+        {
+          "start": 6.0,
+          "end": 8.6,
+          "text": "却率爽三个小提子林居"
+        },
+        {
+          "start": 8.6,
+          "end": 10.4,
+          "text": "软站在沉默之后"
+        },
+        {
+          "start": 10.4,
+          "end": 12.6,
+          "text": "一场反击邀想开始"
+        }
+      ],
+      "reference_chars": 46,
+      "edit_distance": 25,
+      "raw_chinese_CER": 0.5434782608695652,
+      "note": "Raw simplified/traditional differences counted; tiny ASR is not a listening assessment."
+    }
+  }
+]

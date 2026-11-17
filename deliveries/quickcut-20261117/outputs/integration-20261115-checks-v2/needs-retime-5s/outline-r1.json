@@ -1,0 +1,53 @@
+[
+  {
+    "beat_id": "beat-open",
+    "order": 0,
+    "purpose": "建立出发情境",
+    "wish": {
+      "event": "展示第一段测试画面",
+      "assertion": "user_wish",
+      "verified": false
+    },
+    "shot_needs": [
+      "primary"
+    ],
+    "broll_allowed": false,
+    "duration_budget_us": 1666666,
+    "narration_style": "fixture_tone，不是真实语音",
+    "project_id": "project-pipeline-demo"
+  },
+  {
+    "beat_id": "beat-middle",
+    "order": 1,
+    "purpose": "推进过程与环境过渡",
+    "wish": {
+      "event": "展示第二段测试画面",
+      "assertion": "user_wish",
+      "verified": false
+    },
+    "shot_needs": [
+      "primary"
+    ],
+    "broll_allowed": false,
+    "duration_budget_us": 2500000,
+    "narration_style": "fixture_tone，不是真实语音",
+    "project_id": "project-pipeline-demo"
+  },
+  {
+    "beat_id": "beat-close",
+    "order": 2,
+    "purpose": "完成情绪收束",
+    "wish": {
+      "event": "展示第三段测试画面",
+      "assertion": "user_wish",
+      "verified": false
+    },
+    "shot_needs": [
+      "primary"
+    ],
+    "broll_allowed": false,
+    "duration_budget_us": 833334,
+    "narration_style": "fixture_tone，不是真实语音",
+    "project_id": "project-pipeline-demo"
+  }
+]

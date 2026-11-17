@@ -1,0 +1,123 @@
+{
+  "status": "ready",
+  "python": "/Users/tangbao/Documents/ChatGPT/CV Project/.venv-vision/bin/python",
+  "packages": {
+    "open_clip_torch": "2.32.0",
+    "torch": "2.8.0",
+    "torchvision": "0.23.0",
+    "transformers": "4.57.6",
+    "huggingface-hub": "0.36.2",
+    "pillow": "13.0.0",
+    "sentencepiece": "0.2.3"
+  },
+  "files": [
+    {
+      "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_config.json",
+      "bytes": 548,
+      "sha256": "e13a98be8b81cb8319527e4839c4b60446a251f7f4e7e53b597c0c25d10bd344"
+    },
+    {
+      "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+      "bytes": 2007675592,
+      "sha256": "55f4101efcb112643c0b62e650dd891dbf7f0b944a587bfd2e2c8e27663f098f"
+    },
+    {
+      "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--facebook--nllb-200-distilled-600M/snapshots/f8d333a098d19b4fd9a8b18f94170487ad3f821d/config.json",
+      "bytes": 846,
+      "sha256": "f9b4081d3d108e9d06532ea8d92b932c04ed3a15ff2f87e6982f8e14db51fbc5"
+    },
+    {
+      "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--facebook--nllb-200-distilled-600M/snapshots/f8d333a098d19b4fd9a8b18f94170487ad3f821d/sentencepiece.bpe.model",
+      "bytes": 4852054,
+      "sha256": "14bb8dfb35c0ffdea7bc01e56cea38b9e3d5efcdcb9c251d6b40538e1aab555a"
+    },
+    {
+      "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--facebook--nllb-200-distilled-600M/snapshots/f8d333a098d19b4fd9a8b18f94170487ad3f821d/special_tokens_map.json",
+      "bytes": 3548,
+      "sha256": "992bd4ed610d644d6823081937bcc91bb8878dd556cea4ae5327f2480361330e"
+    },
+    {
+      "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--facebook--nllb-200-distilled-600M/snapshots/f8d333a098d19b4fd9a8b18f94170487ad3f821d/tokenizer.json",
+      "bytes": 17331176,
+      "sha256": "e316b82de11d0f951f370943b3c438311629547285129b0b81dadabd01bca665"
+    },
+    {
+      "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--facebook--nllb-200-distilled-600M/snapshots/f8d333a098d19b4fd9a8b18f94170487ad3f821d/tokenizer_config.json",
+      "bytes": 564,
+      "sha256": "d1aa8c3697d3e35674f97b5b7e9c99d22b010f528e80140257d97316be90d044"
+    }
+  ],
+  "models": [
+    {
+      "repo": "visheratin/nllb-clip-base-oc",
+      "revision": "f16398ba58d1d5cff27450ce2fe971b087969444",
+      "allow": [
+        "open_clip_config.json",
+        "open_clip_pytorch_model.bin"
+      ],
+      "snapshot": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444",
+      "files": {
+        "open_clip_config.json": {
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_config.json",
+          "bytes": 548,
+          "sha256": "e13a98be8b81cb8319527e4839c4b60446a251f7f4e7e53b597c0c25d10bd344"
+        },
+        "open_clip_pytorch_model.bin": {
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+          "bytes": 2007675592,
+          "sha256": "55f4101efcb112643c0b62e650dd891dbf7f0b944a587bfd2e2c8e27663f098f"
+        }
+      }
+    },
+    {
+      "repo": "facebook/nllb-200-distilled-600M",
+      "revision": "f8d333a098d19b4fd9a8b18f94170487ad3f821d",
+      "allow": [
+        "config.json",
+        "sentencepiece.bpe.model",
+        "special_tokens_map.json",
+        "tokenizer.json",
+        "tokenizer_config.json"
+      ],
+      "snapshot": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--facebook--nllb-200-distilled-600M/snapshots/f8d333a098d19b4fd9a8b18f94170487ad3f821d",
+      "files": {
+        "config.json": {
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--facebook--nllb-200-distilled-600M/snapshots/f8d333a098d19b4fd9a8b18f94170487ad3f821d/config.json",
+          "bytes": 846,
+          "sha256": "f9b4081d3d108e9d06532ea8d92b932c04ed3a15ff2f87e6982f8e14db51fbc5"
+        },
+        "sentencepiece.bpe.model": {
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--facebook--nllb-200-distilled-600M/snapshots/f8d333a098d19b4fd9a8b18f94170487ad3f821d/sentencepiece.bpe.model",
+          "bytes": 4852054,
+          "sha256": "14bb8dfb35c0ffdea7bc01e56cea38b9e3d5efcdcb9c251d6b40538e1aab555a"
+        },
+        "special_tokens_map.json": {
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--facebook--nllb-200-distilled-600M/snapshots/f8d333a098d19b4fd9a8b18f94170487ad3f821d/special_tokens_map.json",
+          "bytes": 3548,
+          "sha256": "992bd4ed610d644d6823081937bcc91bb8878dd556cea4ae5327f2480361330e"
+        },
+        "tokenizer.json": {
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--facebook--nllb-200-distilled-600M/snapshots/f8d333a098d19b4fd9a8b18f94170487ad3f821d/tokenizer.json",
+          "bytes": 17331176,
+          "sha256": "e316b82de11d0f951f370943b3c438311629547285129b0b81dadabd01bca665"
+        },
+        "tokenizer_config.json": {
+          "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--facebook--nllb-200-distilled-600M/snapshots/f8d333a098d19b4fd9a8b18f94170487ad3f821d/tokenizer_config.json",
+          "bytes": 564,
+          "sha256": "d1aa8c3697d3e35674f97b5b7e9c99d22b010f528e80140257d97316be90d044"
+        }
+      }
+    }
+  ],
+  "environment": {
+    "QUICKCUT_ENCODER": "openclip",
+    "QUICKCUT_CLIP_MODEL": "nllb-clip-base",
+    "QUICKCUT_CLIP_PRETRAINED": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+    "QUICKCUT_CLIP_MODEL_REVISION": "f16398ba58d1d5cff27450ce2fe971b087969444",
+    "QUICKCUT_CLIP_TEXT_MODEL": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--facebook--nllb-200-distilled-600M/snapshots/f8d333a098d19b4fd9a8b18f94170487ad3f821d",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1"
+  },
+  "inference_run": false,
+  "validation": "Pinned files present; main checkpoint SHA256 matches Hugging Face LFS object; model inference not yet run."
+}

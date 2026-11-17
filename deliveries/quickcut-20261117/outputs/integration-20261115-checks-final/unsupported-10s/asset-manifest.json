@@ -1,0 +1,232 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "AssetManifest",
+  "document_id": "manifest-df2f946d85fc42eead7d0eae6c209149",
+  "project_id": "project-pipeline-demo",
+  "revision": 1,
+  "fixtures_only": false,
+  "owner": "A",
+  "inputs": [],
+  "assets": [
+    {
+      "asset_id": "asset-64b1e07729bb492383d96128557ae545",
+      "revision": 1,
+      "origin": "user",
+      "uri": "media/user/asset-64b1e07729bb492383d96128557ae545/r1.mp4",
+      "content_hash": "sha256:26f2c90001ade7bd3009278b94d11dba69048ea4947360ab1dc18e7d95d7b36f",
+      "provenance_note": "实际合成测试图案；非实拍",
+      "media_kind": "video",
+      "duration_us": 18000000,
+      "video": {
+        "width": 320,
+        "height": 180,
+        "encoded_width": 320,
+        "encoded_height": 180,
+        "rotation_degrees": 0,
+        "fps": {
+          "numerator": 30,
+          "denominator": 1
+        },
+        "time_base": "1/15360",
+        "start_time_us": 0,
+        "codec": "h264",
+        "stream_index": 0,
+        "source_origin_pts": 0,
+        "source_origin_us": 0,
+        "variable_frame_rate": false
+      },
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "aac",
+        "start_time_us": 0
+      },
+      "source_pts_uri": "derived/asset-64b1e07729bb492383d96128557ae545/r1/probe-76bfbb931007a0561f2b4fbf/source-pts.json",
+      "proxy_uri": "derived/asset-64b1e07729bb492383d96128557ae545/r1/proxy-c6e17dbcd30ce26f24364d0a/proxy.mp4",
+      "proxy_mapping_uri": "derived/asset-64b1e07729bb492383d96128557ae545/r1/proxy-c6e17dbcd30ce26f24364d0a/proxy-map.json",
+      "proxy_status": "success",
+      "transcript": {
+        "status": "disabled",
+        "profile": {
+          "asr": "none",
+          "asr_model": "tiny",
+          "asr_language": null,
+          "asr_device": "cpu",
+          "asr_compute_type": "int8",
+          "asr_beam_size": 5,
+          "asr_cpu_threads": 2,
+          "asr_num_workers": 1,
+          "asr_vad": true,
+          "asr_condition_on_previous_text": false,
+          "asr_initial_prompt": null,
+          "asr_hotwords": null,
+          "asr_model_revision": null,
+          "packages": {
+            "faster-whisper": "1.2.1",
+            "ctranslate2": "4.8.3",
+            "av": "19.0.1",
+            "tokenizers": "0.23.3",
+            "onnxruntime": "1.31.0",
+            "huggingface-hub": "2.2.0"
+          },
+          "vad_filter": true,
+          "audio_preprocessing": "video-origin-mono-16k-v1",
+          "diagnostics_version": 1
+        },
+        "segments": [],
+        "diagnostics": {},
+        "source_content_hash": "sha256:26f2c90001ade7bd3009278b94d11dba69048ea4947360ab1dc18e7d95d7b36f",
+        "review": {
+          "status": "not_applicable",
+          "reasons": [],
+          "policy": {
+            "version": 1,
+            "calibrated": false,
+            "min_avg_logprob": -1.0,
+            "max_no_speech_prob": 0.6,
+            "max_compression_ratio": 2.4,
+            "tail_tolerance_us": 500000
+          }
+        },
+        "uri": "derived/asset-64b1e07729bb492383d96128557ae545/r1/asr-1f3296908d39d61187a2c34a/transcript.json"
+      },
+      "processing_status": "success"
+    }
+  ],
+  "segments": [
+    {
+      "segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-coarse-0-18000000",
+      "asset_id": "asset-64b1e07729bb492383d96128557ae545",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 18000000
+      },
+      "granularity": "coarse_event",
+      "parent_segment_id": null,
+      "keyframes": [],
+      "quality": {
+        "usable": false,
+        "flags": [
+          "CONTAINER_ONLY"
+        ]
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 18000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-64b1e07729bb492383d96128557ae545/r1/asr-1f3296908d39d61187a2c34a/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-shot-0-6000000",
+      "asset_id": "asset-64b1e07729bb492383d96128557ae545",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 6000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-coarse-0-18000000",
+      "keyframes": [
+        {
+          "source_time_us": 3000000,
+          "uri": "derived/asset-64b1e07729bb492383d96128557ae545/r1/keyframes-f61f594f3c02cb3282b7f174/00000000.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 6000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-64b1e07729bb492383d96128557ae545/r1/asr-1f3296908d39d61187a2c34a/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-shot-6000000-12000000",
+      "asset_id": "asset-64b1e07729bb492383d96128557ae545",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 6000000,
+        "end": 12000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-coarse-0-18000000",
+      "keyframes": [
+        {
+          "source_time_us": 9000000,
+          "uri": "derived/asset-64b1e07729bb492383d96128557ae545/r1/keyframes-f61f594f3c02cb3282b7f174/00000001.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 6000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-64b1e07729bb492383d96128557ae545/r1/asr-1f3296908d39d61187a2c34a/transcript.json",
+        "review_status": "not_applicable"
+      }
+    },
+    {
+      "segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-shot-12000000-18000000",
+      "asset_id": "asset-64b1e07729bb492383d96128557ae545",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 12000000,
+        "end": 18000000
+      },
+      "granularity": "coarse_shot",
+      "parent_segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-coarse-0-18000000",
+      "keyframes": [
+        {
+          "source_time_us": 15000000,
+          "uri": "derived/asset-64b1e07729bb492383d96128557ae545/r1/keyframes-f61f594f3c02cb3282b7f174/00000002.png"
+        }
+      ],
+      "quality": {
+        "usable": true,
+        "flags": []
+      },
+      "segmentation": {
+        "method": "fixed_window",
+        "window_us": 6000000
+      },
+      "transcript": {
+        "status": "disabled",
+        "text": "",
+        "segments": [],
+        "uri": "derived/asset-64b1e07729bb492383d96128557ae545/r1/asr-1f3296908d39d61187a2c34a/transcript.json",
+        "review_status": "not_applicable"
+      }
+    }
+  ],
+  "embedding_profile": {
+    "status": "not_indexed",
+    "owner": "B"
+  },
+  "processing": {
+    "status": "success",
+    "errors": []
+  }
+}

@@ -1,0 +1,149 @@
+........................................................................ [ 13%]
+........................................................................ [ 26%]
+........................................................................ [ 39%]
+........................................................................ [ 52%]
+........................................................................ [ 66%]
+........................................................................ [ 79%]
+........................................................................ [ 92%]
+........................................                                 [100%]
+544 passed in 2.47s
+{
+  "checks": [
+    {
+      "case": "合法固定响应",
+      "expected": null,
+      "got": null,
+      "pass": true
+    },
+    {
+      "case": "非法候选 ID",
+      "expected": "VLM_INVALID_PLAN",
+      "got": "VLM_INVALID_PLAN",
+      "pass": true
+    },
+    {
+      "case": "重复候选 ID",
+      "expected": "VLM_INVALID_PLAN",
+      "got": "VLM_INVALID_PLAN",
+      "pass": true
+    },
+    {
+      "case": "空镜冒充事件主镜头",
+      "expected": "VLM_INVALID_PLAN",
+      "got": "VLM_INVALID_PLAN",
+      "pass": true
+    },
+    {
+      "case": "空选择",
+      "expected": "VLM_INVALID_PLAN",
+      "got": "VLM_INVALID_PLAN",
+      "pass": true
+    },
+    {
+      "case": "陈旧 revision",
+      "expected": "STALE_INPUT_REVISION",
+      "got": "STALE_INPUT_REVISION",
+      "pass": true
+    }
+  ],
+  "passed": 6,
+  "total": 6
+}
+{
+  "mode": "rule",
+  "case": "complete",
+  "status": "ready_for_edit",
+  "beats": 3,
+  "cues": 3,
+  "gaps": 0,
+  "validation_ok": true,
+  "errors": [],
+  "out_dir": "/private/var/folders/5g/6f6q96j97dj59qkx98c9j0m80000gn/T/quickcut-c-review-q6207mei/rule",
+  "bundle": "/private/var/folders/5g/6f6q96j97dj59qkx98c9j0m80000gn/T/quickcut-c-review-q6207mei/rule/bundle.json"
+}
+{
+  "ok": true,
+  "status": "ready_for_edit",
+  "errors": [],
+  "warnings": [],
+  "checks": [
+    "信封、精确依赖和候选源区间检查通过"
+  ],
+  "counts": {
+    "beats": 3,
+    "cues": 3,
+    "gaps": 0,
+    "pending_reviews": 0,
+    "selected_user_segments": 3,
+    "external_duration_us": 4200000,
+    "nonuser_duration_us": 4200000
+  }
+}
+{
+  "mode": "fixed",
+  "case": "complete",
+  "status": "ready_for_edit",
+  "beats": 3,
+  "cues": 3,
+  "gaps": 0,
+  "validation_ok": true,
+  "errors": [],
+  "out_dir": "/private/var/folders/5g/6f6q96j97dj59qkx98c9j0m80000gn/T/quickcut-c-review-q6207mei/fixed",
+  "bundle": "/private/var/folders/5g/6f6q96j97dj59qkx98c9j0m80000gn/T/quickcut-c-review-q6207mei/fixed/bundle.json"
+}
+{
+  "ok": true,
+  "status": "ready_for_edit",
+  "errors": [],
+  "warnings": [],
+  "checks": [
+    "信封、精确依赖和候选源区间检查通过"
+  ],
+  "counts": {
+    "beats": 3,
+    "cues": 3,
+    "gaps": 0,
+    "pending_reviews": 0,
+    "selected_user_segments": 3,
+    "external_duration_us": 3000000,
+    "nonuser_duration_us": 3000000
+  }
+}
+{
+  "mode": "rule",
+  "case": "insufficient",
+  "status": "needs_input",
+  "beats": 3,
+  "cues": 3,
+  "gaps": 1,
+  "validation_ok": true,
+  "errors": [],
+  "out_dir": "/private/var/folders/5g/6f6q96j97dj59qkx98c9j0m80000gn/T/quickcut-c-review-q6207mei/insufficient",
+  "bundle": "/private/var/folders/5g/6f6q96j97dj59qkx98c9j0m80000gn/T/quickcut-c-review-q6207mei/insufficient/bundle.json"
+}
+{
+  "ok": true,
+  "status": "needs_input",
+  "errors": [],
+  "warnings": [],
+  "checks": [
+    "信封、精确依赖和候选源区间检查通过"
+  ],
+  "counts": {
+    "beats": 3,
+    "cues": 3,
+    "gaps": 1,
+    "pending_reviews": 1,
+    "selected_user_segments": 2,
+    "external_duration_us": 4200000,
+    "nonuser_duration_us": 4200000
+  }
+}
+PASS: contract fixture project-forest-vlog-001; 8 documents; no media/model execution
+PASS: 5 invalid-fixture negative controls rejected
+{
+  "c_validator_ok": true,
+  "injected_bundle": "/private/var/folders/5g/6f6q96j97dj59qkx98c9j0m80000gn/T/quickcut-c-review-q6207mei/injected_bundle.json",
+  "official_validator_exit": 0
+}
+C planning offline review passed; real-model and media acceptance remain separate.

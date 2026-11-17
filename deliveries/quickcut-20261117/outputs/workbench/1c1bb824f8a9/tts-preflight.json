@@ -1,0 +1,19 @@
+{
+  "name": "E.local_tts",
+  "status": "ok",
+  "selected": "indextts2",
+  "configuration": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/1c1bb824f8a9/voice-config.json",
+  "real_inference": "not_run",
+  "scope": "检查指定 IndexTTS2 的本地模型文件、运行环境、参考 WAV 和设备；不加载权重、不执行推理。",
+  "reference_audio": {
+    "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/1c1bb824f8a9/reference/voice.wav",
+    "sample_rate": 24000,
+    "channels": 1,
+    "frames": 79680,
+    "sha256": "f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb"
+  },
+  "model_dir": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints",
+  "model_revision": "740dcaf",
+  "runtime_version": "2.0.0",
+  "device": "mps"
+}

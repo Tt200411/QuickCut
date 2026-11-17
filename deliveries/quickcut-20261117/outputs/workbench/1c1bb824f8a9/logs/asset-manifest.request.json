@@ -1,0 +1,38 @@
+{
+  "root": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/1c1bb824f8a9",
+  "sources": [
+    {
+      "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/1c1bb824f8a9/uploads/00.webm",
+      "origin": "external",
+      "source_key": "upload-0-long-01-mandarin-park-guide.webm",
+      "provenance_note": "工作台导入：long-01-mandarin-park-guide.webm；来源由提交者选择为 external"
+    },
+    {
+      "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/1c1bb824f8a9/uploads/01.mp4",
+      "origin": "external",
+      "source_key": "upload-1-short-01-trail-back-view.mp4",
+      "provenance_note": "工作台导入：short-01-trail-back-view.mp4；来源由提交者选择为 external"
+    },
+    {
+      "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/1c1bb824f8a9/uploads/02.mp4",
+      "origin": "external",
+      "source_key": "upload-2-broll-02-countryside-aerial.mp4",
+      "provenance_note": "工作台导入：broll-02-countryside-aerial.mp4；来源由提交者选择为 external"
+    },
+    {
+      "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/1c1bb824f8a9/uploads/03.mp4",
+      "origin": "external",
+      "source_key": "upload-3-long-02-countryside-sunset.mp4",
+      "provenance_note": "工作台导入：long-02-countryside-sunset.mp4；来源由提交者选择为 external"
+    }
+  ],
+  "project_id": "project-1c1bb824f8a9",
+  "config": {
+    "window_us": 15000000,
+    "coarse_window_us": 30000000,
+    "proxy_width": 640,
+    "asr": "faster-whisper",
+    "asr_model": "small",
+    "asr_language": "zh"
+  }
+}

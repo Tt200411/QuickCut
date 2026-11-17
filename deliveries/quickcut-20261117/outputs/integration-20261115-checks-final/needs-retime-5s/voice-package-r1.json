@@ -1,0 +1,239 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "VoicePackage",
+  "document_id": "voice-story-001",
+  "project_id": "project-pipeline-demo",
+  "revision": 1,
+  "fixtures_only": true,
+  "owner": "E",
+  "inputs": [
+    {
+      "kind": "StoryPlan",
+      "document_id": "story-001",
+      "revision": 1
+    }
+  ],
+  "status": "needs_retime",
+  "timing_authority": "D",
+  "mode": "measure",
+  "measurement_source": "fixture_tone",
+  "synthesis_profile": {
+    "engine": "fixture-tone",
+    "version": "1",
+    "voice": "tone-not-speech",
+    "language": "zh-CN",
+    "rate": 145,
+    "local": true,
+    "emotion_supported": false
+  },
+  "assets": [
+    {
+      "asset_id": "generated-voice-a39d11a7994e3c1cadc1ae2889142fbf",
+      "revision": 1,
+      "media_kind": "audio",
+      "origin": "generated",
+      "uri": "audio/narration/f4c98ba58e4e428c0ff13f6571f807cc633d5aebf42ef0e7eb093ce95d98f477.wav",
+      "content_hash": "sha256:36a4152eace2c6a685809bb88d1685f8d9b002965b677754ee91fe62e7cc5987",
+      "duration_us": 1180000,
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "pcm_s16le"
+      }
+    },
+    {
+      "asset_id": "generated-voice-b9d8ee11b6c29dec688cf47b32a67424",
+      "revision": 1,
+      "media_kind": "audio",
+      "origin": "generated",
+      "uri": "audio/narration/b1880f650fb30e3d40b0db81862d92eb2bbbf2a0b90f30ad4d7a4ae20262babe.wav",
+      "content_hash": "sha256:36a4152eace2c6a685809bb88d1685f8d9b002965b677754ee91fe62e7cc5987",
+      "duration_us": 1180000,
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "pcm_s16le"
+      }
+    },
+    {
+      "asset_id": "generated-voice-8c2d9e79143dce926e984f433e025897",
+      "revision": 1,
+      "media_kind": "audio",
+      "origin": "generated",
+      "uri": "audio/narration/01d58f283a77172e5600419a0b634f2c5f3cf0099e5719a531851ec6c5af46a4.wav",
+      "content_hash": "sha256:36a4152eace2c6a685809bb88d1685f8d9b002965b677754ee91fe62e7cc5987",
+      "duration_us": 1180000,
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "pcm_s16le"
+      }
+    }
+  ],
+  "cues": [
+    {
+      "cue_id": "cue-01",
+      "beat_id": "beat-open",
+      "text": "第一段测试画面。",
+      "duration_budget_us": 1466666,
+      "script_input": {
+        "kind": "StoryPlan",
+        "document_id": "story-001",
+        "revision": 1
+      },
+      "requested_timeline_range_us": null,
+      "synthesis_profile": {
+        "engine": "fixture-tone",
+        "version": "1",
+        "voice": "tone-not-speech",
+        "language": "zh-CN",
+        "rate": 145,
+        "local": true,
+        "emotion_supported": false
+      },
+      "cache_key": "c4019a501d551ef0416396e86876e51d8c85a2cf9eae768dd7bbd00b63b8eae8",
+      "asset_id": "generated-voice-a39d11a7994e3c1cadc1ae2889142fbf",
+      "raw_duration_us": 1000000,
+      "engine_duration_us": 1000000,
+      "duration_us": 1180000,
+      "speech_end_us": 1000000,
+      "sentence_pause_us": 180000,
+      "tempo_ratio": 1.0,
+      "fit_status": "fits",
+      "needs_retime": false,
+      "cache_hit": false,
+      "srt_uri": "subtitles/f4c98ba58e4e428c0ff13f6571f807cc633d5aebf42ef0e7eb093ce95d98f477.srt",
+      "quality": {
+        "peak_dbfs": -18.27,
+        "clipped_samples": 0,
+        "text_verification": "not_asr_verified",
+        "naturalness": "requires_listening"
+      },
+      "local_subtitles": [
+        {
+          "range_us": {
+            "begin": 0,
+            "end": 1000000
+          },
+          "text": "第一段测试画面。"
+        }
+      ]
+    },
+    {
+      "cue_id": "cue-02",
+      "beat_id": "beat-middle",
+      "text": "第二段测试画面。",
+      "duration_budget_us": 2300000,
+      "script_input": {
+        "kind": "StoryPlan",
+        "document_id": "story-001",
+        "revision": 1
+      },
+      "requested_timeline_range_us": null,
+      "synthesis_profile": {
+        "engine": "fixture-tone",
+        "version": "1",
+        "voice": "tone-not-speech",
+        "language": "zh-CN",
+        "rate": 145,
+        "local": true,
+        "emotion_supported": false
+      },
+      "cache_key": "a50732301647852540956e7fd22ef4e0cf365f790bbc256a55c7d2818d577285",
+      "asset_id": "generated-voice-b9d8ee11b6c29dec688cf47b32a67424",
+      "raw_duration_us": 1000000,
+      "engine_duration_us": 1000000,
+      "duration_us": 1180000,
+      "speech_end_us": 1000000,
+      "sentence_pause_us": 180000,
+      "tempo_ratio": 1.0,
+      "fit_status": "fits",
+      "needs_retime": false,
+      "cache_hit": false,
+      "srt_uri": "subtitles/b1880f650fb30e3d40b0db81862d92eb2bbbf2a0b90f30ad4d7a4ae20262babe.srt",
+      "quality": {
+        "peak_dbfs": -18.27,
+        "clipped_samples": 0,
+        "text_verification": "not_asr_verified",
+        "naturalness": "requires_listening"
+      },
+      "local_subtitles": [
+        {
+          "range_us": {
+            "begin": 0,
+            "end": 1000000
+          },
+          "text": "第二段测试画面。"
+        }
+      ]
+    },
+    {
+      "cue_id": "cue-03",
+      "beat_id": "beat-close",
+      "text": "第三段测试画面。",
+      "duration_budget_us": 633334,
+      "script_input": {
+        "kind": "StoryPlan",
+        "document_id": "story-001",
+        "revision": 1
+      },
+      "requested_timeline_range_us": null,
+      "synthesis_profile": {
+        "engine": "fixture-tone",
+        "version": "1",
+        "voice": "tone-not-speech",
+        "language": "zh-CN",
+        "rate": 145,
+        "local": true,
+        "emotion_supported": false
+      },
+      "cache_key": "7c999d619cb8614322e831dcb07f6b2938d77aae49644d30439eb009f701ae26",
+      "asset_id": "generated-voice-8c2d9e79143dce926e984f433e025897",
+      "raw_duration_us": 1000000,
+      "engine_duration_us": 1000000,
+      "duration_us": 1180000,
+      "speech_end_us": 1000000,
+      "sentence_pause_us": 180000,
+      "tempo_ratio": 1.0,
+      "fit_status": "needs_retime",
+      "needs_retime": true,
+      "cache_hit": false,
+      "srt_uri": "subtitles/01d58f283a77172e5600419a0b634f2c5f3cf0099e5719a531851ec6c5af46a4.srt",
+      "quality": {
+        "peak_dbfs": -18.27,
+        "clipped_samples": 0,
+        "text_verification": "not_asr_verified",
+        "naturalness": "requires_listening"
+      },
+      "local_subtitles": [
+        {
+          "range_us": {
+            "begin": 0,
+            "end": 1000000
+          },
+          "text": "第三段测试画面。"
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "status": "failed",
+      "code": "VOICE_NEEDS_RETIME",
+      "stage": "voice",
+      "project_id": "project-pipeline-demo",
+      "message": "Measured audio exceeds budget; D retime or C shorten text",
+      "retryable": false,
+      "affected_ids": [
+        "cue-03"
+      ],
+      "action_owner": "D"
+    }
+  ],
+  "request": null,
+  "invalidated_cue_ids": [],
+  "alignment_invalidated": false
+}

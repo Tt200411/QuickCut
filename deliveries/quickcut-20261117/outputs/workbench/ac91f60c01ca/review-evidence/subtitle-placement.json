@@ -1,0 +1,6 @@
+{
+  "at": "2026-11-16T13:08:32.206277+00:00",
+  "actor": "assistant_review",
+  "subtitle_position": "top",
+  "reason": "Reviewed actual source frames: park-guide video already contains burned-in bottom captions. Preserve those and put newly generated narration captions at top."
+}

@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-11-15T07:30:35.260380+00:00",
+  "model_repository": "IndexTeam/IndexTTS-2",
+  "model_revision": "740dcaff396282ffb241903d150ac011cd4b1ede",
+  "runtime_repository": "https://github.com/index-tts/index-tts.git",
+  "runtime_commit": "d9e41aac89fd00b3d71497fddb287b7f24613712",
+  "runtime_version": "2.0.0",
+  "python_version": "3.11.15",
+  "total_model_bytes": 7664297068,
+  "files": [
+    {
+      "repository": "IndexTeam/IndexTTS-2",
+      "revision": "740dcaff396282ffb241903d150ac011cd4b1ede",
+      "remote_path": "config.yaml",
+      "path": "config.yaml",
+      "size": 2882,
+      "blob_id": "98d16c3892bd2321e7da71a379ecc8e1fa4dd84e",
+      "sha256": "ea9c2815ecc3874577c7ac158b97248c027250e5b05972fbbb1216b6d6539081"
+    },
+    {
+      "repository": "IndexTeam/IndexTTS-2",
+      "revision": "740dcaff396282ffb241903d150ac011cd4b1ede",
+      "remote_path": "gpt.pth",
+      "path": "gpt.pth",
+      "size": 3484663079,
+      "blob_id": "2eea776fb328120e4b91c276e7942d2a749af64a",
+      "sha256": "baaaeb8b56328da81731dc540a85a7dee32eca9da28f174b05757cb651c602a4"
+    },
+    {
+      "repository": "IndexTeam/IndexTTS-2",
+      "revision": "740dcaff396282ffb241903d150ac011cd4b1ede",
+      "remote_path": "s2mel.pth",
+      "path": "s2mel.pth",
+      "size": 1202198223,
+      "blob_id": "f6229e3291aaf1278760e4992e96ddf5ae7a6bb6",
+      "sha256": "aae1bb12017cbb47e7a5ce537fc82f40b6b1deb71acdb9b8f25686f32714b636"
+    },
+    {
+      "repository": "IndexTeam/IndexTTS-2",
+      "revision": "740dcaff396282ffb241903d150ac011cd4b1ede",
+      "remote_path": "bpe.model",
+      "path": "bpe.model",
+      "size": 475997,
+      "blob_id": "cb5d4abad29d2b1b1fe34b98e1330a523833bdea",
+      "sha256": "b2a5ce8090d32da3642cc4f81fdc996376bc6dd3f4cd5e3d165f71120d9f2bc8"
+    },
+    {
+      "repository": "IndexTeam/IndexTTS-2",
+      "revision": "740dcaff396282ffb241903d150ac011cd4b1ede",
+      "remote_path": "wav2vec2bert_stats.pt",
+      "path": "wav2vec2bert_stats.pt",
+      "size": 9343,
+      "blob_id": "1a8ecb924668659f3b1a9c35b02b2f8839fd8c5a",
+      "sha256": "c9c176c2b8850ab2e3ba828bbfa969deaf4566ce55db5f2687b8430b87526ad2"
+    },
+    {
+      "repository": "IndexTeam/IndexTTS-2",
+      "revision": "740dcaff396282ffb241903d150ac011cd4b1ede",
+      "remote_path": "feat1.pt",
+      "path": "feat1.pt",
+      "size": 57170,
+      "blob_id": "3efb1545f32405073471a40277094678d7ef40ac",
+      "sha256": "f219cb447d80216ba615666da2ff8d63ac544eee26657f3a7b278692bf7a67c4"
+    },
+    {
+      "repository": "IndexTeam/IndexTTS-2",
+      "revision": "740dcaff396282ffb241903d150ac011cd4b1ede",
+      "remote_path": "feat2.pt",
+      "path": "feat2.pt",
+      "size": 374866,
+      "blob_id": "42b51075f698aea46002f1f503962137b5158130",
+      "sha256": "9c4292e96dee535aea9a6206e9a0c856dd578dde9212acdb16dd3ada4d12bf80"
+    },
+    {
+      "repository": "facebook/w2v-bert-2.0",
+      "revision": "da985ba0987f70aaeb84a80f2851cfac8c697a7b",
+      "remote_path": "config.json",
+      "path": "hf_cache/w2v-bert-2.0/config.json",
+      "size": 1874,
+      "blob_id": "a383a594dac18459628cd2837168cd276342a31a",
+      "sha256": "f5572bd5998b68182e9c328a43127ed21fed687f6910497136b91a4e3b0e3675"
+    },
+    {
+      "repository": "facebook/w2v-bert-2.0",
+      "revision": "da985ba0987f70aaeb84a80f2851cfac8c697a7b",
+      "remote_path": "preprocessor_config.json",
+      "path": "hf_cache/w2v-bert-2.0/preprocessor_config.json",
+      "size": 275,
+      "blob_id": "5db61951cdf5edab6337fd84ee619500c27aaa3d",
+      "sha256": "8e6281aad64f97e40534135a59dcc5d33571efae376f2a25adf5551951897ab4"
+    },
+    {
+      "repository": "facebook/w2v-bert-2.0",
+      "revision": "da985ba0987f70aaeb84a80f2851cfac8c697a7b",
+      "remote_path": "model.safetensors",
+      "path": "hf_cache/w2v-bert-2.0/model.safetensors",
+      "size": 2322063736,
+      "blob_id": "cb7c6d08fe4cc20b2748c5525de64964d50190fa",
+      "sha256": "eb890c9660ed6e3414b6812e27257b8ce5454365d5490d3ad581ea60b93be043"
+    },
+    {
+      "repository": "amphion/MaskGCT",
+      "revision": "265c6cef07625665d0c28d2faafb1415562379dc",
+      "remote_path": "semantic_codec/model.safetensors",
+      "path": "hf_cache/semantic_codec_model.safetensors",
+      "size": 177183712,
+      "blob_id": "d8fb89f71594050e263aed319b2440b362e2eeef",
+      "sha256": "ec947271175d8cad75ec37e83aa487e27c97a0f72a303393772da5ffa84bddf2"
+    },
+    {
+      "repository": "funasr/campplus",
+      "revision": "e4b6ede7ce16997aff4ae69fbca1f0175e2afede",
+      "remote_path": "campplus_cn_common.bin",
+      "path": "hf_cache/campplus_cn_common.bin",
+      "size": 28036335,
+      "blob_id": "ccc729ec7f373f8d2351be91c9efdc7b21c00384",
+      "sha256": "3388cf5fd3493c9ac9c69851d8e7a8badcfb4f3dc631020c4961371646d5ada8"
+    },
+    {
+      "repository": "nvidia/bigvgan_v2_22khz_80band_256x",
+      "revision": "633ff708ed5b74903e86ff1298cf4a98e921c513",
+      "remote_path": "config.json",
+      "path": "hf_cache/bigvgan/config.json",
+      "size": 1405,
+      "blob_id": "635bd8975629bd6d4b51c409986944a281cfe7be",
+      "sha256": "88a1f47acf747db0b21e97a389d838566147f7a5464583ff5c8d819d870f03ee"
+    },
+    {
+      "repository": "nvidia/bigvgan_v2_22khz_80band_256x",
+      "revision": "633ff708ed5b74903e86ff1298cf4a98e921c513",
+      "remote_path": "bigvgan_generator.pt",
+      "path": "hf_cache/bigvgan/bigvgan_generator.pt",
+      "size": 449228171,
+      "blob_id": "8d615250f07a44490d74033318fd330be67f4a86",
+      "sha256": "e95ba25972d3de0628d99cd156e9315a9c018899bf739988959ebe3544080ced"
+    }
+  ],
+  "reference_audio": "User-supplied; not downloaded or replaced by setup",
+  "inference_verification": "not_run"
+}

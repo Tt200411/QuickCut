@@ -1,0 +1,281 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "EditTimeline",
+  "document_id": "timeline-001",
+  "project_id": "project-pipeline-demo",
+  "revision": 1,
+  "fixtures_only": true,
+  "owner": "D",
+  "inputs": [
+    {
+      "kind": "StoryPlan",
+      "document_id": "story-001",
+      "revision": 1
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-74ba2a953d274e35a9165d8318aa979a",
+      "revision": 1
+    },
+    {
+      "kind": "VoicePackage",
+      "document_id": "voice-story-001",
+      "revision": 1
+    },
+    {
+      "kind": "Brief",
+      "document_id": "brief-demo",
+      "revision": 1
+    }
+  ],
+  "status": "ready_for_export",
+  "duration_us": 10000000,
+  "output": {
+    "width": 320,
+    "height": 180,
+    "fps": {
+      "numerator": 30,
+      "denominator": 1
+    },
+    "sample_rate": 48000
+  },
+  "tracks": [
+    {
+      "track_id": "track-picture",
+      "kind": "video",
+      "clips": [
+        {
+          "clip_id": "clip-video-1",
+          "asset_id": "asset-021d5a28b43c492dadbdacfa4a233dfe",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 3333333
+          },
+          "timeline_range_us": {
+            "begin": 0,
+            "end": 3333333
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "segment_id": "asset-021d5a28b43c492dadbdacfa4a233dfe-r1-shot-0-6000000",
+          "beat_id": "beat-open",
+          "role": "primary",
+          "audio_policy": "separate_track"
+        },
+        {
+          "clip_id": "clip-video-2",
+          "asset_id": "asset-021d5a28b43c492dadbdacfa4a233dfe",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 6000000,
+            "end": 11000000
+          },
+          "timeline_range_us": {
+            "begin": 3333333,
+            "end": 8333333
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "segment_id": "asset-021d5a28b43c492dadbdacfa4a233dfe-r1-shot-6000000-12000000",
+          "beat_id": "beat-middle",
+          "role": "primary",
+          "audio_policy": "separate_track"
+        },
+        {
+          "clip_id": "clip-video-3",
+          "asset_id": "asset-021d5a28b43c492dadbdacfa4a233dfe",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 12000000,
+            "end": 13666667
+          },
+          "timeline_range_us": {
+            "begin": 8333333,
+            "end": 10000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "segment_id": "asset-021d5a28b43c492dadbdacfa4a233dfe-r1-shot-12000000-18000000",
+          "beat_id": "beat-close",
+          "role": "primary",
+          "audio_policy": "separate_track"
+        }
+      ]
+    },
+    {
+      "track_id": "track-original",
+      "kind": "source_audio",
+      "clips": [
+        {
+          "clip_id": "clip-original-1",
+          "asset_id": "asset-021d5a28b43c492dadbdacfa4a233dfe",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 3333333
+          },
+          "timeline_range_us": {
+            "begin": 0,
+            "end": 3333333
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "linked_video_clip_id": "clip-video-1",
+          "gain": 0.3
+        },
+        {
+          "clip_id": "clip-original-2",
+          "asset_id": "asset-021d5a28b43c492dadbdacfa4a233dfe",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 6000000,
+            "end": 11000000
+          },
+          "timeline_range_us": {
+            "begin": 3333333,
+            "end": 8333333
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "linked_video_clip_id": "clip-video-2",
+          "gain": 0.3
+        },
+        {
+          "clip_id": "clip-original-3",
+          "asset_id": "asset-021d5a28b43c492dadbdacfa4a233dfe",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 12000000,
+            "end": 13666667
+          },
+          "timeline_range_us": {
+            "begin": 8333333,
+            "end": 10000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "linked_video_clip_id": "clip-video-3",
+          "gain": 0.3
+        }
+      ]
+    },
+    {
+      "track_id": "track-narration",
+      "kind": "narration",
+      "clips": [
+        {
+          "clip_id": "clip-narration-cue-01",
+          "asset_id": "generated-voice-a39d11a7994e3c1cadc1ae2889142fbf",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 1180000
+          },
+          "timeline_range_us": {
+            "begin": 200000,
+            "end": 1380000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "cue_id": "cue-01",
+          "gain": 1.0
+        },
+        {
+          "clip_id": "clip-narration-cue-02",
+          "asset_id": "generated-voice-b9d8ee11b6c29dec688cf47b32a67424",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 1180000
+          },
+          "timeline_range_us": {
+            "begin": 3533333,
+            "end": 4713333
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "cue_id": "cue-02",
+          "gain": 1.0
+        },
+        {
+          "clip_id": "clip-narration-cue-03",
+          "asset_id": "generated-voice-8c2d9e79143dce926e984f433e025897",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 1180000
+          },
+          "timeline_range_us": {
+            "begin": 8533333,
+            "end": 9713333
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "cue_id": "cue-03",
+          "gain": 1.0
+        }
+      ]
+    },
+    {
+      "track_id": "track-subtitles",
+      "kind": "subtitle",
+      "cues": [
+        {
+          "subtitle_id": "sub-cue-01",
+          "cue_id": "cue-01",
+          "text": "第一段测试画面。",
+          "timeline_range_us": {
+            "begin": 200000,
+            "end": 1200000
+          },
+          "editable": true
+        },
+        {
+          "subtitle_id": "sub-cue-02",
+          "cue_id": "cue-02",
+          "text": "第二段测试画面。",
+          "timeline_range_us": {
+            "begin": 3533333,
+            "end": 4533333
+          },
+          "editable": true
+        },
+        {
+          "subtitle_id": "sub-cue-03",
+          "cue_id": "cue-03",
+          "text": "第三段测试画面。",
+          "timeline_range_us": {
+            "begin": 8533333,
+            "end": 9533333
+          },
+          "editable": true
+        }
+      ]
+    }
+  ],
+  "render_policy": {
+    "preview_burn_subtitles": true,
+    "editable_export_burn_subtitles": false,
+    "retain_separate_audio_tracks": true,
+    "unsupported_effect_policy": "error"
+  }
+}

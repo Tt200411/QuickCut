@@ -1,0 +1,789 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "StoryPlan",
+  "document_id": "story-8dfa8632acb57c32",
+  "project_id": "project-1c1bb824f8a9",
+  "revision": 1,
+  "fixtures_only": false,
+  "owner": "C",
+  "inputs": [
+    {
+      "kind": "Brief",
+      "document_id": "brief-project-1c1bb824f8a9",
+      "revision": 1
+    },
+    {
+      "kind": "CandidateSet",
+      "document_id": "candidates-project-1c1bb824f8a9",
+      "revision": 1
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-6205ab1d1652440d88c01eff10a35f1a",
+      "revision": 1
+    }
+  ],
+  "status": "ready_for_edit",
+  "theme": "以山林小路和开阔风景为主题，剪一段自然宁静的散步短片。开场展示山林或步道，中段展现道路和自然风景，最后以暖色风景收尾。中文旁白每句简短，不虚构人物经历。",
+  "narration_language": "zh-CN",
+  "beats": [
+    {
+      "beat_id": "beat-open",
+      "order": 0,
+      "purpose": "建立出发情境",
+      "duration_budget_us": 10000000,
+      "support": "supported",
+      "shots": [
+        {
+          "candidate_id": "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+          "segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+          "origin": "external",
+          "role": "establishing",
+          "candidate_duration_us": 15000000,
+          "reason": "确认时明确替换或重排的主题画面；非模型原始选择",
+          "decided_by": "assistant_edit",
+          "suggested_duration_us": 5000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "transcript": "",
+          "summary": "",
+          "transcript_evidence": {
+            "status": "no_speech",
+            "text": "",
+            "segments": [],
+            "uri": "derived/asset-ea01edc0b20b45858d5a9fda754769e5/r1/asr-391cc7f4cdfca6367615db36/transcript.json",
+            "review_status": "needs_review"
+          },
+          "transcript_review": {
+            "status": "needs_review",
+            "reasons": [
+              "UNVERIFIED_TRANSCRIPT"
+            ],
+            "flagged_segments": [],
+            "last_transcript_end_us": 0,
+            "last_vad_speech_end_us": 0,
+            "policy": {
+              "version": 1,
+              "calibrated": false,
+              "min_avg_logprob": -1.0,
+              "max_no_speech_prob": 0.6,
+              "max_compression_ratio": 2.4,
+              "tail_tolerance_us": 500000
+            }
+          },
+          "montage_review": {
+            "candidate_id": "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+            "asset_id": "asset-ea01edc0b20b45858d5a9fda754769e5",
+            "asset_revision": 1,
+            "segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+            "source_range_us": {
+              "begin": 0,
+              "end": 15000000
+            },
+            "beat_id": "beat-open",
+            "reviewer": "Codex 自动验收（用户授权）",
+            "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+            "source": "assistant_montage_review",
+            "draft_id": "8dfa8632acb57c32",
+            "confirmation_kind": "assistant_review",
+            "human_review_performed": false,
+            "note": "助手核对画面与草案的自动验收，非真人审阅；不把画面作为用户具体经历证据"
+          }
+        },
+        {
+          "candidate_id": "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+          "origin": "external",
+          "role": "detail",
+          "candidate_duration_us": 15000000,
+          "reason": "确认时明确替换或重排的主题画面；非模型原始选择",
+          "decided_by": "assistant_edit",
+          "suggested_duration_us": 5000000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "transcript": "所以植物生长旺盛, 而呈现比较完整的森林面貌 在阳明山国家公园的迎风面 你们都可以看到树木受到封压作用 枝条向一边倾斜 或是一边枝牙干凸的风险现象",
+          "summary": "",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "所以植物生长旺盛, 而呈现比较完整的森林面貌 在阳明山国家公园的迎风面 你们都可以看到树木受到封压作用 枝条向一边倾斜 或是一边枝牙干凸的风险现象",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 58180000,
+                  "end": 60060000
+                },
+                "text": "所以植物生长旺盛,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 60060000,
+                  "end": 63280000
+                },
+                "text": "而呈现比较完整的森林面貌"
+              },
+              {
+                "source_range_us": {
+                  "begin": 63980000,
+                  "end": 66560000
+                },
+                "text": "在阳明山国家公园的迎风面"
+              },
+              {
+                "source_range_us": {
+                  "begin": 66560000,
+                  "end": 69960000
+                },
+                "text": "你们都可以看到树木受到封压作用"
+              },
+              {
+                "source_range_us": {
+                  "begin": 69960000,
+                  "end": 72000000
+                },
+                "text": "枝条向一边倾斜"
+              },
+              {
+                "source_range_us": {
+                  "begin": 72000000,
+                  "end": 75760000
+                },
+                "text": "或是一边枝牙干凸的风险现象"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "transcript_review": {
+            "status": "needs_review",
+            "reasons": [
+              "UNVERIFIED_TRANSCRIPT",
+              "SPEECH_TAIL_REVIEW_RECOMMENDED"
+            ],
+            "flagged_segments": [],
+            "last_transcript_end_us": 111320000,
+            "last_vad_speech_end_us": 113313000,
+            "policy": {
+              "version": 1,
+              "calibrated": false,
+              "min_avg_logprob": -1.0,
+              "max_no_speech_prob": 0.6,
+              "max_compression_ratio": 2.4,
+              "tail_tolerance_us": 500000
+            }
+          },
+          "montage_review": {
+            "candidate_id": "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+            "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+            "asset_revision": 1,
+            "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+            "source_range_us": {
+              "begin": 60000000,
+              "end": 75000000
+            },
+            "beat_id": "beat-open",
+            "reviewer": "Codex 自动验收（用户授权）",
+            "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+            "source": "assistant_montage_review",
+            "draft_id": "8dfa8632acb57c32",
+            "confirmation_kind": "assistant_review",
+            "human_review_performed": false,
+            "note": "助手核对画面与草案的自动验收，非真人审阅；不把画面作为用户具体经历证据"
+          }
+        }
+      ],
+      "alternative_candidate_ids": [
+        "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-15000000-30000000",
+        "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+        "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+        "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-15000000-30000000"
+      ],
+      "cue_ids": [
+        "cue-01"
+      ]
+    },
+    {
+      "beat_id": "beat-middle",
+      "order": 1,
+      "purpose": "推进过程与环境过渡",
+      "duration_budget_us": 15000000,
+      "support": "supported",
+      "shots": [
+        {
+          "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+          "origin": "external",
+          "role": "establishing",
+          "candidate_duration_us": 15000000,
+          "reason": "展示山林或步道，为自然环境做铺垫。",
+          "decided_by": "model:qwen2.5vl:3b",
+          "suggested_duration_us": 7500000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "transcript": "帶來又濕又冷的天氣 陽明山國家公園 各個山頭首當其衝 因為地理和氣候因素的影響 氣溫明顯降低 造就了陽明山地區 特殊的生態景觀",
+          "summary": "",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "帶來又濕又冷的天氣 陽明山國家公園 各個山頭首當其衝 因為地理和氣候因素的影響 氣溫明顯降低 造就了陽明山地區 特殊的生態景觀",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 89620000,
+                  "end": 91900000
+                },
+                "text": "帶來又濕又冷的天氣"
+              },
+              {
+                "source_range_us": {
+                  "begin": 91900000,
+                  "end": 93820000
+                },
+                "text": "陽明山國家公園"
+              },
+              {
+                "source_range_us": {
+                  "begin": 93820000,
+                  "end": 95920000
+                },
+                "text": "各個山頭首當其衝"
+              },
+              {
+                "source_range_us": {
+                  "begin": 96620000,
+                  "end": 99440000
+                },
+                "text": "因為地理和氣候因素的影響"
+              },
+              {
+                "source_range_us": {
+                  "begin": 99440000,
+                  "end": 101500000
+                },
+                "text": "氣溫明顯降低"
+              },
+              {
+                "source_range_us": {
+                  "begin": 101500000,
+                  "end": 103560000
+                },
+                "text": "造就了陽明山地區"
+              },
+              {
+                "source_range_us": {
+                  "begin": 103560000,
+                  "end": 105580000
+                },
+                "text": "特殊的生態景觀"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "transcript_review": {
+            "status": "needs_review",
+            "reasons": [
+              "UNVERIFIED_TRANSCRIPT",
+              "SPEECH_TAIL_REVIEW_RECOMMENDED"
+            ],
+            "flagged_segments": [],
+            "last_transcript_end_us": 111320000,
+            "last_vad_speech_end_us": 113313000,
+            "policy": {
+              "version": 1,
+              "calibrated": false,
+              "min_avg_logprob": -1.0,
+              "max_no_speech_prob": 0.6,
+              "max_compression_ratio": 2.4,
+              "tail_tolerance_us": 500000
+            }
+          },
+          "montage_review": {
+            "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+            "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+            "asset_revision": 1,
+            "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+            "source_range_us": {
+              "begin": 90000000,
+              "end": 105000000
+            },
+            "beat_id": "beat-middle",
+            "reviewer": "Codex 自动验收（用户授权）",
+            "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+            "source": "assistant_montage_review",
+            "draft_id": "8dfa8632acb57c32",
+            "confirmation_kind": "assistant_review",
+            "human_review_performed": false,
+            "note": "助手核对画面与草案的自动验收，非真人审阅；不把画面作为用户具体经历证据"
+          }
+        },
+        {
+          "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+          "origin": "external",
+          "role": "detail",
+          "candidate_duration_us": 15000000,
+          "reason": "展现道路和自然风景，推进过程与环境过渡。",
+          "decided_by": "model:qwen2.5vl:3b",
+          "suggested_duration_us": 7500000,
+          "evidence": [
+            "visual_keyframe",
+            "transcript_overlap"
+          ],
+          "transcript": "每天刮牙刮得几乎刮了半年, 所以北向的坡面就长不出高大的树木, 只剩下生命力强烈的芒草与建筑。 而南向坡面因为于被封面, 所以植物生长旺盛,",
+          "summary": "",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "每天刮牙刮得几乎刮了半年, 所以北向的坡面就长不出高大的树木, 只剩下生命力强烈的芒草与建筑。 而南向坡面因为于被封面, 所以植物生长旺盛,",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 42660000,
+                  "end": 46140000
+                },
+                "text": "每天刮牙刮得几乎刮了半年,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 46560000,
+                  "end": 50420000
+                },
+                "text": "所以北向的坡面就长不出高大的树木,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 50740000,
+                  "end": 53860000
+                },
+                "text": "只剩下生命力强烈的芒草与建筑。"
+              },
+              {
+                "source_range_us": {
+                  "begin": 54800000,
+                  "end": 57780000
+                },
+                "text": "而南向坡面因为于被封面,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 58180000,
+                  "end": 60060000
+                },
+                "text": "所以植物生长旺盛,"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "transcript_review": {
+            "status": "needs_review",
+            "reasons": [
+              "UNVERIFIED_TRANSCRIPT",
+              "SPEECH_TAIL_REVIEW_RECOMMENDED"
+            ],
+            "flagged_segments": [],
+            "last_transcript_end_us": 111320000,
+            "last_vad_speech_end_us": 113313000,
+            "policy": {
+              "version": 1,
+              "calibrated": false,
+              "min_avg_logprob": -1.0,
+              "max_no_speech_prob": 0.6,
+              "max_compression_ratio": 2.4,
+              "tail_tolerance_us": 500000
+            }
+          },
+          "montage_review": {
+            "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+            "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+            "asset_revision": 1,
+            "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+            "source_range_us": {
+              "begin": 45000000,
+              "end": 60000000
+            },
+            "beat_id": "beat-middle",
+            "reviewer": "Codex 自动验收（用户授权）",
+            "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+            "source": "assistant_montage_review",
+            "draft_id": "8dfa8632acb57c32",
+            "confirmation_kind": "assistant_review",
+            "human_review_performed": false,
+            "note": "助手核对画面与草案的自动验收，非真人审阅；不把画面作为用户具体经历证据"
+          }
+        }
+      ],
+      "alternative_candidate_ids": [
+        "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-15000000-30000000",
+        "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+        "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+        "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-0-15000000"
+      ],
+      "cue_ids": [
+        "cue-02"
+      ]
+    },
+    {
+      "beat_id": "beat-close",
+      "order": 2,
+      "purpose": "完成情绪收束",
+      "duration_budget_us": 5000000,
+      "support": "supported",
+      "shots": [
+        {
+          "candidate_id": "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+          "origin": "external",
+          "role": "atmosphere",
+          "candidate_duration_us": 15000000,
+          "reason": "确认时明确替换或重排的主题画面；非模型原始选择",
+          "decided_by": "assistant_edit",
+          "suggested_duration_us": 5000000,
+          "evidence": [
+            "visual_keyframe"
+          ],
+          "transcript": "另一半則是翠麗的高草原 似乎是撿了一個螃蟹頭 这究竟是谁的节奏呢? 原来呀,每年9月开始吹的东北季风就像李法师一样, 每天刮牙刮得几乎刮了半年,",
+          "summary": "",
+          "transcript_evidence": {
+            "status": "success",
+            "text": "另一半則是翠麗的高草原 似乎是撿了一個螃蟹頭 这究竟是谁的节奏呢? 原来呀,每年9月开始吹的东北季风就像李法师一样, 每天刮牙刮得几乎刮了半年,",
+            "segments": [
+              {
+                "source_range_us": {
+                  "begin": 27980000,
+                  "end": 30920000
+                },
+                "text": "另一半則是翠麗的高草原"
+              },
+              {
+                "source_range_us": {
+                  "begin": 31440000,
+                  "end": 33500000
+                },
+                "text": "似乎是撿了一個螃蟹頭"
+              },
+              {
+                "source_range_us": {
+                  "begin": 33500000,
+                  "end": 36080000
+                },
+                "text": "这究竟是谁的节奏呢?"
+              },
+              {
+                "source_range_us": {
+                  "begin": 36520000,
+                  "end": 42180000
+                },
+                "text": "原来呀,每年9月开始吹的东北季风就像李法师一样,"
+              },
+              {
+                "source_range_us": {
+                  "begin": 42660000,
+                  "end": 46140000
+                },
+                "text": "每天刮牙刮得几乎刮了半年,"
+              }
+            ],
+            "uri": "derived/asset-6ed6033cad864a938bc8caca9363777d/r1/asr-b43f281d59d06891d0309b79/transcript.json",
+            "review_status": "needs_review"
+          },
+          "transcript_review": {
+            "status": "needs_review",
+            "reasons": [
+              "UNVERIFIED_TRANSCRIPT",
+              "SPEECH_TAIL_REVIEW_RECOMMENDED"
+            ],
+            "flagged_segments": [],
+            "last_transcript_end_us": 111320000,
+            "last_vad_speech_end_us": 113313000,
+            "policy": {
+              "version": 1,
+              "calibrated": false,
+              "min_avg_logprob": -1.0,
+              "max_no_speech_prob": 0.6,
+              "max_compression_ratio": 2.4,
+              "tail_tolerance_us": 500000
+            }
+          },
+          "montage_review": {
+            "candidate_id": "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+            "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+            "asset_revision": 1,
+            "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+            "source_range_us": {
+              "begin": 30000000,
+              "end": 45000000
+            },
+            "beat_id": "beat-close",
+            "reviewer": "Codex 自动验收（用户授权）",
+            "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+            "source": "assistant_montage_review",
+            "draft_id": "8dfa8632acb57c32",
+            "confirmation_kind": "assistant_review",
+            "human_review_performed": false,
+            "note": "助手核对画面与草案的自动验收，非真人审阅；不把画面作为用户具体经历证据"
+          }
+        }
+      ],
+      "alternative_candidate_ids": [
+        "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-105000000-113313000",
+        "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-0-15000000",
+        "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-75000000-90000000",
+        "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+        "candidate-query-close-atmosphere-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+        "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000"
+      ],
+      "cue_ids": [
+        "cue-03"
+      ]
+    }
+  ],
+  "narration_cues": [
+    {
+      "cue_id": "cue-01",
+      "beat_id": "beat-open",
+      "text": "沿着林间小路，走进清新的绿意。",
+      "text_source": "assistant_review",
+      "approved": true,
+      "content_review": "assistant_review",
+      "duration_budget_us": 9800000,
+      "voice_style": "中文旁白",
+      "expression": "主题蒙太奇旁白，不声称这是用户本人的经历",
+      "evidence_segment_ids": [],
+      "asserts_specific_user_event": false
+    },
+    {
+      "cue_id": "cue-02",
+      "beat_id": "beat-middle",
+      "text": "云雾掠过山头，草木在风中舒展，让脚步慢下来。",
+      "text_source": "assistant_review",
+      "approved": true,
+      "content_review": "assistant_review",
+      "duration_budget_us": 14800000,
+      "voice_style": "中文旁白",
+      "expression": "主题蒙太奇旁白，不声称这是用户本人的经历",
+      "evidence_segment_ids": [],
+      "asserts_specific_user_event": false
+    },
+    {
+      "cue_id": "cue-03",
+      "beat_id": "beat-close",
+      "text": "把宁静留在风景里。",
+      "text_source": "assistant_review",
+      "approved": true,
+      "content_review": "assistant_review",
+      "duration_budget_us": 4800000,
+      "voice_style": "中文旁白",
+      "expression": "主题蒙太奇旁白，不声称这是用户本人的经历",
+      "evidence_segment_ids": [],
+      "asserts_specific_user_event": false
+    }
+  ],
+  "unresolved_gaps": [],
+  "pending_reviews": [],
+  "decision_provenance": {
+    "mode": "ollama",
+    "model_call_ids": [
+      "9498c11f07bc6997",
+      "9718b8a47e218138",
+      "a0bf1f9d1184be92"
+    ],
+    "selected_segment_ids": [
+      "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+      "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+      "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+      "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+      "asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000"
+    ],
+    "evidence_reviews": [
+      {
+        "candidate_id": "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+        "asset_id": "asset-ea01edc0b20b45858d5a9fda754769e5",
+        "asset_revision": 1,
+        "segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+        "source_range_us": {
+          "begin": 0,
+          "end": 15000000
+        },
+        "beat_id": "beat-open",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+        "source": "assistant_montage_review",
+        "draft_id": "8dfa8632acb57c32",
+        "confirmation_kind": "assistant_review",
+        "human_review_performed": false,
+        "note": "助手核对画面与草案的自动验收，非真人审阅；不把画面作为用户具体经历证据"
+      },
+      {
+        "candidate_id": "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+        "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+        "asset_revision": 1,
+        "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+        "source_range_us": {
+          "begin": 60000000,
+          "end": 75000000
+        },
+        "beat_id": "beat-open",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+        "source": "assistant_montage_review",
+        "draft_id": "8dfa8632acb57c32",
+        "confirmation_kind": "assistant_review",
+        "human_review_performed": false,
+        "note": "助手核对画面与草案的自动验收，非真人审阅；不把画面作为用户具体经历证据"
+      },
+      {
+        "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+        "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+        "asset_revision": 1,
+        "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+        "source_range_us": {
+          "begin": 90000000,
+          "end": 105000000
+        },
+        "beat_id": "beat-middle",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+        "source": "assistant_montage_review",
+        "draft_id": "8dfa8632acb57c32",
+        "confirmation_kind": "assistant_review",
+        "human_review_performed": false,
+        "note": "助手核对画面与草案的自动验收，非真人审阅；不把画面作为用户具体经历证据"
+      },
+      {
+        "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+        "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+        "asset_revision": 1,
+        "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+        "source_range_us": {
+          "begin": 45000000,
+          "end": 60000000
+        },
+        "beat_id": "beat-middle",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+        "source": "assistant_montage_review",
+        "draft_id": "8dfa8632acb57c32",
+        "confirmation_kind": "assistant_review",
+        "human_review_performed": false,
+        "note": "助手核对画面与草案的自动验收，非真人审阅；不把画面作为用户具体经历证据"
+      },
+      {
+        "candidate_id": "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+        "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+        "asset_revision": 1,
+        "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+        "source_range_us": {
+          "begin": 30000000,
+          "end": 45000000
+        },
+        "beat_id": "beat-close",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+        "source": "assistant_montage_review",
+        "draft_id": "8dfa8632acb57c32",
+        "confirmation_kind": "assistant_review",
+        "human_review_performed": false,
+        "note": "助手核对画面与草案的自动验收，非真人审阅；不把画面作为用户具体经历证据"
+      }
+    ],
+    "reviewed_anchor_segment_ids": [],
+    "rule_adjustments": [
+      "beat-open: 使用主题画面，不把它当成用户事件证据",
+      "beat-middle: 使用主题画面，不把它当成用户事件证据",
+      "beat-close: 使用主题画面，不把它当成用户事件证据"
+    ],
+    "human_edits": [],
+    "assistant_edits": [
+      "cue-01: 文案来自已批准的蒙太奇旁白，不记为用户事件",
+      "cue-02: 文案来自已批准的蒙太奇旁白，不记为用户事件",
+      "cue-03: 文案来自已批准的蒙太奇旁白，不记为用户事件",
+      "beat-open: 确认者替换或重排主题镜头，保留模型原始选择",
+      "beat-close: 确认者替换或重排主题镜头，保留模型原始选择"
+    ],
+    "narration_approvals": {
+      "beat-open": {
+        "draft_id": "8dfa8632acb57c32",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+        "text_hash": "9cea5dfdf31709f5",
+        "source": "assistant_review",
+        "confirmation_kind": "assistant_review",
+        "human_review_performed": false
+      },
+      "beat-middle": {
+        "draft_id": "8dfa8632acb57c32",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+        "text_hash": "7b23d11e00886e16",
+        "source": "assistant_review",
+        "confirmation_kind": "assistant_review",
+        "human_review_performed": false
+      },
+      "beat-close": {
+        "draft_id": "8dfa8632acb57c32",
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+        "text_hash": "585983976d0daeb6",
+        "source": "assistant_review",
+        "confirmation_kind": "assistant_review",
+        "human_review_performed": false
+      }
+    },
+    "iterations": [
+      {
+        "iteration": 1,
+        "request_revision": 1,
+        "candidate_set_revision": 1,
+        "reason": "首轮按三段叙事目的发出检索请求"
+      }
+    ],
+    "raw_response_count": 3,
+    "input_hashes": {
+      "Brief": "211bb6c22ad65e42",
+      "AssetManifest": "ede54a3c82b58e55",
+      "CandidateSet": "1a616df10fe9f9cc",
+      "RetrievalRequest": "229153ef064f6a26"
+    },
+    "selection_edits": [
+      {
+        "beat_id": "beat-open",
+        "before": [
+          "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-15000000-30000000",
+          "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000"
+        ],
+        "after": [
+          "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+          "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000"
+        ],
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+        "confirmation_kind": "assistant_review",
+        "human_review_performed": false,
+        "source": "assistant_edit",
+        "original_model_call_hash": "9498c11f07bc6997"
+      },
+      {
+        "beat_id": "beat-close",
+        "before": [
+          "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-105000000-113313000"
+        ],
+        "after": [
+          "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000"
+        ],
+        "reviewer": "Codex 自动验收（用户授权）",
+        "reviewed_at": "2026-11-16T13:50:10.190243+00:00",
+        "confirmation_kind": "assistant_review",
+        "human_review_performed": false,
+        "source": "assistant_edit",
+        "original_model_call_hash": "a0bf1f9d1184be92"
+      }
+    ],
+    "actual_model_attempt_count": 3,
+    "confirmation_kind": "assistant_review",
+    "human_review_performed": false
+  }
+}

@@ -1,0 +1,1 @@
+{"status": "preview_rejected", "errors": [{"code": "subtitle_filter_required", "message": "时间线要求烧录字幕，但 FFmpeg 不含 libass subtitles filter"}]}

@@ -1,0 +1,301 @@
+{
+  "cloud_package_completed_time": "",
+  "draft_cloud_capcut_purchase_info": "",
+  "draft_cloud_last_action_download": false,
+  "draft_cloud_materials": [],
+  "draft_cloud_purchase_info": "",
+  "draft_cloud_template_id": "",
+  "draft_cloud_tutorial_info": "",
+  "draft_cloud_videocut_purchase_info": "",
+  "draft_cover": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2/draft/draft_cover.jpg",
+  "draft_deeplink_url": "",
+  "draft_enterprise_info": {
+    "draft_enterprise_extra": "",
+    "draft_enterprise_id": "",
+    "draft_enterprise_name": "",
+    "enterprise_material": []
+  },
+  "draft_fold_path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2/draft",
+  "draft_id": "FF5D4743-FED1-4AC2-91F5-D446025FF51C",
+  "draft_is_ai_packaging_used": false,
+  "draft_is_ai_shorts": false,
+  "draft_is_ai_translate": false,
+  "draft_is_article_video_draft": false,
+  "draft_is_from_deeplink": "false",
+  "draft_is_invisible": false,
+  "draft_materials": [
+    {
+      "type": 0,
+      "value": [
+        {
+          "id": "2F36040A-0ECF-5CA4-BE8A-4FBA216BF3D5",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2/draft/Resources/ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484.mp4",
+          "duration": 44460000,
+          "extra_info": "r1.mp4",
+          "width": 1920,
+          "height": 1080,
+          "metetype": "video",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794834906,
+          "import_time": 1794834906,
+          "import_time_ms": 1794834906131276,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        },
+        {
+          "id": "65A65F26-1C0D-5F80-B5B2-61E99FFA061A",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2/draft/Resources/30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58.webm",
+          "duration": 113313000,
+          "extra_info": "r1.webm",
+          "width": 1280,
+          "height": 720,
+          "metetype": "video",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794834906,
+          "import_time": 1794834906,
+          "import_time_ms": 1794834906131276,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        },
+        {
+          "id": "14461D37-E2D0-5DCF-A235-EF33DD6748CB",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2/draft/Resources/b4d4cdde203cc89ea1e12373b75a13ed88a039808490e42dd2b45460b2938a5b.wav",
+          "duration": 4633521,
+          "extra_info": "40fe21c6e78a53047e07039102e9c44ecf7dc3505e8edb1daf12bb0c35879518.wav",
+          "width": 0,
+          "height": 0,
+          "metetype": "music",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794834906,
+          "import_time": 1794834906,
+          "import_time_ms": 1794834906131276,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        },
+        {
+          "id": "7E10B1C9-0786-5913-B39B-E75CFCC422E7",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2/draft/Resources/4a619e05ae4bd766c668815982a5417e1af797404325401cd7c44a1d3d777d13.wav",
+          "duration": 2607813,
+          "extra_info": "69e54a8b07956f0d6addddfb0e57c73d2d6d28d906fbe68e6e840905269be42f.wav",
+          "width": 0,
+          "height": 0,
+          "metetype": "music",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794834906,
+          "import_time": 1794834906,
+          "import_time_ms": 1794834906131276,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        },
+        {
+          "id": "8F0C4BCD-AE6F-5821-A9C2-69F9E6DB692F",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2/draft/Resources/caa1189e4fedc7aae46fe3e4921c3838ad34e28f1fc0a5ff873845d5129eca8b.wav",
+          "duration": 6168625,
+          "extra_info": "0af02f72921e0245cbe0558c27b5b830cc9ddf0f90d8eda3e2508f667936685f.wav",
+          "width": 0,
+          "height": 0,
+          "metetype": "music",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794834906,
+          "import_time": 1794834906,
+          "import_time_ms": 1794834906131276,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        },
+        {
+          "id": "9C7CBA94-F558-5880-95AE-EE424F8ABC51",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2/draft/Resources/source-audio-1ee431f5509ccc26ab2d306d.wav",
+          "duration": 5000000,
+          "extra_info": "原声-clip-original-1.wav",
+          "width": 0,
+          "height": 0,
+          "metetype": "music",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794834906,
+          "import_time": 1794834906,
+          "import_time_ms": 1794834906131276,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        },
+        {
+          "id": "80B49AF2-A843-5F44-9FFC-A13132D5AD16",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2/draft/Resources/source-audio-0f489f52c2d1ae81672f5ff1.wav",
+          "duration": 5000000,
+          "extra_info": "原声-clip-original-2.wav",
+          "width": 0,
+          "height": 0,
+          "metetype": "music",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794834906,
+          "import_time": 1794834906,
+          "import_time_ms": 1794834906131276,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        },
+        {
+          "id": "2640230C-A872-5127-8017-B73542BCB37C",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2/draft/Resources/source-audio-6e7012516145f3b5cb2f51c3.wav",
+          "duration": 7500000,
+          "extra_info": "原声-clip-original-3.wav",
+          "width": 0,
+          "height": 0,
+          "metetype": "music",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794834906,
+          "import_time": 1794834906,
+          "import_time_ms": 1794834906131276,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        },
+        {
+          "id": "1ACAF353-BE30-5239-9E2F-97EF87870163",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2/draft/Resources/source-audio-5c1b0d439ed6b59a63bbdcda.wav",
+          "duration": 7500000,
+          "extra_info": "原声-clip-original-4.wav",
+          "width": 0,
+          "height": 0,
+          "metetype": "music",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794834906,
+          "import_time": 1794834906,
+          "import_time_ms": 1794834906131276,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        },
+        {
+          "id": "3EF3A7E4-2645-5ADB-AD0D-D1D8F1D97FF3",
+          "file_Path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2/draft/Resources/source-audio-66b0f4a38202e7570fabadd3.wav",
+          "duration": 5000000,
+          "extra_info": "原声-clip-original-5.wav",
+          "width": 0,
+          "height": 0,
+          "metetype": "music",
+          "type": 0,
+          "item_source": 1,
+          "md5": "",
+          "create_time": 1794834906,
+          "import_time": 1794834906,
+          "import_time_ms": 1794834906131276,
+          "roughcut_time_range": {
+            "duration": -1,
+            "start": -1
+          },
+          "sub_time_range": {
+            "duration": -1,
+            "start": -1
+          }
+        }
+      ]
+    },
+    {
+      "type": 1,
+      "value": []
+    },
+    {
+      "type": 2,
+      "value": []
+    },
+    {
+      "type": 3,
+      "value": []
+    },
+    {
+      "type": 6,
+      "value": []
+    },
+    {
+      "type": 7,
+      "value": []
+    },
+    {
+      "type": 8,
+      "value": []
+    }
+  ],
+  "draft_materials_copied_info": [],
+  "draft_name": "QuickCut-ac91f60c01ca",
+  "draft_new_version": "",
+  "draft_removable_storage_device": "",
+  "draft_root_path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2",
+  "draft_segment_extra_info": [],
+  "draft_type": "",
+  "tm_draft_cloud_completed": "",
+  "tm_draft_cloud_modified": 0,
+  "tm_draft_removed": 0,
+  "tm_duration": 30000000,
+  "tm_draft_create": 1794834906131276,
+  "tm_draft_modified": 1794834906131276,
+  "draft_timeline_materials_size_": 60947300
+}

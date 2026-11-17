@@ -1,0 +1,16 @@
+Processing /var/folders/5g/6f6q96j97dj59qkx98c9j0m80000gn/T/quickcut-final-wheel-a0rg68sd/source
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: quickcut
+  Building wheel for quickcut (pyproject.toml): started
+  Building wheel for quickcut (pyproject.toml): finished with status 'done'
+  Created wheel for quickcut: filename=quickcut-0.1.0-py3-none-any.whl size=222455 sha256=45244998bef7475ca34cce22e53d1b9a8762f67d1d217cd978d4641678a7f015
+  Stored in directory: /private/var/folders/5g/6f6q96j97dj59qkx98c9j0m80000gn/T/pip-ephem-wheel-cache-awmghqrc/wheels/62/4b/ce/6530315192644cbbc4042ce8d3d4dbef93fbe09b2e3882f198
+Successfully built quickcut
+
+[notice] A new release of pip is available: 26.0.1 -> 26.3
+[notice] To update, run: /Users/tangbao/Documents/ChatGPT/CV Project/.venv/bin/python -m pip install --upgrade pip

@@ -1,0 +1,102 @@
+{
+  "kind": "TimelinePreviewReport",
+  "schema_version": "0.1.0",
+  "status": "preview_rendered",
+  "project_id": "project-ac91f60c01ca",
+  "inputs": [
+    {
+      "kind": "EditTimeline",
+      "document_id": "timeline-project-ac91f60c01ca",
+      "revision": 11
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-d8819914e7b84e5ba42c52a5615cdf9b",
+      "revision": 1
+    },
+    {
+      "kind": "VoicePackage",
+      "document_id": "voice-story-cd68452eea5694ee",
+      "revision": 11
+    }
+  ],
+  "fixtures_only": false,
+  "expected_duration_us": 30000000,
+  "measured_duration_us": 30000000,
+  "measured_stream_durations_us": {
+    "video": 30000000,
+    "audio": 30000000
+  },
+  "source_measurements_us": {
+    "asset-5c2707d91a914133a755b964b99ed932": {
+      "video": 44460000,
+      "audio": 44480000
+    },
+    "asset-72abd30fcd284c44aa0a99b87bde0370": {
+      "video": 113313000,
+      "audio": 113371938
+    },
+    "generated-voice-55d04cb70aec16a2a2e889f1196ab943": {
+      "audio": 4633521
+    },
+    "generated-voice-9cde895d85bc93478ed50a8f4d54110e": {
+      "audio": 2607813
+    },
+    "generated-voice-d776966fc7a99e9f0379177683a00758": {
+      "audio": 6168625
+    }
+  },
+  "duration_tolerance_us": 35334,
+  "duration_validation": "ffprobe",
+  "video_frame_quantization": "ceil_global_timeline_boundaries",
+  "video_frame_ranges": [
+    {
+      "clip_id": "clip-video-1",
+      "begin_frame": 0,
+      "end_frame": 150
+    },
+    {
+      "clip_id": "clip-video-2",
+      "begin_frame": 150,
+      "end_frame": 300
+    },
+    {
+      "clip_id": "clip-video-3",
+      "begin_frame": 300,
+      "end_frame": 525
+    },
+    {
+      "clip_id": "clip-video-4",
+      "begin_frame": 525,
+      "end_frame": 750
+    },
+    {
+      "clip_id": "clip-video-5",
+      "begin_frame": 750,
+      "end_frame": 900
+    }
+  ],
+  "measured_video_frames": 900,
+  "full_decode_verified": true,
+  "subtitles_burned": true,
+  "subtitles_editable": true,
+  "subtitle_policy_requested": true,
+  "subtitle_position": "top",
+  "subtitle_font": "Hiragino Sans GB",
+  "ffmpeg_binary": "/Users/tangbao/Documents/ChatGPT/CV Project/.venv/lib/python3.14/site-packages/imageio_ffmpeg/binaries/ffmpeg-macos-aarch64-v7.1",
+  "subtitle_frame_quantization": "ceil_global_timeline_boundaries",
+  "srt_time_quantization": "floor_to_millisecond",
+  "audio_mix": "source_audio_and_narration_with_timeline_offsets_and_gains",
+  "editor_project_exported": false,
+  "editor_import_verified": false,
+  "f_acceptance_completed": false,
+  "notes": [
+    "按时间线要求烧录预览字幕，同时保留独立全局 SRT。",
+    "这是媒体预览，不是剪辑工程导出，未完成 F 验收。"
+  ],
+  "files": {
+    "preview": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2/preview.mp4",
+    "subtitles": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2/preview.srt",
+    "report": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/export-r2/preview.preview.json"
+  }
+}

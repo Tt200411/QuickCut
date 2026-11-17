@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "source_video": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/smoke-demo/fixture.mp4",
+  "query": "sky blue scenic shots for an 8 second vlog opening",
+  "duration_budget": 8.0,
+  "index_id": "d177140a8061c2f7",
+  "coverage": "source",
+  "items": [
+    {
+      "item_id": "item-000",
+      "provenance": "source",
+      "asset_id": "shot-0000",
+      "start": 0.0,
+      "end": 1.0,
+      "license_note": "Source video provided by user",
+      "score": 0.9746,
+      "transcript": ""
+    },
+    {
+      "item_id": "item-001",
+      "provenance": "source",
+      "asset_id": "shot-0001",
+      "start": 3.0,
+      "end": 6.0,
+      "license_note": "Source video provided by user",
+      "score": 0.8148,
+      "transcript": ""
+    },
+    {
+      "item_id": "item-002",
+      "provenance": "source",
+      "asset_id": "shot-0002",
+      "start": 6.5,
+      "end": 8.5,
+      "license_note": "Source video provided by user",
+      "score": 0.8148,
+      "transcript": ""
+    }
+  ],
+  "message": "Retrieved 3 source segment(s) with cached index d177140a8061c2f7.",
+  "preset": "clean",
+  "story": {},
+  "narration": "",
+  "captions": [],
+  "duration": 6.0
+}

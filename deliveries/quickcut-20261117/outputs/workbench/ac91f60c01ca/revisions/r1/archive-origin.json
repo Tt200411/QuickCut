@@ -1,0 +1,5 @@
+{
+  "mode": "post_failure_snapshot",
+  "captured_at": "2026-11-16T13:06:28.512808+00:00",
+  "reason": "Preserve first genuine IndexTTS render and WebM validation failure before retry; automatic revision archiver was added after this attempt."
+}

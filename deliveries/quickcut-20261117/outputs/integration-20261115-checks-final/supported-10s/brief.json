@@ -1,0 +1,40 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "Brief",
+  "document_id": "brief-demo",
+  "project_id": "project-pipeline-demo",
+  "revision": 1,
+  "fixtures_only": true,
+  "owner": "C",
+  "inputs": [],
+  "requirements": {
+    "story": "展示第一段测试画面，展示第二段测试画面，展示第三段测试画面。",
+    "format": "demo",
+    "language": "zh-CN",
+    "target_duration_us": 10000000,
+    "aspect_ratio": {
+      "width": 16,
+      "height": 9
+    },
+    "tone": "测试",
+    "narration": {
+      "enabled": true,
+      "style": "fixture_tone，不是真实语音"
+    },
+    "broll_policy": {
+      "enabled": false,
+      "roles": [],
+      "must_not_assert_user_events": true
+    },
+    "target_editor": "未验证"
+  },
+  "constraints": {
+    "local_inference_only": true,
+    "preserve_source_audio": true,
+    "editable_tracks_required": true
+  },
+  "fixture_provenance": {
+    "approval": "preset_fixture_only",
+    "human_review_performed": false
+  }
+}

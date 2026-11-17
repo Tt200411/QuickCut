@@ -1,0 +1,193 @@
+{
+  "export_document_id": "export-E680DE52-F880-48B5-83D5-21E589B2ACBD",
+  "inputs": [
+    {
+      "kind": "EditTimeline",
+      "document_id": "timeline-project-1c1bb824f8a9",
+      "revision": 1
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-6205ab1d1652440d88c01eff10a35f1a",
+      "revision": 1
+    },
+    {
+      "kind": "VoicePackage",
+      "document_id": "voice-story-8dfa8632acb57c32",
+      "revision": 1
+    }
+  ],
+  "fixtures_only": false,
+  "resources": [
+    {
+      "resource_key": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "original_uri": "media/external/asset-6ed6033cad864a938bc8caca9363777d/r1.webm",
+      "draft_uri": "Resources/30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58.webm",
+      "packaged_uri": "draft/Resources/30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58.webm",
+      "content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+      "name": "r1.webm",
+      "media_kind": "video",
+      "size_bytes": 21554223,
+      "origin_us": 7000,
+      "duration_us": 113313000,
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "resource_key": "asset-ea01edc0b20b45858d5a9fda754769e5",
+      "asset_id": "asset-ea01edc0b20b45858d5a9fda754769e5",
+      "asset_revision": 1,
+      "original_uri": "media/external/asset-ea01edc0b20b45858d5a9fda754769e5/r1.mp4",
+      "draft_uri": "Resources/ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484.mp4",
+      "packaged_uri": "draft/Resources/ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484.mp4",
+      "content_hash": "sha256:ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484",
+      "name": "r1.mp4",
+      "media_kind": "video",
+      "size_bytes": 32345199,
+      "origin_us": 0,
+      "duration_us": 44460000,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "resource_key": "generated-voice-58e27476e7cb09e78504f3877158a305",
+      "asset_id": "generated-voice-58e27476e7cb09e78504f3877158a305",
+      "asset_revision": 1,
+      "original_uri": "audio/narration/7d88bca59477ad462effb4f4c9dc61fa136558bca1b4c3cd8d45ec92562cda4e.wav",
+      "draft_uri": "Resources/29824d471ab0fceddf1c87b331b1b6f256dfa941694e62f45c2c3cdb7cf56d3d.wav",
+      "packaged_uri": "draft/Resources/29824d471ab0fceddf1c87b331b1b6f256dfa941694e62f45c2c3cdb7cf56d3d.wav",
+      "content_hash": "sha256:29824d471ab0fceddf1c87b331b1b6f256dfa941694e62f45c2c3cdb7cf56d3d",
+      "name": "7d88bca59477ad462effb4f4c9dc61fa136558bca1b4c3cd8d45ec92562cda4e.wav",
+      "media_kind": "audio",
+      "size_bytes": 165734,
+      "origin_us": 0,
+      "duration_us": 1725937
+    },
+    {
+      "resource_key": "generated-voice-a6e535292f1d8ec377115877f8d1a307",
+      "asset_id": "generated-voice-a6e535292f1d8ec377115877f8d1a307",
+      "asset_revision": 1,
+      "original_uri": "audio/narration/7490b0a6897b2decce1dea88fd7a57b20dbeaddbae35c751bb7c7f70cca4af4d.wav",
+      "draft_uri": "Resources/51e1e69640c3dca0b111216514369fbb85838e769868e52bf83f9d7ce487a678.wav",
+      "packaged_uri": "draft/Resources/51e1e69640c3dca0b111216514369fbb85838e769868e52bf83f9d7ce487a678.wav",
+      "content_hash": "sha256:51e1e69640c3dca0b111216514369fbb85838e769868e52bf83f9d7ce487a678",
+      "name": "7490b0a6897b2decce1dea88fd7a57b20dbeaddbae35c751bb7c7f70cca4af4d.wav",
+      "media_kind": "audio",
+      "size_bytes": 242906,
+      "origin_us": 0,
+      "duration_us": 2529812
+    },
+    {
+      "resource_key": "generated-voice-e7bb7d7c7e85a7e0a86d8f80aaad5dc0",
+      "asset_id": "generated-voice-e7bb7d7c7e85a7e0a86d8f80aaad5dc0",
+      "asset_revision": 1,
+      "original_uri": "audio/narration/27dbef070c0b4328afcb197af55b1372c625341c6f4aeec70dccc280a46f6e67.wav",
+      "draft_uri": "Resources/378678a3aae02422503f5f4337e36d18acef4501ca74d85eb25045640d9e1a27.wav",
+      "packaged_uri": "draft/Resources/378678a3aae02422503f5f4337e36d18acef4501ca74d85eb25045640d9e1a27.wav",
+      "content_hash": "sha256:378678a3aae02422503f5f4337e36d18acef4501ca74d85eb25045640d9e1a27",
+      "name": "27dbef070c0b4328afcb197af55b1372c625341c6f4aeec70dccc280a46f6e67.wav",
+      "media_kind": "audio",
+      "size_bytes": 395426,
+      "origin_us": 0,
+      "duration_us": 4118562
+    },
+    {
+      "resource_key": "source_audio:clip-original-1",
+      "asset_id": "asset-ea01edc0b20b45858d5a9fda754769e5",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 5000000
+      },
+      "derived_for_clip_id": "clip-original-1",
+      "draft_uri": "Resources/source-audio-dff401d4495d582e0a5f3e6f.wav",
+      "packaged_uri": "draft/Resources/source-audio-dff401d4495d582e0a5f3e6f.wav",
+      "name": "原声-clip-original-1.wav",
+      "media_kind": "audio",
+      "content_hash": "sha256:3e09c8f71b897ddd3d09a9b76f3a6a55fee9564ea3e85ed4543f652424ea0260",
+      "size_bytes": 960078,
+      "duration_us": 5000000,
+      "sample_rate": 48000,
+      "sample_rounding_error_us": 0.0
+    },
+    {
+      "resource_key": "source_audio:clip-original-2",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 65000000,
+        "end": 70000000
+      },
+      "derived_for_clip_id": "clip-original-2",
+      "draft_uri": "Resources/source-audio-3b3c7b461c01a2c4f4c7e5df.wav",
+      "packaged_uri": "draft/Resources/source-audio-3b3c7b461c01a2c4f4c7e5df.wav",
+      "name": "原声-clip-original-2.wav",
+      "media_kind": "audio",
+      "content_hash": "sha256:7cd429c094fdb6e0519d6b0f26cb5c7f88fc8f917770998cad3a4f6a6f44f40c",
+      "size_bytes": 960078,
+      "duration_us": 5000000,
+      "sample_rate": 48000,
+      "sample_rounding_error_us": 0.0
+    },
+    {
+      "resource_key": "source_audio:clip-original-3",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 94000000,
+        "end": 101500000
+      },
+      "derived_for_clip_id": "clip-original-3",
+      "draft_uri": "Resources/source-audio-23e2091b0cfe354cc9081dab.wav",
+      "packaged_uri": "draft/Resources/source-audio-23e2091b0cfe354cc9081dab.wav",
+      "name": "原声-clip-original-3.wav",
+      "media_kind": "audio",
+      "content_hash": "sha256:2d5ba555ae0360e83283e37e76c116903652644e2970dd8e56cf708f2478d3dd",
+      "size_bytes": 1440078,
+      "duration_us": 7500000,
+      "sample_rate": 48000,
+      "sample_rounding_error_us": 0.0
+    },
+    {
+      "resource_key": "source_audio:clip-original-4",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 45000000,
+        "end": 52500000
+      },
+      "derived_for_clip_id": "clip-original-4",
+      "draft_uri": "Resources/source-audio-0b7ad87374176bf261c68cdf.wav",
+      "packaged_uri": "draft/Resources/source-audio-0b7ad87374176bf261c68cdf.wav",
+      "name": "原声-clip-original-4.wav",
+      "media_kind": "audio",
+      "content_hash": "sha256:3a1a4b10d1b62ba2341ba17669fe32bd1369b28ce5452b59dfcbea2a0cb56213",
+      "size_bytes": 1440078,
+      "duration_us": 7500000,
+      "sample_rate": 48000,
+      "sample_rounding_error_us": 0.0
+    },
+    {
+      "resource_key": "source_audio:clip-original-5",
+      "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 35000000,
+        "end": 40000000
+      },
+      "derived_for_clip_id": "clip-original-5",
+      "draft_uri": "Resources/source-audio-08455d3615499cde6c6ab2e6.wav",
+      "packaged_uri": "draft/Resources/source-audio-08455d3615499cde6c6ab2e6.wav",
+      "name": "原声-clip-original-5.wav",
+      "media_kind": "audio",
+      "content_hash": "sha256:f89009a2da026f6fdc4ac79cf8b347508117971804355aa75bc235c3c3cff3da",
+      "size_bytes": 960078,
+      "duration_us": 5000000,
+      "sample_rate": 48000,
+      "sample_rounding_error_us": 0.0
+    }
+  ],
+  "editor_import": "not_run"
+}

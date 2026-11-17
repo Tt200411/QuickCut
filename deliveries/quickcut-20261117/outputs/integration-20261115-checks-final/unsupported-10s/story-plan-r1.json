@@ -1,0 +1,310 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "StoryPlan",
+  "document_id": "story-001",
+  "project_id": "project-pipeline-demo",
+  "revision": 1,
+  "fixtures_only": true,
+  "owner": "C",
+  "inputs": [
+    {
+      "kind": "Brief",
+      "document_id": "brief-demo",
+      "revision": 1
+    },
+    {
+      "kind": "CandidateSet",
+      "document_id": "candidates-demo",
+      "revision": 1
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-df2f946d85fc42eead7d0eae6c209149",
+      "revision": 1
+    }
+  ],
+  "status": "needs_input",
+  "theme": "展示第一段测试画面，展示第二段测试画面，展示第三段测试画面。",
+  "narration_language": "zh-CN",
+  "beats": [
+    {
+      "beat_id": "beat-open",
+      "order": 0,
+      "purpose": "建立出发情境",
+      "duration_budget_us": 3333333,
+      "support": "supported",
+      "shots": [
+        {
+          "candidate_id": "candidate-query-open-asset-64b1e07729bb492383d96128557ae545-r1-shot-0-6000000",
+          "segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-shot-0-6000000",
+          "origin": "user",
+          "role": "primary",
+          "decided_by": "rule",
+          "suggested_duration_us": 3333333,
+          "evidence": [
+            "visual_keyframe",
+            "demo_window_label"
+          ],
+          "transcript": "",
+          "summary": {
+            "text": "展示第一段测试画面",
+            "provider": "demo_window_label"
+          },
+          "event_review": {
+            "beat_id": "beat-open",
+            "event": "展示第一段测试画面",
+            "asset_revision": 1,
+            "asset_id": "asset-64b1e07729bb492383d96128557ae545",
+            "segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-shot-0-6000000",
+            "source_range_us": {
+              "begin": 0,
+              "end": 6000000
+            },
+            "reviewer": "demo_preset",
+            "note": "合成演示的预设审阅，只用于让 C 接受 B 返回的候选。",
+            "candidate_id": "candidate-query-open-asset-64b1e07729bb492383d96128557ae545-r1-shot-0-6000000",
+            "source": "human_review"
+          }
+        }
+      ],
+      "alternative_candidate_ids": [
+        "candidate-query-open-asset-64b1e07729bb492383d96128557ae545-r1-shot-6000000-12000000",
+        "candidate-query-open-asset-64b1e07729bb492383d96128557ae545-r1-shot-12000000-18000000"
+      ],
+      "cue_ids": [
+        "cue-01"
+      ]
+    },
+    {
+      "beat_id": "beat-middle",
+      "order": 1,
+      "purpose": "推进过程与环境过渡",
+      "duration_budget_us": 5000000,
+      "support": "unsupported",
+      "shots": [],
+      "alternative_candidate_ids": [],
+      "cue_ids": []
+    },
+    {
+      "beat_id": "beat-close",
+      "order": 2,
+      "purpose": "完成情绪收束",
+      "duration_budget_us": 1666667,
+      "support": "supported",
+      "shots": [
+        {
+          "candidate_id": "candidate-query-close-asset-64b1e07729bb492383d96128557ae545-r1-shot-12000000-18000000",
+          "segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-shot-12000000-18000000",
+          "origin": "user",
+          "role": "primary",
+          "decided_by": "rule",
+          "suggested_duration_us": 1666667,
+          "evidence": [
+            "visual_keyframe",
+            "demo_window_label"
+          ],
+          "transcript": "",
+          "summary": {
+            "text": "展示第三段测试画面",
+            "provider": "demo_window_label"
+          },
+          "event_review": {
+            "beat_id": "beat-close",
+            "event": "展示第三段测试画面",
+            "asset_revision": 1,
+            "asset_id": "asset-64b1e07729bb492383d96128557ae545",
+            "segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-shot-12000000-18000000",
+            "source_range_us": {
+              "begin": 12000000,
+              "end": 18000000
+            },
+            "reviewer": "demo_preset",
+            "note": "合成演示的预设审阅，只用于让 C 接受 B 返回的候选。",
+            "candidate_id": "candidate-query-close-asset-64b1e07729bb492383d96128557ae545-r1-shot-12000000-18000000",
+            "source": "human_review"
+          }
+        }
+      ],
+      "alternative_candidate_ids": [
+        "candidate-query-close-asset-64b1e07729bb492383d96128557ae545-r1-shot-0-6000000",
+        "candidate-query-close-asset-64b1e07729bb492383d96128557ae545-r1-shot-6000000-12000000"
+      ],
+      "cue_ids": [
+        "cue-03"
+      ]
+    }
+  ],
+  "narration_cues": [
+    {
+      "cue_id": "cue-01",
+      "beat_id": "beat-open",
+      "text": "第一段测试画面。",
+      "text_source": "human_editorial",
+      "approved": true,
+      "content_review": "human_editorial",
+      "duration_budget_us": 3133333,
+      "voice_style": "fixture_tone，不是真实语音",
+      "expression": "与画面动作、角色和先后顺序对照检查后再批准",
+      "evidence_segment_ids": [
+        "asset-64b1e07729bb492383d96128557ae545-r1-shot-0-6000000"
+      ],
+      "asserts_specific_user_event": true
+    },
+    {
+      "cue_id": "cue-03",
+      "beat_id": "beat-close",
+      "text": "第三段测试画面。",
+      "text_source": "human_editorial",
+      "approved": true,
+      "content_review": "human_editorial",
+      "duration_budget_us": 1466667,
+      "voice_style": "fixture_tone，不是真实语音",
+      "expression": "与画面动作、角色和先后顺序对照检查后再批准",
+      "evidence_segment_ids": [
+        "asset-64b1e07729bb492383d96128557ae545-r1-shot-12000000-18000000"
+      ],
+      "asserts_specific_user_event": true
+    }
+  ],
+  "unresolved_gaps": [
+    {
+      "gap_id": "gap-beat-middle",
+      "beat_id": "beat-middle",
+      "type": "UNSUPPORTED_STORY_BEAT",
+      "missing": "展示第二段测试画面",
+      "reason": "该段请求没有返回任何可用候选",
+      "iteration": 1,
+      "status": "open",
+      "suggestions": [
+        "补充能证明该事件的用户素材",
+        "改写为主观感受或氛围表达，不虚构具体动作",
+        "缩减三段结构，把预算让给有证据的段落"
+      ],
+      "must_not_assert_user_events": true
+    }
+  ],
+  "pending_reviews": [],
+  "decision_provenance": {
+    "mode": "rule",
+    "model_call_ids": [],
+    "selected_segment_ids": [
+      "asset-64b1e07729bb492383d96128557ae545-r1-shot-0-6000000",
+      "asset-64b1e07729bb492383d96128557ae545-r1-shot-12000000-18000000"
+    ],
+    "evidence_reviews": [
+      {
+        "beat_id": "beat-open",
+        "event": "展示第一段测试画面",
+        "asset_revision": 1,
+        "asset_id": "asset-64b1e07729bb492383d96128557ae545",
+        "segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-shot-0-6000000",
+        "source_range_us": {
+          "begin": 0,
+          "end": 6000000
+        },
+        "reviewer": "demo_preset",
+        "note": "合成演示的预设审阅，只用于让 C 接受 B 返回的候选。",
+        "candidate_id": "candidate-query-open-asset-64b1e07729bb492383d96128557ae545-r1-shot-0-6000000",
+        "source": "human_review"
+      },
+      {
+        "beat_id": "beat-open",
+        "event": "展示第一段测试画面",
+        "asset_revision": 1,
+        "asset_id": "asset-64b1e07729bb492383d96128557ae545",
+        "segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-shot-6000000-12000000",
+        "source_range_us": {
+          "begin": 6000000,
+          "end": 12000000
+        },
+        "reviewer": "demo_preset",
+        "note": "合成演示的预设审阅，只用于让 C 接受 B 返回的候选。",
+        "candidate_id": "candidate-query-open-asset-64b1e07729bb492383d96128557ae545-r1-shot-6000000-12000000",
+        "source": "human_review"
+      },
+      {
+        "beat_id": "beat-open",
+        "event": "展示第一段测试画面",
+        "asset_revision": 1,
+        "asset_id": "asset-64b1e07729bb492383d96128557ae545",
+        "segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-shot-12000000-18000000",
+        "source_range_us": {
+          "begin": 12000000,
+          "end": 18000000
+        },
+        "reviewer": "demo_preset",
+        "note": "合成演示的预设审阅，只用于让 C 接受 B 返回的候选。",
+        "candidate_id": "candidate-query-open-asset-64b1e07729bb492383d96128557ae545-r1-shot-12000000-18000000",
+        "source": "human_review"
+      },
+      {
+        "beat_id": "beat-close",
+        "event": "展示第三段测试画面",
+        "asset_revision": 1,
+        "asset_id": "asset-64b1e07729bb492383d96128557ae545",
+        "segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-shot-12000000-18000000",
+        "source_range_us": {
+          "begin": 12000000,
+          "end": 18000000
+        },
+        "reviewer": "demo_preset",
+        "note": "合成演示的预设审阅，只用于让 C 接受 B 返回的候选。",
+        "candidate_id": "candidate-query-close-asset-64b1e07729bb492383d96128557ae545-r1-shot-12000000-18000000",
+        "source": "human_review"
+      },
+      {
+        "beat_id": "beat-close",
+        "event": "展示第三段测试画面",
+        "asset_revision": 1,
+        "asset_id": "asset-64b1e07729bb492383d96128557ae545",
+        "segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-shot-0-6000000",
+        "source_range_us": {
+          "begin": 0,
+          "end": 6000000
+        },
+        "reviewer": "demo_preset",
+        "note": "合成演示的预设审阅，只用于让 C 接受 B 返回的候选。",
+        "candidate_id": "candidate-query-close-asset-64b1e07729bb492383d96128557ae545-r1-shot-0-6000000",
+        "source": "human_review"
+      },
+      {
+        "beat_id": "beat-close",
+        "event": "展示第三段测试画面",
+        "asset_revision": 1,
+        "asset_id": "asset-64b1e07729bb492383d96128557ae545",
+        "segment_id": "asset-64b1e07729bb492383d96128557ae545-r1-shot-6000000-12000000",
+        "source_range_us": {
+          "begin": 6000000,
+          "end": 12000000
+        },
+        "reviewer": "demo_preset",
+        "note": "合成演示的预设审阅，只用于让 C 接受 B 返回的候选。",
+        "candidate_id": "candidate-query-close-asset-64b1e07729bb492383d96128557ae545-r1-shot-6000000-12000000",
+        "source": "human_review"
+      }
+    ],
+    "reviewed_anchor_segment_ids": [
+      "asset-64b1e07729bb492383d96128557ae545-r1-shot-0-6000000",
+      "asset-64b1e07729bb492383d96128557ae545-r1-shot-12000000-18000000"
+    ],
+    "rule_adjustments": [],
+    "human_edits": [
+      "cue-01: 文案来自人工审阅，不记为模型输出",
+      "cue-03: 文案来自人工审阅，不记为模型输出"
+    ],
+    "iterations": [
+      {
+        "iteration": 1,
+        "request_revision": 1,
+        "candidate_set_revision": 1,
+        "reason": "首轮按三段叙事目的发出检索请求"
+      }
+    ],
+    "raw_response_count": 0,
+    "input_hashes": {
+      "Brief": "187ebedf01547829",
+      "AssetManifest": "ebb9d0a6c90992f6",
+      "CandidateSet": "9dafd7fa7f728063"
+    }
+  }
+}

@@ -1,6 +1,8 @@
 # 团队视频素材：Git LFS 与 fork / PR
 
-共享视频放在 `materials/` 下，使用小写扩展名 `.mp4`、`.mov`、`.mkv` 或 `.webm`。仓库的 `.gitattributes` 会把这些文件交给 Git LFS；已冻结的团队交接样例 `ABCDE/media/**/*.mp4` 和 `ABCDE/derived/**/proxy.mp4` 也使用 LFS。源码、JSON 清单、来源/授权说明、哈希和预览图仍由普通 Git 保存。`inputs/`、`outputs/`、`cache/`、`tmp/` 继续用于本地数据，不上传。
+共享视频放在 `materials/` 下，使用小写扩展名 `.mp4`、`.mov`、`.mkv` 或 `.webm`。仓库的 `.gitattributes` 会把这些文件交给 Git LFS；已冻结的团队交接样例 `ABCDE/media/**/*.mp4` 和 `ABCDE/derived/**/proxy.mp4` 也使用 LFS。源码、JSON 清单、来源/授权说明、哈希和预览图仍由普通 Git 保存。工作中的 `inputs/`、`outputs/`、`cache/`、`tmp/` 继续用于本地数据。
+
+2026-11-17 按用户要求增加[完整交付快照](../../deliveries/quickcut-20261117/README.md)。快照位于 `deliveries/quickcut-20261117/`，其中视频、WAV 和 ZIP 使用 LFS，原始证据字节不改写。三段参考 WAV 和原始 ZIP 位于 `materials/reference-audio/20261117/`，同样使用 LFS；默认 IndexTTS 配置使用其中的男声。模型权重、虚拟环境和下载缓存不上传，使用固定部署脚本在目标机器重建。不要强制加入整个正在运行的 `outputs/`；共享时创建有清单的冻结快照。
 
 ## 首次上传为什么会被拒绝
 

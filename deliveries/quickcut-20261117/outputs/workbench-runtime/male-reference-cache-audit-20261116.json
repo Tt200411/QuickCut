@@ -1,0 +1,59 @@
+{
+  "reference_path": "/Users/tangbao/Documents/ChatGPT/CV Project/inputs/reference-audio-20261116/男声.wav",
+  "sha256": "f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb",
+  "bytes": 159404,
+  "audio": {
+    "sample_rate": 24000,
+    "channels": 1,
+    "sample_width": 2,
+    "frames": 79680,
+    "duration_seconds": 3.32
+  },
+  "previous_reference_sha256": "da1f00d4ca84680174cad16b9db0c4d7a2f21e7545bacce583cf83be06a6ed95",
+  "new_reference_sha256": "f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb",
+  "cache_key_check_same_old_texts": [
+    {
+      "cue_id": "cue-01",
+      "old_key": "083d4e4dceeaa42d88248afc17f8cfff523673f6738a81d812dc78d4e373d7ce",
+      "new_key": "1d0fab2ba0cccaa0a2be828ca58131d0665a6f1658655b230bbd6ff40b2b2a76",
+      "changed": true,
+      "new_key_present_in_previous_cache": false
+    },
+    {
+      "cue_id": "cue-02",
+      "old_key": "61f0843dfc38512cd9a8384748efac40ec80370d5cf92f9c3dd22c918d515a4c",
+      "new_key": "53670ff2c384564c2547cb90b4c22c02d0080b19f08f9800f284865b9a03c2c3",
+      "changed": true,
+      "new_key_present_in_previous_cache": false
+    },
+    {
+      "cue_id": "cue-03",
+      "old_key": "3eccf468ba26caedfcadbdc89e04aeeeb9ee1ed64c90b225bfc94a284961c19f",
+      "new_key": "fdeb74193a0b5e67579d5a80aafdf3b46f604c9e13abfbf89c4226f482fbcf51",
+      "changed": true,
+      "new_key_present_in_previous_cache": false
+    }
+  ],
+  "model_inference_run": false,
+  "profile_runtime_version_source": "previous actual VoicePackage (same pinned runtime)",
+  "changed_profile_fields": [
+    "reference_sha256"
+  ],
+  "contract_tests": {
+    "command": "pytest -q tests/test_voice_package.py tests/test_indextts2.py -p no:cacheprovider",
+    "passed": 35,
+    "neural_model_executed": false
+  },
+  "source_evidence": {
+    "reference_content_hash": "quickcut/indextts2.py:76",
+    "cue_cache_key": "quickcut/voice_package.py:310",
+    "cache_content_verification": "quickcut/voice_package.py:315",
+    "original_reference_forwarding": "quickcut/indextts2.py:112",
+    "worker_resolves_reference": "quickcut/pipeline_worker.py:35",
+    "revision_config_snapshot": "quickcut/production_pipeline.py:363",
+    "job_copies_reference_bytes": "quickcut/workbench.py:370",
+    "job_config_points_to_copy": "quickcut/workbench.py:392",
+    "job_runtime_uses_captured_config": "quickcut/production_pipeline.py:232"
+  },
+  "result": "Reference byte change invalidates all previous cue keys; wrapper test passes the selected original WAV unchanged to model.infer. Current source freezes the WAV into each job. Actual new neural inference remains parent-run acceptance."
+}

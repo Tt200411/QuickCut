@@ -1,0 +1,9 @@
+{
+  "fixtures_only": true,
+  "approval_source": "preset_fixture_only",
+  "approved_cues": {
+    "beat-open": "第一段测试画面。",
+    "beat-middle": "第二段测试画面的修改文案。",
+    "beat-close": "第三段测试画面。"
+  }
+}

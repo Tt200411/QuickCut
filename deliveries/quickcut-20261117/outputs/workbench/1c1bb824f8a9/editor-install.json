@@ -1,0 +1,19 @@
+{
+  "status": "installed",
+  "draft_name": "QuickCut-1c1bb824f8a9-r1",
+  "draft_id": "B9C8931B-AC3B-4E58-8356-DFD2115C4A88",
+  "draft_directory": "/Users/tangbao/Movies/JianyingPro/User Data/Projects/com.lveditor.draft/QuickCut-1c1bb824f8a9-r1",
+  "registry_backup": "/Users/tangbao/Movies/JianyingPro/User Data/Projects/com.lveditor.draft/root_meta_info.quickcut-backup-1794837146274249000.json",
+  "editor_import_verified": false,
+  "fixtures_only": false,
+  "next_step": "启动剪映，打开新草稿并验证独立轨道、编辑、保存和重新打开。",
+  "export_binding": {
+    "revision": 1,
+    "package_directory": "export-r1",
+    "export": {
+      "kind": "ExportManifest",
+      "document_id": "export-E680DE52-F880-48B5-83D5-21E589B2ACBD",
+      "revision": 1
+    }
+  }
+}

@@ -1,0 +1,242 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "VoicePackage",
+  "document_id": "voice-story-8dfa8632acb57c32",
+  "project_id": "project-1c1bb824f8a9",
+  "revision": 1,
+  "fixtures_only": false,
+  "owner": "E",
+  "inputs": [
+    {
+      "kind": "StoryPlan",
+      "document_id": "story-8dfa8632acb57c32",
+      "revision": 1
+    }
+  ],
+  "status": "ready",
+  "timing_authority": "D",
+  "mode": "measure",
+  "measurement_source": "measured_pcm_samples",
+  "synthesis_profile": {
+    "engine": "indextts2",
+    "version": "2.0.0",
+    "model": "IndexTeam/IndexTTS-2",
+    "model_revision": "740dcaf",
+    "voice": "reference-audio",
+    "reference_sha256": "f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb",
+    "language": "zh-CN",
+    "device": "mps",
+    "seed": 42,
+    "local": true,
+    "emotion_supported": false
+  },
+  "assets": [
+    {
+      "asset_id": "generated-voice-a6e535292f1d8ec377115877f8d1a307",
+      "revision": 1,
+      "media_kind": "audio",
+      "origin": "generated",
+      "uri": "audio/narration/7490b0a6897b2decce1dea88fd7a57b20dbeaddbae35c751bb7c7f70cca4af4d.wav",
+      "content_hash": "sha256:51e1e69640c3dca0b111216514369fbb85838e769868e52bf83f9d7ce487a678",
+      "duration_us": 2529812,
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "pcm_s16le"
+      }
+    },
+    {
+      "asset_id": "generated-voice-e7bb7d7c7e85a7e0a86d8f80aaad5dc0",
+      "revision": 1,
+      "media_kind": "audio",
+      "origin": "generated",
+      "uri": "audio/narration/27dbef070c0b4328afcb197af55b1372c625341c6f4aeec70dccc280a46f6e67.wav",
+      "content_hash": "sha256:378678a3aae02422503f5f4337e36d18acef4501ca74d85eb25045640d9e1a27",
+      "duration_us": 4118562,
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "pcm_s16le"
+      }
+    },
+    {
+      "asset_id": "generated-voice-58e27476e7cb09e78504f3877158a305",
+      "revision": 1,
+      "media_kind": "audio",
+      "origin": "generated",
+      "uri": "audio/narration/7d88bca59477ad462effb4f4c9dc61fa136558bca1b4c3cd8d45ec92562cda4e.wav",
+      "content_hash": "sha256:29824d471ab0fceddf1c87b331b1b6f256dfa941694e62f45c2c3cdb7cf56d3d",
+      "duration_us": 1725938,
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "pcm_s16le"
+      }
+    }
+  ],
+  "cues": [
+    {
+      "cue_id": "cue-01",
+      "beat_id": "beat-open",
+      "text": "沿着林间小路，走进清新的绿意。",
+      "duration_budget_us": 9800000,
+      "script_input": {
+        "kind": "StoryPlan",
+        "document_id": "story-8dfa8632acb57c32",
+        "revision": 1
+      },
+      "requested_timeline_range_us": null,
+      "synthesis_profile": {
+        "engine": "indextts2",
+        "version": "2.0.0",
+        "model": "IndexTeam/IndexTTS-2",
+        "model_revision": "740dcaf",
+        "voice": "reference-audio",
+        "reference_sha256": "f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb",
+        "language": "zh-CN",
+        "device": "mps",
+        "seed": 42,
+        "local": true,
+        "emotion_supported": false
+      },
+      "cache_key": "1d0fab2ba0cccaa0a2be828ca58131d0665a6f1658655b230bbd6ff40b2b2a76",
+      "asset_id": "generated-voice-a6e535292f1d8ec377115877f8d1a307",
+      "raw_duration_us": 2349812,
+      "engine_duration_us": 2844458,
+      "duration_us": 2529812,
+      "speech_end_us": 2349812,
+      "sentence_pause_us": 180000,
+      "tempo_ratio": 1.0,
+      "fit_status": "fits",
+      "needs_retime": false,
+      "cache_hit": false,
+      "srt_uri": "subtitles/7490b0a6897b2decce1dea88fd7a57b20dbeaddbae35c751bb7c7f70cca4af4d.srt",
+      "quality": {
+        "peak_dbfs": -0.3,
+        "clipped_samples": 0,
+        "text_verification": "not_asr_verified",
+        "naturalness": "requires_listening"
+      },
+      "local_subtitles": [
+        {
+          "range_us": {
+            "begin": 0,
+            "end": 2349812
+          },
+          "text": "沿着林间小路，走进清新的绿意。"
+        }
+      ]
+    },
+    {
+      "cue_id": "cue-02",
+      "beat_id": "beat-middle",
+      "text": "云雾掠过山头，草木在风中舒展，让脚步慢下来。",
+      "duration_budget_us": 14800000,
+      "script_input": {
+        "kind": "StoryPlan",
+        "document_id": "story-8dfa8632acb57c32",
+        "revision": 1
+      },
+      "requested_timeline_range_us": null,
+      "synthesis_profile": {
+        "engine": "indextts2",
+        "version": "2.0.0",
+        "model": "IndexTeam/IndexTTS-2",
+        "model_revision": "740dcaf",
+        "voice": "reference-audio",
+        "reference_sha256": "f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb",
+        "language": "zh-CN",
+        "device": "mps",
+        "seed": 42,
+        "local": true,
+        "emotion_supported": false
+      },
+      "cache_key": "53670ff2c384564c2547cb90b4c22c02d0080b19f08f9800f284865b9a03c2c3",
+      "asset_id": "generated-voice-e7bb7d7c7e85a7e0a86d8f80aaad5dc0",
+      "raw_duration_us": 3938562,
+      "engine_duration_us": 4446625,
+      "duration_us": 4118562,
+      "speech_end_us": 3938562,
+      "sentence_pause_us": 180000,
+      "tempo_ratio": 1.0,
+      "fit_status": "fits",
+      "needs_retime": false,
+      "cache_hit": false,
+      "srt_uri": "subtitles/27dbef070c0b4328afcb197af55b1372c625341c6f4aeec70dccc280a46f6e67.srt",
+      "quality": {
+        "peak_dbfs": 0.0,
+        "clipped_samples": 1,
+        "text_verification": "not_asr_verified",
+        "naturalness": "requires_listening"
+      },
+      "local_subtitles": [
+        {
+          "range_us": {
+            "begin": 0,
+            "end": 3938562
+          },
+          "text": "云雾掠过山头，草木在风中舒展，让脚步慢下来。"
+        }
+      ]
+    },
+    {
+      "cue_id": "cue-03",
+      "beat_id": "beat-close",
+      "text": "把宁静留在风景里。",
+      "duration_budget_us": 4800000,
+      "script_input": {
+        "kind": "StoryPlan",
+        "document_id": "story-8dfa8632acb57c32",
+        "revision": 1
+      },
+      "requested_timeline_range_us": null,
+      "synthesis_profile": {
+        "engine": "indextts2",
+        "version": "2.0.0",
+        "model": "IndexTeam/IndexTTS-2",
+        "model_revision": "740dcaf",
+        "voice": "reference-audio",
+        "reference_sha256": "f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb",
+        "language": "zh-CN",
+        "device": "mps",
+        "seed": 42,
+        "local": true,
+        "emotion_supported": false
+      },
+      "cache_key": "fdeb74193a0b5e67579d5a80aafdf3b46f604c9e13abfbf89c4226f482fbcf51",
+      "asset_id": "generated-voice-58e27476e7cb09e78504f3877158a305",
+      "raw_duration_us": 1545938,
+      "engine_duration_us": 2031750,
+      "duration_us": 1725938,
+      "speech_end_us": 1545938,
+      "sentence_pause_us": 180000,
+      "tempo_ratio": 1.0,
+      "fit_status": "fits",
+      "needs_retime": false,
+      "cache_hit": false,
+      "srt_uri": "subtitles/7d88bca59477ad462effb4f4c9dc61fa136558bca1b4c3cd8d45ec92562cda4e.srt",
+      "quality": {
+        "peak_dbfs": 0.0,
+        "clipped_samples": 4,
+        "text_verification": "not_asr_verified",
+        "naturalness": "requires_listening"
+      },
+      "local_subtitles": [
+        {
+          "range_us": {
+            "begin": 0,
+            "end": 1545938
+          },
+          "text": "把宁静留在风景里。"
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "request": null,
+  "invalidated_cue_ids": [],
+  "alignment_invalidated": false
+}

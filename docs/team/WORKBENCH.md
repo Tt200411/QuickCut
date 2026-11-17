@@ -40,7 +40,9 @@ B 固定环境从 `outputs/vision-runtime/deployment-manifest.json` 读取 check
 
 IndexTTS2 的输入包括已批准文本和参考音频。工作台接收 1–30 秒、最大 20 MB、完整且有有效声音的 PCM16 WAV；每个新任务保存自己的 `reference/voice.wav`、`voice-config.json` 和原始来源/SHA-256，预检和合成都读取该任务配置。修改默认音色不会改变已经建立的任务；逐句参考覆盖也统一到本次选定的参考音频，逐句 seed 保留。声音缓存包含参考音频字节哈希，换音色不能误用旧 WAV。
 
-本机默认参考已按用户选择切换到 `ref_audio.zip` 内的 `男声.wav`（24 kHz、单声道、3.32 秒）。用户音频只保存在本机忽略目录，不随代码上传；其他机器需要在页面上传自己的参考 WAV，或在声音配置中指定有效文件。
+默认参考为用户选择的 `男声.wav`（24 kHz、单声道、3.32 秒）。根据用户本次共享要求，原始 `ref_audio.zip` 和三份 WAV 一同保存在 `materials/reference-audio/20261117/`；默认声音配置直接引用其中的 `男声.wav`。新克隆仓库需先安装 Git LFS 并在仓库根运行 `git lfs pull`，取得真实音频和共享交付媒体，不能把 LFS 指针文件当成 WAV。也可在页面上传其他有效参考 WAV，仅用于新建任务。
+
+共享参考音频不包含本地模型环境。新机器仍需运行 `python3 scripts/setup_indextts2.py` 和 `python3 scripts/setup_vision.py` 准备固定版本的模型与环境；安装脚本不会替换参考 WAV。部署清单包含本机路径，应由目标机器重新生成，归档中的旧清单仅作为验收证据。
 
 ## 失败恢复与版本
 

@@ -1,0 +1,10 @@
+{
+  "engine": "indextts2",
+  "model_dir": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/checkpoints",
+  "model_revision": "740dcaf",
+  "reference_audio": "/Users/tangbao/Documents/ChatGPT/CV Project/inputs/indextts2-reference.wav",
+  "device": "mps",
+  "seed": 42,
+  "sentence_pause_us": 180000,
+  "max_tempo": 1.15
+}

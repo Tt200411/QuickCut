@@ -1,0 +1,236 @@
+{
+  "method": "FFmpeg mono 48kHz PCM; FFT normalized cross-correlation around D offsets; no perceptual listening claim",
+  "native": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-release-20261115/QuickCut-Countryside-30s-正式预览.mov",
+  "package": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/quickcut-f-release-20261115/乡村工程",
+  "native_decoded_samples": 1438895,
+  "preview_decoded_samples": 1440000,
+  "sample_rate": 48000,
+  "cue_checks": [
+    {
+      "cue_id": "cue-01",
+      "expected_end_s": 3.660625,
+      "native_vs_e": {
+        "expected_start_s": 0.2,
+        "best_start_s": 0.2,
+        "offset_ms": 0.0,
+        "normalized_correlation": 0.9995972677027914,
+        "estimated_gain": 0.9969789104595378,
+        "reference_rms_dbfs": -22.6049631524744,
+        "native_rms_dbfs": -22.627744927930568,
+        "residual_to_reference_db": -30.963191835656836,
+        "reference_last_active_s": 3.26875,
+        "last_300ms_active_correlation": 0.9998169796095835,
+        "last_300ms_rms_ratio": 0.9985858569905318
+      },
+      "preview_vs_e": {
+        "expected_start_s": 0.2,
+        "best_start_s": 0.2,
+        "offset_ms": 0.0,
+        "normalized_correlation": 0.9998998190656936,
+        "estimated_gain": 0.997119516430346,
+        "reference_rms_dbfs": -22.6049631524744,
+        "native_rms_dbfs": -22.629148614302267,
+        "residual_to_reference_db": -37.006252274575324,
+        "reference_last_active_s": 3.26875,
+        "last_300ms_active_correlation": 0.9998698515444663,
+        "last_300ms_rms_ratio": 0.9961449606236166
+      }
+    },
+    {
+      "cue_id": "cue-02",
+      "expected_end_s": 13.859104,
+      "native_vs_e": {
+        "expected_start_s": 10.2,
+        "best_start_s": 10.199979166666667,
+        "offset_ms": -0.02083333333224857,
+        "normalized_correlation": 0.9999142400891899,
+        "estimated_gain": 0.9978732011199961,
+        "reference_rms_dbfs": -22.46790950239463,
+        "native_rms_dbfs": -22.48565738190969,
+        "residual_to_reference_db": -37.67479094630878,
+        "reference_last_active_s": 3.4571666666666667,
+        "last_300ms_active_correlation": 0.9998879317416546,
+        "last_300ms_rms_ratio": 0.9988901617942999
+      },
+      "preview_vs_e": {
+        "expected_start_s": 10.2,
+        "best_start_s": 10.2,
+        "offset_ms": 0.0,
+        "normalized_correlation": 0.9998514129327196,
+        "estimated_gain": 0.9966246194355514,
+        "reference_rms_dbfs": -22.46790950239463,
+        "native_rms_dbfs": -22.495986570340406,
+        "residual_to_reference_db": -35.29828966723042,
+        "reference_last_active_s": 3.4571666666666667,
+        "last_300ms_active_correlation": 0.9997186523834626,
+        "last_300ms_rms_ratio": 0.9945398156458716
+      }
+    },
+    {
+      "cue_id": "cue-03",
+      "expected_end_s": 28.687833,
+      "native_vs_e": {
+        "expected_start_s": 25.2,
+        "best_start_s": 25.199958333333335,
+        "offset_ms": -0.04166666666449714,
+        "normalized_correlation": 0.9998149494496671,
+        "estimated_gain": 0.9974296119568599,
+        "reference_rms_dbfs": -21.566378099101406,
+        "native_rms_dbfs": -21.587125471219583,
+        "residual_to_reference_db": -34.33794545667596,
+        "reference_last_active_s": 3.2717916666666667,
+        "last_300ms_active_correlation": 0.9997985053027849,
+        "last_300ms_rms_ratio": 0.997251436918669
+      },
+      "preview_vs_e": {
+        "expected_start_s": 25.2,
+        "best_start_s": 25.2,
+        "offset_ms": 0.0,
+        "normalized_correlation": 0.9998156150769355,
+        "estimated_gain": 0.9958525783380886,
+        "reference_rms_dbfs": -21.566378099101406,
+        "native_rms_dbfs": -21.60087536183006,
+        "residual_to_reference_db": -34.36734364776787,
+        "reference_last_active_s": 3.2717916666666667,
+        "last_300ms_active_correlation": 0.9998732604501859,
+        "last_300ms_rms_ratio": 0.9976540392069116
+      }
+    }
+  ],
+  "source_audio_checks": [
+    {
+      "clip_id": "clip-original-1",
+      "rms_dbfs": -240.0,
+      "peak": 0.0,
+      "samples": 480000
+    },
+    {
+      "clip_id": "clip-original-2",
+      "rms_dbfs": -240.0,
+      "peak": 0.0,
+      "samples": 720000
+    },
+    {
+      "clip_id": "clip-original-3",
+      "rms_dbfs": -240.0,
+      "peak": 0.0,
+      "samples": 240000
+    }
+  ],
+  "quiet_window_checks": [
+    {
+      "begin_s": 0,
+      "end_s": 0.15,
+      "rms_dbfs": -240.0,
+      "peak": 0.0
+    },
+    {
+      "begin_s": 4,
+      "end_s": 9.8,
+      "rms_dbfs": -240.0,
+      "peak": 0.0
+    },
+    {
+      "begin_s": 14,
+      "end_s": 24.8,
+      "rms_dbfs": -240.0,
+      "peak": 0.0
+    },
+    {
+      "begin_s": 28.8,
+      "end_s": 29.9,
+      "rms_dbfs": -240.0,
+      "peak": 0.0
+    },
+    {
+      "begin_s": 29.95,
+      "end_s": 29.976979166666666,
+      "rms_dbfs": -240.0,
+      "peak": 0.0
+    }
+  ],
+  "frame_checks": [
+    {
+      "time_s": 1,
+      "top_two_thirds_correlation": 0.9689858393064296,
+      "mean_absolute_luma_error_255": 5.1336458333333335
+    },
+    {
+      "time_s": 5,
+      "top_two_thirds_correlation": 0.998365715088018,
+      "mean_absolute_luma_error_255": 1.2051041666666666
+    },
+    {
+      "time_s": 9.966667,
+      "top_two_thirds_correlation": 0.9997607928464843,
+      "mean_absolute_luma_error_255": 1.1130208333333333
+    },
+    {
+      "time_s": 10,
+      "top_two_thirds_correlation": 0.9999454976831792,
+      "mean_absolute_luma_error_255": 0.789375
+    },
+    {
+      "time_s": 10.033333,
+      "top_two_thirds_correlation": 0.999945948185993,
+      "mean_absolute_luma_error_255": 0.7832291666666666
+    },
+    {
+      "time_s": 15,
+      "top_two_thirds_correlation": 0.9989520846656283,
+      "mean_absolute_luma_error_255": 1.4185416666666666
+    },
+    {
+      "time_s": 24.966667,
+      "top_two_thirds_correlation": 0.9999166321371925,
+      "mean_absolute_luma_error_255": 1.0360416666666667
+    },
+    {
+      "time_s": 25,
+      "top_two_thirds_correlation": 0.9999427538494066,
+      "mean_absolute_luma_error_255": 1.0420833333333333
+    },
+    {
+      "time_s": 25.033333,
+      "top_two_thirds_correlation": 0.9979332356413668,
+      "mean_absolute_luma_error_255": 3.3823958333333333
+    },
+    {
+      "time_s": 29.9,
+      "top_two_thirds_correlation": 0.999916324308644,
+      "mean_absolute_luma_error_255": 1.2202083333333333
+    }
+  ],
+  "input_refs": [
+    {
+      "kind": "EditTimeline",
+      "document_id": "timeline-countryside",
+      "revision": 1
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-1aebcf579acf476087b5110924b0862e",
+      "revision": 1
+    },
+    {
+      "kind": "VoicePackage",
+      "document_id": "voice-story-countryside",
+      "revision": 1
+    }
+  ],
+  "checked_hashes": {
+    "QuickCut-Countryside-30s-正式预览.mov": "sha256:a6367e299dca0e78b9006e83cf0f54af05082bada9b54130180c369e10f52616",
+    "乡村工程/preview.mp4": "sha256:0d672288c8ade56a0be91dcdd87cf3dc53a3905fedbe47d0596b554dbd879b0a",
+    "乡村工程/export-manifest.json": "sha256:009519ea54996b4eea81241143e10a186cd61dd7e377cf13b3724a8771ec4d0a",
+    "乡村工程/inputs/timeline.json": "sha256:ca1aaa9b92142e640597f3a1f1b03342cbff8cb66dbe44f54ebd73688676e3b7"
+  },
+  "assessment": {
+    "narration_timing": "passed: maximum absolute offset 0.041667ms at 48kHz comparison rate",
+    "narration_present": "passed: all three correlations >0.99959",
+    "narration_tails": "passed: each last 300ms active speech correlates >0.99979; no truncation detected",
+    "picture_samples": "passed: expected sequence and 10s/25s cuts agree at sampled frames",
+    "shorter_audio_stream": "only trailing digital silence absent; last narration ends 28.687833s, >1.28s before decoded native audio end",
+    "source_audio_mixing": "not established by this native export: all three source audio PCM tracks contain digital zeros",
+    "subjective_listening": "not performed"
+  }
+}

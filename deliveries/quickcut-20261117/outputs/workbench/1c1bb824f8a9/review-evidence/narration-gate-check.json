@@ -1,0 +1,9 @@
+{
+  "http_status": 422,
+  "body": {
+    "detail": "建立出发情境旁白需修改：旁白缺少句末标点，可能是残句；请核对并改成完整句后确认。"
+  },
+  "status_after": "needs_review",
+  "render_attempt_after": 0,
+  "purpose": "Actual unfinished model narration must be rejected before E"
+}

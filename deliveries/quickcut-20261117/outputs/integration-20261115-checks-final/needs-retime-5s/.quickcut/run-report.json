@@ -1,0 +1,54 @@
+{
+  "project_id": "project-pipeline-demo",
+  "manifest_revision": 1,
+  "stages": [
+    {
+      "asset_id": "asset-1ae59de70e8f43e280ccc0fd869861d7",
+      "stage": "probe",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-1ae59de70e8f43e280ccc0fd869861d7",
+      "stage": "keyframes",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-1ae59de70e8f43e280ccc0fd869861d7",
+      "stage": "proxy",
+      "cache_hit": false,
+      "attempts": 1
+    },
+    {
+      "asset_id": "asset-1ae59de70e8f43e280ccc0fd869861d7",
+      "stage": "asr",
+      "cache_hit": false,
+      "attempts": 1
+    }
+  ],
+  "errors": [],
+  "config": {
+    "window_us": 3500000,
+    "coarse_window_us": 10500000,
+    "proxy_width": 320,
+    "asr": "none",
+    "asr_model": "tiny",
+    "asr_language": null,
+    "asr_device": "cpu",
+    "asr_compute_type": "int8",
+    "asr_beam_size": 5,
+    "asr_cpu_threads": 2,
+    "asr_num_workers": 1,
+    "asr_vad": true,
+    "asr_condition_on_previous_text": false,
+    "asr_initial_prompt": null,
+    "asr_hotwords": null,
+    "asr_model_revision": null,
+    "max_attempts": 1
+  },
+  "tools": {
+    "ffmpeg": "ffmpeg version 9.0.2 Copyright (c) 2000-2026 the FFmpeg developers",
+    "ffprobe": "ffprobe version 9.0.2 Copyright (c) 2007-2026 the FFmpeg developers"
+  }
+}

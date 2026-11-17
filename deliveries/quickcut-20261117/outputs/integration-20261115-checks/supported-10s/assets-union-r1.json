@@ -1,0 +1,144 @@
+{
+  "fixtures_only": true,
+  "inputs": [
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-74ba2a953d274e35a9165d8318aa979a",
+      "revision": 1
+    },
+    {
+      "kind": "VoicePackage",
+      "document_id": "voice-story-001",
+      "revision": 1
+    }
+  ],
+  "assets": [
+    {
+      "asset_id": "asset-021d5a28b43c492dadbdacfa4a233dfe",
+      "revision": 1,
+      "origin": "user",
+      "uri": "media/user/asset-021d5a28b43c492dadbdacfa4a233dfe/r1.mp4",
+      "content_hash": "sha256:26f2c90001ade7bd3009278b94d11dba69048ea4947360ab1dc18e7d95d7b36f",
+      "provenance_note": "实际合成测试图案；非实拍",
+      "media_kind": "video",
+      "duration_us": 18000000,
+      "video": {
+        "width": 320,
+        "height": 180,
+        "fps": {
+          "numerator": 30,
+          "denominator": 1
+        },
+        "time_base": "1/15360",
+        "start_time_us": 0,
+        "codec": "h264",
+        "stream_index": 0,
+        "source_origin_pts": 0,
+        "source_origin_us": 0,
+        "variable_frame_rate": false
+      },
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "aac",
+        "start_time_us": 0
+      },
+      "source_pts_uri": "derived/asset-021d5a28b43c492dadbdacfa4a233dfe/r1/probe-23643091d5f6d95cd3093613/source-pts.json",
+      "proxy_uri": "derived/asset-021d5a28b43c492dadbdacfa4a233dfe/r1/proxy-add9f5b5a056302f8ab335da/proxy.mp4",
+      "proxy_mapping_uri": "derived/asset-021d5a28b43c492dadbdacfa4a233dfe/r1/proxy-add9f5b5a056302f8ab335da/proxy-map.json",
+      "proxy_status": "success",
+      "transcript": {
+        "status": "disabled",
+        "profile": {
+          "asr": "none",
+          "asr_model": "tiny",
+          "asr_language": null,
+          "asr_device": "cpu",
+          "asr_compute_type": "int8",
+          "asr_beam_size": 5,
+          "asr_cpu_threads": 2,
+          "asr_num_workers": 1,
+          "asr_vad": true,
+          "asr_condition_on_previous_text": false,
+          "asr_initial_prompt": null,
+          "asr_hotwords": null,
+          "asr_model_revision": null,
+          "packages": {
+            "faster-whisper": "1.2.1",
+            "ctranslate2": "4.8.3",
+            "av": "19.0.1",
+            "tokenizers": "0.23.3",
+            "onnxruntime": "1.31.0",
+            "huggingface-hub": "2.2.0"
+          },
+          "vad_filter": true,
+          "audio_preprocessing": "video-origin-mono-16k-v1",
+          "diagnostics_version": 1
+        },
+        "segments": [],
+        "diagnostics": {},
+        "source_content_hash": "sha256:26f2c90001ade7bd3009278b94d11dba69048ea4947360ab1dc18e7d95d7b36f",
+        "review": {
+          "status": "not_applicable",
+          "reasons": [],
+          "policy": {
+            "version": 1,
+            "calibrated": false,
+            "min_avg_logprob": -1.0,
+            "max_no_speech_prob": 0.6,
+            "max_compression_ratio": 2.4,
+            "tail_tolerance_us": 500000
+          }
+        },
+        "uri": "derived/asset-021d5a28b43c492dadbdacfa4a233dfe/r1/asr-1f3296908d39d61187a2c34a/transcript.json"
+      },
+      "processing_status": "success"
+    },
+    {
+      "asset_id": "generated-voice-a39d11a7994e3c1cadc1ae2889142fbf",
+      "revision": 1,
+      "media_kind": "audio",
+      "origin": "generated",
+      "uri": "audio/narration/f4c98ba58e4e428c0ff13f6571f807cc633d5aebf42ef0e7eb093ce95d98f477.wav",
+      "content_hash": "sha256:36a4152eace2c6a685809bb88d1685f8d9b002965b677754ee91fe62e7cc5987",
+      "duration_us": 1180000,
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "pcm_s16le"
+      }
+    },
+    {
+      "asset_id": "generated-voice-b9d8ee11b6c29dec688cf47b32a67424",
+      "revision": 1,
+      "media_kind": "audio",
+      "origin": "generated",
+      "uri": "audio/narration/b1880f650fb30e3d40b0db81862d92eb2bbbf2a0b90f30ad4d7a4ae20262babe.wav",
+      "content_hash": "sha256:36a4152eace2c6a685809bb88d1685f8d9b002965b677754ee91fe62e7cc5987",
+      "duration_us": 1180000,
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "pcm_s16le"
+      }
+    },
+    {
+      "asset_id": "generated-voice-8c2d9e79143dce926e984f433e025897",
+      "revision": 1,
+      "media_kind": "audio",
+      "origin": "generated",
+      "uri": "audio/narration/01d58f283a77172e5600419a0b634f2c5f3cf0099e5719a531851ec6c5af46a4.wav",
+      "content_hash": "sha256:36a4152eace2c6a685809bb88d1685f8d9b002965b677754ee91fe62e7cc5987",
+      "duration_us": 1180000,
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "pcm_s16le"
+      }
+    }
+  ]
+}

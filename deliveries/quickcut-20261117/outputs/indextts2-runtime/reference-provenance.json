@@ -1,0 +1,15 @@
+{
+  "source": "examples/voice_package/real/audio/narration/10f65b0234fa64f7d0ad4b473c9aacbac25bd8e4107d2019a148150fdf1baf44.wav",
+  "reference": "inputs/indextts2-reference.wav",
+  "source_engine": {
+    "engine": "say",
+    "version": "15.7.9",
+    "voice": "Reed (中文（中国大陆）)",
+    "language": "zh-CN",
+    "rate": 145,
+    "local": true,
+    "emotion_supported": false
+  },
+  "purpose": "User-approved project Mandarin sample for deployment validation; not original user test speaker",
+  "sha256": "da1f00d4ca84680174cad16b9db0c4d7a2f21e7545bacce583cf83be06a6ed95"
+}

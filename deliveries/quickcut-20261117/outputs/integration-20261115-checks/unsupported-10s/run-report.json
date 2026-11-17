@@ -1,0 +1,182 @@
+{
+  "schema_version": "0.1.0",
+  "project_id": "project-pipeline-demo",
+  "case": "unsupported",
+  "target_seconds": 10,
+  "fixturesOnly": true,
+  "status": "needs_input",
+  "stages": [
+    {
+      "stage": "setup",
+      "status": "completed",
+      "elapsed_seconds": 0.10107233305461705
+    },
+    {
+      "stage": "synthesize",
+      "status": "completed",
+      "elapsed_seconds": 0.11595741601195186
+    },
+    {
+      "stage": "A-ingest",
+      "status": "completed",
+      "elapsed_seconds": 0.33934725006110966
+    },
+    {
+      "stage": "A-validate",
+      "status": "completed",
+      "elapsed_seconds": 0.08911529195029289
+    },
+    {
+      "stage": "B-retrieve",
+      "status": "completed",
+      "elapsed_seconds": 0.01884429098572582
+    },
+    {
+      "stage": "C-r1",
+      "status": "completed",
+      "elapsed_seconds": 0.0012471249792724848
+    },
+    {
+      "stage": "manifest-unchanged",
+      "status": "completed",
+      "elapsed_seconds": 3.533298149704933e-05
+    }
+  ],
+  "calls": {
+    "A": 1,
+    "B": 1,
+    "E": 0,
+    "D": 0
+  },
+  "files": {
+    "brief": "brief.json",
+    "source": "sources/synthetic-pattern.mp4",
+    "manifest": "asset-manifest.json",
+    "candidate_set": "candidate-set.json",
+    "story_plan": "story-plan-r1.json",
+    "report": "run-report.json"
+  },
+  "render": null,
+  "limitations": [
+    "合成测试画面没有对白。演示给每个窗口写上对应故事句，B 再按字面重合检索。",
+    "候选审阅和 approved_cues 是预设夹具；不代表真人看片或听审。",
+    "E fixture_tone 是固定一秒测试音调，不是真实语音；5 秒目标的收尾预算不足时停止 D。",
+    "仅生成 D 多轨 JSON；未渲染、未导出编辑器工程、未验证编辑器导入。"
+  ],
+  "git": {
+    "head": "655bea288611af6161d6d3e8ae20664346985038",
+    "branch": "codex/integrate-f-export",
+    "refs": [
+      "ae64376f25a50258183e8e2b0a5bc9eb007016a7 refs/codex/turn-diffs/checkpoints/62dd8629649527285eee4809bab84240/bad5aa65c31c3926665de3dca0bab9f8/1793955465476/3fdc7c9b-9f23-48dd-9d09-8f2fb84fb1c9",
+      "655bea288611af6161d6d3e8ae20664346985038 refs/heads/codex/integrate-f-export",
+      "dffe4f7b9998329d68d5820d20a0c12d7ab5fb62 refs/heads/main",
+      "dffe4f7b9998329d68d5820d20a0c12d7ab5fb62 refs/remotes/origin/main",
+      "a463e4555fa0933cf898481ae0531eb5e30c8058 refs/remotes/origin/pr/6",
+      "eb05bd0de8b7415c9bf95dcdfe7e8188d313244f refs/remotes/origin/pr/9",
+      "a463e4555fa0933cf898481ae0531eb5e30c8058 refs/remotes/review/pr6",
+      "eb05bd0de8b7415c9bf95dcdfe7e8188d313244f refs/remotes/review/pr9"
+    ],
+    "status": [
+      "M .github/workflows/pipeline-integration.yml",
+      " M quickcut/cli.py",
+      " M quickcut/encoder.py",
+      " M quickcut/retrieval.py",
+      " M quickcut/timeline_preview.py",
+      " M scripts/plan_summary_acts.py",
+      " M tests/test_encoder.py",
+      " M tests/test_retrieval.py",
+      " M tests/test_summary.py",
+      " M tests/test_timeline_preview.py",
+      "?? quickcut/jianying.py",
+      "?? quickcut/templates/"
+    ],
+    "source_hashes": {
+      "quickcut/ingest.py": "sha256:f754a124b5c7de578f778f8f627d1fba41a15b967afb67eb95623d86c593453c",
+      "quickcut/retrieval.py": "sha256:c9de958ee82d49c2942df1499d8b946415b767920cd710a174e85839afc0424e",
+      "quickcut/planning/planning.py": "sha256:2b042ddd7f6b882fe178244109279ff734d1ff5ce225d4fcf8e79dbe76e7df0a",
+      "quickcut/voice_package.py": "sha256:024123c2eb0cefa612f4dd7ea6437c07ee2d957ac0c837b6f5e1c4abcb13399d",
+      "quickcut/timeline.py": "sha256:9662c2e30cfcf908d93d607447347dd166e7eee3b1363428a55af21073e66fed",
+      "quickcut/integration.py": "sha256:807c7e73b4a0d79d4d4f8e67ee98f7e059105bdc2be44b99d6bc9e5ad1ba8a13",
+      "scripts/demo_pipeline.py": "sha256:98c0db4b3c45ff82d39c6c0e101e128a040634d20dd38dcd97532f6c4789994d"
+    }
+  },
+  "capabilities": {
+    "tools": {
+      "ffmpeg": {
+        "version": "ffmpeg version 9.0.2 Copyright (c) 2000-2026 the FFmpeg developers",
+        "binary": "/opt/homebrew/bin/ffmpeg"
+      },
+      "ffprobe": {
+        "version": "ffprobe version 9.0.2 Copyright (c) 2007-2026 the FFmpeg developers",
+        "binary": "/opt/homebrew/bin/ffprobe"
+      }
+    },
+    "A": {
+      "ingest": true,
+      "asr": "none"
+    },
+    "B": {
+      "executed": true,
+      "candidate_source": "retrieve"
+    },
+    "C": {
+      "selector": "rule",
+      "vlm_executed": false
+    },
+    "E": {
+      "mode": "fixture_tone",
+      "speech": false
+    },
+    "D": {
+      "multitrack_json": true
+    },
+    "render": {
+      "executed": false
+    }
+  },
+  "ingest_config": {
+    "window_us": 6000000,
+    "coarse_window_us": 18000000,
+    "proxy_width": 320,
+    "asr": "none",
+    "asr_model": "tiny",
+    "asr_language": null,
+    "asr_device": "cpu",
+    "asr_compute_type": "int8",
+    "asr_beam_size": 5,
+    "asr_cpu_threads": 2,
+    "asr_num_workers": 1,
+    "asr_vad": true,
+    "asr_condition_on_previous_text": false,
+    "asr_initial_prompt": null,
+    "asr_hotwords": null,
+    "asr_model_revision": null,
+    "max_attempts": 1
+  },
+  "manifest_hash_before": "sha256:51f5af0609636b74fb3de7c1a8ba3fd3a7c4bf96860a2bb2a19390dc76b24865",
+  "media_validation": {
+    "status": "passed",
+    "asset_count": 1,
+    "decoded_video_files": 2,
+    "hashes": true,
+    "source_pts_mapping": true,
+    "A_manifest_validated": true
+  },
+  "manifestFixturesOnly": false,
+  "expected_stop": true,
+  "feedback": {
+    "status": "needs_input",
+    "code": "UNSUPPORTED_STORY_BEAT",
+    "stage": "C",
+    "project_id": "project-pipeline-demo",
+    "action_owner": "C",
+    "retryable": false,
+    "affected_ids": [
+      "beat-middle"
+    ],
+    "message": "B 的中段候选被演示用例清空；未调用 E/D"
+  },
+  "manifest_hash_after": "sha256:51f5af0609636b74fb3de7c1a8ba3fd3a7c4bf96860a2bb2a19390dc76b24865",
+  "manifest_unchanged": true,
+  "elapsed_seconds": 0.6657080000732094
+}

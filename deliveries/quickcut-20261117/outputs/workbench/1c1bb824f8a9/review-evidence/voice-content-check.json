@@ -1,0 +1,48 @@
+{
+  "checked_at": "2026-11-17T01:19:41.770873+00:00",
+  "method": "independent faster-whisper/small cpu/int8 on actual generated WAV through QuickCut ASR adapter",
+  "reference_sha256": "f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb",
+  "voice_package_revision": 1,
+  "not_a_human_listening_review": true,
+  "checks": [
+    {
+      "cue_id": "cue-01",
+      "expected": "沿着林间小路，走进清新的绿意。",
+      "recognized": "沿着临间小路走进清新的律义。",
+      "spans": [
+        {
+          "segment_id": "segment-0000",
+          "start": 0.0,
+          "end": 2.4,
+          "text": "沿着临间小路走进清新的律义。"
+        }
+      ]
+    },
+    {
+      "cue_id": "cue-02",
+      "expected": "云雾掠过山头，草木在风中舒展，让脚步慢下来。",
+      "recognized": "雲霧掠過山頭,草木在風中舒展,讓腳步慢下來。",
+      "spans": [
+        {
+          "segment_id": "segment-0000",
+          "start": 0.0,
+          "end": 4.0,
+          "text": "雲霧掠過山頭,草木在風中舒展,讓腳步慢下來。"
+        }
+      ]
+    },
+    {
+      "cue_id": "cue-03",
+      "expected": "把宁静留在风景里。",
+      "recognized": "把宁静留在风景里。",
+      "spans": [
+        {
+          "segment_id": "segment-0000",
+          "start": 0.0,
+          "end": 1.6,
+          "text": "把宁静留在风景里。"
+        }
+      ]
+    }
+  ]
+}

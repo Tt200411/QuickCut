@@ -1,0 +1,9 @@
+{
+  "subtitle_position": "top",
+  "source": "settings.json",
+  "applied_before_final_freeze": true,
+  "d_timeline_content_hash": "sha256:456c0d1d47ad42dfffc7388729abfd92ae286319f4c60c2c5d531393b233412f",
+  "final_timeline_content_hash": "sha256:90a5b4264988df18d373ccd60c3f45fefa33c9ad0c3da2cbb2b6c91e30d86b6b",
+  "timing_changed": false,
+  "fit_receipt_changed": false
+}

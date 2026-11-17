@@ -1,0 +1,363 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "CandidateSet",
+  "document_id": "candidates-demo",
+  "project_id": "project-pipeline-demo",
+  "revision": 1,
+  "fixtures_only": true,
+  "owner": "B",
+  "inputs": [
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-68a8d6b2750845a79500436bb18523b2",
+      "revision": 1
+    },
+    {
+      "kind": "RetrievalRequest",
+      "document_id": "request-001",
+      "revision": 1
+    }
+  ],
+  "status": "ok",
+  "results": [
+    {
+      "query_id": "query-open",
+      "status": "ok",
+      "reason": "",
+      "allowed_origins": [
+        "user"
+      ],
+      "constraints": {
+        "aspect_ratio": null,
+        "min_duration_us": null,
+        "max_duration_us": null,
+        "duration_budget_us_applied_as_filter": false,
+        "rejected": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "candidate-query-open-asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-0-6000000",
+          "segment_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-0-6000000",
+          "asset_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e",
+          "asset_revision": 1,
+          "origin": "user",
+          "visual_score": 0.15,
+          "transcript_score": 0.0,
+          "description_score": 1.0,
+          "ranking_score": 0.65,
+          "score_profile": "encoder=fallback-color-histogram; model=fallback-color-histogram; pretrained=none; dimension=72; visual=color-histogram; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 6000000
+          },
+          "duration_us": 6000000,
+          "evidence": [
+            "visual_keyframe",
+            "demo_window_label"
+          ],
+          "provenance_note": "实际合成测试图案；非实拍",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "not_applicable",
+            "reason": "tags are recorded for external b-roll"
+          }
+        },
+        {
+          "candidate_id": "candidate-query-open-asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-6000000-12000000",
+          "segment_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-6000000-12000000",
+          "asset_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e",
+          "asset_revision": 1,
+          "origin": "user",
+          "visual_score": 0.15,
+          "transcript_score": 0.0,
+          "description_score": 0.8889,
+          "ranking_score": 0.5778,
+          "score_profile": "encoder=fallback-color-histogram; model=fallback-color-histogram; pretrained=none; dimension=72; visual=color-histogram; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 6000000,
+            "end": 12000000
+          },
+          "duration_us": 6000000,
+          "evidence": [
+            "visual_keyframe",
+            "demo_window_label"
+          ],
+          "provenance_note": "实际合成测试图案；非实拍",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "not_applicable",
+            "reason": "tags are recorded for external b-roll"
+          }
+        },
+        {
+          "candidate_id": "candidate-query-open-asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-12000000-18000000",
+          "segment_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-12000000-18000000",
+          "asset_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e",
+          "asset_revision": 1,
+          "origin": "user",
+          "visual_score": 0.15,
+          "transcript_score": 0.0,
+          "description_score": 0.8889,
+          "ranking_score": 0.5778,
+          "score_profile": "encoder=fallback-color-histogram; model=fallback-color-histogram; pretrained=none; dimension=72; visual=color-histogram; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 12000000,
+            "end": 18000000
+          },
+          "duration_us": 6000000,
+          "evidence": [
+            "visual_keyframe",
+            "demo_window_label"
+          ],
+          "provenance_note": "实际合成测试图案；非实拍",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "not_applicable",
+            "reason": "tags are recorded for external b-roll"
+          }
+        }
+      ]
+    },
+    {
+      "query_id": "query-middle",
+      "status": "ok",
+      "reason": "",
+      "allowed_origins": [
+        "user"
+      ],
+      "constraints": {
+        "aspect_ratio": null,
+        "min_duration_us": null,
+        "max_duration_us": null,
+        "duration_budget_us_applied_as_filter": false,
+        "rejected": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "candidate-query-middle-asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-6000000-12000000",
+          "segment_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-6000000-12000000",
+          "asset_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e",
+          "asset_revision": 1,
+          "origin": "user",
+          "visual_score": 0.15,
+          "transcript_score": 0.0,
+          "description_score": 1.0,
+          "ranking_score": 0.65,
+          "score_profile": "encoder=fallback-color-histogram; model=fallback-color-histogram; pretrained=none; dimension=72; visual=color-histogram; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 6000000,
+            "end": 12000000
+          },
+          "duration_us": 6000000,
+          "evidence": [
+            "visual_keyframe",
+            "demo_window_label"
+          ],
+          "provenance_note": "实际合成测试图案；非实拍",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "not_applicable",
+            "reason": "tags are recorded for external b-roll"
+          }
+        },
+        {
+          "candidate_id": "candidate-query-middle-asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-0-6000000",
+          "segment_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-0-6000000",
+          "asset_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e",
+          "asset_revision": 1,
+          "origin": "user",
+          "visual_score": 0.15,
+          "transcript_score": 0.0,
+          "description_score": 0.8889,
+          "ranking_score": 0.5778,
+          "score_profile": "encoder=fallback-color-histogram; model=fallback-color-histogram; pretrained=none; dimension=72; visual=color-histogram; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 6000000
+          },
+          "duration_us": 6000000,
+          "evidence": [
+            "visual_keyframe",
+            "demo_window_label"
+          ],
+          "provenance_note": "实际合成测试图案；非实拍",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "not_applicable",
+            "reason": "tags are recorded for external b-roll"
+          }
+        },
+        {
+          "candidate_id": "candidate-query-middle-asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-12000000-18000000",
+          "segment_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-12000000-18000000",
+          "asset_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e",
+          "asset_revision": 1,
+          "origin": "user",
+          "visual_score": 0.15,
+          "transcript_score": 0.0,
+          "description_score": 0.8889,
+          "ranking_score": 0.5778,
+          "score_profile": "encoder=fallback-color-histogram; model=fallback-color-histogram; pretrained=none; dimension=72; visual=color-histogram; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 12000000,
+            "end": 18000000
+          },
+          "duration_us": 6000000,
+          "evidence": [
+            "visual_keyframe",
+            "demo_window_label"
+          ],
+          "provenance_note": "实际合成测试图案；非实拍",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "not_applicable",
+            "reason": "tags are recorded for external b-roll"
+          }
+        }
+      ]
+    },
+    {
+      "query_id": "query-close",
+      "status": "ok",
+      "reason": "",
+      "allowed_origins": [
+        "user"
+      ],
+      "constraints": {
+        "aspect_ratio": null,
+        "min_duration_us": null,
+        "max_duration_us": null,
+        "duration_budget_us_applied_as_filter": false,
+        "rejected": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "candidate-query-close-asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-12000000-18000000",
+          "segment_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-12000000-18000000",
+          "asset_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e",
+          "asset_revision": 1,
+          "origin": "user",
+          "visual_score": 0.15,
+          "transcript_score": 0.0,
+          "description_score": 1.0,
+          "ranking_score": 0.65,
+          "score_profile": "encoder=fallback-color-histogram; model=fallback-color-histogram; pretrained=none; dimension=72; visual=color-histogram; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 12000000,
+            "end": 18000000
+          },
+          "duration_us": 6000000,
+          "evidence": [
+            "visual_keyframe",
+            "demo_window_label"
+          ],
+          "provenance_note": "实际合成测试图案；非实拍",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "not_applicable",
+            "reason": "tags are recorded for external b-roll"
+          }
+        },
+        {
+          "candidate_id": "candidate-query-close-asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-0-6000000",
+          "segment_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-0-6000000",
+          "asset_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e",
+          "asset_revision": 1,
+          "origin": "user",
+          "visual_score": 0.15,
+          "transcript_score": 0.0,
+          "description_score": 0.8889,
+          "ranking_score": 0.5778,
+          "score_profile": "encoder=fallback-color-histogram; model=fallback-color-histogram; pretrained=none; dimension=72; visual=color-histogram; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 0,
+            "end": 6000000
+          },
+          "duration_us": 6000000,
+          "evidence": [
+            "visual_keyframe",
+            "demo_window_label"
+          ],
+          "provenance_note": "实际合成测试图案；非实拍",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "not_applicable",
+            "reason": "tags are recorded for external b-roll"
+          }
+        },
+        {
+          "candidate_id": "candidate-query-close-asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-6000000-12000000",
+          "segment_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e-r1-shot-6000000-12000000",
+          "asset_id": "asset-a8f8c84d6a1a467587f9fbc00db5cd2e",
+          "asset_revision": 1,
+          "origin": "user",
+          "visual_score": 0.15,
+          "transcript_score": 0.0,
+          "description_score": 0.8889,
+          "ranking_score": 0.5778,
+          "score_profile": "encoder=fallback-color-histogram; model=fallback-color-histogram; pretrained=none; dimension=72; visual=color-histogram; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+          "suggested_role": "primary",
+          "source_range_us": {
+            "begin": 6000000,
+            "end": 12000000
+          },
+          "duration_us": 6000000,
+          "evidence": [
+            "visual_keyframe",
+            "demo_window_label"
+          ],
+          "provenance_note": "实际合成测试图案；非实拍",
+          "flags": [],
+          "unmet_conditions": [],
+          "tags": {
+            "status": "not_applicable",
+            "reason": "tags are recorded for external b-roll"
+          }
+        }
+      ]
+    }
+  ],
+  "retrieval_profile": {
+    "config": {
+      "encoder_mode": null,
+      "transcript_weight": 0.35,
+      "description_weight": 0.65,
+      "low_confidence_threshold": 0.22,
+      "minimum_ranking_score": 0.0,
+      "dedup_by_content_hash": true
+    },
+    "input_fingerprints": {
+      "AssetManifest": "sha256:2be0269508ca23e324da4e93dcc6d2c01a385aeae7f67b4fe679149c62f80e01",
+      "RetrievalRequest": "sha256:21b242e8e329bedb99e031b280945c694a4b71378a5948c8a4cd0915974631e9"
+    },
+    "score_profile": "encoder=fallback-color-histogram; model=fallback-color-histogram; pretrained=none; dimension=72; visual=color-histogram; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+    "encoder": {
+      "encoder": "fallback-color-histogram",
+      "model": "fallback-color-histogram",
+      "pretrained": "none",
+      "dimension": 72,
+      "visual_score": "color-histogram",
+      "calibrated": false
+    },
+    "dedup_by_content_hash": true,
+    "duration_budget_us_applied_as_filter": false,
+    "tag_labels": null,
+    "tag_method": "unavailable"
+  }
+}

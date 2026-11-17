@@ -1,0 +1,620 @@
+{
+  "status": "passed",
+  "verified_at": "2026-11-17T01:18:36.482203+00:00",
+  "scope": "Independent real-reference/media/contract and prior-cut comparison; no neural inference or native UI actions performed by this verification",
+  "job_id": "1c1bb824f8a9",
+  "old_comparison_job_id": "ac91f60c01ca",
+  "job_status": "completed",
+  "fixtures_only": false,
+  "confirmation_kind": "assistant_review",
+  "reference": {
+    "original_file": "inputs/reference-audio-20261116/男声.wav",
+    "project_copy": "reference/voice.wav",
+    "sha256": "sha256:f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb",
+    "file_copy_and_package_profile_and_all_cue_profiles_match": true,
+    "old_reference_sha256": "sha256:da1f00d4ca84680174cad16b9db0c4d7a2f21e7545bacce583cf83be06a6ed95",
+    "different_from_old_reference": true
+  },
+  "voice_execution": {
+    "started_at": "2026-11-16T13:50:10.277164+00:00",
+    "action": "voice",
+    "python": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/upstream/.venv/bin/python",
+    "code_sha256": {
+      "voice_package.py": "ff926857d73e4b03d577c380c47d31f10521609c148b8ba1824da4500ac55f51",
+      "indextts2.py": "200614066a4ee8c309cfa5ad1f249e5465fa7ac1fd7104e4fe14218798ca71e8"
+    },
+    "local_models_only": true,
+    "exit_code": 0,
+    "elapsed_seconds": 115.96646920905914,
+    "finished_at": "2026-11-16T13:52:06.244713+00:00"
+  },
+  "cue_checks": [
+    {
+      "cue_id": "cue-01",
+      "text": "沿着林间小路，走进清新的绿意。",
+      "cache_hit": false,
+      "tempo_ratio": 1.0,
+      "reference_sha256": "sha256:f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb",
+      "duration_us": 2529812,
+      "old_duration_us": 4633521,
+      "frames": 121431,
+      "sample_rate": 48000,
+      "channels": 1,
+      "pcm16": true,
+      "non_silent": true,
+      "content_hash": "sha256:51e1e69640c3dca0b111216514369fbb85838e769868e52bf83f9d7ce487a678",
+      "old_content_hash": "sha256:b4d4cdde203cc89ea1e12373b75a13ed88a039808490e42dd2b45460b2938a5b",
+      "text_matches_old": true,
+      "new_audio_differs_from_old": true,
+      "full_duration_matches_within_one_sample": true,
+      "peak_absolute_sample": 31640,
+      "near_full_scale_samples_abs_ge_32767": 0
+    },
+    {
+      "cue_id": "cue-02",
+      "text": "云雾掠过山头，草木在风中舒展，让脚步慢下来。",
+      "cache_hit": false,
+      "tempo_ratio": 1.0,
+      "reference_sha256": "sha256:f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb",
+      "duration_us": 4118562,
+      "old_duration_us": 6168625,
+      "frames": 197691,
+      "sample_rate": 48000,
+      "channels": 1,
+      "pcm16": true,
+      "non_silent": true,
+      "content_hash": "sha256:378678a3aae02422503f5f4337e36d18acef4501ca74d85eb25045640d9e1a27",
+      "old_content_hash": "sha256:caa1189e4fedc7aae46fe3e4921c3838ad34e28f1fc0a5ff873845d5129eca8b",
+      "text_matches_old": true,
+      "new_audio_differs_from_old": true,
+      "full_duration_matches_within_one_sample": true,
+      "peak_absolute_sample": 32768,
+      "near_full_scale_samples_abs_ge_32767": 1
+    },
+    {
+      "cue_id": "cue-03",
+      "text": "把宁静留在风景里。",
+      "cache_hit": false,
+      "tempo_ratio": 1.0,
+      "reference_sha256": "sha256:f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb",
+      "duration_us": 1725938,
+      "old_duration_us": 2607812,
+      "frames": 82845,
+      "sample_rate": 48000,
+      "channels": 1,
+      "pcm16": true,
+      "non_silent": true,
+      "content_hash": "sha256:29824d471ab0fceddf1c87b331b1b6f256dfa941694e62f45c2c3cdb7cf56d3d",
+      "old_content_hash": "sha256:4a619e05ae4bd766c668815982a5417e1af797404325401cd7c44a1d3d777d13",
+      "text_matches_old": true,
+      "new_audio_differs_from_old": true,
+      "full_duration_matches_within_one_sample": true,
+      "peak_absolute_sample": 32768,
+      "near_full_scale_samples_abs_ge_32767": 4
+    }
+  ],
+  "old_job_comparison": {
+    "approved_narration_text_equal": true,
+    "subtitle_text_equal": true,
+    "five_picture_clips_equal_by_source_hash_ranges_timing_rate_role": true,
+    "five_source_audio_clips_equal_by_source_hash_ranges_timing_rate_gain": true,
+    "narration_global_starts_equal": true,
+    "narration_start_us": {
+      "cue-01": 200000,
+      "cue-02": 10200000,
+      "cue-03": 25200000
+    },
+    "picture_clips": [
+      {
+        "source_content_hash": "sha256:ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484",
+        "source_range_us": {
+          "begin": 0,
+          "end": 5000000
+        },
+        "timeline_range_us": {
+          "begin": 0,
+          "end": 5000000
+        },
+        "playback_rate": {
+          "numerator": 1,
+          "denominator": 1
+        },
+        "beat_id": "beat-open",
+        "role": "establishing",
+        "audio_policy": "separate_track"
+      },
+      {
+        "source_content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+        "source_range_us": {
+          "begin": 65000000,
+          "end": 70000000
+        },
+        "timeline_range_us": {
+          "begin": 5000000,
+          "end": 10000000
+        },
+        "playback_rate": {
+          "numerator": 1,
+          "denominator": 1
+        },
+        "beat_id": "beat-open",
+        "role": "detail",
+        "audio_policy": "separate_track"
+      },
+      {
+        "source_content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+        "source_range_us": {
+          "begin": 94000000,
+          "end": 101500000
+        },
+        "timeline_range_us": {
+          "begin": 10000000,
+          "end": 17500000
+        },
+        "playback_rate": {
+          "numerator": 1,
+          "denominator": 1
+        },
+        "beat_id": "beat-middle",
+        "role": "establishing",
+        "audio_policy": "separate_track"
+      },
+      {
+        "source_content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+        "source_range_us": {
+          "begin": 45000000,
+          "end": 52500000
+        },
+        "timeline_range_us": {
+          "begin": 17500000,
+          "end": 25000000
+        },
+        "playback_rate": {
+          "numerator": 1,
+          "denominator": 1
+        },
+        "beat_id": "beat-middle",
+        "role": "detail",
+        "audio_policy": "separate_track"
+      },
+      {
+        "source_content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+        "source_range_us": {
+          "begin": 35000000,
+          "end": 40000000
+        },
+        "timeline_range_us": {
+          "begin": 25000000,
+          "end": 30000000
+        },
+        "playback_rate": {
+          "numerator": 1,
+          "denominator": 1
+        },
+        "beat_id": "beat-close",
+        "role": "atmosphere",
+        "audio_policy": "separate_track"
+      }
+    ],
+    "original_audio_clips": [
+      {
+        "source_content_hash": "sha256:ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484",
+        "source_range_us": {
+          "begin": 0,
+          "end": 5000000
+        },
+        "timeline_range_us": {
+          "begin": 0,
+          "end": 5000000
+        },
+        "playback_rate": {
+          "numerator": 1,
+          "denominator": 1
+        },
+        "gain": 0.3
+      },
+      {
+        "source_content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+        "source_range_us": {
+          "begin": 65000000,
+          "end": 70000000
+        },
+        "timeline_range_us": {
+          "begin": 5000000,
+          "end": 10000000
+        },
+        "playback_rate": {
+          "numerator": 1,
+          "denominator": 1
+        },
+        "gain": 0.3
+      },
+      {
+        "source_content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+        "source_range_us": {
+          "begin": 94000000,
+          "end": 101500000
+        },
+        "timeline_range_us": {
+          "begin": 10000000,
+          "end": 17500000
+        },
+        "playback_rate": {
+          "numerator": 1,
+          "denominator": 1
+        },
+        "gain": 0.3
+      },
+      {
+        "source_content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+        "source_range_us": {
+          "begin": 45000000,
+          "end": 52500000
+        },
+        "timeline_range_us": {
+          "begin": 17500000,
+          "end": 25000000
+        },
+        "playback_rate": {
+          "numerator": 1,
+          "denominator": 1
+        },
+        "gain": 0.3
+      },
+      {
+        "source_content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+        "source_range_us": {
+          "begin": 35000000,
+          "end": 40000000
+        },
+        "timeline_range_us": {
+          "begin": 25000000,
+          "end": 30000000
+        },
+        "playback_rate": {
+          "numerator": 1,
+          "denominator": 1
+        },
+        "gain": 0.3
+      }
+    ],
+    "actual_selected_source_hash_checks": [
+      {
+        "job": "1c1bb824f8a9",
+        "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+        "content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58"
+      },
+      {
+        "job": "1c1bb824f8a9",
+        "asset_id": "asset-ea01edc0b20b45858d5a9fda754769e5",
+        "content_hash": "sha256:ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484"
+      },
+      {
+        "job": "ac91f60c01ca",
+        "asset_id": "asset-72abd30fcd284c44aa0a99b87bde0370",
+        "content_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58"
+      },
+      {
+        "job": "ac91f60c01ca",
+        "asset_id": "asset-5c2707d91a914133a755b964b99ed932",
+        "content_hash": "sha256:ff58b7f8603f19621f39de7bd2f70bee6d9eaef9a8ab26ca389b45c6a1c7a484"
+      }
+    ],
+    "note": "Asset/document IDs intentionally differ by project. New voice audio and subtitle/voice ends differ with actual new measured speech; no claim of identical narration waveforms."
+  },
+  "preview": {
+    "file": "export-r1/preview.mp4",
+    "sha256": "sha256:63c4511811213e6f27c619bbbd55f5cb0f58e6e4b42c585b12076cde1f43d480",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "avg_frame_rate": "30/1",
+          "duration": "30.000000",
+          "nb_frames": "900"
+        },
+        {
+          "index": 1,
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "avg_frame_rate": "0/0",
+          "duration": "30.000000",
+          "nb_frames": "1408"
+        }
+      ],
+      "format": {
+        "duration": "30.000000",
+        "size": "14797183"
+      }
+    },
+    "probe_command": [
+      "ffprobe",
+      "-v",
+      "error",
+      "-show_entries",
+      "stream=index,codec_name,codec_type,width,height,r_frame_rate,avg_frame_rate,sample_rate,channels,nb_frames,duration:format=duration,size",
+      "-of",
+      "json",
+      "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/1c1bb824f8a9/export-r1/preview.mp4"
+    ],
+    "full_decode_verified": true,
+    "decode_exit_code": 0,
+    "decoded_video_frames": 900,
+    "decode_stderr": "",
+    "decode_command": [
+      "ffmpeg",
+      "-v",
+      "error",
+      "-threads",
+      "2",
+      "-i",
+      "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/1c1bb824f8a9/export-r1/preview.mp4",
+      "-map",
+      "0:v:0",
+      "-map",
+      "0:a:0",
+      "-progress",
+      "pipe:1",
+      "-nostats",
+      "-f",
+      "null",
+      "-"
+    ]
+  },
+  "package": {
+    "file": "QuickCut-project-r1.zip",
+    "bytes": 72401675,
+    "sha256": "sha256:f7601e7fdedb472246a08527a5bf99317b86186445389031f607d55d9070732e"
+  },
+  "frozen_input_sha256": {
+    "voice-package.json": "sha256:cd96a0745e6941a340e1e832d7211f8139b6f354c21b02f3d3dbe80d389230ac",
+    "voice-measured-r1.json": "sha256:cd96a0745e6941a340e1e832d7211f8139b6f354c21b02f3d3dbe80d389230ac",
+    "timeline.json": "sha256:8088f43a65094cecd4b74684390f18ce4118b012dcb7630c0d6d59188bf1173a",
+    "asset-manifest.json": "sha256:9d75db6b5fe464cb939d6cadfb6791cbac8cfe9e54d1569e9a6d2bc73d2c1f7a",
+    "story-plan.json": "sha256:21cda09155fea756b60a9f4b47ffa3e2449211aadac5225480a33016a71da5b5",
+    "approval.json": "sha256:f452491f5882f9886d9d506794b27255374f77523a0db83efccb312066855940",
+    "revisions/r1/voice-config.json": "sha256:ce0c2334c55f6e7d619566d72aa066cd62baeeac105fe7165c44a074a8e9404b"
+  },
+  "frozen_inputs_unchanged_during_verification": true,
+  "test_suite": {
+    "log": "outputs/workbench-runtime/final-regression-20261116.log",
+    "log_sha256": "sha256:a5a6c04f8b15a7c6d5ae20da81c7155c748b71a368d7d388c0a1a899af3e200c",
+    "result": "1158 passed in 30.87s",
+    "exit_code": 0
+  },
+  "native_editor": {
+    "auto_open_report": {
+      "status": "opened",
+      "draft_name": "QuickCut-1c1bb824f8a9-r1",
+      "draft_directory": "/Users/tangbao/Movies/JianyingPro/User Data/Projects/com.lveditor.draft/QuickCut-1c1bb824f8a9-r1",
+      "message": "剪映已启动，请在草稿列表打开 QuickCut-1c1bb824f8a9-r1",
+      "editor_import_verified": false
+    },
+    "independent_native_ui_verification": "Actual UI checks supplied by supervising agent; see native-export-male.json and screenshots",
+    "observed_scope": "New male project opened with four online tracks; native export completed dialog observed.",
+    "native_export_file": "review-evidence/native-export-male.mov",
+    "native_export_sha256": "sha256:73da9bbc871496148bce9d81a5e2c6725df41cadb231c0b69276a39c56687292",
+    "native_export_hash_independently_verified": true,
+    "native_export_full_decode_exit_code": 0,
+    "native_export_probe": {
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "h264",
+          "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+          "profile": "High",
+          "codec_type": "video",
+          "codec_tag_string": "avc1",
+          "codec_tag": "0x31637661",
+          "mime_codec_string": "avc1.640029",
+          "width": 1920,
+          "height": 1080,
+          "coded_width": 1920,
+          "coded_height": 1080,
+          "has_b_frames": 2,
+          "pix_fmt": "yuv420p",
+          "level": 41,
+          "color_range": "tv",
+          "color_space": "bt709",
+          "color_transfer": "bt709",
+          "color_primaries": "bt709",
+          "chroma_location": "left",
+          "field_order": "progressive",
+          "is_avc": "true",
+          "nal_length_size": "4",
+          "id": "0x1",
+          "r_frame_rate": "30/1",
+          "avg_frame_rate": "30/1",
+          "time_base": "1/600",
+          "start_pts": 0,
+          "start_time": "0.000000",
+          "duration_ts": 18000,
+          "duration": "30.000000",
+          "bit_rate": "12001096",
+          "bits_per_raw_sample": "8",
+          "nb_frames": "900",
+          "extradata_size": 36,
+          "disposition": {
+            "default": 1,
+            "dub": 0,
+            "original": 0,
+            "comment": 0,
+            "lyrics": 0,
+            "karaoke": 0,
+            "forced": 0,
+            "hearing_impaired": 0,
+            "visual_impaired": 0,
+            "clean_effects": 0,
+            "attached_pic": 0,
+            "timed_thumbnails": 0,
+            "non_diegetic": 0,
+            "captions": 0,
+            "descriptions": 0,
+            "metadata": 0,
+            "dependent": 0,
+            "still_image": 0,
+            "multilayer": 0
+          },
+          "tags": {
+            "creation_time": "2026-11-17T01:17:27.000000Z",
+            "language": "und",
+            "handler_name": "Core Media Video",
+            "vendor_id": "[0][0][0][0]",
+            "encoder": "H.264"
+          }
+        },
+        {
+          "index": 1,
+          "codec_name": "aac",
+          "codec_long_name": "AAC (Advanced Audio Coding)",
+          "profile": "LC",
+          "codec_type": "audio",
+          "codec_tag_string": "mp4a",
+          "codec_tag": "0x6134706d",
+          "mime_codec_string": "mp4a.40.2",
+          "sample_fmt": "fltp",
+          "sample_rate": "44100",
+          "channels": 2,
+          "channel_layout": "stereo",
+          "bits_per_sample": 0,
+          "initial_padding": 2112,
+          "id": "0x2",
+          "r_frame_rate": "0/0",
+          "avg_frame_rate": "0/0",
+          "time_base": "1/44100",
+          "start_pts": 0,
+          "start_time": "0.000000",
+          "duration_ts": 1321984,
+          "duration": "29.976961",
+          "bit_rate": "94450",
+          "nb_frames": "1294",
+          "extradata_size": 2,
+          "disposition": {
+            "default": 1,
+            "dub": 0,
+            "original": 0,
+            "comment": 0,
+            "lyrics": 0,
+            "karaoke": 0,
+            "forced": 0,
+            "hearing_impaired": 0,
+            "visual_impaired": 0,
+            "clean_effects": 0,
+            "attached_pic": 0,
+            "timed_thumbnails": 0,
+            "non_diegetic": 0,
+            "captions": 0,
+            "descriptions": 0,
+            "metadata": 0,
+            "dependent": 0,
+            "still_image": 0,
+            "multilayer": 0
+          },
+          "tags": {
+            "creation_time": "2026-11-17T01:17:27.000000Z",
+            "language": "und",
+            "handler_name": "Core Media Audio",
+            "vendor_id": "[0][0][0][0]"
+          }
+        }
+      ],
+      "format": {
+        "filename": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/1c1bb824f8a9/review-evidence/native-export-male.mov",
+        "nb_streams": 2,
+        "nb_programs": 0,
+        "nb_stream_groups": 0,
+        "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+        "format_long_name": "QuickTime / MOV",
+        "start_time": "0.000000",
+        "duration": "30.000000",
+        "size": "45379584",
+        "bit_rate": "12101222",
+        "probe_score": 100,
+        "tags": {
+          "major_brand": "qt  ",
+          "minor_version": "0",
+          "compatible_brands": "qt  ",
+          "creation_time": "2026-11-17T01:17:27.000000Z"
+        }
+      }
+    },
+    "native_evidence_file": "review-evidence/native-export-male.json",
+    "screenshots": [
+      "jianying-male-four-tracks.png",
+      "jianying-male-export-completed.png",
+      "workbench-male-completed.png"
+    ],
+    "subtitle_edit_save_reopen_for_new_male_draft": "not_run; old reference-voice draft has separate evidence",
+    "browser_observation": {
+      "readyState": 4,
+      "duration_seconds": 30,
+      "video_width": 1280,
+      "video_height": 720,
+      "download_links_match_new_job": true,
+      "source": "supervising agent actual browser UI observation"
+    }
+  },
+  "quality_limits": [
+    "No independent ASR or subjective listening performed in this check.",
+    "Cue 02/03 contain 1/4 samples with abs(value)>=32767; documented, not claimed unclipped or perceptually accepted.",
+    "Old sample-reference native MOVs and cached-fit acceptance are not new male-voice editor evidence."
+  ],
+  "additional_asr_evidence": {
+    "file": "review-evidence/voice-content-check.json",
+    "method": "independent faster-whisper/small cpu/int8 on actual generated WAV through QuickCut ASR adapter",
+    "not_a_human_listening_review": true,
+    "source": "Separate check supplied by supervising agent; no ASR model run by this media verifier",
+    "checks": [
+      {
+        "cue_id": "cue-01",
+        "expected": "沿着林间小路，走进清新的绿意。",
+        "recognized": "沿着临间小路走进清新的律义。",
+        "spans": [
+          {
+            "segment_id": "segment-0000",
+            "start": 0.0,
+            "end": 2.4,
+            "text": "沿着临间小路走进清新的律义。"
+          }
+        ]
+      },
+      {
+        "cue_id": "cue-02",
+        "expected": "云雾掠过山头，草木在风中舒展，让脚步慢下来。",
+        "recognized": "雲霧掠過山頭,草木在風中舒展,讓腳步慢下來。",
+        "spans": [
+          {
+            "segment_id": "segment-0000",
+            "start": 0.0,
+            "end": 4.0,
+            "text": "雲霧掠過山頭,草木在風中舒展,讓腳步慢下來。"
+          }
+        ]
+      },
+      {
+        "cue_id": "cue-03",
+        "expected": "把宁静留在风景里。",
+        "recognized": "把宁静留在风景里。",
+        "spans": [
+          {
+            "segment_id": "segment-0000",
+            "start": 0.0,
+            "end": 1.6,
+            "text": "把宁静留在风景里。"
+          }
+        ]
+      }
+    ],
+    "all_cues_exact_text_match": false
+  }
+}

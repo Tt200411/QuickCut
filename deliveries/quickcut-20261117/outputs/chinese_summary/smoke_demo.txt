@@ -1,0 +1,9 @@
+{
+  "index_id": "d177140a8061c2f7",
+  "encoder": "fallback-color-histogram",
+  "source_duration": 12.0,
+  "timeline_duration": 8.0,
+  "edited_duration": 6.0,
+  "rendered": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/smoke-demo/quickcut-edited.mp4",
+  "unsupported_coverage": "abstain"
+}

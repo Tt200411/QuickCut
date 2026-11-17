@@ -1,0 +1,79 @@
+{
+  "story_plan": {
+    "kind": "StoryPlan",
+    "document_id": "story-8dfa8632acb57c32",
+    "revision": 1
+  },
+  "asset_manifest": {
+    "kind": "AssetManifest",
+    "document_id": "manifest-6205ab1d1652440d88c01eff10a35f1a",
+    "revision": 1
+  },
+  "edits": [
+    {
+      "beat_id": "beat-open",
+      "shot_index": 0,
+      "candidate_id": "candidate-query-open-asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+      "segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+      "source_range_us": {
+        "begin": 0,
+        "end": 5000000
+      },
+      "method": "manual",
+      "reviewer": "Codex 自动验收（用户授权）",
+      "reason": "助手验收核对真实画面后的源视频入出点"
+    },
+    {
+      "beat_id": "beat-open",
+      "shot_index": 1,
+      "candidate_id": "candidate-query-open-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+      "source_range_us": {
+        "begin": 65000000,
+        "end": 70000000
+      },
+      "method": "manual",
+      "reviewer": "Codex 自动验收（用户授权）",
+      "reason": "助手验收核对真实画面后的源视频入出点"
+    },
+    {
+      "beat_id": "beat-middle",
+      "shot_index": 0,
+      "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+      "source_range_us": {
+        "begin": 94000000,
+        "end": 101500000
+      },
+      "method": "manual",
+      "reviewer": "Codex 自动验收（用户授权）",
+      "reason": "助手验收核对真实画面后的源视频入出点"
+    },
+    {
+      "beat_id": "beat-middle",
+      "shot_index": 1,
+      "candidate_id": "candidate-query-middle-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+      "source_range_us": {
+        "begin": 45000000,
+        "end": 52500000
+      },
+      "method": "manual",
+      "reviewer": "Codex 自动验收（用户授权）",
+      "reason": "助手验收核对真实画面后的源视频入出点"
+    },
+    {
+      "beat_id": "beat-close",
+      "shot_index": 0,
+      "candidate_id": "candidate-query-close-asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+      "source_range_us": {
+        "begin": 35000000,
+        "end": 40000000
+      },
+      "method": "manual",
+      "reviewer": "Codex 自动验收（用户授权）",
+      "reason": "助手验收核对真实画面后的源视频入出点"
+    }
+  ]
+}

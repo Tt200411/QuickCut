@@ -22,3 +22,8 @@ tmp/
 !/materials/**/*.mov
 !/materials/**/*.mkv
 !/materials/**/*.webm
+
+# Explicit frozen delivery; live inputs, outputs and caches remain local.
+!/deliveries/
+!/deliveries/quickcut-20261117/
+!/deliveries/quickcut-20261117/**

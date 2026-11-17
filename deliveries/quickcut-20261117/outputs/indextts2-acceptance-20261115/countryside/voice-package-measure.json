@@ -1,0 +1,242 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "VoicePackage",
+  "document_id": "voice-story-countryside",
+  "project_id": "project-countryside",
+  "revision": 1,
+  "fixtures_only": false,
+  "owner": "E",
+  "inputs": [
+    {
+      "kind": "StoryPlan",
+      "document_id": "story-countryside",
+      "revision": 1
+    }
+  ],
+  "status": "ready",
+  "timing_authority": "D",
+  "mode": "measure",
+  "measurement_source": "measured_pcm_samples",
+  "synthesis_profile": {
+    "engine": "indextts2",
+    "version": "2.0.0",
+    "model": "IndexTeam/IndexTTS-2",
+    "model_revision": "740dcaf",
+    "voice": "reference-audio",
+    "reference_sha256": "da1f00d4ca84680174cad16b9db0c4d7a2f21e7545bacce583cf83be06a6ed95",
+    "language": "zh-CN",
+    "device": "mps",
+    "seed": 42,
+    "local": true,
+    "emotion_supported": false
+  },
+  "assets": [
+    {
+      "asset_id": "generated-voice-1fbc08bef02d710529111fd67361d0e0",
+      "revision": 1,
+      "media_kind": "audio",
+      "origin": "generated",
+      "uri": "audio/narration/cac0e8917b0c81ce4b7854fb7e5023628089e6c70a9ab7e376758a856819829b.wav",
+      "content_hash": "sha256:55db2a8e2fd46709f6285f4df55a835b5722a0a386b927490ecaa3ea7e577d3d",
+      "duration_us": 4699750,
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "pcm_s16le"
+      }
+    },
+    {
+      "asset_id": "generated-voice-8351612c958a03b99b2a81dbe8c0f53d",
+      "revision": 1,
+      "media_kind": "audio",
+      "origin": "generated",
+      "uri": "audio/narration/fa1fec2ad5e4519e40a919b5721057d8f2a229b40bc4ebf742e2be79e9f23b45.wav",
+      "content_hash": "sha256:3e494276bff715fd2550086e833c52241853afc5145883d42e41352d18d9bac7",
+      "duration_us": 5252312,
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "pcm_s16le"
+      }
+    },
+    {
+      "asset_id": "generated-voice-78a7450e2dd143f54d3a22a89aec9094",
+      "revision": 1,
+      "media_kind": "audio",
+      "origin": "generated",
+      "uri": "audio/narration/6d26dd077dda4e643bb82c1830e0c1ce12554ca5d47403490c1f784634795ed9.wav",
+      "content_hash": "sha256:22d403ed38d7c9ec53933552c8f2334caedf4a2d7f922e2ece3f9a0b9fb7a02d",
+      "duration_us": 4728375,
+      "audio": {
+        "present": true,
+        "sample_rate": 48000,
+        "channels": 1,
+        "codec": "pcm_s16le"
+      }
+    }
+  ],
+  "cues": [
+    {
+      "cue_id": "cue-01",
+      "beat_id": "beat-open",
+      "text": "沿着郊外的小路，看看路边的风景。",
+      "duration_budget_us": 9800000,
+      "script_input": {
+        "kind": "StoryPlan",
+        "document_id": "story-countryside",
+        "revision": 1
+      },
+      "requested_timeline_range_us": null,
+      "synthesis_profile": {
+        "engine": "indextts2",
+        "version": "2.0.0",
+        "model": "IndexTeam/IndexTTS-2",
+        "model_revision": "740dcaf",
+        "voice": "reference-audio",
+        "reference_sha256": "da1f00d4ca84680174cad16b9db0c4d7a2f21e7545bacce583cf83be06a6ed95",
+        "language": "zh-CN",
+        "device": "mps",
+        "seed": 42,
+        "local": true,
+        "emotion_supported": false
+      },
+      "cache_key": "e859968859dc5ee6bf01cf68c5578a1739669536e5d8143307e7301c1ba7e307",
+      "asset_id": "generated-voice-1fbc08bef02d710529111fd67361d0e0",
+      "raw_duration_us": 4519750,
+      "engine_duration_us": 4945854,
+      "duration_us": 4699750,
+      "speech_end_us": 4519750,
+      "sentence_pause_us": 180000,
+      "tempo_ratio": 1.0,
+      "fit_status": "fits",
+      "needs_retime": false,
+      "cache_hit": false,
+      "srt_uri": "subtitles/cac0e8917b0c81ce4b7854fb7e5023628089e6c70a9ab7e376758a856819829b.srt",
+      "quality": {
+        "peak_dbfs": -2.96,
+        "clipped_samples": 0,
+        "text_verification": "not_asr_verified",
+        "naturalness": "requires_listening"
+      },
+      "local_subtitles": [
+        {
+          "range_us": {
+            "begin": 0,
+            "end": 4519750
+          },
+          "text": "沿着郊外的小路，看看路边的风景。"
+        }
+      ]
+    },
+    {
+      "cue_id": "cue-02",
+      "beat_id": "beat-middle",
+      "text": "放慢脚步，留一点时间给身边的自然。",
+      "duration_budget_us": 14800000,
+      "script_input": {
+        "kind": "StoryPlan",
+        "document_id": "story-countryside",
+        "revision": 1
+      },
+      "requested_timeline_range_us": null,
+      "synthesis_profile": {
+        "engine": "indextts2",
+        "version": "2.0.0",
+        "model": "IndexTeam/IndexTTS-2",
+        "model_revision": "740dcaf",
+        "voice": "reference-audio",
+        "reference_sha256": "da1f00d4ca84680174cad16b9db0c4d7a2f21e7545bacce583cf83be06a6ed95",
+        "language": "zh-CN",
+        "device": "mps",
+        "seed": 42,
+        "local": true,
+        "emotion_supported": false
+      },
+      "cache_key": "508bd6eb03af0a4363fb9e8093423f79c5c241804dbba5acafd87f5b1ee2ff9d",
+      "asset_id": "generated-voice-8351612c958a03b99b2a81dbe8c0f53d",
+      "raw_duration_us": 5072312,
+      "engine_duration_us": 5421875,
+      "duration_us": 5252312,
+      "speech_end_us": 5072312,
+      "sentence_pause_us": 180000,
+      "tempo_ratio": 1.0,
+      "fit_status": "fits",
+      "needs_retime": false,
+      "cache_hit": false,
+      "srt_uri": "subtitles/fa1fec2ad5e4519e40a919b5721057d8f2a229b40bc4ebf742e2be79e9f23b45.srt",
+      "quality": {
+        "peak_dbfs": -4.25,
+        "clipped_samples": 0,
+        "text_verification": "not_asr_verified",
+        "naturalness": "requires_listening"
+      },
+      "local_subtitles": [
+        {
+          "range_us": {
+            "begin": 0,
+            "end": 5072312
+          },
+          "text": "放慢脚步，留一点时间给身边的自然。"
+        }
+      ]
+    },
+    {
+      "cue_id": "cue-03",
+      "beat_id": "beat-close",
+      "text": "让这段散步，在柔和的光线里收尾。",
+      "duration_budget_us": 4800000,
+      "script_input": {
+        "kind": "StoryPlan",
+        "document_id": "story-countryside",
+        "revision": 1
+      },
+      "requested_timeline_range_us": null,
+      "synthesis_profile": {
+        "engine": "indextts2",
+        "version": "2.0.0",
+        "model": "IndexTeam/IndexTTS-2",
+        "model_revision": "740dcaf",
+        "voice": "reference-audio",
+        "reference_sha256": "da1f00d4ca84680174cad16b9db0c4d7a2f21e7545bacce583cf83be06a6ed95",
+        "language": "zh-CN",
+        "device": "mps",
+        "seed": 42,
+        "local": true,
+        "emotion_supported": false
+      },
+      "cache_key": "55f0a85056c223771775e5c76532d1a32925f3b482590c632bcd8b58e18bfab5",
+      "asset_id": "generated-voice-78a7450e2dd143f54d3a22a89aec9094",
+      "raw_duration_us": 4548375,
+      "engine_duration_us": 5050354,
+      "duration_us": 4728375,
+      "speech_end_us": 4548375,
+      "sentence_pause_us": 180000,
+      "tempo_ratio": 1.0,
+      "fit_status": "fits",
+      "needs_retime": false,
+      "cache_hit": false,
+      "srt_uri": "subtitles/6d26dd077dda4e643bb82c1830e0c1ce12554ca5d47403490c1f784634795ed9.srt",
+      "quality": {
+        "peak_dbfs": -1.67,
+        "clipped_samples": 0,
+        "text_verification": "not_asr_verified",
+        "naturalness": "requires_listening"
+      },
+      "local_subtitles": [
+        {
+          "range_us": {
+            "begin": 0,
+            "end": 4548375
+          },
+          "text": "让这段散步，在柔和的光线里收尾。"
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "request": null,
+  "invalidated_cue_ids": [],
+  "alignment_invalidated": false
+}

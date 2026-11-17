@@ -9,3 +9,18 @@ materials/**/*.webm filter=lfs diff=lfs merge=lfs -text
 # Frozen A–E handoff media use the same content-addressed LFS storage.
 ABCDE/media/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
 ABCDE/derived/**/proxy.mp4 filter=lfs diff=lfs merge=lfs -text
+
+# User-authorized reference voices and frozen project deliveries.
+materials/reference-audio/**/*.wav filter=lfs diff=lfs merge=lfs -text
+materials/reference-audio/**/*.zip filter=lfs diff=lfs merge=lfs -text
+deliveries/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
+deliveries/**/*.mov filter=lfs diff=lfs merge=lfs -text
+deliveries/**/*.mkv filter=lfs diff=lfs merge=lfs -text
+deliveries/**/*.webm filter=lfs diff=lfs merge=lfs -text
+deliveries/**/*.wav filter=lfs diff=lfs merge=lfs -text
+deliveries/**/*.zip filter=lfs diff=lfs merge=lfs -text
+
+# Preserve raw evidence bytes, including whitespace emitted by external tools.
+deliveries/quickcut-20261117/inputs/** -text -whitespace
+deliveries/quickcut-20261117/outputs/** -text -whitespace
+deliveries/quickcut-20261117/native-drafts/** -text -whitespace

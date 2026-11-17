@@ -1,0 +1,68 @@
+{
+  "file": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/chinese_summary/narration.wav",
+  "model": "small",
+  "language": "zh",
+  "segments": [
+    {
+      "segment_id": "segment-0000",
+      "start": 0.0,
+      "end": 5.0,
+      "text": "在白兔手的树下,他的对手爬上高树。"
+    },
+    {
+      "segment_id": "segment-0001",
+      "start": 5.0,
+      "end": 11.0,
+      "text": "沿着枝杆步步逼近,这枝飞树丁紧目标。"
+    },
+    {
+      "segment_id": "segment-0002",
+      "start": 11.0,
+      "end": 16.0,
+      "text": "准备亮出华翔的本领,四枝一斩。"
+    },
+    {
+      "segment_id": "segment-0003",
+      "start": 16.0,
+      "end": 24.0,
+      "text": "擦纵深越起,从树烧飞向零尖,一颗果实也从高树坠落。"
+    },
+    {
+      "segment_id": "segment-0004",
+      "start": 24.0,
+      "end": 29.0,
+      "text": "危险渐渐险入,地面露出一排尖庄。"
+    },
+    {
+      "segment_id": "segment-0005",
+      "start": 29.0,
+      "end": 35.0,
+      "text": "轻松的华翔顿时变成险境,飞树贴着肩装越过。"
+    },
+    {
+      "segment_id": "segment-0006",
+      "start": 35.0,
+      "end": 41.0,
+      "text": "即时抓住树枝,躲开了一截,可他刚站稳脚步。"
+    },
+    {
+      "segment_id": "segment-0007",
+      "start": 41.0,
+      "end": 46.0,
+      "text": "才发现到白兔已经存在眼前,到手一伸。"
+    },
+    {
+      "segment_id": "segment-0008",
+      "start": 46.0,
+      "end": 52.0,
+      "text": "这位空中高手,只能归不归树手就秦,在飞起来时,"
+    },
+    {
+      "segment_id": "segment-0009",
+      "start": 52.0,
+      "end": 58.0,
+      "text": "他已成了兔子手中的风筝、风波平息,到白兔终于笑了。"
+    }
+  ],
+  "last_end": 58.0
+}

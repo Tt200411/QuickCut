@@ -1,0 +1,10 @@
+{
+  "code": "VLM_INVALID_PLAN",
+  "message": "reasons/roles 必须且只能逐项包含 shot_order 中的短ID",
+  "stage": "draft",
+  "detail": {
+    "log": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/1c1bb824f8a9/logs/draft.log"
+  },
+  "action_owner": null,
+  "affected_ids": []
+}

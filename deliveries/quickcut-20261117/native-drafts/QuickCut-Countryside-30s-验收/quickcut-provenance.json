@@ -1,0 +1,171 @@
+{
+  "export_document_id": "export-105FF60F-4349-4699-AB0E-C019357C5AF9",
+  "inputs": [
+    {
+      "kind": "EditTimeline",
+      "document_id": "timeline-countryside",
+      "revision": 1
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-1aebcf579acf476087b5110924b0862e",
+      "revision": 1
+    },
+    {
+      "kind": "VoicePackage",
+      "document_id": "voice-story-countryside",
+      "revision": 1
+    }
+  ],
+  "fixtures_only": false,
+  "resources": [
+    {
+      "resource_key": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "asset_revision": 1,
+      "original_uri": "media/external/asset-334e462ce36b4c3c8010a87c3c17b4a1/r1.mp4",
+      "draft_uri": "Resources/191bcc5a37350b6550e869ba4cbc9fb9893a62a9a88eb02f3b52649e4d9786e9.mp4",
+      "packaged_uri": "draft/Resources/191bcc5a37350b6550e869ba4cbc9fb9893a62a9a88eb02f3b52649e4d9786e9.mp4",
+      "content_hash": "sha256:191bcc5a37350b6550e869ba4cbc9fb9893a62a9a88eb02f3b52649e4d9786e9",
+      "name": "r1.mp4",
+      "media_kind": "video",
+      "size_bytes": 32752809,
+      "origin_us": 0,
+      "duration_us": 77327250,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "resource_key": "asset-577def926287491bb985d17196918ee6",
+      "asset_id": "asset-577def926287491bb985d17196918ee6",
+      "asset_revision": 1,
+      "original_uri": "media/external/asset-577def926287491bb985d17196918ee6/r1.mp4",
+      "draft_uri": "Resources/70ec7d3ae6f75792291a2e612c1c066e436d993992c3128af80a94e16be9fca2.mp4",
+      "packaged_uri": "draft/Resources/70ec7d3ae6f75792291a2e612c1c066e436d993992c3128af80a94e16be9fca2.mp4",
+      "content_hash": "sha256:70ec7d3ae6f75792291a2e612c1c066e436d993992c3128af80a94e16be9fca2",
+      "name": "r1.mp4",
+      "media_kind": "video",
+      "size_bytes": 11539757,
+      "origin_us": 0,
+      "duration_us": 15056667,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "resource_key": "asset-806103fd984c4670ba62f904a034f231",
+      "asset_id": "asset-806103fd984c4670ba62f904a034f231",
+      "asset_revision": 1,
+      "original_uri": "media/external/asset-806103fd984c4670ba62f904a034f231/r1.mp4",
+      "draft_uri": "Resources/b11de2acb26d6de3d3985ae5ae95d56051b08e993cfe28c6be31f9004a5f4a86.mp4",
+      "packaged_uri": "draft/Resources/b11de2acb26d6de3d3985ae5ae95d56051b08e993cfe28c6be31f9004a5f4a86.mp4",
+      "content_hash": "sha256:b11de2acb26d6de3d3985ae5ae95d56051b08e993cfe28c6be31f9004a5f4a86",
+      "name": "r1.mp4",
+      "media_kind": "video",
+      "size_bytes": 17005311,
+      "origin_us": 0,
+      "duration_us": 28611667,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "resource_key": "generated-voice-413949fa77c039a432acee2d76f378bb",
+      "asset_id": "generated-voice-413949fa77c039a432acee2d76f378bb",
+      "asset_revision": 1,
+      "original_uri": "audio/narration/33351c9d3519ac461688e33d40c0188261ab777d84f34abe8c87f8354fb9956f.wav",
+      "draft_uri": "Resources/df5157278f2ecca95c4e224b5cf81068534f0d4cb211f32a9d2728e6e00b43f5.wav",
+      "packaged_uri": "draft/Resources/df5157278f2ecca95c4e224b5cf81068534f0d4cb211f32a9d2728e6e00b43f5.wav",
+      "content_hash": "sha256:df5157278f2ecca95c4e224b5cf81068534f0d4cb211f32a9d2728e6e00b43f5",
+      "name": "33351c9d3519ac461688e33d40c0188261ab777d84f34abe8c87f8354fb9956f.wav",
+      "media_kind": "audio",
+      "size_bytes": 334876,
+      "origin_us": 0,
+      "duration_us": 3487833
+    },
+    {
+      "resource_key": "generated-voice-da9bf397eec736862feb7554316f21a3",
+      "asset_id": "generated-voice-da9bf397eec736862feb7554316f21a3",
+      "asset_revision": 1,
+      "original_uri": "audio/narration/b3417aa244eb320d8f30b8997f27c6d0481e907072243670f89661069c69f8c4.wav",
+      "draft_uri": "Resources/50ebf8b594e84d7b36969e160c2ace4460e5a20ede136956da4820147718f538.wav",
+      "packaged_uri": "draft/Resources/50ebf8b594e84d7b36969e160c2ace4460e5a20ede136956da4820147718f538.wav",
+      "content_hash": "sha256:50ebf8b594e84d7b36969e160c2ace4460e5a20ede136956da4820147718f538",
+      "name": "b3417aa244eb320d8f30b8997f27c6d0481e907072243670f89661069c69f8c4.wav",
+      "media_kind": "audio",
+      "size_bytes": 332264,
+      "origin_us": 0,
+      "duration_us": 3460625
+    },
+    {
+      "resource_key": "generated-voice-fb19890df45295d522a0a57df214d553",
+      "asset_id": "generated-voice-fb19890df45295d522a0a57df214d553",
+      "asset_revision": 1,
+      "original_uri": "audio/narration/a6810d28ec70902dcd85eaad439d3626d33954fea8a0a6fe00ee60780760ca95.wav",
+      "draft_uri": "Resources/1b480c2fc61d92d0cf68223677986ae055a424defc25d0e662e42a5587f64e8f.wav",
+      "packaged_uri": "draft/Resources/1b480c2fc61d92d0cf68223677986ae055a424defc25d0e662e42a5587f64e8f.wav",
+      "content_hash": "sha256:1b480c2fc61d92d0cf68223677986ae055a424defc25d0e662e42a5587f64e8f",
+      "name": "a6810d28ec70902dcd85eaad439d3626d33954fea8a0a6fe00ee60780760ca95.wav",
+      "media_kind": "audio",
+      "size_bytes": 351318,
+      "origin_us": 0,
+      "duration_us": 3659104
+    },
+    {
+      "resource_key": "source_audio:clip-original-1",
+      "asset_id": "asset-806103fd984c4670ba62f904a034f231",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 10000000
+      },
+      "derived_for_clip_id": "clip-original-1",
+      "draft_uri": "Resources/source-audio-d2fdb917244e1b90da1fc9eb.wav",
+      "packaged_uri": "draft/Resources/source-audio-d2fdb917244e1b90da1fc9eb.wav",
+      "name": "原声-clip-original-1.wav",
+      "media_kind": "audio",
+      "content_hash": "sha256:22e532219166ffff157c4ece7648cf070287531fc0edb467c6e30189f3c00876",
+      "size_bytes": 1920078,
+      "duration_us": 10000000,
+      "sample_rate": 48000,
+      "sample_rounding_error_us": 0.0
+    },
+    {
+      "resource_key": "source_audio:clip-original-2",
+      "asset_id": "asset-577def926287491bb985d17196918ee6",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 15000000
+      },
+      "derived_for_clip_id": "clip-original-2",
+      "draft_uri": "Resources/source-audio-b1af897783e42e269b93ec07.wav",
+      "packaged_uri": "draft/Resources/source-audio-b1af897783e42e269b93ec07.wav",
+      "name": "原声-clip-original-2.wav",
+      "media_kind": "audio",
+      "content_hash": "sha256:4f3a2b6b78ae9a0344b81a4ccc4525d0c000d9ac53326d7b7cbc7dd6481df439",
+      "size_bytes": 2880078,
+      "duration_us": 15000000,
+      "sample_rate": 48000,
+      "sample_rounding_error_us": 0.0
+    },
+    {
+      "resource_key": "source_audio:clip-original-3",
+      "asset_id": "asset-334e462ce36b4c3c8010a87c3c17b4a1",
+      "asset_revision": 1,
+      "source_range_us": {
+        "begin": 0,
+        "end": 5000000
+      },
+      "derived_for_clip_id": "clip-original-3",
+      "draft_uri": "Resources/source-audio-a38a8e74dffd40e64d3ef1b9.wav",
+      "packaged_uri": "draft/Resources/source-audio-a38a8e74dffd40e64d3ef1b9.wav",
+      "name": "原声-clip-original-3.wav",
+      "media_kind": "audio",
+      "content_hash": "sha256:3e09c8f71b897ddd3d09a9b76f3a6a55fee9564ea3e85ed4543f652424ea0260",
+      "size_bytes": 960078,
+      "duration_us": 5000000,
+      "sample_rate": 48000,
+      "sample_rounding_error_us": 0.0
+    }
+  ],
+  "editor_import": "not_run"
+}

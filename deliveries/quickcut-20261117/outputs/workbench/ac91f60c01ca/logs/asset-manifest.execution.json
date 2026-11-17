@@ -1,0 +1,14 @@
+{
+  "started_at": "2026-11-16T12:52:35.343441+00:00",
+  "action": "ingest",
+  "python": "/Users/tangbao/Documents/ChatGPT/CV Project/.venv/bin/python",
+  "code_sha256": {
+    "ingest.py": "1fce0761e4be409a4f9d17de5ccdc1d43d68ccb5e0a0409ceff3f6236467a1f6",
+    "asr.py": "c41bf51a0c1241af5ce391755fc80b270fc8e8a86485029474437089026e9934",
+    "media.py": "359881b2dee65acee7ecb39be6d074b3005011c5dac363890970ade2161550a5"
+  },
+  "local_models_only": true,
+  "exit_code": 0,
+  "elapsed_seconds": 1.2045875410549343,
+  "finished_at": "2026-11-16T12:52:36.548042+00:00"
+}

@@ -1,0 +1,91 @@
+{
+  "kind": "TimelinePreviewReport",
+  "schema_version": "0.1.0",
+  "status": "preview_rendered",
+  "project_id": "project-countryside",
+  "inputs": [
+    {
+      "kind": "EditTimeline",
+      "document_id": "timeline-countryside",
+      "revision": 1
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-1aebcf579acf476087b5110924b0862e",
+      "revision": 1
+    },
+    {
+      "kind": "VoicePackage",
+      "document_id": "voice-story-countryside",
+      "revision": 1
+    }
+  ],
+  "fixtures_only": false,
+  "expected_duration_us": 30000000,
+  "measured_duration_us": 30000000,
+  "measured_stream_durations_us": {
+    "video": 30000000,
+    "audio": 30000000
+  },
+  "source_measurements_us": {
+    "asset-334e462ce36b4c3c8010a87c3c17b4a1": {
+      "video": 77327250,
+      "audio": 77333333
+    },
+    "asset-577def926287491bb985d17196918ee6": {
+      "video": 15056667,
+      "audio": 15060000
+    },
+    "asset-806103fd984c4670ba62f904a034f231": {
+      "video": 28611667,
+      "audio": 28628333
+    },
+    "generated-voice-413949fa77c039a432acee2d76f378bb": {
+      "audio": 3487833
+    },
+    "generated-voice-da9bf397eec736862feb7554316f21a3": {
+      "audio": 3460625
+    },
+    "generated-voice-fb19890df45295d522a0a57df214d553": {
+      "audio": 3659104
+    }
+  },
+  "duration_tolerance_us": 35334,
+  "duration_validation": "ffprobe",
+  "video_frame_quantization": "ceil_global_timeline_boundaries",
+  "video_frame_ranges": [
+    {
+      "clip_id": "clip-video-1",
+      "begin_frame": 0,
+      "end_frame": 300
+    },
+    {
+      "clip_id": "clip-video-2",
+      "begin_frame": 300,
+      "end_frame": 750
+    },
+    {
+      "clip_id": "clip-video-3",
+      "begin_frame": 750,
+      "end_frame": 900
+    }
+  ],
+  "measured_video_frames": 900,
+  "full_decode_verified": true,
+  "subtitles_burned": false,
+  "subtitles_editable": true,
+  "srt_time_quantization": "floor_to_millisecond",
+  "audio_mix": "source_audio_and_narration_with_timeline_offsets_and_gains",
+  "editor_project_exported": false,
+  "editor_import_verified": false,
+  "f_acceptance_completed": false,
+  "notes": [
+    "字幕未烧录，独立全局 SRT 保留编辑性。",
+    "这是媒体预览，不是剪辑工程导出，未完成 F 验收。"
+  ],
+  "files": {
+    "preview": "/tmp/quickcut-pr-audit-20261115/countryside-preview.mp4",
+    "subtitles": "/tmp/quickcut-pr-audit-20261115/countryside-preview.srt",
+    "report": "/tmp/quickcut-pr-audit-20261115/countryside-preview.preview.json"
+  }
+}

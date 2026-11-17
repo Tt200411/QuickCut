@@ -1,0 +1,67 @@
+{
+  "ready": true,
+  "checks": [
+    {
+      "stage": "A",
+      "name": "视频接入与语音识别",
+      "ready": true,
+      "detail": "/Users/tangbao/Documents/ChatGPT/CV Project/.venv/bin/python"
+    },
+    {
+      "stage": "B",
+      "name": "中文视觉检索",
+      "ready": true,
+      "detail": "/Users/tangbao/Documents/ChatGPT/CV Project/.venv-vision/bin/python"
+    },
+    {
+      "stage": "E",
+      "name": "IndexTTS2 配音",
+      "ready": true,
+      "detail": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/indextts2-runtime/upstream/.venv/bin/python"
+    },
+    {
+      "stage": "A",
+      "name": "Whisper 语音识别权重",
+      "ready": true,
+      "detail": "small"
+    },
+    {
+      "stage": "B",
+      "name": "中文视觉检索权重",
+      "ready": true,
+      "detail": "nllb-clip-base · 部署文件完整"
+    },
+    {
+      "stage": "C",
+      "name": "Qwen 看图与规划",
+      "ready": true,
+      "detail": "qwen2.5vl:3b"
+    },
+    {
+      "stage": "F",
+      "name": "ffmpeg",
+      "ready": true,
+      "detail": "/opt/homebrew/bin/ffmpeg"
+    },
+    {
+      "stage": "F",
+      "name": "ffprobe",
+      "ready": true,
+      "detail": "/opt/homebrew/bin/ffprobe"
+    },
+    {
+      "stage": "E",
+      "name": "配音权重与参考音频",
+      "ready": true,
+      "detail": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/1c1bb824f8a9/voice-config.json"
+    },
+    {
+      "stage": "editor",
+      "name": "剪映专业版",
+      "ready": true,
+      "detail": "6.1.0"
+    }
+  ],
+  "scope": "安装和服务检查；每次生成仍会验证模型资源并实际推理。",
+  "checked_at": "2026-11-16T13:46:34.747665+00:00"
+}

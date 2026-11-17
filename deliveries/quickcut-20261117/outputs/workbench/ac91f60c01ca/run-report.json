@@ -1,0 +1,107 @@
+{
+  "status": "completed",
+  "completed_at": "2026-11-16T13:15:19.150662+00:00",
+  "fixtures_only": false,
+  "models": {
+    "ASR": "faster-whisper/small",
+    "B": {
+      "config": {
+        "encoder_mode": "openclip",
+        "transcript_weight": 0.35,
+        "description_weight": 0.65,
+        "low_confidence_threshold": 0.22,
+        "minimum_ranking_score": 0.12,
+        "dedup_by_content_hash": true
+      },
+      "input_fingerprints": {
+        "AssetManifest": "sha256:9f74033cc1532d2ecfe2fe9914fdbf3bb9d5daf3d5d6c1d2fc1bd111a942407a",
+        "RetrievalRequest": "sha256:b543d6a494cbc18c9f0f05bb79762426b74e37777515f61b1a180a2c29e50d08"
+      },
+      "implementation_fingerprints": {
+        "retrieval.py": "sha256:82c8a06a8617a1349571988db8f707b65a317969e3303a32b10c0339a8c3fd99",
+        "encoder.py": "sha256:718ae7811fcdcd3f7c3a6a048888633968b198c2cbd77164deedecbdcedcc8f3"
+      },
+      "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+      "encoder": {
+        "encoder": "openclip",
+        "model": "nllb-clip-base",
+        "pretrained": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--visheratin--nllb-clip-base-oc/snapshots/f16398ba58d1d5cff27450ce2fe971b087969444/open_clip_pytorch_model.bin",
+        "dimension": 512,
+        "visual_score": "cosine",
+        "calibrated": false,
+        "model_revision": "f16398ba58d1d5cff27450ce2fe971b087969444",
+        "checkpoint_sha256": "sha256:55f4101efcb112643c0b62e650dd891dbf7f0b944a587bfd2e2c8e27663f098f",
+        "text_model": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/vision-runtime/hf-cache/models--facebook--nllb-200-distilled-600M/snapshots/f8d333a098d19b4fd9a8b18f94170487ad3f821d",
+        "device": "cpu"
+      },
+      "dedup_by_content_hash": true,
+      "duration_budget_us_applied_as_filter": false,
+      "tag_labels": {
+        "scene": [
+          "小路",
+          "树林",
+          "田野",
+          "夕阳风景",
+          "室内"
+        ],
+        "emotion": [
+          "平静",
+          "温暖",
+          "紧张"
+        ],
+        "light": [
+          "日光",
+          "暖色光线",
+          "阴天"
+        ],
+        "motion": [
+          "人物步行",
+          "航拍",
+          "固定镜头"
+        ]
+      },
+      "tag_method": "openclip-zero-shot"
+    },
+    "C": "qwen2.5vl:3b",
+    "E": {
+      "engine": "indextts2",
+      "version": "2.0.0",
+      "model": "IndexTeam/IndexTTS-2",
+      "model_revision": "740dcaf",
+      "voice": "reference-audio",
+      "reference_sha256": "da1f00d4ca84680174cad16b9db0c4d7a2f21e7545bacce583cf83be06a6ed95",
+      "language": "zh-CN",
+      "device": "mps",
+      "seed": 42,
+      "local": true,
+      "emotion_supported": false
+    }
+  },
+  "timeline": {
+    "kind": "EditTimeline",
+    "document_id": "timeline-project-ac91f60c01ca",
+    "revision": 11
+  },
+  "duration_us": 30000000,
+  "export": {
+    "kind": "ExportManifest",
+    "document_id": "export-FF5D4743-FED1-4AC2-91F5-D446025FF51C",
+    "revision": 1
+  },
+  "files": {
+    "video": "export-r2/preview.mp4",
+    "package": "QuickCut-project-r2.zip"
+  },
+  "package_directory": "export-r2",
+  "revision": 2,
+  "editor": {
+    "status": "opened",
+    "draft_name": "QuickCut-ac91f60c01ca-r2",
+    "draft_directory": "/Users/tangbao/Movies/JianyingPro/User Data/Projects/com.lveditor.draft/QuickCut-ac91f60c01ca-r2",
+    "message": "剪映已启动，请在草稿列表打开 QuickCut-ac91f60c01ca-r2",
+    "editor_import_verified": false
+  },
+  "approval": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/workbench/ac91f60c01ca/revisions/r2/approval.json",
+  "confirmation_kind": "assistant_review",
+  "revision_archive": "revisions/r2"
+}

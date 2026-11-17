@@ -1,0 +1,351 @@
+{
+  "kind": "ABCurrentPathAudit",
+  "schema_version": "1.0",
+  "audited_at_utc": "2026-11-15T07:20:02.501793+00:00",
+  "head": "0d4c2337580b7377825aa336fc1e9f8508c48f7d",
+  "scope": {
+    "source_files_changed": false,
+    "models_downloaded": false,
+    "model_inference_run": false,
+    "runtime": "3.14.4",
+    "executable": "/Users/tangbao/Documents/ChatGPT/CV Project/.venv/bin/python",
+    "repo_root": "/Users/tangbao/Documents/ChatGPT/CV Project"
+  },
+  "source_hashes": {
+    "quickcut/encoder.py": "sha256:dd8bfb1fdfa2fe5bd54beef5a33100ad597fa93fceff2ddc1ea35478963ee1c8",
+    "quickcut/retrieval.py": "sha256:c9de958ee82d49c2942df1499d8b946415b767920cd710a174e85839afc0424e",
+    "quickcut/ingest.py": "sha256:1fce0761e4be409a4f9d17de5ccdc1d43d68ccb5e0a0409ceff3f6236467a1f6",
+    "quickcut/planning/planning.py": "sha256:2b042ddd7f6b882fe178244109279ff734d1ff5ce225d4fcf8e79dbe76e7df0a",
+    "quickcut/planning/selection.py": "sha256:e113613a31d9e976c69a4692009e00ebb1cec164ef63d7c312b917c93fc39c10",
+    "scripts/demo_pipeline.py": "sha256:98c0db4b3c45ff82d39c6c0e101e128a040634d20dd38dcd97532f6c4789994d",
+    "scripts/run_countryside_handoff.py": "sha256:ecb9d9f92cbc2ee990a1dc0a322885b2987dbdcd7456603d61f0a5545a7dc130",
+    "quickcut/ui.py": "sha256:d73e621a5f3cc3a3422ce97aace728ebd82adbf223c5a662850d45d04d85e3a5"
+  },
+  "dependencies": {
+    "faster_whisper": {
+      "distribution": "faster-whisper",
+      "version": "1.2.1",
+      "module_available": true
+    },
+    "ctranslate2": {
+      "distribution": "ctranslate2",
+      "version": "4.8.3",
+      "module_available": true
+    },
+    "open_clip": {
+      "distribution": "open_clip_torch",
+      "version": null,
+      "module_available": false
+    },
+    "torch": {
+      "distribution": "torch",
+      "version": null,
+      "module_available": false
+    },
+    "transformers": {
+      "distribution": "transformers",
+      "version": null,
+      "module_available": false
+    },
+    "PIL": {
+      "distribution": "pillow",
+      "version": "12.3.0",
+      "module_available": true
+    }
+  },
+  "default_encoder": {
+    "encoder": "fallback-color-histogram",
+    "model": "fallback-color-histogram",
+    "pretrained": "none",
+    "dimension": 72,
+    "visual_score": "color-histogram",
+    "calibrated": false
+  },
+  "explicit_openclip_probe": {
+    "status": "failed",
+    "error_type": "RuntimeError",
+    "error_message": "OpenCLIP backend requires quickcut[ml]",
+    "command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -c \"from quickcut.encoder import make_encoder; make_encoder('openclip')\"",
+    "source": {
+      "path": "quickcut/encoder.py",
+      "line": 158
+    }
+  },
+  "asr_dependency_probe": {
+    "status": "constructed",
+    "backend": "faster-whisper",
+    "model_constructed": false,
+    "inference_run": false
+  },
+  "default_huggingface_cache": {
+    "root": "/Users/tangbao/.cache/huggingface/hub",
+    "matching_models": [
+      {
+        "name": "models--Systran--faster-whisper-small",
+        "snapshots": [
+          {
+            "revision": "536b0662742c02347bc0e980a01041f333bce120",
+            "files": [
+              "config.json",
+              "model.bin",
+              "tokenizer.json",
+              "vocabulary.txt"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "models--Systran--faster-whisper-tiny",
+        "snapshots": [
+          {
+            "revision": "d90ca5fe260221311c53c58e660288d3deb8d356",
+            "files": [
+              "config.json",
+              "model.bin",
+              "tokenizer.json",
+              "vocabulary.txt"
+            ]
+          }
+        ]
+      }
+    ],
+    "scope_note": "Default configured cache only; no exhaustive filesystem search. No model weights were loaded."
+  },
+  "frozen_abcde": {
+    "artifact_hashes": {
+      "ABCDE/asset-manifest.json": "sha256:bf032a88926811ddbf8216492e3f9309c3d7d5ecd5f9e820acf736dffe219490",
+      "ABCDE/candidate-set.json": "sha256:a2f95e461783d1f732304690f049f511a44bf195eb2c36e23266d43650b22ec5",
+      "ABCDE/run-report.json": "sha256:4d00873718514d52f7ee90d6e2f46dde9fe5609df9faf4125b9df7dc2e23c712"
+    },
+    "artifact_last_commit": "f941b1e9117c6f47a7771201f750cde06131a964",
+    "candidate_count": 16,
+    "all_candidates_visual_only": true,
+    "source_begin_us_values": [
+      0
+    ],
+    "profile": {
+      "score_profile": "encoder=openclip; model=nllb-clip-base; pretrained=v1; dimension=512; visual=cosine; transcript_weight=0.35; description_weight=0.65; ranking_score is the max of separate signals, not a calibrated probability",
+      "encoder": {
+        "encoder": "openclip",
+        "model": "nllb-clip-base",
+        "pretrained": "v1",
+        "dimension": 512,
+        "visual_score": "cosine",
+        "calibrated": false
+      },
+      "dedup_by_content_hash": true,
+      "duration_budget_us_applied_as_filter": false,
+      "tag_labels": {
+        "scene": [
+          "小路",
+          "树林",
+          "田野",
+          "夕阳风景",
+          "室内"
+        ],
+        "emotion": [
+          "平静",
+          "温暖",
+          "紧张"
+        ],
+        "light": [
+          "日光",
+          "暖色光线",
+          "阴天"
+        ],
+        "motion": [
+          "人物步行",
+          "航拍",
+          "固定镜头"
+        ]
+      },
+      "tag_method": "openclip-zero-shot"
+    },
+    "current_profile_fields_missing_from_frozen": [
+      "config",
+      "input_fingerprints"
+    ],
+    "current_profile_source": {
+      "path": "quickcut/retrieval.py",
+      "line": 333
+    },
+    "inference": "The frozen CandidateSet predates the current retrieval implementation and has not been regenerated with its input fingerprints. All selected windows begin at zero; this alone does not prove which later windows a new model run would rank highest.",
+    "asr_status_counts": {
+      "disabled": 5,
+      "no_audio": 1
+    },
+    "nonempty_segment_transcript_count": 0,
+    "segment_description_count": 0,
+    "original_media_present_count": 6,
+    "asr_configuration_source": {
+      "path": "ABCDE/run-report.json",
+      "line": 4
+    }
+  },
+  "missing_project_root_probe": {
+    "kind": "read_only_negative_case",
+    "project_root": "/nonexistent/quickcut-audit",
+    "project_root_exists": false,
+    "config": {
+      "encoder_mode": "fallback"
+    },
+    "command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/python - <<'PY'\nimport json\nfrom pathlib import Path\nfrom quickcut.retrieval import RetrievalConfig,retrieve\nmanifest=json.loads(Path('ABCDE/asset-manifest.json').read_text())\nrequest=json.loads(Path('ABCDE/retrieval-request.json').read_text())\nresult=retrieve(manifest,request,project_root=Path('/nonexistent/quickcut-audit'),config=RetrievalConfig(encoder_mode='fallback'))\nprint(json.dumps({'status':result['status'],'results':[{'query_id':row['query_id'],'status':row['status'],'reason':row['reason'],'candidate_count':len(row['candidates'])} for row in result['results']]},ensure_ascii=False))\nPY",
+    "result": {
+      "status": "empty",
+      "results": [
+        {
+          "query_id": "query-open",
+          "status": "empty",
+          "reason": "No segment had a positive match for the query",
+          "candidate_count": 0
+        },
+        {
+          "query_id": "query-middle",
+          "status": "empty",
+          "reason": "No segment had a positive match for the query",
+          "candidate_count": 0
+        },
+        {
+          "query_id": "query-close",
+          "status": "empty",
+          "reason": "No segment had a positive match for the query",
+          "candidate_count": 0
+        },
+        {
+          "query_id": "query-middle-establishing",
+          "status": "empty",
+          "reason": "No segment had a positive match for the query",
+          "candidate_count": 0
+        },
+        {
+          "query_id": "query-close-atmosphere",
+          "status": "empty",
+          "reason": "No segment had a positive match for the query",
+          "candidate_count": 0
+        },
+        {
+          "query_id": "query-evidence-gap",
+          "status": "empty",
+          "reason": "No segment had a positive match for the query",
+          "candidate_count": 0
+        }
+      ]
+    },
+    "finding": "Unavailable visual inputs return the same ordinary empty-result state as a valid retrieval with no positive match; no media-unavailable error is surfaced.",
+    "source_refs": [
+      {
+        "path": "quickcut/retrieval.py",
+        "line": 154
+      },
+      {
+        "path": "quickcut/retrieval.py",
+        "line": 211
+      },
+      {
+        "path": "quickcut/retrieval.py",
+        "line": 474
+      }
+    ]
+  },
+  "asr_metadata_handoff": {
+    "observation": "A preserves exact source spans, transcription status and review status; B scores only flattened text; C rebuilds its candidate view from A but retains only transcript.text. Candidate source_range_us remains the video-window range, not the ASR utterance range.",
+    "source_refs": {
+      "a_preserves": {
+        "path": "quickcut/ingest.py",
+        "line": 340
+      },
+      "b_scores_flat_text": {
+        "path": "quickcut/retrieval.py",
+        "line": 264
+      },
+      "b_candidate_fields": {
+        "path": "quickcut/retrieval.py",
+        "line": 446
+      },
+      "c_flattens": {
+        "path": "quickcut/planning/planning.py",
+        "line": 314
+      },
+      "vlm_receives": {
+        "path": "quickcut/planning/selection.py",
+        "line": 281
+      }
+    },
+    "omitted_fields": [
+      "transcript.status",
+      "transcript.segments[].source_range_us",
+      "transcript.review_status",
+      "transcript.uri"
+    ],
+    "a_overlap_rule": "An utterance is included in every segment it overlaps; the full utterance is joined into each segment text.",
+    "current_abcde_impact": "Not exercised: all current ABCDE transcript texts are empty. This is not evidence that the current countryside film contains ASR-driven errors.",
+    "real_guide_evidence": {
+      "path": "materials/A-countryside/media/long-01-mandarin-park-guide.webm",
+      "file_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+      "transcript_source_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+      "evaluation_source_hash": "sha256:30a13e6e9689e25757da623350e3cfd58f8a6884878c4f8749b5635d615d1d58",
+      "status": "success",
+      "span_count": 29,
+      "review_status": "needs_review",
+      "model": "base",
+      "model_revision": "ebe41f70d5b6dfa9166e2c581c45c9c0cfc57b66",
+      "evaluation_scope": "Only the referenced interval; not an overall model accuracy estimate",
+      "metrics": {
+        "reference_characters": 33,
+        "hypothesis_characters": 33,
+        "substitutions": 3,
+        "deletions": 0,
+        "insertions": 0,
+        "edit_distance": 3,
+        "cer": 0.09090909090909091
+      },
+      "excluded_from_abcde": true
+    },
+    "minimal_next_acceptance": "On a new versioned project, use the real guide reference interval and a cross-window utterance; verify B/C preserve exact ASR spans and needs_review status. Do not count this static inspection as a completed ASR-to-story run."
+  },
+  "entrypoint_boundaries": [
+    {
+      "entrypoint": "quickcut.ui",
+      "actual_path": "legacy core.build_index -> core.localize; default visual fallback, ASR auto",
+      "source": {
+        "path": "quickcut/ui.py",
+        "line": 156
+      }
+    },
+    {
+      "entrypoint": "scripts/demo_pipeline.py / CI",
+      "actual_path": "real B function but manually supplied segment descriptions; ASR none; CI fallback",
+      "source_refs": [
+        {
+          "path": "scripts/demo_pipeline.py",
+          "line": 132
+        },
+        {
+          "path": "scripts/demo_pipeline.py",
+          "line": 309
+        },
+        {
+          "path": ".github/workflows/pipeline-integration.yml",
+          "line": 23
+        }
+      ],
+      "interpretation": "Legitimate offline integration regression, not semantic or ASR model acceptance."
+    },
+    {
+      "entrypoint": "scripts/run_countryside_handoff.py",
+      "actual_path": "real A with ASR none -> explicit nllb-clip-base/v1 B -> C/E/D",
+      "source": {
+        "path": "scripts/run_countryside_handoff.py",
+        "line": 187
+      }
+    },
+    {
+      "entrypoint": "external media",
+      "actual_path": "A registration in same project works and all six frozen assets remain external; CLI --broll-library explicitly rejects unregistered libraries",
+      "source": {
+        "path": "quickcut/cli.py",
+        "line": 33
+      }
+    }
+  ]
+}

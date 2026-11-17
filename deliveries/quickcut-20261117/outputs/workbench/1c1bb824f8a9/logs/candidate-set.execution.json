@@ -1,0 +1,13 @@
+{
+  "started_at": "2026-11-16T13:34:43.005219+00:00",
+  "action": "retrieve",
+  "python": "/Users/tangbao/Documents/ChatGPT/CV Project/.venv-vision/bin/python",
+  "code_sha256": {
+    "retrieval.py": "82c8a06a8617a1349571988db8f707b65a317969e3303a32b10c0339a8c3fd99",
+    "encoder.py": "718ae7811fcdcd3f7c3a6a048888633968b198c2cbd77164deedecbdcedcc8f3"
+  },
+  "local_models_only": true,
+  "exit_code": 0,
+  "elapsed_seconds": 20.02820270799566,
+  "finished_at": "2026-11-16T13:35:03.033610+00:00"
+}

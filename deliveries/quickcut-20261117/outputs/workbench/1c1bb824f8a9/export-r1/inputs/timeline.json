@@ -1,0 +1,449 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "EditTimeline",
+  "document_id": "timeline-project-1c1bb824f8a9",
+  "project_id": "project-1c1bb824f8a9",
+  "revision": 1,
+  "fixtures_only": false,
+  "owner": "D",
+  "inputs": [
+    {
+      "kind": "StoryPlan",
+      "document_id": "story-8dfa8632acb57c32",
+      "revision": 1
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-6205ab1d1652440d88c01eff10a35f1a",
+      "revision": 1
+    },
+    {
+      "kind": "VoicePackage",
+      "document_id": "voice-story-8dfa8632acb57c32",
+      "revision": 1
+    },
+    {
+      "kind": "Brief",
+      "document_id": "brief-project-1c1bb824f8a9",
+      "revision": 1
+    }
+  ],
+  "status": "ready_for_export",
+  "duration_us": 30000000,
+  "output": {
+    "width": 1280,
+    "height": 720,
+    "fps": {
+      "numerator": 30,
+      "denominator": 1
+    },
+    "sample_rate": 48000
+  },
+  "boundary_decisions": [
+    {
+      "beat_id": "beat-open",
+      "shot_index": 0,
+      "segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+      "method": "manual",
+      "reviewer": "Codex 自动验收（用户授权）",
+      "reason": "助手验收核对真实画面后的源视频入出点",
+      "segment_range_us": {
+        "begin": 0,
+        "end": 15000000
+      },
+      "source_range_us": {
+        "begin": 0,
+        "end": 5000000
+      },
+      "clip_id": "clip-video-1"
+    },
+    {
+      "beat_id": "beat-open",
+      "shot_index": 1,
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+      "method": "manual",
+      "reviewer": "Codex 自动验收（用户授权）",
+      "reason": "助手验收核对真实画面后的源视频入出点",
+      "segment_range_us": {
+        "begin": 60000000,
+        "end": 75000000
+      },
+      "source_range_us": {
+        "begin": 65000000,
+        "end": 70000000
+      },
+      "clip_id": "clip-video-2"
+    },
+    {
+      "beat_id": "beat-middle",
+      "shot_index": 0,
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+      "method": "manual",
+      "reviewer": "Codex 自动验收（用户授权）",
+      "reason": "助手验收核对真实画面后的源视频入出点",
+      "segment_range_us": {
+        "begin": 90000000,
+        "end": 105000000
+      },
+      "source_range_us": {
+        "begin": 94000000,
+        "end": 101500000
+      },
+      "clip_id": "clip-video-3"
+    },
+    {
+      "beat_id": "beat-middle",
+      "shot_index": 1,
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+      "method": "manual",
+      "reviewer": "Codex 自动验收（用户授权）",
+      "reason": "助手验收核对真实画面后的源视频入出点",
+      "segment_range_us": {
+        "begin": 45000000,
+        "end": 60000000
+      },
+      "source_range_us": {
+        "begin": 45000000,
+        "end": 52500000
+      },
+      "clip_id": "clip-video-4"
+    },
+    {
+      "beat_id": "beat-close",
+      "shot_index": 0,
+      "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+      "method": "manual",
+      "reviewer": "Codex 自动验收（用户授权）",
+      "reason": "助手验收核对真实画面后的源视频入出点",
+      "segment_range_us": {
+        "begin": 30000000,
+        "end": 45000000
+      },
+      "source_range_us": {
+        "begin": 35000000,
+        "end": 40000000
+      },
+      "clip_id": "clip-video-5"
+    }
+  ],
+  "tracks": [
+    {
+      "track_id": "track-picture",
+      "kind": "video",
+      "clips": [
+        {
+          "clip_id": "clip-video-1",
+          "asset_id": "asset-ea01edc0b20b45858d5a9fda754769e5",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 5000000
+          },
+          "timeline_range_us": {
+            "begin": 0,
+            "end": 5000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "segment_id": "asset-ea01edc0b20b45858d5a9fda754769e5-r1-shot-0-15000000",
+          "beat_id": "beat-open",
+          "role": "establishing",
+          "audio_policy": "separate_track"
+        },
+        {
+          "clip_id": "clip-video-2",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 65000000,
+            "end": 70000000
+          },
+          "timeline_range_us": {
+            "begin": 5000000,
+            "end": 10000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-60000000-75000000",
+          "beat_id": "beat-open",
+          "role": "detail",
+          "audio_policy": "separate_track"
+        },
+        {
+          "clip_id": "clip-video-3",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 94000000,
+            "end": 101500000
+          },
+          "timeline_range_us": {
+            "begin": 10000000,
+            "end": 17500000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-90000000-105000000",
+          "beat_id": "beat-middle",
+          "role": "establishing",
+          "audio_policy": "separate_track"
+        },
+        {
+          "clip_id": "clip-video-4",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 45000000,
+            "end": 52500000
+          },
+          "timeline_range_us": {
+            "begin": 17500000,
+            "end": 25000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-45000000-60000000",
+          "beat_id": "beat-middle",
+          "role": "detail",
+          "audio_policy": "separate_track"
+        },
+        {
+          "clip_id": "clip-video-5",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 35000000,
+            "end": 40000000
+          },
+          "timeline_range_us": {
+            "begin": 25000000,
+            "end": 30000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "segment_id": "asset-6ed6033cad864a938bc8caca9363777d-r1-shot-30000000-45000000",
+          "beat_id": "beat-close",
+          "role": "atmosphere",
+          "audio_policy": "separate_track"
+        }
+      ]
+    },
+    {
+      "track_id": "track-original",
+      "kind": "source_audio",
+      "clips": [
+        {
+          "clip_id": "clip-original-1",
+          "asset_id": "asset-ea01edc0b20b45858d5a9fda754769e5",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 5000000
+          },
+          "timeline_range_us": {
+            "begin": 0,
+            "end": 5000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "linked_video_clip_id": "clip-video-1",
+          "gain": 0.3
+        },
+        {
+          "clip_id": "clip-original-2",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 65000000,
+            "end": 70000000
+          },
+          "timeline_range_us": {
+            "begin": 5000000,
+            "end": 10000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "linked_video_clip_id": "clip-video-2",
+          "gain": 0.3
+        },
+        {
+          "clip_id": "clip-original-3",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 94000000,
+            "end": 101500000
+          },
+          "timeline_range_us": {
+            "begin": 10000000,
+            "end": 17500000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "linked_video_clip_id": "clip-video-3",
+          "gain": 0.3
+        },
+        {
+          "clip_id": "clip-original-4",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 45000000,
+            "end": 52500000
+          },
+          "timeline_range_us": {
+            "begin": 17500000,
+            "end": 25000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "linked_video_clip_id": "clip-video-4",
+          "gain": 0.3
+        },
+        {
+          "clip_id": "clip-original-5",
+          "asset_id": "asset-6ed6033cad864a938bc8caca9363777d",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 35000000,
+            "end": 40000000
+          },
+          "timeline_range_us": {
+            "begin": 25000000,
+            "end": 30000000
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "linked_video_clip_id": "clip-video-5",
+          "gain": 0.3
+        }
+      ]
+    },
+    {
+      "track_id": "track-narration",
+      "kind": "narration",
+      "clips": [
+        {
+          "clip_id": "clip-narration-cue-01",
+          "asset_id": "generated-voice-a6e535292f1d8ec377115877f8d1a307",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 2529812
+          },
+          "timeline_range_us": {
+            "begin": 200000,
+            "end": 2729812
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "cue_id": "cue-01",
+          "gain": 1.0
+        },
+        {
+          "clip_id": "clip-narration-cue-02",
+          "asset_id": "generated-voice-e7bb7d7c7e85a7e0a86d8f80aaad5dc0",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 4118562
+          },
+          "timeline_range_us": {
+            "begin": 10200000,
+            "end": 14318562
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "cue_id": "cue-02",
+          "gain": 1.0
+        },
+        {
+          "clip_id": "clip-narration-cue-03",
+          "asset_id": "generated-voice-58e27476e7cb09e78504f3877158a305",
+          "asset_revision": 1,
+          "source_range_us": {
+            "begin": 0,
+            "end": 1725938
+          },
+          "timeline_range_us": {
+            "begin": 25200000,
+            "end": 26925938
+          },
+          "playback_rate": {
+            "numerator": 1,
+            "denominator": 1
+          },
+          "cue_id": "cue-03",
+          "gain": 1.0
+        }
+      ]
+    },
+    {
+      "track_id": "track-subtitles",
+      "kind": "subtitle",
+      "cues": [
+        {
+          "subtitle_id": "sub-cue-01",
+          "cue_id": "cue-01",
+          "text": "沿着林间小路，走进清新的绿意。",
+          "timeline_range_us": {
+            "begin": 200000,
+            "end": 2549812
+          },
+          "editable": true
+        },
+        {
+          "subtitle_id": "sub-cue-02",
+          "cue_id": "cue-02",
+          "text": "云雾掠过山头，草木在风中舒展，让脚步慢下来。",
+          "timeline_range_us": {
+            "begin": 10200000,
+            "end": 14138562
+          },
+          "editable": true
+        },
+        {
+          "subtitle_id": "sub-cue-03",
+          "cue_id": "cue-03",
+          "text": "把宁静留在风景里。",
+          "timeline_range_us": {
+            "begin": 25200000,
+            "end": 26745938
+          },
+          "editable": true
+        }
+      ]
+    }
+  ],
+  "render_policy": {
+    "preview_burn_subtitles": true,
+    "editable_export_burn_subtitles": false,
+    "retain_separate_audio_tracks": true,
+    "unsupported_effect_policy": "error",
+    "subtitle_position": "top"
+  }
+}

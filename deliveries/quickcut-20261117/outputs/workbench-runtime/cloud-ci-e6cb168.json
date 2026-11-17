@@ -1,0 +1,29 @@
+[
+  {
+    "id": 43995412598,
+    "name": "Pipeline integration",
+    "head_branch": "main",
+    "head_sha": "e6cb16870e5fbb249040ab098998432a39d4888b",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/Tt200411/QuickCut/actions/runs/43995412598"
+  },
+  {
+    "id": 43995412554,
+    "name": "C planning contracts",
+    "head_branch": "main",
+    "head_sha": "e6cb16870e5fbb249040ab098998432a39d4888b",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/Tt200411/QuickCut/actions/runs/43995412554"
+  },
+  {
+    "id": 43995034653,
+    "name": "Pipeline integration",
+    "head_branch": "codex/real-pipeline-ui",
+    "head_sha": "e6cb16870e5fbb249040ab098998432a39d4888b",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/Tt200411/QuickCut/actions/runs/43995034653"
+  }
+]

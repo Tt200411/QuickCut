@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "RetrievalRequest",
+  "document_id": "request-001",
+  "project_id": "project-pipeline-demo",
+  "revision": 1,
+  "fixtures_only": true,
+  "owner": "C",
+  "inputs": [
+    {
+      "kind": "Brief",
+      "document_id": "brief-demo",
+      "revision": 1
+    },
+    {
+      "kind": "AssetManifest",
+      "document_id": "manifest-35a9f94db39d4fcb90e397abfac9326c",
+      "revision": 1
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "query-open",
+      "beat_id": "beat-open",
+      "semantic_text": "展示第一段测试画面",
+      "role": "primary",
+      "allowed_origins": [
+        "user"
+      ],
+      "duration_budget_us": 3333333,
+      "top_k": 4,
+      "iteration": 1,
+      "beat_purpose": "建立出发情境"
+    },
+    {
+      "query_id": "query-middle",
+      "beat_id": "beat-middle",
+      "semantic_text": "展示第二段测试画面",
+      "role": "primary",
+      "allowed_origins": [
+        "user"
+      ],
+      "duration_budget_us": 5000000,
+      "top_k": 4,
+      "iteration": 1,
+      "beat_purpose": "推进过程与环境过渡"
+    },
+    {
+      "query_id": "query-close",
+      "beat_id": "beat-close",
+      "semantic_text": "展示第三段测试画面",
+      "role": "primary",
+      "allowed_origins": [
+        "user"
+      ],
+      "duration_budget_us": 1666667,
+      "top_k": 4,
+      "iteration": 1,
+      "beat_purpose": "完成情绪收束"
+    }
+  ],
+  "iteration": 1,
+  "max_iterations": 3,
+  "iteration_notes": [
+    "首轮按三段叙事目的发出检索请求"
+  ],
+  "status": "pending"
+}

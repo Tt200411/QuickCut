@@ -1,0 +1,74 @@
+{
+  "video": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/verification-smoke/summary.mp4",
+  "format_duration": 6.0,
+  "streams": [
+    {
+      "codec_type": "video",
+      "codec_name": "h264",
+      "time_base": "1/12800",
+      "start_time": "0.000000",
+      "duration": "5.960000",
+      "width": 160,
+      "height": 90,
+      "avg_frame_rate": "3750/149",
+      "first_decoded_frame_pts": 0.0
+    },
+    {
+      "codec_type": "audio",
+      "codec_name": "aac",
+      "time_base": "1/48000",
+      "start_time": "0.000000",
+      "duration": "6.000000",
+      "sample_rate": "48000",
+      "channels": 2,
+      "avg_frame_rate": "0/0",
+      "first_decoded_frame_pts": 0.0
+    }
+  ],
+  "errors": [],
+  "full_decode": {
+    "returncode": 0,
+    "diagnostics": ""
+  },
+  "subtitles": {
+    "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/verification-smoke/summary.srt",
+    "count": 2,
+    "last_end": 6.0,
+    "cues": [
+      {
+        "start": 0.0,
+        "end": 3.0,
+        "text": "树林里，故事开始了。"
+      },
+      {
+        "start": 3.0,
+        "end": 6.0,
+        "text": "旅程结束，大家回到了家。"
+      }
+    ]
+  },
+  "timeline": {
+    "path": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/verification-smoke/summary.json",
+    "narration_matches_subtitles": true
+  },
+  "source_audio": {
+    "method": "least_squares_on_decoded_stereo_samples",
+    "sample_rate": 12000,
+    "compared_duration": 6.0,
+    "original_only": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/verification-smoke/original.mp4",
+    "narration": "/Users/tangbao/Documents/ChatGPT/CV Project/outputs/verification-smoke/narration.wav",
+    "narration_filter": "loudnorm=I=-18:TP=-2:LRA=7",
+    "source_gain": 0.2986129950044893,
+    "source_rms": 0.0623388645008908,
+    "source_correlation_after_removing_narration": 0.9961382530914633,
+    "reconstruction_correlation": 0.9998537217037574,
+    "residual_rms": 0.0016407226943293306,
+    "relative_residual_rms": 0.017103660285004388,
+    "explained_energy_fraction": 0.9997074648048552,
+    "matrix_rank": 2,
+    "narration_gain": 0.9995677104715827,
+    "source_partial_r_squared": 0.9922914192685359,
+    "source_retained": true
+  },
+  "passed": true
+}

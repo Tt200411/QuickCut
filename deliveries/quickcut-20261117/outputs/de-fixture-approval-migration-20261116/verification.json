@@ -1,0 +1,64 @@
+{
+  "initial": [
+    {
+      "cue_id": "cue-01",
+      "duration_us": 1180000,
+      "fit_status": "fits",
+      "hash_verified": true
+    },
+    {
+      "cue_id": "cue-02",
+      "duration_us": 1180000,
+      "fit_status": "fits",
+      "hash_verified": true
+    },
+    {
+      "cue_id": "cue-03",
+      "duration_us": 1180000,
+      "fit_status": "needs_retime",
+      "hash_verified": true
+    }
+  ],
+  "updated": [
+    {
+      "cue_id": "cue-01",
+      "duration_us": 1180000,
+      "fit_status": "fits",
+      "hash_verified": true
+    },
+    {
+      "cue_id": "cue-02",
+      "duration_us": 1180000,
+      "fit_status": "fits",
+      "hash_verified": true
+    },
+    {
+      "cue_id": "cue-03",
+      "duration_us": 1180000,
+      "fit_status": "needs_retime",
+      "hash_verified": true
+    }
+  ],
+  "fitted": [
+    {
+      "cue_id": "cue-01",
+      "duration_us": 1098062,
+      "fit_status": "fits",
+      "hash_verified": true
+    },
+    {
+      "cue_id": "cue-02",
+      "duration_us": 1180000,
+      "fit_status": "fits",
+      "hash_verified": true
+    },
+    {
+      "cue_id": "cue-03",
+      "duration_us": 1180000,
+      "fit_status": "needs_retime",
+      "hash_verified": true
+    }
+  ],
+  "revision_test": "only cue-01 changed; cue-02/cue-03 reused",
+  "failure_test": "TTS_FAILED returned"
+}

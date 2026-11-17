@@ -1,0 +1,41 @@
+{
+  "schema_version": "0.1.0",
+  "kind": "Brief",
+  "document_id": "brief-project-ac91f60c01ca",
+  "project_id": "project-ac91f60c01ca",
+  "revision": 1,
+  "fixtures_only": false,
+  "owner": "C",
+  "inputs": [],
+  "requirements": {
+    "story": "以山林小路和开阔风景为主题，剪一段自然宁静的散步短片。开场展示山林或步道，中段展现道路和自然风景，最后以暖色风景收尾。中文旁白每句简短，不虚构人物经历。",
+    "format": "thematic_montage",
+    "language": "zh-CN",
+    "target_duration_us": 30000000,
+    "aspect_ratio": {
+      "width": 16,
+      "height": 9
+    },
+    "tone": "自然、简洁",
+    "narration": {
+      "enabled": true,
+      "style": "中文旁白"
+    },
+    "picture_policy": "thematic_montage",
+    "broll_policy": {
+      "enabled": true,
+      "roles": [
+        "establishing",
+        "atmosphere",
+        "detail"
+      ],
+      "must_not_assert_user_events": true
+    },
+    "target_editor": "Jianying 6.1.0"
+  },
+  "constraints": {
+    "local_inference_only": true,
+    "preserve_source_audio": true,
+    "editable_tracks_required": true
+  }
+}
