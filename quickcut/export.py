@@ -350,9 +350,14 @@ def _verify_package(package_dir: str | Path, *, allow_fixtures: bool = False) ->
     report = json.loads((root / "export-manifest.json").read_text(encoding="utf-8"))
     _require(report.get("kind") == "ExportManifest" and report.get("schema_version") == "0.1.0" and
              report.get("status") == "generated", "PACKAGE_INVALID", "需要当前 generated ExportManifest")
-    _target(report.get("target", {}).get("version"))
-    _require(report.get("target", {}).get("adapter_version") == jianying.ADAPTER_VERSION and
-             report["target"].get("editor") == "JianyingPro" and report["target"].get("platform") == "macOS",
+    target = report.get("target", {})
+    _target(target.get("version"))
+    if (target.get("adapter_version") == "quickcut-jianying-mac-0.1.0"
+            and target.get("editor") == "JianyingPro" and target.get("platform") == "macOS"):
+        raise ExportError("PACKAGE_INVALID", "该工程包使用旧版字幕布局（0.1.0）。请重新导出工程包后再打开剪映；"
+                          "新版字幕布局不会直接重建旧包，避免改变原工程的字幕。")
+    _require(target.get("adapter_version") == jianying.ADAPTER_VERSION and
+             target.get("editor") == "JianyingPro" and target.get("platform") == "macOS",
              "PACKAGE_INVALID", "未知工程适配器版本")
     seen = set()
     for item in report["files"]:

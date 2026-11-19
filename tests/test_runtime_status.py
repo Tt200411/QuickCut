@@ -118,6 +118,36 @@ def test_missing_local_asr_directory_does_not_use_remote_cache(runtime_env, tmp_
     assert model + "/model.bin" in item["detail"]
 
 
+@pytest.mark.parametrize("failure,expected", [
+    ("missing", "文件缺失"),
+    ("malformed", "Expecting"),
+    ("lfs_pointer", "Git LFS 指针"),
+    ("unreadable", "文件不可读"),
+])
+def test_voice_configuration_failure_names_the_actual_path(runtime_env, monkeypatch, failure, expected):
+    config = Path(runtime_env.voice_config)
+    if failure == "missing":
+        config.unlink()
+    elif failure == "malformed":
+        config.write_text('{"engine":')
+    elif failure == "lfs_pointer":
+        config.write_bytes(LFS_POINTER)
+    else:
+        original_open = Path.open
+        def unreadable(path, *args, **kwargs):
+            if path == config:
+                raise PermissionError("test denied")
+            return original_open(path, *args, **kwargs)
+        monkeypatch.setattr(Path, "open", unreadable)
+    status = pipeline.runtime_status(runtime_env)
+    item = check(status, "配音权重与参考音频")
+    assert not item["ready"]
+    assert not status["generation_ready"]
+    assert str(config) in item["detail"]
+    assert expected in item["detail"]
+    assert check(status, "Whisper 语音识别权重")["ready"]
+
+
 def test_remote_model_name_keeps_existing_cache_check(runtime_env, tmp_path):
     cached = tmp_path / "hf/hub/models--Systran--faster-whisper-small/snapshots/revision/model.bin"
     cached.parent.mkdir(parents=True)

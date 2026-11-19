@@ -170,6 +170,9 @@ def runtime_status(runtime):
     voice_ready = False
     voice_detail = runtime.voice_config
     try:
+        config_issue = _resource_issue(Path(runtime.voice_config))
+        if config_issue:
+            raise ValueError(config_issue)
         config = read(runtime.voice_config)
         def local_path(value):
             path = Path(value).expanduser()
@@ -182,8 +185,8 @@ def runtime_status(runtime):
             issues.insert(0, "声音配置的 engine 必须为 indextts2")
         voice_ready = not issues
         voice_detail = "\n".join(issues) if issues else runtime.voice_config + "\n必要权重和参考音频可见；未加载模型或解码音频。"
-    except (OSError, ValueError, KeyError, TypeError):
-        voice_detail = "声音配置、模型或参考音频缺失"
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        voice_detail = f"声音配置、模型或参考音频不可用（配置：{runtime.voice_config}）：{exc}"
     checks.append({"stage": "E", "name": "配音权重与参考音频", "ready": voice_ready, "detail": voice_detail})
     app = Path("/Applications/VideoFusion-macOS.app/Contents/Info.plist")
     version = None

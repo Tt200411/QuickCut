@@ -455,8 +455,26 @@ def test_pre_layout_adapter_package_is_rejected_before_rebuild(tmp_path):
               "target": {"version": jianying.TARGET_VERSION, "editor": "JianyingPro",
                          "platform": "macOS", "adapter_version": "quickcut-jianying-mac-0.1.0"}}
     (tmp_path / "export-manifest.json").write_text(json.dumps(report), encoding="utf-8")
-    with pytest.raises(export.ExportError, match="未知工程适配器版本"):
+    with pytest.raises(export.ExportError, match="旧版字幕布局") as error:
         export._verify_package(tmp_path)
+    assert error.value.code == "PACKAGE_INVALID"
+    assert "重新导出工程包后再打开剪映" in str(error.value)
+    assert "不会直接重建旧包" in str(error.value)
+
+
+@pytest.mark.parametrize("adapter,editor,platform", [
+    ("unknown-adapter", "JianyingPro", "macOS"),
+    ("quickcut-jianying-mac-0.1.0", "OtherEditor", "macOS"),
+    ("quickcut-jianying-mac-0.1.0", "JianyingPro", "OtherPlatform"),
+])
+def test_unknown_adapter_target_keeps_original_rejection(tmp_path, adapter, editor, platform):
+    report = {"kind": "ExportManifest", "schema_version": "0.1.0", "status": "generated",
+              "target": {"version": jianying.TARGET_VERSION, "editor": editor,
+                         "platform": platform, "adapter_version": adapter}}
+    (tmp_path / "export-manifest.json").write_text(json.dumps(report), encoding="utf-8")
+    with pytest.raises(export.ExportError, match="^未知工程适配器版本$") as error:
+        export._verify_package(tmp_path)
+    assert error.value.code == "PACKAGE_INVALID"
 
 
 def test_relocation_rebuilds_all_paths_preserves_hashes_and_existing_registry(tmp_path, source_media, docs, monkeypatch):

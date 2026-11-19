@@ -1,0 +1,194 @@
+{
+  "kind": "PR12ReviewEvidence",
+  "author_head": "dd465de231630b02ad0a89e5e292490ed52fc1cd",
+  "base_head": "81644e547f7ea26d3531a57dce6574761af693e3",
+  "neural_inference_executed": false,
+  "tts_audio": "reused approved historical male-reference IndexTTS WAVs; no resynthesis",
+  "native_editor_visual_acceptance": false,
+  "render_cases": [
+    {
+      "case": "before-portrait",
+      "source_job": "ac91f60c01ca",
+      "source_document_sha256": {
+        "timeline.json": "18ee0c78f5317b15472bad9b9a3a33c65f45380c69f3a6ad121adeb3f22a3052",
+        "asset-manifest.json": "e35dbcf7edc95c5f798ac8dee8183fcb260ca2674e8eb737d1be3651de6b6a4b",
+        "voice-package.json": "e21f9e4eafc40a1d81d080d5083b8edd0fd27d63b4e76956888f5d0a5b34d8bb"
+      },
+      "source_documents_unchanged": true,
+      "audio_reused_without_tts": true,
+      "model_inference_executed": false,
+      "output": {
+        "width": 720,
+        "height": 1280,
+        "fps": {
+          "numerator": 30,
+          "denominator": 1
+        },
+        "sample_rate": 48000
+      },
+      "canonical_srt_sha256": "c25f7e73b77a4c8afa26c0a96a6e0158cc1390929b4e212c0ef43e27bff01338",
+      "canonical_srt_unchanged": true,
+      "movie": "before-portrait.mp4",
+      "frame": "before-portrait-11s.png",
+      "sample_top_subtitle_pixels": {
+        "region": [
+          0,
+          0,
+          720,
+          300
+        ],
+        "brightness_min": 170,
+        "count": 10064,
+        "bounds": [
+          59,
+          89,
+          719,
+          160
+        ]
+      },
+      "movie_sha256": "e59dbe36c4947a694ef752d3186fd13428d5ceec3720f59972161a7a251d1198",
+      "frame_sha256": "80624161e020a1eb5b976cb54969e1cb120764f95ecc6704295a2cbce665c3d3"
+    },
+    {
+      "case": "after-portrait",
+      "source_job": "ac91f60c01ca",
+      "source_document_sha256": {
+        "timeline.json": "18ee0c78f5317b15472bad9b9a3a33c65f45380c69f3a6ad121adeb3f22a3052",
+        "asset-manifest.json": "e35dbcf7edc95c5f798ac8dee8183fcb260ca2674e8eb737d1be3651de6b6a4b",
+        "voice-package.json": "e21f9e4eafc40a1d81d080d5083b8edd0fd27d63b4e76956888f5d0a5b34d8bb"
+      },
+      "source_documents_unchanged": true,
+      "audio_reused_without_tts": true,
+      "model_inference_executed": false,
+      "output": {
+        "width": 720,
+        "height": 1280,
+        "fps": {
+          "numerator": 30,
+          "denominator": 1
+        },
+        "sample_rate": 48000
+      },
+      "canonical_srt_sha256": "c25f7e73b77a4c8afa26c0a96a6e0158cc1390929b4e212c0ef43e27bff01338",
+      "canonical_srt_unchanged": true,
+      "movie": "after-portrait.mp4",
+      "frame": "after-portrait-11s.png",
+      "sample_top_subtitle_pixels": {
+        "region": [
+          0,
+          0,
+          720,
+          300
+        ],
+        "brightness_min": 170,
+        "count": 4546,
+        "bounds": [
+          173,
+          40,
+          548,
+          111
+        ]
+      },
+      "movie_sha256": "fdbc80d2b25cc206cc890d4fc17191e56b7e01b2a0726686e7e6e4b8332fe204",
+      "frame_sha256": "6e5058c55800c82069129c887a680e875436bc32723ac4c757644f66fc5c2385"
+    },
+    {
+      "case": "after-landscape",
+      "source_job": "ac91f60c01ca",
+      "source_document_sha256": {
+        "timeline.json": "18ee0c78f5317b15472bad9b9a3a33c65f45380c69f3a6ad121adeb3f22a3052",
+        "asset-manifest.json": "e35dbcf7edc95c5f798ac8dee8183fcb260ca2674e8eb737d1be3651de6b6a4b",
+        "voice-package.json": "e21f9e4eafc40a1d81d080d5083b8edd0fd27d63b4e76956888f5d0a5b34d8bb"
+      },
+      "source_documents_unchanged": true,
+      "audio_reused_without_tts": true,
+      "model_inference_executed": false,
+      "output": {
+        "width": 1280,
+        "height": 720,
+        "fps": {
+          "numerator": 30,
+          "denominator": 1
+        },
+        "sample_rate": 48000
+      },
+      "canonical_srt_sha256": "c25f7e73b77a4c8afa26c0a96a6e0158cc1390929b4e212c0ef43e27bff01338",
+      "canonical_srt_unchanged": true,
+      "movie": "after-landscape.mp4",
+      "frame": "after-landscape-11s.png",
+      "pixel_isolation_note": "Real landscape picture has bright pixels behind text; threshold bounds cannot isolate subtitles. Margin gates use separate synthetic-media regression tests.",
+      "movie_sha256": "b9f40874c64c3e9b34cfac1022b3d48d2e4b693f48c8543e02211ef1ea212f10",
+      "frame_sha256": "b908742c96ac0cc5896ef4b8a73b5a3c8746d85e4a921261f2253a394a2de772"
+    }
+  ],
+  "lightweight_host_health": {
+    "ready": true,
+    "generation_ready": true,
+    "editor_ready": true,
+    "checks": [
+      {
+        "stage": "A",
+        "name": "视频接入与语音识别 Python 解释器",
+        "ready": true,
+        "detail": "${PROJECT_ROOT}/.venv/bin/python\n仅检查解释器文件存在；未验证依赖包或模型推理。"
+      },
+      {
+        "stage": "B",
+        "name": "中文视觉检索 Python 解释器",
+        "ready": true,
+        "detail": "${PROJECT_ROOT}/.venv-vision/bin/python\n仅检查解释器文件存在；未验证依赖包或模型推理。"
+      },
+      {
+        "stage": "E",
+        "name": "IndexTTS2 配音 Python 解释器",
+        "ready": true,
+        "detail": "${PROJECT_ROOT}/outputs/indextts2-runtime/upstream/.venv/bin/python\n仅检查解释器文件存在；未验证依赖包或模型推理。"
+      },
+      {
+        "stage": "A",
+        "name": "Whisper 语音识别权重",
+        "ready": true,
+        "detail": "small\n缓存权重可见；未加载模型。"
+      },
+      {
+        "stage": "B",
+        "name": "中文视觉检索权重",
+        "ready": true,
+        "detail": "nllb-clip-base · 部署文件可见；未加载模型。"
+      },
+      {
+        "stage": "C",
+        "name": "Qwen 看图与规划",
+        "ready": true,
+        "detail": "qwen2.5vl:3b"
+      },
+      {
+        "stage": "F",
+        "name": "ffmpeg",
+        "ready": true,
+        "detail": "/opt/homebrew/bin/ffmpeg"
+      },
+      {
+        "stage": "F",
+        "name": "ffprobe",
+        "ready": true,
+        "detail": "/opt/homebrew/bin/ffprobe"
+      },
+      {
+        "stage": "E",
+        "name": "配音权重与参考音频",
+        "ready": true,
+        "detail": "${PROJECT_ROOT}/examples/voice_package/indextts2.config.json\n必要权重和参考音频可见；未加载模型或解码音频。"
+      },
+      {
+        "stage": "editor",
+        "name": "剪映专业版",
+        "ready": true,
+        "detail": "6.1.0"
+      }
+    ],
+    "scope": "轻量安装、资源可见性与服务检查，参考音频取当前默认声音配置；不加载模型、不执行推理、不验证媒体内容。解释器存在不代表依赖包完整。每次生成仍会验证任务资源并实际推理；剪映仅影响打开工程。",
+    "checked_at": "2026-11-19T08:45:47.222891+00:00"
+  },
+  "legacy_package_install": "0.1.0 correctly rejected, now explicitly requests re-export; existing installed draft unchanged"
+}
