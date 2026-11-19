@@ -29,6 +29,8 @@ from .types import IndexManifest, Shot, Timeline, TimelineItem
 MIN_TIMELINE_SECONDS = 5.0
 MAX_TIMELINE_SECONDS = 60.0
 DEFAULT_TIMELINE_SECONDS = 30.0
+# Used when `search` / `localize` prompts do not name a duration.
+DEFAULT_SEARCH_SECONDS = 15.0
 
 
 def _run(command: list[str], *, input_bytes: bytes | None = None) -> subprocess.CompletedProcess[bytes]:
@@ -290,7 +292,7 @@ def parse_prompt(prompt: str, duration: float | None = None) -> tuple[list[str],
     # avoiding a partial match such as ``8 secondsLater``.
     duration_pattern = r"(?<!\d)(\d+(?:\.\d+)?)\s*(?:s|sec|secs|second|seconds|秒钟?)(?=$|[^A-Za-z])"
     matches = re.findall(duration_pattern, prompt.lower())
-    budget = float(matches[0]) if matches else (duration or 8.0)
+    budget = float(matches[0]) if matches else (duration or DEFAULT_SEARCH_SECONDS)
     budget = min(MAX_TIMELINE_SECONDS, max(MIN_TIMELINE_SECONDS, budget))
     clean = re.sub(duration_pattern, "", prompt, flags=re.I)
     beats = [piece.strip() for piece in re.split(r"[,;]|\band\b|\u548c|\u4e0e", clean, flags=re.I) if piece.strip()]

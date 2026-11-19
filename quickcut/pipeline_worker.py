@@ -19,7 +19,8 @@ def execute(action, data):
         from .retrieval import RetrievalConfig, retrieve
         return retrieve(read(data["manifest"]), read(data["request"]), project_root=data["root"],
                         document_id="candidates-" + data["project_id"],
-                        config=RetrievalConfig(encoder_mode="openclip", minimum_ranking_score=0.12))
+                        config=RetrievalConfig(encoder_mode="openclip", minimum_ranking_score=0.12,
+                                                minimum_visual_score=0.12))
     if action == "draft":
         from .planning.production import generate_draft
         root = Path(data["root"])

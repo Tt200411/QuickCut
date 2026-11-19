@@ -29,7 +29,7 @@ from .contracts import (
 from .selection import RuleSelector, Selection, Selector, validate_selection
 
 BEAT_SUFFIXES = ("open", "middle", "close")
-# 2:3:1 对应黄金样例的 6/9/3 秒，且对任意总时长都只用整数微秒运算。
+# 三句故事仍用 2:3:1，对应黄金样例的 6/9/3 秒。
 BUDGET_WEIGHTS = [2.0, 3.0, 1.0]
 BROLL_ROLE_BEATS = {
     "establishing": "middle",
@@ -37,7 +37,8 @@ BROLL_ROLE_BEATS = {
     "detail": "middle",
     "atmosphere": "close",
 }
-SPLIT_RE = re.compile(r"[，,。；;、]|然后|接着|最后|再|到|并")
+# 只按中文逗号和句号切开。不把「然后」「到」这类字当成分隔符。
+CLAUSE_RE = re.compile(r"[，。]")
 
 
 @dataclass
@@ -50,8 +51,15 @@ class PlanResult:
 
 
 def _events(story: str) -> list[str]:
-    pieces = [p.strip() for p in SPLIT_RE.split(story or "") if p.strip()]
-    return pieces or ["建立环境", "推进过程", "安静收束"]
+    """按「，」和「。」切成独立检索句，保持原有顺序。"""
+    pieces = [p.strip() for p in CLAUSE_RE.split(story or "") if p.strip()]
+    return pieces or ["建立环境"]
+
+
+def _beat_id(index: int, count: int) -> str:
+    if count == 3:
+        return f"beat-{BEAT_SUFFIXES[index]}"
+    return f"beat-{index + 1:02d}"
 
 
 def _broll_roles(brief: dict[str, Any]) -> dict[str, list[str]]:
@@ -70,36 +78,31 @@ def _broll_roles(brief: dict[str, Any]) -> dict[str, list[str]]:
 
 
 def build_outline(brief: dict[str, Any]) -> list[dict[str, Any]]:
-    """把用户愿望拆成三段初始结构，愿望与已证实事实分开保存。"""
+    """按标点切出的每一句做一段，愿望与已证实事实分开保存。"""
     check_envelope(brief, expected_kind="Brief", owner="C")
     requirements = brief.get("requirements", {})
     total = require_us(requirements.get("target_duration_us"), "Brief.target_duration_us")
     events = _events(requirements.get("story", ""))
-    budgets = split_budget(total, BUDGET_WEIGHTS)
+    budgets = split_budget(total, BUDGET_WEIGHTS if len(events) == 3 else [1.0] * len(events))
     if any(budget <= 0 for budget in budgets):
-        raise PlanningError(VLM_INVALID_PLAN, "三段预算必须均为正整数微秒", retryable=False)
+        raise PlanningError(VLM_INVALID_PLAN, "每句预算必须为正整数微秒", retryable=False)
     broll_roles = _broll_roles(brief)
     narration = requirements.get("narration") or {}
     style = narration.get("style", "中性旁白")
+    legacy_purposes = ["建立出发情境", "推进过程与环境过渡", "完成情绪收束"]
 
-    purposes = ["建立出发情境", "推进过程与环境过渡", "完成情绪收束"]
-    needs = [["primary", *broll_roles[suffix]] for suffix in BEAT_SUFFIXES]
     outline: list[dict[str, Any]] = []
-    for idx, suffix in enumerate(BEAT_SUFFIXES):
-        if len(events) == 1:
-            event = events[0] if idx == 1 else f"{events[0]}（{purposes[idx]}）"
-        elif len(events) == 2:
-            event = events[0] if idx == 0 else events[1]
-        else:
-            event = events[0] if idx == 0 else (events[-1] if idx == 2 else "、".join(events[1:-1]))
+    for idx, event in enumerate(events):
+        suffix = BEAT_SUFFIXES[idx] if len(events) == 3 else ""
+        extra_roles = broll_roles[suffix] if suffix else []
         outline.append({
-            "beat_id": f"beat-{suffix}",
+            "beat_id": _beat_id(idx, len(events)),
             "order": idx,
-            "purpose": purposes[idx],
+            "purpose": legacy_purposes[idx] if suffix else event,
             # 这是用户想讲什么，不是素材里已经拍到的事实。
             "wish": {"event": event, "assertion": "user_wish", "verified": False},
-            "shot_needs": needs[idx],
-            "broll_allowed": bool(broll_roles[suffix]),
+            "shot_needs": ["primary", *extra_roles],
+            "broll_allowed": bool(extra_roles),
             "duration_budget_us": budgets[idx],
             "narration_style": style,
             "project_id": brief["project_id"],
@@ -138,10 +141,13 @@ def build_retrieval_request(
             "beat_purpose": beat["purpose"],
         })
     if broll_queries:
+        beats_by_id = {beat["beat_id"]: beat for beat in outline}
         for suffix, role in (
             (suffix, role) for suffix in BEAT_SUFFIXES for role in broll_roles[suffix]
         ):
-            beat = next(b for b in outline if b["beat_id"] == f"beat-{suffix}")
+            beat = beats_by_id.get(f"beat-{suffix}")
+            if beat is None:
+                continue
             queries.append({
                 "query_id": f"query-{suffix}-{role}",
                 "beat_id": beat["beat_id"],

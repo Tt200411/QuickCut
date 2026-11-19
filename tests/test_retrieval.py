@@ -351,6 +351,19 @@ def test_recall_report_records_hits_misses_and_an_empty_gap():
     assert report["cases"][1]["status"] == "gap_confirmed"
 
 
+def test_low_visual_score_is_dropped_even_when_transcript_overlaps(monkeypatch, manifest, request_doc):
+    monkeypatch.setattr(Retriever, "_image_embedding",
+                        lambda self, segment, project_root, fixture=False: [1.0, 0.0])
+    monkeypatch.setattr(Retriever, "_visual_score",
+                        lambda self, query_text, segment, project_root, fixture=False: 0.0155)
+    monkeypatch.setattr(Retriever, "_text_score",
+                        lambda self, query_text, segment, fixture=False: (0.5, 0.0))
+    kept = retrieve(manifest, request_doc, config=RetrievalConfig(minimum_visual_score=0.0))
+    assert _result(kept, "query-open")["candidates"]
+    dropped = retrieve(manifest, request_doc, config=RetrievalConfig(minimum_visual_score=0.12))
+    assert _result(dropped, "query-open")["candidates"] == []
+
+
 def test_minimum_ranking_score_drops_weak_matches(manifest, request_doc):
     found = retrieve(manifest, request_doc)
     assert _result(found, "query-open")["candidates"]

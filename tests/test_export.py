@@ -124,6 +124,52 @@ def test_webm_measures_playable_stream_instead_of_longer_container(webm_source):
         export._inspect_media(webm_source, {"asset_id": "webm"}, tracks, core._ffmpeg_binary(), probe)
 
 
+def test_late_audio_start_is_padded_with_silence(tmp_path):
+    ffmpeg = core._ffmpeg_binary()
+    if not timeline_preview._ffprobe_binary():
+        pytest.skip("导出需要 ffprobe")
+    root = tmp_path / "project"
+    root.mkdir()
+    source = root / "late.mp4"
+    subprocess.run([ffmpeg, "-v", "error", "-y", "-f", "lavfi", "-i", "color=c=green:s=160x120:r=25:d=2",
+        "-itsoffset", "0.069", "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=44100:duration=1.93",
+        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", str(source)], check=True, capture_output=True)
+    probe = timeline_preview._probe(timeline_preview._ffprobe_binary(), source)
+    audio = next(stream for stream in probe["streams"] if stream["codec_type"] == "audio")
+    assert timeline_preview._start_time(audio) > 20_000
+    speech = root / "speech.wav"
+    subprocess.run([ffmpeg, "-v", "error", "-y", "-f", "lavfi", "-i", "sine=frequency=1000:sample_rate=48000:duration=0.4",
+        "-c:a", "pcm_s16le", str(speech)], check=True, capture_output=True)
+    _, _, voice = _documents()
+    brief = _envelope("Brief", "brief")
+    brief.update(requirements={"target_duration_us": 800_000}, constraints={"preserve_source_audio": True})
+    manifest = _envelope("AssetManifest", "manifest")
+    manifest["assets"] = [dict(asset_id="late", revision=1, media_kind="video", uri="late.mp4",
+        duration_us=2_000_000, content_hash=digest(source), audio={"present": True})]
+    manifest["segments"] = [dict(segment_id="late", asset_id="late", asset_revision=1,
+        source_range_us={"begin": 0, "end": 800_000})]
+    story = _envelope("StoryPlan", "story")
+    story.update(status="ready_for_edit", unresolved_gaps=[], inputs=[timeline_preview._ref(d) for d in (manifest, brief)],
+        narration_cues=[dict(cue_id="cue", beat_id="beat", text="可编辑字幕", duration_budget_us=500_000)],
+        beats=[dict(beat_id="beat", order=1, duration_budget_us=800_000, cue_ids=["cue"],
+                    shots=[dict(segment_id="late", role="source", suggested_duration_us=800_000)])])
+    voice["assets"][0]["content_hash"] = digest(speech)
+    timeline = compile_timeline(brief, manifest, story, voice, output={"width": 160, "height": 120,
+        "fps": {"numerator": 25, "denominator": 1}, "sample_rate": 48000})
+    report = export.export_project(timeline, manifest, voice, root, tmp_path / "export")
+    derived = next(item for item in report["resources"] if item.get("derived_for_clip_id"))
+    assert derived["leading_silence_samples"] > 900
+    wav_path = tmp_path / "export" / derived["packaged_uri"]
+    with wave.open(str(wav_path), "rb") as wav:
+        assert abs(wav.getnframes() - 800_000 * wav.getframerate() / 1_000_000) <= 1
+        samples = array.array("h", wav.readframes(wav.getnframes()))
+    mono = samples[::2]
+    head = mono[: int(0.02 * 48000)]
+    tone = mono[int(0.12 * 48000): int(0.2 * 48000)]
+    assert max(abs(v) for v in head) == 0
+    assert max(abs(v) for v in tone) > 1000
+
+
 def test_export_and_preview_accept_webm_without_declared_stream_duration(tmp_path, source_media, docs):
     root = tmp_path / "project"
     shutil.copytree(source_media, root)

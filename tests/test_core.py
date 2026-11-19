@@ -11,6 +11,7 @@ import pytest
 
 import quickcut.core as core
 from quickcut.core import (
+    DEFAULT_SEARCH_SECONDS,
     MAX_TIMELINE_SECONDS,
     _has_audio_stream,
     _probable_credit_shot,
@@ -235,6 +236,8 @@ def test_localize_avoids_end_credit_roll_for_basic_montage():
 
 
 def test_story_duration_accepts_one_minute_and_clamps_longer_requests():
+    _, default_budget = parse_prompt("a person close to the camera")
+    assert default_budget == DEFAULT_SEARCH_SECONDS
     _, budget = parse_prompt("a complete story 60 seconds")
     assert budget == MAX_TIMELINE_SECONDS
     _, chinese_budget = parse_prompt("一个完整故事 60秒")

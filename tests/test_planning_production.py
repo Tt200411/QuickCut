@@ -176,10 +176,10 @@ def test_assistant_confirmation_is_not_recorded_as_human(inputs, tmp_path, model
 
 def test_close_narration_budget_rejected_before_tts(inputs, tmp_path, model):
     draft = draft_for(inputs, tmp_path)
-    assert draft["beats"][-1]["narration_max_chars"] == 10
+    assert draft["beats"][-1]["narration_max_chars"] == 18
     texts = {b["beat_id"]: b["narration_draft"] for b in draft["beats"]}
     texts["beat-close"] = "这是一段远远超过五秒钟朗读预算的过长中文旁白。"
-    with pytest.raises(PlanningError, match="最多 10 字"):
+    with pytest.raises(PlanningError, match="最多 18 字"):
         confirm_draft(draft, approved_text_by_beat=texts, reviewer="测试者", reviewed_at="2026-11-16T10:00:00+08:00")
 
 
@@ -401,8 +401,8 @@ def test_narration_schema_budget_includes_punctuation_and_targets_short_single_s
         assert prompt["narration_target_chars"] == {"min": max(4, int(limit * 0.6)), "max": limit - 1}
         assert "不要复述ASR" in prompt["task"] and "不要堆叠地名" in prompt["task"]
         assert f"总长最多 {limit} 个字符（包括标点）" in prompt["task"]
-    assert model[0]["format"]["properties"]["narration_draft"]["maxLength"] == 23
-    assert model[2]["format"]["properties"]["narration_draft"]["maxLength"] == 10
+    assert model[0]["format"]["properties"]["narration_draft"]["maxLength"] == 37
+    assert model[2]["format"]["properties"]["narration_draft"]["maxLength"] == 18
 
 
 def test_unknown_short_alias_is_never_silently_mapped(inputs, tmp_path, monkeypatch):
@@ -419,7 +419,7 @@ def test_unknown_short_alias_is_never_silently_mapped(inputs, tmp_path, monkeypa
 
 
 @pytest.mark.parametrize("bad_text,warning_code", [
-    ("沿着山林间的小路缓缓向前走感受这一刻自然带来的宁静美丽。", "NARRATION_TOO_LONG"),
+    ("沿着山林间的小路缓缓向前走感受这一刻自然带来的宁静美丽和远处慢慢落下的暖色光线。", "NARRATION_TOO_LONG"),
     ("也别忘了多带几", "NARRATION_INCOMPLETE_SENTENCE"),
     ("A peaceful forest.", "NARRATION_NON_CHINESE"),
     ("", "NARRATION_EMPTY"),

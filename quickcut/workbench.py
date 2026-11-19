@@ -570,10 +570,12 @@ def create_app(*, root=None, runtime=None):
     def return_review(job_id: str):
         with jobs.lock:
             data = jobs.get(job_id)
-            if data["status"] not in {"failed", "interrupted"} or not data.get("can_review") or job_id in jobs.active:
+            draft_ready = (jobs.directory(job_id) / "draft.json").is_file()
+            recoverable = data["status"] == "completed" or (data["status"] in {"failed", "interrupted"} and data.get("can_review"))
+            if job_id in jobs.active or not draft_ready or not recoverable:
                 raise HTTPException(409, "此任务没有可以恢复的已完成草案")
             jobs.update(job_id, status="needs_review", stage="review", error=None,
-                        message="已保留原素材分析与模型选镜，请修改旁白或入出点后再次确认")
+                        message="已回到方案。可以修改镜头和旁白，再次确认后生成新成片；刚才的成片仍可查看。")
         return {"job_id": job_id}
 
     @app.post("/api/jobs/{job_id}/retry-analysis")

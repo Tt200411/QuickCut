@@ -188,6 +188,18 @@ def test_worker_errors_are_persisted_with_owner(browser, monkeypatch):
     assert client.get(f"/api/jobs/{job_id}/files/error").status_code == 200
 
 
+def test_completed_job_returns_to_review_and_keeps_the_film(browser):
+    client, jobs, _ = browser
+    job_id = review_ready(client, jobs)
+    jobs.update(job_id, status="completed", stage="completed", result={"duration_us": 30_000_000})
+    assert client.post(f"/api/jobs/{job_id}/return-review").status_code == 200
+    view = client.get(f"/api/jobs/{job_id}").json()
+    assert view["status"] == "needs_review"
+    assert view["result"]["duration_us"] == 30_000_000
+    assert view["downloads"]["video"].endswith("/files/video")
+    assert view["draft"]["beats"]
+
+
 def test_failed_render_returns_to_review_without_reupload(browser):
     client, jobs, submitted = browser
     job_id = review_ready(client, jobs)

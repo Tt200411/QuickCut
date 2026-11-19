@@ -23,9 +23,17 @@ from typing import Any, Protocol
 from .contracts import PlanningError, UNSUPPORTED_STORY_BEAT, VLM_INVALID_PLAN
 
 
+# Calm Chinese narration is about 4.2 characters per second. Keep one tenth of
+# the shot for the pause after the sentence instead of subtracting a flat 0.8 s,
+# which used up most of a 3-second clause.
+NARRATION_CHARS_PER_SECOND = 4.2
+NARRATION_SPEECH_FRACTION = 0.9
+
+
 def narration_character_limit(budget_us: int) -> int:
-    """Conservative Chinese speech budget with 0.8 s left for pauses/tail."""
-    return max(2, int(max(0, budget_us / 1_000_000 - 0.8) * 2.5))
+    """Estimated Chinese characters that fit the shot, punctuation excluded."""
+    seconds = max(0.0, budget_us / 1_000_000)
+    return max(2, int(seconds * NARRATION_CHARS_PER_SECOND * NARRATION_SPEECH_FRACTION))
 
 
 def narration_character_count(text: str) -> int:

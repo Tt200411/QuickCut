@@ -65,7 +65,7 @@ def generate_draft(
                 by_segment[sid] = {**candidate, "retrieval_aliases": []}
         candidates = list(by_segment.values())
         if not candidates:
-            _fail(f"{beat['beat_id']} 没有未重复的真实候选，需增加素材或重新检索")
+            _fail(f"「{beat['wish']['event']}」没有画面足够接近的镜头，请改写这一句或更换素材")
         model_candidates = candidates[:8]
         selection = selector.select(beat=beat, candidates=model_candidates, context={
             "project_id": brief["project_id"], "thematic_montage": True,
