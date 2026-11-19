@@ -551,6 +551,17 @@ def render_timeline_preview(
                 with wave.open(str(pcm), "rb") as wav:
                     samples = wav.getnframes()
                 expected_samples = Fraction((interval["end"] - interval["begin"]) * sample_rate, 1_000_000)
+                if (kind == "source_audio" and samples == 0 and
+                        interval["end"] <= starts[clip["asset_id"]]["audio"] - origin):
+                    # A trim wholly before the verified audio start has no frames
+                    # for aresample to pad. Match export's nearest sample count
+                    # (half ties round down); never fill an interior gap or narration.
+                    samples = math.ceil(expected_samples - Fraction(1, 2))
+                    with wave.open(str(pcm), "wb") as wav:
+                        wav.setnchannels(2)
+                        wav.setsampwidth(2)
+                        wav.setframerate(sample_rate)
+                        wav.writeframes(bytes(samples * 4))
                 _require(abs(samples - expected_samples) <= 1, f"真实音频采样不足或超长: {clip['clip_id']}；不补静音或截音凑时长")
                 command += ["-i", str(pcm)]
                 label = f"a{input_index}"

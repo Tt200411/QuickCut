@@ -467,6 +467,19 @@ class OllamaSelector:
         reverse_aliases = {cid: alias for alias, cid in aliases.items()}
         max_shots = 1 if beat["duration_budget_us"] <= 5_000_000 else 2
         if aliases:
+            selectable_ids = {item["candidate_id"] for item in evidence if item["selectable"]}
+            capacities = sorted((c["duration_us"] for c in candidates
+                                 if c["candidate_id"] in selectable_ids
+                                 and type(c.get("duration_us")) is int and c["duration_us"] > 0), reverse=True)[:8]
+            # Retain the short-beat limit when it can fill the budget. Longer
+            # sentence beats may need more real clips; the model still chooses.
+            if sum(capacities[:max_shots]) < beat["duration_budget_us"]:
+                capacity = 0
+                for count, duration in enumerate(capacities, start=1):
+                    capacity += duration
+                    max_shots = max(max_shots, count)
+                    if capacity >= beat["duration_budget_us"]:
+                        break
             compact = []
             for item in evidence:
                 transcript = item["transcript_evidence"] or {}
@@ -485,7 +498,7 @@ class OllamaSelector:
                     },
                 })
             instruction["task"] = (
-                f"看图，为本段主题择优选择1到{max_shots}个镜头，不要全选。候选用短ID C01等表示，"
+                f"看图，为本段主题择优选择1到{max_shots}个镜头；容量允许时让所选源区间总时长覆盖本段预算。候选用短ID C01等表示，"
                 "图格编号不是候选ID。保留来源，不把用户上传或外部画面说成用户经历，不编造人物关系/因果。"
                 "输出完整JSON：shot_order为所选短ID，reasons和roles只包含这些所选短ID，理由每项不超过12字；"
                 "角色只能是establishing/detail/transition/atmosphere/broll。"

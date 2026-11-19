@@ -110,6 +110,42 @@ def build_outline(brief: dict[str, Any]) -> list[dict[str, Any]]:
     return outline
 
 
+def validate_frozen_outline(brief: dict[str, Any], request: dict[str, Any],
+                            outline: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Accept a saved thematic structure only when its frozen queries bind it."""
+    def reject():
+        raise PlanningError(VLM_INVALID_PLAN, "冻结大纲必须与原检索主查询的身份、顺序、文案和预算一致", retryable=False)
+
+    if picture_policy(brief) != THEMATIC_POLICY or not isinstance(outline, list) or not outline:
+        reject()
+    primary = [query for query in request.get("queries", []) if query.get("role") == "primary"]
+    if len(primary) != len(outline) or len({q.get("beat_id") for q in primary}) != len(primary):
+        reject()
+    if len({q.get("query_id") for q in primary}) != len(primary):
+        reject()
+    total = 0
+    for index, (beat, query) in enumerate(zip(outline, primary)):
+        if not isinstance(beat, dict):
+            reject()
+        budget = beat.get("duration_budget_us")
+        wish = beat.get("wish") or {}
+        if (beat.get("beat_id") != query.get("beat_id") or not isinstance(beat.get("beat_id"), str)
+                or beat.get("retrieval_query_id") != query.get("query_id") or not isinstance(query.get("query_id"), str)
+                or type(beat.get("order")) is not int or beat["order"] != index
+                or beat.get("project_id") != brief["project_id"]
+                or type(budget) is not int or budget <= 0 or type(query.get("duration_budget_us")) is not int
+                or budget != query["duration_budget_us"]
+                or beat.get("purpose") != query.get("beat_purpose")
+                or not isinstance(wish, dict) or not isinstance(wish.get("event"), str)
+                or wish.get("event") != query.get("semantic_text")
+                or wish.get("assertion") != "user_wish" or wish.get("verified") is not False):
+            reject()
+        total += budget
+    if total != require_us(brief["requirements"].get("target_duration_us"), "Brief.target_duration_us"):
+        reject()
+    return copy.deepcopy(outline)
+
+
 def build_retrieval_request(
     brief: dict[str, Any],
     manifest: dict[str, Any],
@@ -475,6 +511,7 @@ def plan(
     plan_document_id: str = "story-001",
     plan_revision: int = 1,
     iteration_history: list[dict[str, Any]] | None = None,
+    frozen_outline: list[dict[str, Any]] | None = None,
 ) -> PlanResult:
     """执行一次规划。candidate_set 为空时只产出大纲与首轮检索请求。"""
     check_envelope(brief, expected_kind="Brief", owner="C")
@@ -483,13 +520,17 @@ def plan(
     if candidate_set is not None:
         check_envelope(candidate_set, expected_kind="CandidateSet", owner="B")
         check_project(brief, candidate_set)
-    outline = build_outline(brief)
+    if frozen_outline is not None and retrieval_request is None:
+        raise PlanningError(VLM_INVALID_PLAN, "冻结大纲必须同时提供原 RetrievalRequest", retryable=False)
+    outline = build_outline(brief) if frozen_outline is None else copy.deepcopy(frozen_outline)
     request = retrieval_request if retrieval_request is not None else build_retrieval_request(
         brief, manifest, outline, broll_queries=broll_queries, max_iterations=max_iterations,
     )
     check_envelope(request, expected_kind="RetrievalRequest", owner="C")
     check_project(brief, manifest, request)
     check_inputs(request, {"Brief": brief, "AssetManifest": manifest})
+    if frozen_outline is not None:
+        outline = validate_frozen_outline(brief, request, outline)
     beat_ids = {beat["beat_id"] for beat in outline}
     if any(query.get("beat_id") not in beat_ids for query in request.get("queries", [])):
         raise PlanningError(VLM_INVALID_PLAN, "检索查询引用了当前大纲之外的 beat", retryable=False)
@@ -813,6 +854,8 @@ def plan(
             "RetrievalRequest": content_hash(request),
         },
     }
+    if frozen_outline is not None:
+        provenance["frozen_outline"] = copy.deepcopy(outline)
     status = "needs_input" if gaps or pending_reviews else "ready_for_edit"
     doc = envelope(
         "StoryPlan", plan_document_id, project_id, plan_revision,

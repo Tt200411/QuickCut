@@ -124,15 +124,19 @@ def test_webm_measures_playable_stream_instead_of_longer_container(webm_source):
         export._inspect_media(webm_source, {"asset_id": "webm"}, tracks, core._ffmpeg_binary(), probe)
 
 
-def test_late_audio_start_is_padded_with_silence(tmp_path):
+@pytest.mark.parametrize("video_start,audio_start,source_begin", [
+    (0, 0.069, 0), (0, 1.2, 0), (0.4, 1.6, 200_001),
+])
+def test_late_audio_start_is_padded_with_silence(tmp_path, video_start, audio_start, source_begin):
     ffmpeg = core._ffmpeg_binary()
     if not timeline_preview._ffprobe_binary():
         pytest.skip("导出需要 ffprobe")
     root = tmp_path / "project"
     root.mkdir()
     source = root / "late.mp4"
-    subprocess.run([ffmpeg, "-v", "error", "-y", "-f", "lavfi", "-i", "color=c=green:s=160x120:r=25:d=2",
-        "-itsoffset", "0.069", "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=44100:duration=1.93",
+    subprocess.run([ffmpeg, "-v", "error", "-y", "-copyts", "-f", "lavfi", "-i", "color=c=green:s=160x120:r=25:d=2",
+        "-itsoffset", str(audio_start), "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=44100:duration=1.93",
+        "-vf", f"setpts=PTS+{video_start}/TB", "-fps_mode", "passthrough",
         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", str(source)], check=True, capture_output=True)
     probe = timeline_preview._probe(timeline_preview._ffprobe_binary(), source)
     audio = next(stream for stream in probe["streams"] if stream["codec_type"] == "audio")
@@ -147,7 +151,7 @@ def test_late_audio_start_is_padded_with_silence(tmp_path):
     manifest["assets"] = [dict(asset_id="late", revision=1, media_kind="video", uri="late.mp4",
         duration_us=2_000_000, content_hash=digest(source), audio={"present": True})]
     manifest["segments"] = [dict(segment_id="late", asset_id="late", asset_revision=1,
-        source_range_us={"begin": 0, "end": 800_000})]
+        source_range_us={"begin": source_begin, "end": source_begin + 800_000})]
     story = _envelope("StoryPlan", "story")
     story.update(status="ready_for_edit", unresolved_gaps=[], inputs=[timeline_preview._ref(d) for d in (manifest, brief)],
         narration_cues=[dict(cue_id="cue", beat_id="beat", text="可编辑字幕", duration_budget_us=500_000)],
@@ -156,7 +160,8 @@ def test_late_audio_start_is_padded_with_silence(tmp_path):
     voice["assets"][0]["content_hash"] = digest(speech)
     timeline = compile_timeline(brief, manifest, story, voice, output={"width": 160, "height": 120,
         "fps": {"numerator": 25, "denominator": 1}, "sample_rate": 48000})
-    report = export.export_project(timeline, manifest, voice, root, tmp_path / "export")
+    report = export.export_project(timeline, manifest, voice, root, tmp_path / "export", preview=True)
+    assert report["validation"]["preview"] == "passed"
     derived = next(item for item in report["resources"] if item.get("derived_for_clip_id"))
     assert derived["leading_silence_samples"] > 900
     wav_path = tmp_path / "export" / derived["packaged_uri"]
@@ -167,7 +172,41 @@ def test_late_audio_start_is_padded_with_silence(tmp_path):
     head = mono[: int(0.02 * 48000)]
     tone = mono[int(0.12 * 48000): int(0.2 * 48000)]
     assert max(abs(v) for v in head) == 0
-    assert max(abs(v) for v in tone) > 1000
+    if audio_start - video_start > 1:
+        assert derived["leading_silence_samples"] == 38_400
+        assert max(abs(v) for v in mono) == 0
+        # The empty original-audio slice must not remove or replace the narration.
+        mixed = root / "preview-audio.wav"
+        subprocess.run([ffmpeg, "-v", "error", "-i", str(tmp_path / "export" / "preview.mp4"),
+            "-map", "0:a:0", "-c:a", "pcm_s16le", str(mixed)], check=True, capture_output=True)
+        assert _amplitude(mixed, 1000) > 0.03
+    else:
+        assert max(abs(v) for v in tone) > 1000
+
+
+@pytest.mark.parametrize("damage", ["interior_gap", "short_tail"])
+def test_known_leading_silence_does_not_allow_missing_original_audio(tmp_path, source_media, docs, damage):
+    root = tmp_path / "project"
+    shutil.copytree(source_media, root)
+    source = root / "bad-original.mkv"
+    ffmpeg = core._ffmpeg_binary()
+    length = 0.4 if damage == "short_tail" else 1.6
+    command = [ffmpeg, "-v", "error", "-f", "lavfi", "-i", "color=c=green:s=160x120:r=25:d=1.6",
+        "-f", "lavfi", "-i", f"sine=frequency=440:sample_rate=48000:duration={length}"]
+    if damage == "interior_gap":
+        command += ["-af", "aselect='not(between(t,0.1,1.2))'"]
+    subprocess.run(command + ["-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "pcm_s16le", str(source)],
+                   check=True, capture_output=True)
+    docs[1]["assets"][0].update(uri=source.name, content_hash=digest(source))
+    for consumer in ("preview", "export"):
+        destination = tmp_path / ("rejected.mp4" if consumer == "preview" else "rejected-package")
+        with pytest.raises((export.ExportError, timeline_preview.PreviewError),
+                           match="原声采样|真实音频采样|真实 audio 流"):
+            if consumer == "preview":
+                timeline_preview.render_timeline_preview(*docs, root, destination)
+            else:
+                export.export_project(*docs, root, destination, preview=True)
+        assert not destination.exists()
 
 
 def test_export_and_preview_accept_webm_without_declared_stream_duration(tmp_path, source_media, docs):

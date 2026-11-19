@@ -620,18 +620,22 @@ def create_app(*, root=None, runtime=None):
 
     @app.post("/api/jobs/{job_id}/open-editor")
     def editor(job_id: str):
-        data = jobs.get(job_id)
-        if data["status"] != "completed":
-            raise HTTPException(409, "工程尚未生成")
-        try:
-            opened = jobs.open_editor(jobs.directory(job_id))
-        except Exception as exc:
-            raise HTTPException(409, str(exc)) from exc
-        result = data["result"]
-        result["editor"] = opened
-        write_json(jobs.directory(job_id) / "run-report.json", result)
-        jobs.update(job_id, result=result)
-        return opened
+        # Returning to a draft preserves its last export. Do not let a new
+        # confirmation race with opening/updating that previous revision.
+        with jobs.lock:
+            data = jobs.get(job_id)
+            if (data["status"] not in {"completed", "needs_review"}
+                    or not data.get("result") or job_id in jobs.active):
+                raise HTTPException(409, "工程尚未生成或任务正在运行")
+            try:
+                opened = jobs.open_editor(jobs.directory(job_id))
+            except Exception as exc:
+                raise HTTPException(409, str(exc)) from exc
+            result = data["result"]
+            result["editor"] = opened
+            write_json(jobs.directory(job_id) / "run-report.json", result)
+            jobs.update(job_id, result=result)
+            return opened
 
     return app
 
