@@ -89,6 +89,8 @@ def test_narration_duration_metrics_and_advisories_do_not_block_confirm(tmp_path
         pytest.skip("需要 Node 执行内联浏览器事件处理器")
     html = (Path(__file__).parents[1] / "quickcut/web/index.html").read_text()
     assert "建议不超过" not in html
+    assert "完整句级字幕，显示层会自动换行" in html
+    assert "逐词对齐" not in html
     script = html.split("<script>", 1)[1].split("</script>", 1)[0]
     handlers = script[script.index("function reviewKey"):script.index("function drawResult")]
     harness = r'''
@@ -131,7 +133,9 @@ function allText(node){return node.textContent+node.children.map(allText).join('
   const content=allText($('beats'));
   assert.match(content,/编辑安全上限 160 字符/);
   assert.match(content,/按2\.5字\/秒\+0\.8秒粗估，不含标点；以配音实测为准/);
-  assert.equal(field('metrics').textContent,'段落计划时长 2.0 秒 · 当前朗读字数 18 字 · 粗估时长 8.0 秒');
+  assert.equal(field('metrics').textContent,'段落计划时长 2.0 秒 · 当前朗读字数 18 字 · 粗估时长 8.0 秒 · 尚未实测');
+  assert.match(content,/字数不是字幕单行上限/);
+  assert.match(content,/粗估仅供参考，不阻断确认/);
   assert.equal(field('advisory').textContent,'时长待实测：配音后核对时长。');
   assert.equal(field('advisory').classList.contains('hidden'),false);
   assert.equal(field('warning').classList.contains('hidden'),true);
@@ -184,6 +188,76 @@ function allText(node){return node.textContent+node.children.map(allText).join('
 })().catch(error=>{console.error(error);process.exitCode=1;});
 '''
     target = tmp_path / "narration-review.cjs"
+    target.write_text(harness + handlers + checks)
+    result = subprocess.run([node, str(target)], capture_output=True, text=True, timeout=15)
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_health_separates_generation_and_editor_and_clears_failed_results(tmp_path):
+    node = shutil.which("node")
+    if not node:
+        pytest.skip("需要 Node 执行健康检查处理器")
+    html = (Path(__file__).parents[1] / "quickcut/web/index.html").read_text()
+    assert html.index('id="healthBlockers"') < html.index('id="healthDetails"')
+    assert "white-space:pre-wrap;overflow-wrap:anywhere" in html
+    script = html.split("<script>", 1)[1].split("</script>", 1)[0]
+    handlers = script[script.index("async function health()"):script.index("function referenceNote")]
+    harness = r'''
+const assert=require('node:assert/strict');
+const el=(tag,text='',className='')=>({tag,textContent:text,className,children:[],open:false,disabled:false,
+  append(...children){this.children.push(...children);},replaceChildren(){this.children=[];}});
+const elements=new Map();
+const $=id=>{if(!elements.has(id))elements.set(id,el('div'));return elements.get(id);};
+let request;
+function result(generationReady,editorReady){return {
+  ready:generationReady&&editorReady,generation_ready:generationReady,editor_ready:editorReady,
+  scope:'只检查文件与服务，不执行推理。',checked_at:'2026-11-19T10:00:00+00:00',
+  checks:[{stage:'E',name:'配音权重与参考音频',ready:generationReady,detail:'Git LFS 指针\n/path/<音色>.wav'},
+          {stage:'editor',name:'剪映专业版',ready:editorReady,detail:editorReady?'6.1.0':'未找到'}]
+};}
+'''
+    checks = r'''
+(async()=>{
+  for(const [generation,editor] of [[true,false],[false,true],[false,false],[true,true]]){
+    $('healthDetails').open=false;
+    request=async()=>result(generation,editor);await health();
+    assert.equal($('healthLabel').textContent,generation?'生成依赖检查通过':'生成依赖待处理');
+    assert.equal($('healthDetails').open,!generation);
+    assert.match($('healthScope').textContent,/不执行推理/);
+    assert.match($('healthCheckedAt').textContent,/2026-11-19/);
+    const blockers=$('healthBlockers').textContent;
+    assert.ok(generation?blockers.includes('生成阻塞项：无'):blockers.includes('生成阻塞项：\n• 配音权重与参考音频'));
+    assert.ok(!blockers.includes('• 剪映'));
+    if(!editor)assert.match(blockers,/不阻止生成视频和工程包/);
+    const detail=$('modelList').children[0].children[2];
+    assert.equal(detail.textContent,'Git LFS 指针\n/path/<音色>.wav');
+    assert.equal(detail.className,'model-detail');
+    assert.equal(detail.innerHTML,undefined,'详情必须以明文呈现');
+  }
+  // 兼容旧接口时，不能把包含编辑器的 ready 当作生成门禁。
+  request=async()=>{const data=result(true,false);delete data.generation_ready;delete data.editor_ready;return data;};
+  await health();assert.equal($('healthLabel').textContent,'生成依赖检查通过');
+  // 请求期间即清除旧值；失败后不得保留已通过的检查或时间。
+  let reject;request=()=>new Promise((resolve,fail)=>reject=fail);
+  const pending=health();
+  assert.equal($('refreshHealth').disabled,true);
+  assert.equal($('modelList').children.length,0);
+  assert.equal($('healthCheckedAt').textContent,'');
+  reject(new Error('服务不可达'));await pending;
+  assert.equal($('healthLabel').textContent,'检查失败');
+  assert.equal($('healthLabel').className,'pending');
+  assert.equal($('modelList').children.length,0);
+  assert.equal($('healthScope').textContent,'');
+  assert.equal($('healthCheckedAt').textContent,'');
+  assert.match($('healthBlockers').textContent,/状态未知：服务不可达/);
+  assert.equal($('healthDetails').open,true);
+  assert.equal($('refreshHealth').disabled,false);
+  request=async()=>result(true,true);await health();
+  assert.equal($('healthLabel').className,'ok');
+  assert.equal($('modelList').children.length,2);
+})().catch(error=>{console.error(error);process.exitCode=1;});
+'''
+    target = tmp_path / "health-handlers.cjs"
     target.write_text(harness + handlers + checks)
     result = subprocess.run([node, str(target)], capture_output=True, text=True, timeout=15)
     assert result.returncode == 0, result.stdout + result.stderr

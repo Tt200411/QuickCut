@@ -104,25 +104,58 @@ def unload_qwen(runtime):
     ollama_json(runtime, "/api/generate", {"model": runtime.model, "keep_alive": 0}, timeout=30)
 
 
+def _resource_issue(path, *, minimum_bytes=1, expected_bytes=None):
+    try:
+        if not path.is_file():
+            return f"文件缺失：{path}"
+        size = path.stat().st_size
+        # 只读固定长度的文件头，不扫描权重或解码媒体。
+        with path.open("rb") as stream:
+            header = stream.read(512)
+        if header.startswith(b"version https://git-lfs.github.com/spec/v1"):
+            return f"Git LFS 指针，尚未下载实际文件：{path}"
+        if size < minimum_bytes:
+            return f"文件为空或过小：{path}"
+        if expected_bytes is not None and size != expected_bytes:
+            return f"文件长度与部署记录不符：{path}"
+    except OSError as exc:
+        return f"文件不可读：{path}（{exc}）"
+    return None
+
+
 def runtime_status(runtime):
     checks = []
     for stage, executable in (("A", runtime.python), ("B", runtime.vision_python), ("E", runtime.tts_python)):
-        checks.append({"stage": stage, "name": {"A": "视频接入与语音识别", "B": "中文视觉检索", "E": "IndexTTS2 配音"}[stage],
-                       "ready": Path(executable).is_file(), "detail": executable})
+        checks.append({"stage": stage, "name": {"A": "视频接入与语音识别", "B": "中文视觉检索", "E": "IndexTTS2 配音"}[stage] + " Python 解释器",
+                       "ready": Path(executable).is_file(),
+                       "detail": executable + "\n仅检查解释器文件存在；未验证依赖包或模型推理。"})
     asr_path = Path(runtime.asr_model).expanduser()
-    cached_asr = list((Path(os.environ.get("HF_HOME", str(Path.home() / ".cache/huggingface"))) / "hub" /
-                      ("models--Systran--faster-whisper-" + runtime.asr_model) / "snapshots").glob("*/model.bin")) if not asr_path.is_dir() else [asr_path / "model.bin"]
-    checks.append({"stage": "A", "name": "Whisper 语音识别权重", "ready": any(path.is_file() and path.stat().st_size > 1000 for path in cached_asr),
-                   "detail": runtime.asr_model})
+    local_asr = asr_path.is_dir() or asr_path.is_absolute() or runtime.asr_model.startswith((".", "~"))
+    if local_asr:
+        asr_issues = [issue for name in ("model.bin", "config.json", "tokenizer.json")
+                      if (issue := _resource_issue(asr_path / name, minimum_bytes=1001 if name == "model.bin" else 1))]
+        asr_ready = not asr_issues
+        asr_detail = "\n".join(asr_issues) if asr_issues else str(asr_path) + "\n本地 ASR 必要文件可见；未加载模型。"
+    else:
+        cached_asr = list((Path(os.environ.get("HF_HOME", str(Path.home() / ".cache/huggingface"))) / "hub" /
+                          ("models--Systran--faster-whisper-" + runtime.asr_model) / "snapshots").glob("*/model.bin"))
+        asr_issues = [_resource_issue(path, minimum_bytes=1001) for path in cached_asr]
+        asr_ready = any(issue is None for issue in asr_issues)
+        asr_detail = runtime.asr_model + "\n" + ("缓存权重可见；未加载模型。" if asr_ready else
+                     "\n".join(asr_issues) or "未找到本地缓存权重；本检查不下载模型。")
+    checks.append({"stage": "A", "name": "Whisper 语音识别权重", "ready": asr_ready,
+                   "detail": asr_detail})
     deployment_path = REPO / "outputs/vision-runtime/deployment-manifest.json"
     vision_ready, vision_detail = False, "检索权重尚未完成部署"
     if deployment_path.is_file():
         try:
             deployment = read(deployment_path)
             files = deployment.get("files", [])
-            vision_ready = deployment.get("status") == "ready" and bool(files) and all(
-                Path(item["path"]).is_file() and Path(item["path"]).stat().st_size == item["bytes"] for item in files)
-            vision_detail = "nllb-clip-base · 部署文件完整" if vision_ready else "检索权重文件缺失或长度变化"
+            issues = [issue for item in files
+                      if (issue := _resource_issue(Path(item["path"]), expected_bytes=item["bytes"]))]
+            vision_ready = deployment.get("status") == "ready" and bool(files) and not issues
+            vision_detail = ("nllb-clip-base · 部署文件可见；未加载模型。" if vision_ready else
+                             "\n".join(issues) or "检索权重尚未完成部署")
         except (OSError, ValueError, KeyError, TypeError):
             vision_detail = "检索模型部署记录无效"
     checks.append({"stage": "B", "name": "中文视觉检索权重", "ready": vision_ready, "detail": vision_detail})
@@ -142,9 +175,13 @@ def runtime_status(runtime):
             path = Path(value).expanduser()
             return path if path.is_absolute() else REPO / path
         weights = local_path(config["model_dir"])
-        voice_ready = (config.get("engine") == "indextts2" and weights.is_dir()
-                       and all((weights / name).is_file() for name in ("gpt.pth", "s2mel.pth", "config.yaml"))
-                       and local_path(config["reference_audio"]).is_file())
+        resources = [weights / name for name in ("gpt.pth", "s2mel.pth", "config.yaml")]
+        resources.append(local_path(config["reference_audio"]))
+        issues = [issue for path in resources if (issue := _resource_issue(path))]
+        if config.get("engine") != "indextts2":
+            issues.insert(0, "声音配置的 engine 必须为 indextts2")
+        voice_ready = not issues
+        voice_detail = "\n".join(issues) if issues else runtime.voice_config + "\n必要权重和参考音频可见；未加载模型或解码音频。"
     except (OSError, ValueError, KeyError, TypeError):
         voice_detail = "声音配置、模型或参考音频缺失"
     checks.append({"stage": "E", "name": "配音权重与参考音频", "ready": voice_ready, "detail": voice_detail})
@@ -154,8 +191,11 @@ def runtime_status(runtime):
         with app.open("rb") as stream:
             version = plistlib.load(stream).get("CFBundleShortVersionString")
     checks.append({"stage": "editor", "name": "剪映专业版", "ready": version == "6.1.0", "detail": version or "未找到"})
-    return {"ready": all(item["ready"] for item in checks), "checks": checks,
-            "scope": "安装和服务检查；每次生成仍会验证模型资源并实际推理。", "checked_at": now()}
+    return {"ready": all(item["ready"] for item in checks),
+            "generation_ready": all(item["ready"] for item in checks if item["stage"] != "editor"),
+            "editor_ready": all(item["ready"] for item in checks if item["stage"] == "editor"), "checks": checks,
+            "scope": "轻量安装、资源可见性与服务检查，参考音频取当前默认声音配置；不加载模型、不执行推理、不验证媒体内容。解释器存在不代表依赖包完整。每次生成仍会验证任务资源并实际推理；剪映仅影响打开工程。",
+            "checked_at": now()}
 
 
 def worker(runtime, action, payload, root, result_name, *, progress=None, timeout=2400, cancel_event=None):
