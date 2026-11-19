@@ -184,7 +184,25 @@ def test_late_audio_start_is_padded_with_silence(tmp_path, video_start, audio_st
         assert max(abs(v) for v in tone) > 1000
 
 
-@pytest.mark.parametrize("damage", ["interior_gap", "short_tail"])
+def test_audio_continuity_accepts_short_frames_sharing_a_container_tick(tmp_path):
+    source = tmp_path / "coarse-audio-timestamps.mkv"
+    subprocess.run([core._ffmpeg_binary(), "-v", "error", "-f", "lavfi", "-i",
+        "sine=frequency=440:sample_rate=48000:duration=0.4", "-af", "asetnsamples=n=32:p=0",
+        "-c:a", "pcm_s16le", str(source)], check=True, capture_output=True)
+    probe = timeline_preview._ffprobe_binary()
+    audio = next(stream for stream in timeline_preview._probe(probe, source)["streams"]
+                 if stream["codec_type"] == "audio")
+    frames = json.loads(subprocess.check_output([probe, "-v", "error", "-select_streams", "a:0",
+        "-show_frames", "-show_entries", "frame=pts,nb_samples", "-of", "json", str(source)]))["frames"]
+    assert audio["time_base"] == "1/1000"
+    assert len(frames) == 600
+    assert sum(frame["nb_samples"] for frame in frames) == 19200
+    assert any(a["pts"] == b["pts"] for a, b in zip(frames, frames[1:]))
+    timeline_preview._require_audio_continuity(probe, source, audio,
+        [{"begin": 0, "end": 400_000}], origin_us=0)
+
+
+@pytest.mark.parametrize("damage", ["interior_gap", "all_selected_audio_missing", "short_tail"])
 def test_known_leading_silence_does_not_allow_missing_original_audio(tmp_path, source_media, docs, damage):
     root = tmp_path / "project"
     shutil.copytree(source_media, root)
@@ -193,10 +211,30 @@ def test_known_leading_silence_does_not_allow_missing_original_audio(tmp_path, s
     length = 0.4 if damage == "short_tail" else 1.6
     command = [ffmpeg, "-v", "error", "-f", "lavfi", "-i", "color=c=green:s=160x120:r=25:d=1.6",
         "-f", "lavfi", "-i", f"sine=frequency=440:sample_rate=48000:duration={length}"]
-    if damage == "interior_gap":
-        command += ["-af", "aselect='not(between(t,0.1,1.2))'"]
+    if damage != "short_tail":
+        window = "0.4,0.6" if damage == "interior_gap" else "0.1,1.2"
+        # Ten-millisecond PCM frames align with Matroska's timestamp ticks.
+        # Resampler rounding must not accidentally reject an otherwise padded gap.
+        command += ["-af", f"asetnsamples=n=480:p=0,aselect='not(between(t,{window}))'"]
     subprocess.run(command + ["-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "pcm_s16le", str(source)],
                    check=True, capture_output=True)
+    if damage != "short_tail":
+        frames = json.loads(subprocess.check_output([timeline_preview._ffprobe_binary(), "-v", "error",
+            "-select_streams", "a:0", "-show_frames", "-show_entries", "frame=pts_time,nb_samples",
+            "-of", "json", str(source)]))["frames"]
+        gaps = [(float(a["pts_time"]) + a["nb_samples"] / 48000, float(b["pts_time"]))
+                for a, b in zip(frames, frames[1:])
+                if float(b["pts_time"]) - float(a["pts_time"]) - a["nb_samples"] / 48000 > .1]
+        assert len(gaps) == 1, "Fixture must contain a real decoded audio timestamp gap"
+        assert sum(frame["nb_samples"] for frame in frames) < 1.6 * 48000
+        if damage == "interior_gap":
+            assert .2 < gaps[0][0] < gaps[0][1] < 1.0
+        else:
+            assert gaps[0][0] < .2 < 1.0 < gaps[0][1]
+        audio = next(stream for stream in timeline_preview._probe(timeline_preview._ffprobe_binary(), source)["streams"]
+                     if stream["codec_type"] == "audio")
+        timeline_preview._require_audio_continuity(timeline_preview._ffprobe_binary(), source, audio,
+            [{"begin": 20_000, "end": 80_000}], origin_us=0)  # An unused later gap must not reject this trim.
     docs[1]["assets"][0].update(uri=source.name, content_hash=digest(source))
     for consumer in ("preview", "export"):
         destination = tmp_path / ("rejected.mp4" if consumer == "preview" else "rejected-package")

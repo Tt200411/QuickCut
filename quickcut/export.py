@@ -135,6 +135,9 @@ def _inspect_media(path: Path, asset: dict, tracks: dict, ffmpeg: str, probe: st
             tolerance = 2 if kind == "video" else max(2, math.ceil(1_000_000 / int(stream["sample_rate"])))
             _require(max(ends) <= start - origin + length + tolerance, "MEDIA_UNREADABLE",
                      f"真实 {kind} 流不能覆盖源区间: {asset['asset_id']}")
+        renderer._require_audio_continuity(probe, path, streams.get("audio", {}),
+            [clip["source_range_us"] for clip in tracks.get("source_audio", {}).get("clips", [])
+             if clip["asset_id"] == asset["asset_id"]], origin_us=origin)
         if any(c["asset_id"] == asset["asset_id"] for c in tracks["narration"]["clips"]):
             _verify_narration_wav(path, asset)
         result = {"origin_us": origin, "duration_us": renderer._duration(video or streams["audio"])}
