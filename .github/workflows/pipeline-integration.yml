@@ -78,13 +78,18 @@ jobs:
           if [ "$pytest_status" -eq 0 ]; then pytest_status=${test_statuses[1]}; fi
           set -e
           if [ "$pytest_status" -ne 0 ]; then
-            python - <<'PY'
+            python - <<'PY' || true
           import os
           from pathlib import Path
           log = Path(os.environ["PIPELINE_OUTPUT"]) / "pytest.txt"
           tail = "\n".join(log.read_text(errors="replace").splitlines()[-80:])
-          message = tail.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
-          print("::error title=Pytest failed or timed out::" + message)
+          # GitHub truncates individual annotations at 4096 characters. Emit
+          # bounded chunks so the failing test and stack survive that limit.
+          encoded = tail.encode("utf-8")
+          chunks = [encoded[i:i + 2000].decode("utf-8", errors="replace") for i in range(0, len(encoded), 2000)]
+          for number, chunk in enumerate(chunks, 1):
+              message = chunk.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+              print(f"::error title=Pytest failure context {number}/{len(chunks)}::" + message)
           PY
           fi
           exit "$pytest_status"
