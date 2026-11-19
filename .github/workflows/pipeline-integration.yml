@@ -42,7 +42,7 @@ jobs:
           sudo apt-get update
           # ffmpeg 包同时提供 ffprobe；doctor 必需检查系统 TTS。
           sudo apt-get install --no-install-recommends -y ffmpeg espeak-ng fonts-noto-cjk
-          python -m pip install -e '.[dev,server,ingest,runtime]'
+          python -m pip install -e '.[dev,server,ingest,runtime]' 'pytest-timeout>=2.3,<3'
           ffmpeg -version
           ffprobe -version
           mkdir -p "$PIPELINE_OUTPUT"
@@ -67,7 +67,12 @@ jobs:
       - name: 全量 pytest
         run: |
           set -euo pipefail
-          python -m pytest -q -ra --junitxml="$PIPELINE_OUTPUT/pytest.xml" | tee "$PIPELINE_OUTPUT/pytest.txt"
+          # Report the exact active test and dump stacks before a hard timeout.
+          # Thread timeout also stops hangs inside native code/subprocess waits;
+          # it fails the job rather than silently skipping a stalled test.
+          python -u -m pytest -vv -ra --durations=20 \
+            -o faulthandler_timeout=60 --timeout=180 --timeout-method=thread \
+            --junitxml="$PIPELINE_OUTPUT/pytest.xml" 2>&1 | tee "$PIPELINE_OUTPUT/pytest.txt"
 
       - name: 真实合成媒体用例和十秒预览
         run: |
