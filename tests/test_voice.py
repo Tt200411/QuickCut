@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import subprocess
+import json
 import math
 import struct
 import wave
@@ -58,24 +59,37 @@ def test_caption_render_keeps_original_audio(tmp_path):
     assert "pts_time:0" in audio_probe.stderr
 
 
-def test_narration_mix_rebases_and_bounds_both_streams(tmp_path):
+@pytest.mark.parametrize("has_original_audio", [True, False])
+@pytest.mark.parametrize("narration_duration", [2, 8])
+def test_narration_mix_rebases_and_bounds_both_streams(tmp_path, has_original_audio, narration_duration):
     ffmpeg = _require_binary("ffmpeg")
     source = tmp_path / "source.mp4"
     narration = tmp_path / "narration.wav"
     output = tmp_path / "mixed.mp4"
-    subprocess.run([
+    source_command = [
         ffmpeg, "-hide_banner", "-loglevel", "error",
         "-f", "lavfi", "-i", "color=c=skyblue:s=320x180:d=6",
-        "-f", "lavfi", "-i", "sine=frequency=440:duration=6",
-        "-map", "0:v:0", "-map", "1:a:0", "-c:v", "libx264", "-bf", "0", "-pix_fmt", "yuv420p",
-        "-c:a", "aac", "-ar", "48000", "-ac", "2", str(source), "-y",
-    ], check=True)
+    ]
+    if has_original_audio:
+        source_command += ["-f", "lavfi", "-i", "sine=frequency=440:duration=6",
+                           "-map", "0:v:0", "-map", "1:a:0", "-c:a", "aac", "-ar", "48000", "-ac", "2"]
+    else:
+        source_command += ["-an"]
+    subprocess.run(source_command + ["-c:v", "libx264", "-bf", "0", "-pix_fmt", "yuv420p", str(source), "-y"],
+                   check=True)
     subprocess.run([
         ffmpeg, "-hide_banner", "-loglevel", "error", "-f", "lavfi",
-        "-i", "sine=frequency=880:duration=2", "-c:a", "pcm_s16le", str(narration), "-y",
+        "-i", f"sine=frequency=880:duration={narration_duration}", "-c:a", "pcm_s16le", str(narration), "-y",
     ], check=True)
     _mix_narration(source, narration, output, 6.0)
     subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-i", str(output), "-f", "null", "-"], check=True)
+    streams = json.loads(subprocess.run([
+        _require_binary("ffprobe"), "-v", "error", "-show_streams", "-of", "json", str(output),
+    ], check=True, capture_output=True, text=True).stdout)["streams"]
+    assert {s["codec_type"] for s in streams} == {"video", "audio"}
+    assert all(float(s["duration"]) == pytest.approx(6.0, abs=0.002) for s in streams)
+    audio = next(s for s in streams if s["codec_type"] == "audio")
+    assert audio["sample_rate"] == "48000" and audio["channels"] == 2
     video_probe = subprocess.run([
         ffmpeg, "-hide_banner", "-loglevel", "info", "-i", str(output),
         "-vf", "showinfo", "-an", "-frames:v", "1", "-f", "null", "-",
@@ -88,16 +102,29 @@ def test_narration_mix_rebases_and_bounds_both_streams(tmp_path):
     assert "pts_time:0" in audio_probe.stderr
 
     # A nonempty audio stream alone does not prove the soundtrack survived.
-    # The original 440 Hz component must remain after the 880 Hz narration ends.
+    # The short narration must remain audible, then leave the original sound
+    # (or silence) intact. Longer narration is bounded by the six-second target.
     pcm = subprocess.run([
-        ffmpeg, "-hide_banner", "-loglevel", "error", "-ss", "3", "-i", str(output),
-        "-t", "1", "-vn", "-ar", "8000", "-ac", "1", "-f", "s16le", "-",
+        ffmpeg, "-hide_banner", "-loglevel", "error", "-i", str(output),
+        "-vn", "-ar", "8000", "-ac", "1", "-f", "s16le", "-",
     ], check=True, capture_output=True).stdout
-    samples = struct.unpack(f"<{len(pcm) // 2}h", pcm)
+    all_samples = struct.unpack(f"<{len(pcm) // 2}h", pcm)
+    early = all_samples[4000:12000]
+    early_880 = abs(sum(value * complex(math.cos(2 * math.pi * 880 * i / 8000), math.sin(2 * math.pi * 880 * i / 8000)) for i, value in enumerate(early))) / len(early)
+    assert early_880 > 100
+    samples = all_samples[24000:32000]
     energy_440 = abs(sum(value * complex(math.cos(2 * math.pi * 440 * i / 8000), math.sin(2 * math.pi * 440 * i / 8000)) for i, value in enumerate(samples))) / len(samples)
     energy_880 = abs(sum(value * complex(math.cos(2 * math.pi * 880 * i / 8000), math.sin(2 * math.pi * 880 * i / 8000)) for i, value in enumerate(samples))) / len(samples)
-    assert energy_440 > 100
-    assert energy_440 > energy_880 * 10
+    if has_original_audio:
+        assert energy_440 > 100
+    else:
+        assert energy_440 < 2
+    if narration_duration < 3:
+        assert energy_880 < 2
+        if not has_original_audio:
+            assert max(abs(value) for value in samples) <= 2
+    else:
+        assert energy_880 > 100
 
 
 def test_srt_merges_sentence_across_cuts_and_removes_invalid_cues(tmp_path):

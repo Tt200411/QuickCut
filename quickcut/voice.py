@@ -314,9 +314,12 @@ def _mix_narration(video: Path, audio: Path, output: Path, duration: float) -> N
         # inputs are explicitly rebased to t=0 and the original track is the
         # first mix input, so the mix has a deterministic timeline even when
         # the source contains a non-zero MP4 edit-list offset.
+        # Bound each silence generator itself, rather than relying on downstream
+        # EOF alone. Dynamic loudnorm outputs 192 kHz, so restore the common
+        # sample rate before padding/mixing short narration on older FFmpeg.
         filter_complex = (
-            f"[0:a:0]asetpts=PTS-STARTPTS,aresample=48000:async=1:first_pts=0,volume=0.30,apad,atrim=duration={duration:.6f}[orig];"
-            f"[1:a:0]asetpts=PTS-STARTPTS,aresample=48000:async=1:first_pts=0,loudnorm=I=-18:TP=-2:LRA=7,apad,atrim=duration={duration:.6f}[narr];"
+            f"[0:a:0]asetpts=PTS-STARTPTS,aresample=48000:async=1:first_pts=0,volume=0.30,apad=whole_dur={duration:.6f},atrim=duration={duration:.6f}[orig];"
+            f"[1:a:0]asetpts=PTS-STARTPTS,aresample=48000:async=1:first_pts=0,loudnorm=I=-18:TP=-2:LRA=7,aresample=48000,apad=whole_dur={duration:.6f},atrim=duration={duration:.6f}[narr];"
             "[orig][narr]amix=inputs=2:duration=first:dropout_transition=0:normalize=0,alimiter=limit=0.95:level=0:latency=1,asetpts=PTS-STARTPTS[aout]"
         )
         command = [
@@ -330,7 +333,7 @@ def _mix_narration(video: Path, audio: Path, output: Path, duration: float) -> N
     else:
         command = [
             ffmpeg, "-hide_banner", "-loglevel", "error", "-i", str(video), "-i", str(audio),
-            "-map", "0:v:0", "-map", "1:a:0", "-af", "asetpts=PTS-STARTPTS,aresample=48000:async=1:first_pts=0,apad",
+            "-map", "0:v:0", "-map", "1:a:0", "-af", f"asetpts=PTS-STARTPTS,aresample=48000:async=1:first_pts=0,apad=whole_dur={duration:.6f}",
             "-t", f"{duration:.3f}", "-vf", "setpts=PTS-STARTPTS", "-c:v", "libx264",
             "-preset", "veryfast", "-crf", "19", "-bf", "0", "-pix_fmt", "yuv420p",
             "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2",
