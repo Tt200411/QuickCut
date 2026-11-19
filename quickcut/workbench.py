@@ -472,7 +472,7 @@ def create_app(*, root=None, runtime=None):
             text = payload.get("approved_text_by_beat")
             expected = {beat["beat_id"] for beat in data["draft"]["beats"]}
             if not isinstance(text, dict) or set(text) != expected or any(not isinstance(value, str) or not value.strip() or len(value) > 160 for value in text.values()):
-                raise HTTPException(422, "请逐段填写 1–160 字旁白")
+                raise HTTPException(422, "请逐段填写 1–160 字符旁白")
             from .planning.selection import narration_review
             for beat in data["draft"]["beats"]:
                 review = narration_review(text[beat["beat_id"]], beat["duration_budget_us"], max_chars=beat["narration_max_chars"])

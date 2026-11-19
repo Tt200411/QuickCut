@@ -86,8 +86,10 @@ def generate_draft(
                   "selected": c["candidate_id"] in chosen} for c in candidates]
         record = selection.to_record()
         calls.append(record)
-        for attempt in [*selection.raw_response.get("previous_attempts", []), selection.raw_response]:
-            model_attempts.append({"beat_id": beat["beat_id"], "archive_path": attempt.get("archive_path"),
+        for attempt in [*selection.raw_response.get("previous_attempts", []), selection.raw_response,
+                        *selection.raw_response.get("narration_rewrites", [])]:
+            model_attempts.append({"beat_id": beat["beat_id"], "kind": attempt.get("kind", "selection"),
+                                   "rewrite_attempt": attempt.get("rewrite_attempt"), "archive_path": attempt.get("archive_path"),
                                    "status": attempt.get("status"), "model": attempt.get("model"),
                                    "started_at": attempt.get("request", {}).get("started_at"),
                                    "format_attempt": attempt.get("request", {}).get("format_attempt", 1),
