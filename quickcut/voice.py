@@ -328,9 +328,18 @@ def _mix_narration(video: Path, audio: Path, output: Path, duration: float) -> N
                 f"[1:a:0]asetpts=PTS-STARTPTS,aresample=48000:async=1:first_pts=0,apad=whole_dur={duration:.6f},atrim=duration={duration:.6f}[narr];"
                 "[orig][narr]amix=inputs=2:duration=first:dropout_transition=0:normalize=0,alimiter=limit=0.95:level=0:latency=1,asetpts=PTS-STARTPTS[aout]"
             )
+            # Complete the audio graph independently of video encoding. The
+            # final mux consumes finite PCM and has no audio filter scheduling.
+            mixed = Path(temporary) / "mixed.wav"
+            subprocess.run([
+                ffmpeg, "-hide_banner", "-loglevel", "error", "-nostdin",
+                "-i", str(video), "-i", str(normalized), "-filter_complex", filter_complex,
+                "-map", "[aout]", "-vn", "-t", f"{duration:.3f}",
+                "-ar", "48000", "-ac", "2", "-c:a", "pcm_f32le", str(mixed), "-y",
+            ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             command = [
-                ffmpeg, "-hide_banner", "-loglevel", "error", "-i", str(video), "-i", str(normalized),
-                "-map", "0:v:0", "-map", "[aout]", "-filter_complex", filter_complex,
+                ffmpeg, "-hide_banner", "-loglevel", "error", "-nostdin", "-i", str(video), "-i", str(mixed),
+                "-map", "0:v:0", "-map", "1:a:0",
                 "-t", f"{duration:.3f}", "-vf", "setpts=PTS-STARTPTS", "-c:v", "libx264",
                 "-preset", "veryfast", "-crf", "19", "-bf", "0", "-pix_fmt", "yuv420p",
                 "-c:a", "aac", "-b:a", "192k",
