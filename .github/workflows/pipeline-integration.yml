@@ -67,12 +67,33 @@ jobs:
       - name: 全量 pytest
         run: |
           set -euo pipefail
-          # Report the exact active test and dump stacks before a hard timeout.
-          # Thread timeout also stops hangs inside native code/subprocess waits;
-          # it fails the job rather than silently skipping a stalled test.
-          python -u -m pytest -vv -ra --durations=20 \
+          # Keep a stalled media subprocess from consuming the whole job, and
+          # expose its last test/stack in the check result as well as the logs.
+          set +e
+          PYTHONUNBUFFERED=1 timeout --kill-after=10s 300s python -m pytest -vv -ra --durations=20 \
             -o faulthandler_timeout=60 --timeout=180 --timeout-method=thread \
-            --junitxml="$PIPELINE_OUTPUT/pytest.xml" 2>&1 | tee "$PIPELINE_OUTPUT/pytest.txt"
+            --junitxml="$PIPELINE_OUTPUT/pytest.xml" \
+            2>&1 | tee "$PIPELINE_OUTPUT/pytest.txt"
+          test_statuses=("${PIPESTATUS[@]}")
+          pytest_status=${test_statuses[0]}
+          if [ "$pytest_status" -eq 0 ]; then pytest_status=${test_statuses[1]}; fi
+          set -e
+          if [ "$pytest_status" -ne 0 ]; then
+            python - <<'PY' || true
+          import os
+          from pathlib import Path
+          log = Path(os.environ["PIPELINE_OUTPUT"]) / "pytest.txt"
+          tail = "\n".join(log.read_text(errors="replace").splitlines()[-80:])
+          # GitHub truncates individual annotations at 4096 characters. Emit
+          # bounded chunks so the failing test and stack survive that limit.
+          encoded = tail.encode("utf-8")
+          chunks = [encoded[i:i + 2000].decode("utf-8", errors="replace") for i in range(0, len(encoded), 2000)]
+          for number, chunk in enumerate(chunks, 1):
+              message = chunk.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+              print(f"::error title=Pytest failure context {number}/{len(chunks)}::" + message)
+          PY
+          fi
+          exit "$pytest_status"
 
       - name: 真实合成媒体用例和十秒预览
         run: |

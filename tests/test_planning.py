@@ -46,6 +46,29 @@ def request_doc(docs):
     )
 
 
+def test_prompt_is_split_on_chinese_punctuation_and_retrieved_in_order(docs):
+    brief = copy.deepcopy(docs["Brief"])
+    brief["requirements"]["story"] = (
+        "这是一段45s的巴厘岛旅行Vlog。一开始我们躺在沙滩躺椅上没出门。"
+        "然后我们坐车到超市，最后回到airbnb。"
+    )
+    outline = build_outline(brief)
+    assert [beat["wish"]["event"] for beat in outline] == [
+        "这是一段45s的巴厘岛旅行Vlog",
+        "一开始我们躺在沙滩躺椅上没出门",
+        "然后我们坐车到超市",
+        "最后回到airbnb",
+    ]
+    assert [beat["beat_id"] for beat in outline] == ["beat-01", "beat-02", "beat-03", "beat-04"]
+    request = build_retrieval_request(
+        brief, docs["AssetManifest"], outline, broll_queries=False,
+    )
+    assert [query["semantic_text"] for query in request["queries"]] == [
+        beat["wish"]["event"] for beat in outline
+    ]
+    assert sum(beat["duration_budget_us"] for beat in outline) == brief["requirements"]["target_duration_us"]
+
+
 def test_outline_splits_wish_from_fact_and_keeps_integer_microseconds(docs):
     brief = docs["Brief"]
     outline = build_outline(brief)

@@ -22,7 +22,7 @@ result = confirm_draft(
 
 `generate_draft` 必须消费真实、非 fixture 输入，并实际调用本地 Ollama。每段先合并同一源片段在不同 B 查询中的候选别名，再用一张带编号接触表请求模型选镜与中文旁白；不使用固定 `APPROVED` 文案，也不降级到 rule。输出为 `needs_review`，包含候选与源区间、实际模型选镜、`planned_shots` 的建议时长、中文草稿、旁白字数预算、冻结输入及其内容哈希、模型调用记录。`planned_shots` 应用于 UI 默认边界，不能另按平均时长重算。
 
-`confirm_draft` 使用服务器保存的冻结草案，不再次推理。确认必须逐段提供非空文本、实际确认者和含时区时间；记录绑定草案、镜头/素材版本/源区间及文本哈希，再通过现有 `plan` 和 StoryPlan validator。`plan_revision` 仅接受正整数，拒绝 bool、float、字符串；同草案改稿时保留文档 ID、发布新 revision，旧声音/时间线不能只修改引用后复用。旁白长度在确认前按段落预算检查，按每秒 2.5 字并留 0.8 秒余量；例如 5 秒尾段最多 10 字（不计标点）。这只是生成前门槛，最终仍以 E 的真实 PCM 时长为准。
+`confirm_draft` 使用服务器保存的冻结草案，不再次推理。确认必须逐段提供非空文本、实际确认者和含时区时间；记录绑定草案、镜头/素材版本/源区间及文本哈希，再通过现有 `plan` 和 StoryPlan validator。`plan_revision` 仅接受正整数，拒绝 bool、float、字符串；同草案改稿时保留文档 ID、发布新 revision，旧声音/时间线不能只修改引用后复用。旁白长度在确认前按段落预算检查，按每秒 4.2 字、实际可读时间为画面时长的 90%；例如 5 秒尾段最多 18 字（不计标点）。这只是生成前门槛，最终仍以 E 的真实 PCM 时长为准。
 
 `selection_overrides={beat_id: [candidate_id, ...]}` 支持在冻结候选中替换或重排镜头；未传时保留原模型选择。`preview_selections(draft, selection_overrides=None)` 返回按 beat ID 索引的 `selected_candidate_ids/planned_shots`，用于 UI 重算时长，不推理、不批准。非法/重复 ID、跨段重复源片段及不合法容量会拒绝。修改后的镜头写 `decided_by=human_edit/assistant_edit`，`selection_edits` 记录原顺序、新顺序、确认者和时间；原始模型响应与调用身份保持原样，不能将人工选择写成模型输出。
 

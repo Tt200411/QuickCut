@@ -29,7 +29,7 @@ from .contracts import (
 from .selection import RuleSelector, Selection, Selector, validate_selection
 
 BEAT_SUFFIXES = ("open", "middle", "close")
-# 2:3:1 对应黄金样例的 6/9/3 秒，且对任意总时长都只用整数微秒运算。
+# 三句故事仍用 2:3:1，对应黄金样例的 6/9/3 秒。
 BUDGET_WEIGHTS = [2.0, 3.0, 1.0]
 BROLL_ROLE_BEATS = {
     "establishing": "middle",
@@ -37,7 +37,8 @@ BROLL_ROLE_BEATS = {
     "detail": "middle",
     "atmosphere": "close",
 }
-SPLIT_RE = re.compile(r"[，,。；;、]|然后|接着|最后|再|到|并")
+# 只按中文逗号和句号切开。不把「然后」「到」这类字当成分隔符。
+CLAUSE_RE = re.compile(r"[，。]")
 
 
 @dataclass
@@ -50,8 +51,15 @@ class PlanResult:
 
 
 def _events(story: str) -> list[str]:
-    pieces = [p.strip() for p in SPLIT_RE.split(story or "") if p.strip()]
-    return pieces or ["建立环境", "推进过程", "安静收束"]
+    """按「，」和「。」切成独立检索句，保持原有顺序。"""
+    pieces = [p.strip() for p in CLAUSE_RE.split(story or "") if p.strip()]
+    return pieces or ["建立环境"]
+
+
+def _beat_id(index: int, count: int) -> str:
+    if count == 3:
+        return f"beat-{BEAT_SUFFIXES[index]}"
+    return f"beat-{index + 1:02d}"
 
 
 def _broll_roles(brief: dict[str, Any]) -> dict[str, list[str]]:
@@ -70,41 +78,72 @@ def _broll_roles(brief: dict[str, Any]) -> dict[str, list[str]]:
 
 
 def build_outline(brief: dict[str, Any]) -> list[dict[str, Any]]:
-    """把用户愿望拆成三段初始结构，愿望与已证实事实分开保存。"""
+    """按标点切出的每一句做一段，愿望与已证实事实分开保存。"""
     check_envelope(brief, expected_kind="Brief", owner="C")
     requirements = brief.get("requirements", {})
     total = require_us(requirements.get("target_duration_us"), "Brief.target_duration_us")
     events = _events(requirements.get("story", ""))
-    budgets = split_budget(total, BUDGET_WEIGHTS)
+    budgets = split_budget(total, BUDGET_WEIGHTS if len(events) == 3 else [1.0] * len(events))
     if any(budget <= 0 for budget in budgets):
-        raise PlanningError(VLM_INVALID_PLAN, "三段预算必须均为正整数微秒", retryable=False)
+        raise PlanningError(VLM_INVALID_PLAN, "每句预算必须为正整数微秒", retryable=False)
     broll_roles = _broll_roles(brief)
     narration = requirements.get("narration") or {}
     style = narration.get("style", "中性旁白")
+    legacy_purposes = ["建立出发情境", "推进过程与环境过渡", "完成情绪收束"]
 
-    purposes = ["建立出发情境", "推进过程与环境过渡", "完成情绪收束"]
-    needs = [["primary", *broll_roles[suffix]] for suffix in BEAT_SUFFIXES]
     outline: list[dict[str, Any]] = []
-    for idx, suffix in enumerate(BEAT_SUFFIXES):
-        if len(events) == 1:
-            event = events[0] if idx == 1 else f"{events[0]}（{purposes[idx]}）"
-        elif len(events) == 2:
-            event = events[0] if idx == 0 else events[1]
-        else:
-            event = events[0] if idx == 0 else (events[-1] if idx == 2 else "、".join(events[1:-1]))
+    for idx, event in enumerate(events):
+        suffix = BEAT_SUFFIXES[idx] if len(events) == 3 else ""
+        extra_roles = broll_roles[suffix] if suffix else []
         outline.append({
-            "beat_id": f"beat-{suffix}",
+            "beat_id": _beat_id(idx, len(events)),
             "order": idx,
-            "purpose": purposes[idx],
+            "purpose": legacy_purposes[idx] if suffix else event,
             # 这是用户想讲什么，不是素材里已经拍到的事实。
             "wish": {"event": event, "assertion": "user_wish", "verified": False},
-            "shot_needs": needs[idx],
-            "broll_allowed": bool(broll_roles[suffix]),
+            "shot_needs": ["primary", *extra_roles],
+            "broll_allowed": bool(extra_roles),
             "duration_budget_us": budgets[idx],
             "narration_style": style,
             "project_id": brief["project_id"],
         })
     return outline
+
+
+def validate_frozen_outline(brief: dict[str, Any], request: dict[str, Any],
+                            outline: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Accept a saved thematic structure only when its frozen queries bind it."""
+    def reject():
+        raise PlanningError(VLM_INVALID_PLAN, "冻结大纲必须与原检索主查询的身份、顺序、文案和预算一致", retryable=False)
+
+    if picture_policy(brief) != THEMATIC_POLICY or not isinstance(outline, list) or not outline:
+        reject()
+    primary = [query for query in request.get("queries", []) if query.get("role") == "primary"]
+    if len(primary) != len(outline) or len({q.get("beat_id") for q in primary}) != len(primary):
+        reject()
+    if len({q.get("query_id") for q in primary}) != len(primary):
+        reject()
+    total = 0
+    for index, (beat, query) in enumerate(zip(outline, primary)):
+        if not isinstance(beat, dict):
+            reject()
+        budget = beat.get("duration_budget_us")
+        wish = beat.get("wish") or {}
+        if (beat.get("beat_id") != query.get("beat_id") or not isinstance(beat.get("beat_id"), str)
+                or beat.get("retrieval_query_id") != query.get("query_id") or not isinstance(query.get("query_id"), str)
+                or type(beat.get("order")) is not int or beat["order"] != index
+                or beat.get("project_id") != brief["project_id"]
+                or type(budget) is not int or budget <= 0 or type(query.get("duration_budget_us")) is not int
+                or budget != query["duration_budget_us"]
+                or beat.get("purpose") != query.get("beat_purpose")
+                or not isinstance(wish, dict) or not isinstance(wish.get("event"), str)
+                or wish.get("event") != query.get("semantic_text")
+                or wish.get("assertion") != "user_wish" or wish.get("verified") is not False):
+            reject()
+        total += budget
+    if total != require_us(brief["requirements"].get("target_duration_us"), "Brief.target_duration_us"):
+        reject()
+    return copy.deepcopy(outline)
 
 
 def build_retrieval_request(
@@ -138,10 +177,13 @@ def build_retrieval_request(
             "beat_purpose": beat["purpose"],
         })
     if broll_queries:
+        beats_by_id = {beat["beat_id"]: beat for beat in outline}
         for suffix, role in (
             (suffix, role) for suffix in BEAT_SUFFIXES for role in broll_roles[suffix]
         ):
-            beat = next(b for b in outline if b["beat_id"] == f"beat-{suffix}")
+            beat = beats_by_id.get(f"beat-{suffix}")
+            if beat is None:
+                continue
             queries.append({
                 "query_id": f"query-{suffix}-{role}",
                 "beat_id": beat["beat_id"],
@@ -469,6 +511,7 @@ def plan(
     plan_document_id: str = "story-001",
     plan_revision: int = 1,
     iteration_history: list[dict[str, Any]] | None = None,
+    frozen_outline: list[dict[str, Any]] | None = None,
 ) -> PlanResult:
     """执行一次规划。candidate_set 为空时只产出大纲与首轮检索请求。"""
     check_envelope(brief, expected_kind="Brief", owner="C")
@@ -477,13 +520,17 @@ def plan(
     if candidate_set is not None:
         check_envelope(candidate_set, expected_kind="CandidateSet", owner="B")
         check_project(brief, candidate_set)
-    outline = build_outline(brief)
+    if frozen_outline is not None and retrieval_request is None:
+        raise PlanningError(VLM_INVALID_PLAN, "冻结大纲必须同时提供原 RetrievalRequest", retryable=False)
+    outline = build_outline(brief) if frozen_outline is None else copy.deepcopy(frozen_outline)
     request = retrieval_request if retrieval_request is not None else build_retrieval_request(
         brief, manifest, outline, broll_queries=broll_queries, max_iterations=max_iterations,
     )
     check_envelope(request, expected_kind="RetrievalRequest", owner="C")
     check_project(brief, manifest, request)
     check_inputs(request, {"Brief": brief, "AssetManifest": manifest})
+    if frozen_outline is not None:
+        outline = validate_frozen_outline(brief, request, outline)
     beat_ids = {beat["beat_id"] for beat in outline}
     if any(query.get("beat_id") not in beat_ids for query in request.get("queries", [])):
         raise PlanningError(VLM_INVALID_PLAN, "检索查询引用了当前大纲之外的 beat", retryable=False)
@@ -807,6 +854,8 @@ def plan(
             "RetrievalRequest": content_hash(request),
         },
     }
+    if frozen_outline is not None:
+        provenance["frozen_outline"] = copy.deepcopy(outline)
     status = "needs_input" if gaps or pending_reviews else "ready_for_edit"
     doc = envelope(
         "StoryPlan", plan_document_id, project_id, plan_revision,

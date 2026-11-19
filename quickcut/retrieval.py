@@ -85,6 +85,9 @@ class RetrievalConfig:
     # dropping a ranking of zero. OpenCLIP cosine on a miss is a small positive
     # number, so a real visual run sets a floor above that noise.
     minimum_ranking_score: float = 0.0
+    # When a real keyframe was scored, a low cosine is not a match. Transcript
+    # character overlap must not promote that frame into the candidate list.
+    minimum_visual_score: float = 0.0
     dedup_by_content_hash: bool = True
 
 
@@ -466,6 +469,10 @@ class Retriever:
                         segment, project_root, fixture=fixture) is not None else "fixture_text_only")
             except RetrievalVisualError as exc:
                 errors.append(_diagnostic(exc, query, segment))
+                continue
+            visual_floor = self.config.minimum_visual_score
+            if (visual_states[segment["segment_id"]] == "scored" and visual_floor > 0
+                    and visual < visual_floor):
                 continue
             transcript_overlap, description_overlap = self._text_score(semantic_text, segment, fixture=fixture)
             weighted_text = max(

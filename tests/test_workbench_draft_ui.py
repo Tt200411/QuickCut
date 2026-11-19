@@ -187,3 +187,112 @@ function allText(node){return node.textContent+node.children.map(allText).join('
     target.write_text(harness + handlers + checks)
     result = subprocess.run([node, str(target)], capture_output=True, text=True, timeout=15)
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def _run_navigation_handlers(tmp_path, checks):
+    node = shutil.which("node")
+    if not node:
+        pytest.skip("Node is required to execute the inline browser handlers")
+    html = (Path(__file__).parents[1] / "quickcut/web/index.html").read_text()
+    script = html.split("<script>", 1)[1].split("</script>", 1)[0]
+    handlers = script[script.index("function selectJob"):script.index("function busy")]
+    handlers += script[script.index("function stageIndex"):script.index("function statusBox")]
+    handlers += script[script.index("function renderNarrationMetrics"):script.index("async function changeSelection")]
+    harness = r'''
+const assert=require('node:assert/strict');
+class Element {
+  constructor(tag,text){this.tag=tag;this.textContent=text;this.children=[];this.dataset={};this.style={};this.classes=new Set();this.attributes={};this.paused=true;this.pauseCalls=0;
+    this.classList={add:key=>this.classes.add(key),remove:key=>this.classes.delete(key),contains:key=>this.classes.has(key),toggle:(key,value)=>{if(value===undefined)value=!this.classes.has(key);if(value)this.classes.add(key);else this.classes.delete(key);}};
+  }
+  append(...children){this.children.push(...children);}
+  replaceChildren(...children){this.children=[...children];}
+  setAttribute(name,value){this.attributes[name]=value;}
+  removeAttribute(name){delete this.attributes[name];}
+  querySelectorAll(tag){return this.children.flatMap(child=>[...(tag==='*'||child.tag===tag?[child]:[]),...child.querySelectorAll(tag)]);}
+  pause(){this.paused=true;this.pauseCalls++;}
+}
+const elements=new Map();
+const $=id=>{if(!elements.has(id))elements.set(id,new Element(id));return elements.get(id);};
+const el=(tag,text,cls='')=>{const node=new Element(tag,text);for(const name of cls.split(' ').filter(Boolean))node.classList.add(name);return node;};
+const document={querySelector(selector){
+  const [,name,value]=selector.match(/^\[data-([\w-]+)="([^"]+)"\]$/);
+  const key=name.replace(/-([a-z])/g,(_,letter)=>letter.toUpperCase());
+  return $('beats').querySelectorAll('*').find(node=>node.dataset[key]===value)||null;
+}};
+$('steps').append(...Array.from({length:5},()=>new Element('button')));
+$('review').append($('beats'));
+let current='a',latest,preferredIndex=null,navigationVersion=0,lastView='',draftView=null,reviewDirty=false,editVersion=0,editPending=false,saveTimer;
+const storage=new Map(),messages=[],polled=[];
+const localStorage={setItem:(key,value)=>storage.set(key,value)};
+const clearTimeout=()=>{},rememberReview=()=>{},restoreReview=()=>{},setEditBusy=()=>{},changeSelection=()=>{},reviewChanged=()=>{};
+const toast=value=>messages.push(value);
+let request;
+async function poll(){polled.push(current);if(latest)applyView(latest);}
+function completed(id){return {job_id:id,status:'completed',stage:'completed',downloads:{video:id+'.mp4'},result:{}};}
+function draft(ids){return {beats:ids.map((beat_id,i)=>({beat_id,purpose:'第'+(i+1)+'个原句',duration_budget_us:10000000,shots:[],available_candidates:[],narration_max_chars:30,narration_draft:'完整旁白。'}))};}
+'''
+    target = tmp_path / "navigation-handlers.cjs"
+    target.write_text(harness + handlers + "\n(async()=>{\n" + checks + "\n})().catch(error=>{console.error(error);process.exitCode=1;});\n")
+    result = subprocess.run([node, str(target)], capture_output=True, text=True, timeout=15)
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_delayed_return_to_review_cannot_change_a_newer_navigation(tmp_path):
+    _run_navigation_handlers(tmp_path, r'''
+for(const switchBack of [false,true]){
+  selectJob('a');latest=completed('a');applyView(latest);
+  let resolve;request=()=>new Promise(done=>resolve=done);
+  const oldRequest=openStep(2);
+  selectJob('b');latest=completed('b');applyView(latest);
+  if(switchBack){selectJob('a');latest=completed('a');applyView(latest);}
+  const calls=polled.length;
+  resolve({});await oldRequest;
+  assert.equal(preferredIndex,null,'An old return-review response must not override the selected job view');
+  assert.equal(polled.length,calls,'The stale navigation must not trigger a poll for the newly selected job');
+  assert.equal($('result').classList.contains('hidden'),false);
+}
+// A later step click in the same job wins over an earlier pending navigation.
+selectJob('a');latest=completed('a');
+let resolve;request=()=>new Promise(done=>resolve=done);
+const oldStep=openStep(2);await openStep(4);resolve({});await oldStep;
+assert.equal(preferredIndex,4);
+assert.equal($('result').classList.contains('hidden'),false);
+// Errors from an abandoned job must not appear as errors of the current one.
+let reject;request=()=>new Promise((done,fail)=>reject=fail);
+const failedStep=openStep(2);selectJob('b');latest=completed('b');
+reject(new Error('old job failed'));await failedStep;
+assert.deepEqual(messages,[]);
+''')
+
+
+def test_navigation_pauses_hidden_previews_but_keeps_the_visible_video(tmp_path):
+    _run_navigation_handlers(tmp_path, r'''
+const data=draft(['beat-01']);
+data.beats[0].shots=[{shot_index:0,candidate_id:'c1',segment_id:'s1',available_range_us:{begin:0,end:10000000},source_range_us:{begin:0,end:5000000},media_url:'/source.mp4'}];
+data.beats[0].available_candidates=[{candidate_id:'c1',label:'素材1'}];
+drawReview(data);
+const source=$('review').querySelectorAll('video')[0],final=$('finalVideo');
+assert.ok(source,'Exercise the source video created by the actual review renderer');
+source.paused=false;final.paused=false;showPanel('review');
+assert.equal(source.paused,false,'Showing the review must not interrupt its active preview');
+assert.equal(final.paused,true);
+for(const panel of ['materials','voiceStep','result','empty']){
+  source.paused=false;final.paused=false;showPanel(panel);
+  assert.equal(source.paused,true,'Hidden source audio must stop when leaving review');
+  assert.equal(final.paused,panel!=='result','Only the visible final player may keep playing');
+}
+source.paused=false;final.paused=false;selectJob('b');
+assert.equal(source.paused,true,'Switching jobs must immediately stop the old source preview');
+assert.equal(final.paused,true);
+''')
+
+
+def test_review_titles_follow_beat_identity_for_one_three_and_four_clauses(tmp_path):
+    _run_navigation_handlers(tmp_path, r'''
+function titles(ids){drawReview(draft(ids));return $('beats').children.map(card=>card.children[0].children[0].textContent);}
+assert.deepEqual(titles(['beat-open','beat-middle','beat-close']),['开场','展开','收尾']);
+for(const count of [1,3,4]){
+  const ids=Array.from({length:count},(_,i)=>'beat-'+String(i+1).padStart(2,'0'));
+  assert.deepEqual(titles(ids),ids.map((_,i)=>'第 '+(i+1)+' 段 · 第'+(i+1)+'个原句'));
+}
+''')

@@ -73,6 +73,140 @@ def confirm(draft):
                          reviewer="测试确认者", reviewed_at="2026-11-16T10:00:00+08:00")
 
 
+def _rehash_draft(draft):
+    draft.pop("draft_id", None)
+    draft["draft_id"] = content_hash(draft)
+
+
+def test_legacy_single_sentence_draft_keeps_frozen_three_beats(inputs, tmp_path, model, monkeypatch):
+    brief, manifest, candidates, _ = inputs
+    # Historical C used three beats even for this one-clause brief. Its actual
+    # request, candidate documents and model responses remain the confirmation inputs.
+    legacy_outline = build_outline(brief)
+    brief["requirements"]["story"] = "林间风景"
+    for beat, event in zip(legacy_outline, ["林间风景（建立出发情境）", "林间风景", "林间风景（完成情绪收束）"]):
+        beat["wish"]["event"] = event
+    request = build_retrieval_request(brief, manifest, legacy_outline, broll_queries=False)
+    with monkeypatch.context() as patch:
+        patch.setattr("quickcut.planning.production.build_outline", lambda _: copy.deepcopy(legacy_outline))
+        draft = draft_for((brief, manifest, candidates, request), tmp_path)
+    draft.pop("outline")  # Old files did not have the new explicit outline field.
+    for beat, limit in zip(draft["beats"], [23, 35, 10]):
+        beat["narration_max_chars"] = limit
+    _rehash_draft(draft)
+    frozen = copy.deepcopy(draft)
+    assert [b["beat_id"] for b in build_outline(brief)] == ["beat-01"]
+
+    def no_regeneration(*args, **kwargs):
+        raise AssertionError("Confirmation must not rebuild a frozen outline or rerun the model")
+    monkeypatch.setattr("quickcut.planning.planning.build_outline", no_regeneration)
+    monkeypatch.setattr("quickcut.planning.validator.build_outline", no_regeneration)
+    monkeypatch.setattr("quickcut.planning.selection.open_ollama", no_regeneration)
+    texts = {beat["beat_id"]: "林间风景静静展开。" for beat in draft["beats"]}
+    result = confirm_draft(draft, approved_text_by_beat=texts, reviewer="离线回放审核",
+                           reviewed_at="2026-11-19T10:00:00+08:00", confirmation_kind="assistant_review",
+                           plan_revision=2)
+    story = result.story_plan
+    assert story["status"] == "ready_for_edit"
+    assert story["revision"] == 2
+    assert [beat["beat_id"] for beat in story["beats"]] == ["beat-open", "beat-middle", "beat-close"]
+    assert [beat["wish"] for beat in story["decision_provenance"]["frozen_outline"]] == [beat["wish"] for beat in legacy_outline]
+    assert story["decision_provenance"]["input_hashes"] == frozen["input_hashes"]
+    assert result.run["raw_responses"] == frozen["model_calls"]
+    assert draft == frozen
+    assert len(model) == 3
+    assert validate_story_plan(story, brief=brief, manifest=manifest, candidate_set=candidates,
+                               upstream=draft["inputs"])["ok"]
+    texts["beat-close"] = "这句话比原来保存的十字预算更长。"
+    longer = confirm_draft(draft, approved_text_by_beat=texts, reviewer="离线回放审核",
+                           reviewed_at="2026-11-19T10:00:00+08:00")
+    assert longer.story_plan["narration_cues"][-1]["text"] == texts["beat-close"]
+    assert draft == frozen  # Legacy estimated limits remain frozen, but are advisory.
+
+
+@pytest.mark.parametrize("field,value", [("beat_id", "beat-forged"), ("retrieval_query_id", "query-forged"),
+                                         ("duration_budget_us", 10_000_001), ("order", 1),
+                                         ("wish", {"event": "伪造主题", "assertion": "user_wish", "verified": False})])
+def test_frozen_outline_cannot_override_upstream_even_with_new_draft_hash(inputs, tmp_path, model, field, value):
+    draft = draft_for(inputs, tmp_path)
+    draft["outline"][0][field] = value
+    _rehash_draft(draft)
+    with pytest.raises(PlanningError, match="冻结大纲"):
+        confirm(draft)
+
+
+def test_validator_checks_frozen_outline_budget_and_request_identity(inputs, tmp_path, model):
+    draft = draft_for(inputs, tmp_path)
+    result = confirm(draft)
+    for field, value in [("duration_budget_us", 10_000_001), ("beat_id", "beat-forged")]:
+        story = copy.deepcopy(result.story_plan)
+        story["decision_provenance"]["frozen_outline"][0][field] = value
+        report = validate_story_plan(story, brief=inputs[0], manifest=inputs[1], candidate_set=inputs[2],
+                                     upstream=draft["inputs"])
+        assert not report["ok"]
+        assert any("冻结大纲" in error for error in report["errors"])
+    # Matching outline/query edits cannot grant extra time beyond the frozen Brief.
+    draft["outline"][0]["duration_budget_us"] += 1
+    draft["inputs"]["RetrievalRequest"]["queries"][0]["duration_budget_us"] += 1
+    draft["input_hashes"]["RetrievalRequest"] = content_hash(draft["inputs"]["RetrievalRequest"])
+    _rehash_draft(draft)
+    with pytest.raises(PlanningError, match="冻结大纲"):
+        confirm(draft)
+
+
+@pytest.mark.parametrize("story_text,durations,expected_limits,expected_counts", [
+    ("林间风景", [10, 10, 10, 10], [3], [3]),
+    ("林间光影，沿路风景，轻松收束", [10, 10, 10, 10], [2, 2, 1], [1, 2, 1]),
+    ("林间风景", [30, 10, 10, 10], [3], [3]),
+])
+def test_selector_capacity_covers_thirty_seconds_without_changing_short_beats(
+        inputs, tmp_path, monkeypatch, story_text, durations, expected_limits, expected_counts):
+    brief, manifest, _, _ = inputs
+    brief["requirements"]["story"] = story_text
+    fourth_asset, fourth_segment = copy.deepcopy(manifest["assets"][0]), copy.deepcopy(manifest["segments"][0])
+    fourth_asset.update(asset_id="asset-3", uri="source-3.mp4")
+    fourth_segment.update(segment_id="segment-3", asset_id="asset-3")
+    manifest["assets"].append(fourth_asset)
+    manifest["segments"].append(fourth_segment)
+    for asset, duration in zip(manifest["assets"], durations):
+        asset["duration_us"] = duration * 1_000_000
+    for segment, duration in zip(manifest["segments"], durations):
+        segment["source_range_us"] = {"begin": 0, "end": duration * 1_000_000}
+    request = build_retrieval_request(brief, manifest, build_outline(brief), broll_queries=False)
+    candidates = envelope("CandidateSet", "candidates-live", "project-live", 1, fixtures_only=False, owner="B",
+                          inputs=[ref(manifest), ref(request)])
+    candidates.update(status="success", results=[
+        {"query_id": query["query_id"], "status": "ok", "candidates": [
+            {"candidate_id": f"q{i}-candidate-{j}", "segment_id": segment["segment_id"], "asset_revision": 1,
+             "ranking_score": 0.9 - j * .01, "evidence": ["actual_keyframe"]}
+            for j, segment in enumerate(manifest["segments"])]}
+        for i, query in enumerate(request["queries"])])
+    payloads = []
+    def respond(request, timeout):
+        payload = json.loads(request.data)
+        payloads.append(payload)
+        prompt = json.loads(payload["prompt"])
+        count = (prompt["beat"]["duration_budget_us"] + 9_999_999) // 10_000_000
+        # The model prefers the shorter clips even when one long clip could
+        # cover the entire beat. The schema must permit that genuine choice.
+        ids = [c["candidate_id"] for c in prompt["candidates"] if c["selectable"]
+               and c["source_range_us"]["end"] - c["source_range_us"]["begin"] == 10_000_000][:count]
+        answer = {"shot_order": ids, "roles": {cid: "atmosphere" for cid in ids},
+                  "reasons": {cid: "画面符合主题" for cid in ids}, "narration_draft": "林间风景静静展开。"}
+        return io.BytesIO(json.dumps({"model": payload["model"], "done": True, "response": json.dumps(answer)}).encode())
+    monkeypatch.setattr("quickcut.planning.selection.open_ollama", respond)
+    draft = draft_for((brief, manifest, candidates, request), tmp_path)
+    assert [p["format"]["properties"]["shot_order"]["maxItems"] for p in payloads] == expected_limits
+    assert [len(b["selected_candidate_ids"]) for b in draft["beats"]] == expected_counts
+    if durations[0] == 30:
+        assert draft["beats"][0]["selected_candidate_ids"] == ["q0-candidate-1", "q0-candidate-2", "q0-candidate-3"]
+    result = confirm(draft)
+    assert result.story_plan["status"] == "ready_for_edit"
+    assert sum(shot["suggested_duration_us"] for beat in result.story_plan["beats"] for shot in beat["shots"]) == 30_000_000
+    assert all(shot["decided_by"].startswith("model:") for beat in result.story_plan["beats"] for shot in beat["shots"])
+    assert len(payloads) == len(expected_counts)  # Confirmation makes no extra calls.
+
+
 def test_live_draft_requires_confirmation_and_preserves_model_evidence(inputs, tmp_path, model):
     draft = draft_for(inputs, tmp_path)
     assert draft["status"] == "needs_review"

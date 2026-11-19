@@ -378,6 +378,49 @@ def _start_time(stream: Document) -> int:
     return round(Fraction(str(value)) * 1_000_000)
 
 
+def _require_audio_continuity(binary: str, path: Path, stream: Document,
+                              intervals: list[Document], *, origin_us: int) -> None:
+    """Reject missing source samples before resampling can synthesize silence.
+
+    A late first frame is a legitimate leading offset. Gaps between decoded
+    frames inside a selected interval are missing media, even when async audio
+    resampling could make the output's sample count appear correct.
+    """
+    if not intervals:
+        return
+    try:
+        timebase = Fraction(stream["time_base"])
+        rate = int(stream["sample_rate"])
+        _require(timebase > 0 and rate > 0, "真实音频采样时间基无效")
+        data = json.loads(_run([
+            binary, "-v", "error", "-select_streams", str(stream["index"]),
+            "-show_frames", "-show_entries", "frame=best_effort_timestamp,pts,nb_samples,sample_rate",
+            "-of", "json", str(path),
+        ]))
+        frames = data.get("frames", [])
+        _require(bool(frames), "真实音频采样为空")
+        ranges = [(Fraction(interval["begin"] + origin_us, 1_000_000),
+                   Fraction(interval["end"] + origin_us, 1_000_000)) for interval in intervals]
+        # Container timestamps may round adjacent frame positions by one tick.
+        tolerance = timebase + Fraction(1, rate)
+        previous_begin = previous_end = None
+        for frame in frames:
+            begin = Fraction(frame.get("best_effort_timestamp", frame.get("pts"))) * timebase
+            duration = Fraction(int(frame["nb_samples"]), int(frame.get("sample_rate") or rate))
+            _require(duration > 0, "真实音频采样帧长度无效")
+            if previous_end is not None:
+                _require(begin >= previous_begin, "真实音频采样时间戳倒退")
+                if begin - previous_end > tolerance:
+                    _require(not any(min(begin, end) - max(previous_end, start) > tolerance
+                                     for start, end in ranges), "真实音频采样存在内部缺口；不能补静音掩盖缺失原声")
+            previous_begin = begin
+            previous_end = max(previous_end or begin, begin + duration)
+    except (KeyError, TypeError, ValueError, ZeroDivisionError) as exc:
+        if isinstance(exc, PreviewError):
+            raise
+        raise PreviewError(f"真实音频采样连续性无法确认: {exc}") from exc
+
+
 def _video_origin(binary: str, path: Path) -> int:
     info = json.loads(_run([
         binary, "-v", "error", "-select_streams", "v:0", "-read_intervals", "%+#1",
@@ -475,6 +518,10 @@ def render_timeline_preview(
                                for c in t.get("clips", []) if c["asset_id"] == asset_id)
             _require(required_end <= offset + length + tolerance,
                      f"真实 {kind} 流不足以覆盖 source bounds: {asset_id}")
+        _require_audio_continuity(probe, path, streams.get("audio", {}),
+                                  [clip["source_range_us"] for clip in tracks["source_audio"]["clips"]
+                                   if clip["asset_id"] == asset_id],
+                                  origin_us=starts[asset_id].get("video", 0))
         measurements[asset_id] = measured
     output = timeline["output"]
     sample_rate = output["sample_rate"]
@@ -551,6 +598,17 @@ def render_timeline_preview(
                 with wave.open(str(pcm), "rb") as wav:
                     samples = wav.getnframes()
                 expected_samples = Fraction((interval["end"] - interval["begin"]) * sample_rate, 1_000_000)
+                if (kind == "source_audio" and samples == 0 and
+                        interval["end"] <= starts[clip["asset_id"]]["audio"] - origin):
+                    # A trim wholly before the verified audio start has no frames
+                    # for aresample to pad. Match export's nearest sample count
+                    # (half ties round down); never fill an interior gap or narration.
+                    samples = math.ceil(expected_samples - Fraction(1, 2))
+                    with wave.open(str(pcm), "wb") as wav:
+                        wav.setnchannels(2)
+                        wav.setsampwidth(2)
+                        wav.setframerate(sample_rate)
+                        wav.writeframes(bytes(samples * 4))
                 _require(abs(samples - expected_samples) <= 1, f"真实音频采样不足或超长: {clip['clip_id']}；不补静音或截音凑时长")
                 command += ["-i", str(pcm)]
                 label = f"a{input_index}"

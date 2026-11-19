@@ -14,7 +14,7 @@ from typing import Any
 from .contracts import (PlanningError, VLM_INVALID_PLAN, check_envelope, check_inputs,
                         check_project, content_hash)
 from .planning import (PlanResult, THEMATIC_POLICY, MONTAGE_ROLES, build_outline, candidates_for_beat,
-                       picture_policy, plan)
+                       picture_policy, plan, validate_frozen_outline)
 from .selection import (OllamaSelector, Selection, validate_selection,
                         narration_character_limit, narration_character_count, narration_review)
 from .validator import assert_valid, validate_story_plan
@@ -30,7 +30,7 @@ def generate_draft(
     model: str | None = None, base_url: str | None = None, timeout: float = 180,
     archive_dir: str | Path | None = None,
 ) -> dict[str, Any]:
-    """Call Qwen for each of three beats; never approve narration automatically."""
+    """Call Qwen for each frozen beat; never approve narration automatically."""
     inputs = copy.deepcopy({"Brief": brief, "AssetManifest": manifest,
                             "CandidateSet": candidate_set, "RetrievalRequest": retrieval_request})
     brief, manifest, candidate_set, retrieval_request = (
@@ -50,7 +50,11 @@ def generate_draft(
     assets = {asset["asset_id"]: asset for asset in manifest["assets"]}
     selected_segments: set[str] = set()
     beats, calls, model_attempts = [], [], []
-    for beat in build_outline(brief):
+    primary = {q["beat_id"]: q for q in retrieval_request["queries"] if q["role"] == "primary"}
+    outline = [{**beat, "retrieval_query_id": primary.get(beat["beat_id"], {}).get("query_id")}
+               for beat in build_outline(brief)]
+    outline = validate_frozen_outline(brief, retrieval_request, outline)
+    for beat in outline:
         by_segment: dict[str, dict[str, Any]] = {}
         for candidate in candidates_for_beat(beat, retrieval_request, candidate_set, manifest):
             sid = candidate["segment_id"]
@@ -65,7 +69,7 @@ def generate_draft(
                 by_segment[sid] = {**candidate, "retrieval_aliases": []}
         candidates = list(by_segment.values())
         if not candidates:
-            _fail(f"{beat['beat_id']} 没有未重复的真实候选，需增加素材或重新检索")
+            _fail(f"「{beat['wish']['event']}」没有画面足够接近的镜头，请改写这一句或更换素材")
         model_candidates = candidates[:8]
         selection = selector.select(beat=beat, candidates=model_candidates, context={
             "project_id": brief["project_id"], "thematic_montage": True,
@@ -106,6 +110,7 @@ def generate_draft(
     draft = {
         "status": "needs_review", "project_id": brief["project_id"],
         "created_at": datetime.now(timezone.utc).isoformat(), "beats": beats,
+        "outline": copy.deepcopy(outline),
         "model_calls": calls, "inputs": inputs,
         "model_attempts": model_attempts,
         "input_hashes": {kind: content_hash(doc) for kind, doc in inputs.items()},
@@ -123,6 +128,30 @@ def _check_frozen_draft(draft: dict[str, Any]) -> None:
         _fail("原始草案已变化，请重新生成并审阅")
     if draft.get("input_hashes") != {kind: content_hash(doc) for kind, doc in draft["inputs"].items()}:
         _fail("草案输入内容已经变化")
+
+
+def _frozen_outline(draft: dict[str, Any]) -> list[dict[str, Any]]:
+    """Old drafts recover their original structure from saved primary queries."""
+    brief, request = draft["inputs"]["Brief"], draft["inputs"]["RetrievalRequest"]
+    outline = draft.get("outline")
+    if outline is None:
+        primary = [q for q in request["queries"] if q.get("role") == "primary"]
+        outline = []
+        for index, query in enumerate(primary):
+            roles = [q["role"] for q in request["queries"]
+                     if q.get("beat_id") == query["beat_id"] and q.get("role") != "primary"]
+            outline.append({"beat_id": query["beat_id"], "retrieval_query_id": query["query_id"], "order": index,
+                            "purpose": query.get("beat_purpose"), "duration_budget_us": query["duration_budget_us"],
+                            "wish": {"event": query["semantic_text"], "assertion": "user_wish", "verified": False},
+                            "shot_needs": ["primary", *roles], "broll_allowed": bool(roles),
+                            "narration_style": (brief["requirements"].get("narration") or {}).get("style", "中性旁白"),
+                            "project_id": brief["project_id"]})
+    outline = validate_frozen_outline(brief, request, outline)
+    if (len(outline) != len(draft["beats"]) or any(
+            any(saved[key] != beat[key] for key in ("beat_id", "purpose", "duration_budget_us"))
+            for saved, beat in zip(outline, draft["beats"]))):
+        _fail("草案镜头段落与冻结大纲不一致")
+    return outline
 
 
 def _review_selection(beat: dict[str, Any], ids: list[str], *, source: str) -> Selection:
@@ -205,6 +234,7 @@ def confirm_draft(
     except (ValueError, AttributeError, TypeError):
         _fail("确认时间必须是含时区的 ISO 时间")
     selected = preview_selections(draft, selection_overrides)
+    outline = _frozen_outline(draft)
     draft_id = draft["draft_id"]
     inputs = draft["inputs"]
     beat_ids = {beat["beat_id"] for beat in draft["beats"]}
@@ -215,7 +245,7 @@ def confirm_draft(
     for beat in draft["beats"]:
         bid = beat["beat_id"]
         texts[bid] = approved_text_by_beat[bid].strip()
-        review = narration_review(texts[bid], beat["duration_budget_us"])
+        review = narration_review(texts[bid], beat["duration_budget_us"], max_chars=beat.get("narration_max_chars"))
         if review["warnings"]:
             _fail(f"{bid} 旁白需修改：" + "；".join(item["message"] for item in review["warnings"]))
         approvals[bid] = {"draft_id": draft_id, "reviewer": reviewer.strip(), "reviewed_at": reviewed_at,
@@ -243,7 +273,7 @@ def confirm_draft(
                   retrieval_request=inputs["RetrievalRequest"], selector=_ConfirmedModelSelector(
                       draft, selected, source="human_edit" if human else "assistant_edit"),
                   approved_cues=texts, approval_records=approvals, reviewed_evidence=reviews,
-                  plan_document_id=f"story-{draft_id}", plan_revision=plan_revision)
+                  plan_document_id=f"story-{draft_id}", plan_revision=plan_revision, frozen_outline=outline)
     if selection_edits:
         # Human changes must not rewrite what the model actually said or its call identity.
         original_calls = copy.deepcopy(draft["model_calls"])

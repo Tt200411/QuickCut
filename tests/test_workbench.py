@@ -244,6 +244,46 @@ def test_worker_errors_are_persisted_with_owner(browser, monkeypatch):
     assert client.get(f"/api/jobs/{job_id}/files/error").status_code == 200
 
 
+def test_completed_job_returns_to_review_and_keeps_the_film(browser):
+    client, jobs, _ = browser
+    job_id = review_ready(client, jobs)
+    jobs.update(job_id, status="completed", stage="completed", result={"duration_us": 30_000_000})
+    assert client.post(f"/api/jobs/{job_id}/return-review").status_code == 200
+    view = client.get(f"/api/jobs/{job_id}").json()
+    assert view["status"] == "needs_review"
+    assert view["result"]["duration_us"] == 30_000_000
+    assert view["downloads"]["video"].endswith("/files/video")
+    assert view["draft"]["beats"]
+
+
+def test_review_can_open_previous_export_without_approving_new_edits(browser, monkeypatch):
+    client, jobs, submitted = browser
+    job_id = review_ready(client, jobs)
+    result = {"duration_us": 30_000_000, "revision": 1, "package_directory": "export-r1"}
+    jobs.update(job_id, status="completed", stage="completed", result=result)
+    write_json(jobs.directory(job_id) / "run-report.json", result)
+    opened = []
+    def open_previous(root):
+        opened.append(root)
+        return {"status": "opened", "draft_name": "previous-r1"}
+    monkeypatch.setattr(jobs, "open_editor", open_previous)
+    assert client.post(f"/api/jobs/{job_id}/return-review").status_code == 200
+    submitted.clear()
+    response = client.post(f"/api/jobs/{job_id}/open-editor")
+    assert response.status_code == 200, response.text
+    view = client.get(f"/api/jobs/{job_id}").json()
+    assert view["status"] == "needs_review" and view["result"]["revision"] == 1
+    assert view["result"]["package_directory"] == "export-r1"
+    assert view["result"]["editor"]["draft_name"] == "previous-r1"
+    assert opened == [jobs.directory(job_id)] and not submitted
+    jobs.active.add(job_id)
+    try:
+        assert client.post(f"/api/jobs/{job_id}/open-editor").status_code == 409
+        assert len(opened) == 1
+    finally:
+        jobs.active.discard(job_id)
+
+
 def test_failed_render_returns_to_review_without_reupload(browser):
     client, jobs, submitted = browser
     job_id = review_ready(client, jobs)

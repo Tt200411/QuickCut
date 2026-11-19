@@ -135,9 +135,16 @@ def _inspect_media(path: Path, asset: dict, tracks: dict, ffmpeg: str, probe: st
             tolerance = 2 if kind == "video" else max(2, math.ceil(1_000_000 / int(stream["sample_rate"])))
             _require(max(ends) <= start - origin + length + tolerance, "MEDIA_UNREADABLE",
                      f"真实 {kind} 流不能覆盖源区间: {asset['asset_id']}")
+        renderer._require_audio_continuity(probe, path, streams.get("audio", {}),
+            [clip["source_range_us"] for clip in tracks.get("source_audio", {}).get("clips", [])
+             if clip["asset_id"] == asset["asset_id"]], origin_us=origin)
         if any(c["asset_id"] == asset["asset_id"] for c in tracks["narration"]["clips"]):
             _verify_narration_wav(path, asset)
         result = {"origin_us": origin, "duration_us": renderer._duration(video or streams["audio"])}
+        if "audio" in kinds:
+            # WAV start is defined as 0, matching the coverage check above.
+            result["audio_start_us"] = 0 if info["format"].get("format_name") == "wav" else renderer._start_time(streams["audio"])
+            result["audio_duration_us"] = renderer._duration(streams["audio"])
         if video:
             result.update(width=video["width"], height=video["height"])
         return result
@@ -145,6 +152,67 @@ def _inspect_media(path: Path, asset: dict, tracks: dict, ffmpeg: str, probe: st
         if isinstance(exc, ExportError):
             raise
         raise ExportError("MEDIA_UNREADABLE", f"{asset['asset_id']}: {exc}", (asset["asset_id"],)) from exc
+
+
+def _ceil_samples(microseconds: int, sample_rate: int) -> int:
+    return math.ceil(Fraction(max(0, microseconds) * sample_rate, 1_000_000))
+
+
+def _nearest_sample_count(expected: Fraction) -> int:
+    whole = int(expected)
+    return whole if expected - whole <= Fraction(1, 2) else whole + 1
+
+
+def _write_padded_wav(path: Path, head: int, tail: int) -> int:
+    """Insert silence so a late or short source stream matches the picture slot."""
+    with wave.open(str(path), "rb") as wav:
+        channels, rate, width = wav.getnchannels(), wav.getframerate(), wav.getsampwidth()
+        payload = wav.readframes(wav.getnframes())
+    silence = b"\x00" * (width * channels)
+    with wave.open(str(path), "wb") as wav:
+        wav.setnchannels(channels)
+        wav.setsampwidth(width)
+        wav.setframerate(rate)
+        wav.writeframes(silence * head + payload + silence * tail)
+    with wave.open(str(path), "rb") as wav:
+        return wav.getnframes()
+
+
+def _extract_source_audio(ffmpeg: str, source: Path, target: Path, bounds: dict, *,
+                          origin_us: int, audio_start_us: int, audio_duration_us: int,
+                          sample_rate: int, clip_id: str) -> dict:
+    """Cut original audio to the picture range, padding gaps that contain no samples.
+
+    Phone videos often start the AAC stream tens of milliseconds after the first
+    picture. The missing head is silence, not a broken file.
+    """
+    command = [ffmpeg, "-v", "error", "-xerror", "-nostdin", "-n", "-copyts", "-i", str(source),
+        "-map", "0:a:0", "-af",
+        f"atrim=start={renderer._seconds(bounds['begin'] + origin_us)}:end={renderer._seconds(bounds['end'] + origin_us)},asetpts=PTS-STARTPTS",
+        "-ar", str(sample_rate), "-ac", "2", "-c:a", "pcm_s16le", str(target)]
+    try:
+        renderer._run(command)
+        with wave.open(str(target), "rb") as wav:
+            frames, rate = wav.getnframes(), wav.getframerate()
+    except (renderer.PreviewError, wave.Error) as exc:
+        raise ExportError("MEDIA_UNREADABLE", str(exc), (clip_id,)) from exc
+    expected = Fraction((bounds["end"] - bounds["begin"]) * rate, 1_000_000)
+    head_pad = tail_pad = 0
+    if abs(frames - expected) > 1:
+        available_begin = audio_start_us - origin_us
+        available_end = available_begin + audio_duration_us
+        head_budget = _ceil_samples(available_begin - bounds["begin"], rate)
+        tail_budget = _ceil_samples(bounds["end"] - available_end, rate)
+        deficit = _nearest_sample_count(expected) - frames
+        if deficit < 0 or deficit > head_budget + tail_budget:
+            raise ExportError("MEDIA_UNREADABLE", f"原声采样时长不符: {clip_id}", (clip_id,))
+        head_pad = min(deficit, head_budget)
+        tail_pad = deficit - head_pad
+        frames = _write_padded_wav(target, head_pad, tail_pad)
+        if abs(frames - expected) > 1:
+            raise ExportError("MEDIA_UNREADABLE", f"原声采样时长不符: {clip_id}", (clip_id,))
+    return {"frames": frames, "rate": rate, "expected": expected,
+            "leading_silence_samples": head_pad, "trailing_silence_samples": tail_pad}
 
 
 def _verify_narration_wav(path: Path, asset: dict) -> None:
@@ -223,25 +291,21 @@ def export_project(timeline: dict, manifest: dict, voice: dict, project_root: st
             filename = f"source-audio-{fingerprint(clip)}.wav"
             target = resource_dir / filename
             bounds = clip["source_range_us"]
-            origin = measurements[clip["asset_id"]]["origin_us"]
-            sample_rate = timeline["output"]["sample_rate"]
-            command = [ffmpeg, "-v", "error", "-xerror", "-nostdin", "-n", "-copyts", "-i", str(paths[clip["asset_id"]]),
-                "-map", "0:a:0", "-af", f"atrim=start={renderer._seconds(bounds['begin'] + origin)}:end={renderer._seconds(bounds['end'] + origin)},asetpts=PTS-STARTPTS",
-                "-ar", str(sample_rate), "-ac", "2", "-c:a", "pcm_s16le", str(target)]
-            try:
-                renderer._run(command)
-                with wave.open(str(target), "rb") as wav:
-                    frames, rate = wav.getnframes(), wav.getframerate()
-            except (renderer.PreviewError, wave.Error) as exc:
-                raise ExportError("MEDIA_UNREADABLE", str(exc), (clip["clip_id"],)) from exc
-            expected_samples = Fraction((bounds["end"] - bounds["begin"]) * rate, 1_000_000)
-            _require(abs(frames - expected_samples) <= 1, "MEDIA_UNREADABLE", f"原声采样时长不符: {clip['clip_id']}")
+            measurement = measurements[clip["asset_id"]]
+            extracted = _extract_source_audio(
+                ffmpeg, paths[clip["asset_id"]], target, bounds,
+                origin_us=measurement["origin_us"], audio_start_us=measurement["audio_start_us"],
+                audio_duration_us=measurement["audio_duration_us"],
+                sample_rate=timeline["output"]["sample_rate"], clip_id=clip["clip_id"])
+            frames, rate = extracted["frames"], extracted["rate"]
             resources.append({"resource_key": key, "asset_id": clip["asset_id"], "asset_revision": clip["asset_revision"],
                 "source_range_us": deepcopy(bounds), "derived_for_clip_id": clip["clip_id"],
                 "draft_uri": f"Resources/{filename}", "packaged_uri": f"draft/Resources/{filename}",
                 "name": f"原声-{clip['clip_id']}.wav", "media_kind": "audio", "content_hash": digest(target),
                 "size_bytes": target.stat().st_size, "duration_us": round(Fraction(frames * 1_000_000, rate)),
-                "sample_rate": rate, "sample_rounding_error_us": float(Fraction(frames * 1_000_000, rate) - (bounds["end"] - bounds["begin"]))})
+                "sample_rate": rate, "sample_rounding_error_us": float(Fraction(frames * 1_000_000, rate) - (bounds["end"] - bounds["begin"])),
+                "leading_silence_samples": extracted["leading_silence_samples"],
+                "trailing_silence_samples": extracted["trailing_silence_samples"]})
         input_files = {"EditTimeline": "inputs/timeline.json", "AssetManifest": "inputs/asset-manifest.json",
                        "VoicePackage": "inputs/voice-package.json"}
         for doc in (timeline, manifest, voice):
