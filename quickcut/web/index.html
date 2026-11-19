@@ -4,90 +4,548 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>QuickCut · 本地剪辑工作台</title>
 <style>
-:root{color-scheme:dark;--bg:#06080d;--paper:#0c111b;--raised:#111a28;--ink:#edf3fc;--muted:#98a9c1;--line:#253147;--green:#67e6ed;--light:#102d39;--orange:#f2c879;--danger:#ff949f;--violet:#af9cff;--radius:16px}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 4% 0%,#0e354b55,transparent 44%),radial-gradient(ellipse at 100% 30%,#2b205b24,transparent 44%),var(--bg);color:var(--ink);font:14px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh}button,input,select,textarea{font:inherit}button,a,input,textarea,select{outline-offset:4px}button,a,label,summary{-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:disabled{opacity:.45;cursor:wait}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--green);outline-offset:4px}header{height:78px;max-width:1480px;margin:auto;padding:0 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #23344b}.brand{font-size:24px;font-weight:750;letter-spacing:-.9px;display:flex;gap:12px;align-items:center}.mark{display:inline-grid;place-items:center;width:36px;height:36px;background:linear-gradient(135deg,var(--green),#aa9bff);color:#09121b;border-radius:9px;font-size:23px;box-shadow:0 0 24px #67e6ed1c}.brand small{font-size:12px;font-weight:400;letter-spacing:1px;color:var(--muted);margin-left:12px;padding-left:20px;border-left:1px solid var(--line)}.local{font-size:12px;background:#0e2029;color:#a4d5db;padding:6px 12px;border:1px solid #2a4958;border-radius:7px;white-space:nowrap}.local:before{content:'●';font-size:8px;margin-right:8px;color:var(--green);text-shadow:0 0 10px #67e6ed6b}main{max-width:1480px;margin:32px auto 56px;padding:0 40px}.intro{display:flex;justify-content:space-between;gap:28px;align-items:flex-end;margin:0 0 30px}.intro-copy{max-width:800px}.eyebrow{font:10px/1.5 "SFMono-Regular",Consolas,monospace;letter-spacing:2.5px;color:#839ab8;margin:0 0 11px}.intro h1{font-size:34px;line-height:1.35;font-weight:650;letter-spacing:-1px;margin:0 0 10px;color:#f3f6ff}.intro h1 em{font-style:normal;background:linear-gradient(110deg,#a4f4f3,#baafff);color:transparent;background-clip:text;-webkit-background-clip:text}.intro p{color:var(--muted);margin:0;font-size:13px;line-height:1.8}.intro-aside{color:#8ba0bf;font-size:11px;letter-spacing:.8px;text-align:right;line-height:1.9;padding-bottom:2px;flex-shrink:0}.intro-aside b{color:#c5d9ee;font-size:13px;font-weight:500;display:block;letter-spacing:0}.workspace{display:grid;grid-template-columns:350px minmax(0,1fr);gap:24px;align-items:start}.workspace>*{min-width:0}.card{background:linear-gradient(145deg,#101824d9,#0b111bfa);border:1px solid var(--line);border-radius:var(--radius);padding:25px;box-shadow:0 16px 50px #00000024;min-width:0}.card h2{font-size:17px;margin:0;font-weight:600}.panel-heading{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:22px}.panel-heading .panel-index{font:10px "SFMono-Regular",Consolas,monospace;color:#7198b5;letter-spacing:1px}.section-caption{font-size:11px;color:#8ba7c1;display:flex;gap:9px;align-items:center;margin:0 0 13px}.section-caption b{font:10px "SFMono-Regular",Consolas,monospace;color:var(--green)}.form-section+.form-section{border-top:1px solid var(--line);margin-top:23px;padding-top:21px}.label{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px;font-weight:550;margin:18px 0 8px;color:#dce7f6}.label:first-child{margin-top:0}.hint{font-size:12px;font-weight:400;color:var(--muted);line-height:1.7}.drop{border:1px dashed #426377;border-radius:10px;background:radial-gradient(ellipse at center,#17435238,transparent 80%),#0b1621;padding:24px 12px;text-align:center;display:block;cursor:pointer;transition:background .18s,border-color .18s,box-shadow .18s}.drop:hover,.drop.drag{background:#122c39;border-color:var(--green);box-shadow:inset 0 0 25px #67e6ed08}.drop svg{width:30px;height:30px;color:var(--green);margin-bottom:8px}.drop strong{display:block;font-size:13px;font-weight:550;color:#d8f0f7}.drop span{font-size:11px;color:#91a9c1}input[type=file]{position:absolute;width:1px;height:1px;opacity:0}#inputForm:has(#files:focus-visible) .drop{outline:2px solid var(--green);outline-offset:4px}#fileList{font-size:11px;color:var(--muted);padding:0;list-style:none;max-height:150px;overflow:auto;margin:10px 0 0}#fileList li{padding:7px 0;display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #1f3042}#fileList li>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#fileList button{background:#182637;border:0;color:#bfcede;padding:1px 6px;border-radius:4px;font-size:16px}textarea{resize:vertical;min-height:120px;width:100%;border:1px solid #304058;border-radius:8px;padding:11px 12px;color:var(--ink);background:#090f18;line-height:1.75;transition:border-color .15s,box-shadow .15s}textarea::placeholder{color:#7186a2;font-size:12px}textarea:focus,input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px #67e6ed0c}input[type=number],input[type=text],select{border:1px solid #304058;border-radius:7px;background:#0a121e;padding:9px 10px;max-width:100%;color:var(--ink)}select{cursor:pointer}select option{background:#101a29;color:#e5edf7}.row{display:flex;gap:12px;align-items:center}.row>div{flex:1;min-width:0}.row select{width:100%}.check{display:flex;gap:9px;align-items:flex-start;font-size:12px;margin-top:18px;color:var(--muted);cursor:pointer}input[type=checkbox]{accent-color:var(--green);margin:5px 0 0;width:14px;height:14px;flex-shrink:0}.primary,.secondary{border-radius:8px;padding:10px 15px;border:1px solid #355367;font-weight:550;text-decoration:none;display:inline-flex;justify-content:center;align-items:center;gap:7px;font-size:12px;line-height:1.5;transition:border-color .15s,background .15s,box-shadow .15s}.primary{background:linear-gradient(110deg,#79edf0,#7ccce9);color:#06131b;border-color:#81e8ec;box-shadow:0 4px 22px #67e6ed0c}.primary:not(:disabled):hover{background:#a1f4f5;border-color:#a8f8f5;box-shadow:0 0 26px #67e6ed25}.secondary{background:#121f2f;color:#b8dcf0;border-color:#344b65}.secondary:not(:disabled):hover{background:#1a2b40;color:#dcefff;border-color:#6a91b1}.wide{width:100%;margin-top:18px;min-height:44px}.footnote{font-size:10px;color:#8ea4be;text-align:center;margin:11px 0 0;line-height:1.75}.models{margin-top:19px;padding-top:15px;border-top:1px solid var(--line);color:var(--muted);font-size:11px}.models summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:10px}.models summary>span:first-child:before{content:'＋';margin-right:7px;color:#a7bed6}.models[open] summary>span:first-child:before{content:'−'}.model-list{margin:11px 0 0;padding:0;list-style:none}.model-list li{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding:8px 0;gap:8px}.ok{color:#78e4bd}.bad{color:var(--danger)}.pending{color:var(--orange)}.output-card{padding:25px 28px 24px;min-height:600px}.output-heading{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:22px}.output-heading h2{font-size:17px}.output-heading span{font-size:11px;color:#849cba}.stagebar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:10px;background:#0a111c;border:1px solid #26354b;border-radius:10px;margin-bottom:8px;color:#8293b0;font-size:12px}.step{appearance:none;-webkit-appearance:none;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px 4px;border:1px solid transparent;border-radius:8px;background:transparent;color:inherit;font:inherit;line-height:1.2;white-space:nowrap}.step:disabled{cursor:default;opacity:.38}.step:not(:disabled){cursor:pointer}.step:not(:disabled):hover{border-color:#355066;background:#101a28}.step b{display:grid;place-items:center;border:1px solid #34455f;border-radius:6px;width:22px;height:22px;font:10px "SFMono-Regular",Consolas,monospace;flex-shrink:0}.step.reached{color:#c5d7ea}.step.current{color:#c4f6f9;font-weight:550;border-color:#407c8c;background:#102833}.step.current b,.step.reached b{background:#153d4b;color:var(--green);border-color:#407c8c}.stage-hint{margin:0 0 18px;font-size:11px;color:#8ea6c2;line-height:1.6}.facts{margin:0;display:grid;gap:14px}.facts div{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;align-items:start}.facts dt{color:#8ea6c2;font-size:12px}.facts dd{margin:0;overflow-wrap:anywhere}.facts ul{margin:0;padding-left:18px}#materialFiles li+li{margin-top:4px}.empty{display:flex;min-height:390px;align-items:center;justify-content:center;text-align:center;border-radius:11px;background:radial-gradient(ellipse at 50% 45%,#16465c30,transparent 65%),linear-gradient(#829ac206 1px,transparent 1px),linear-gradient(90deg,#829ac206 1px,transparent 1px),#080f19;background-size:auto,32px 32px,32px 32px,auto;border:1px solid #233a4e;position:relative;overflow:hidden}.empty:before,.empty:after{content:'';position:absolute;width:245px;height:245px;border:1px solid #548b9d16;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}.empty:after{width:330px;height:330px;border-color:#8075b711}.empty>div{position:relative;z-index:1;padding:28px 18px}.empty svg{width:66px;height:66px;color:#6acbd6;filter:drop-shadow(0 0 18px #67e6ed22)}.empty h3{font-size:21px;font-weight:550;letter-spacing:.3px;margin:23px 0 8px;color:#dcecfb}.empty p{color:#8fa7c3;font-size:12px;margin:0}.preview-note{display:flex;gap:23px;justify-content:center;flex-wrap:wrap;color:#90a9c3;font-size:11px;margin-top:20px}.preview-note span{display:flex;align-items:center;gap:7px}.preview-note span:before{content:'';width:4px;height:4px;background:#7587c2}.status{border:1px solid #304e63;border-radius:9px;padding:14px 16px;background:#0d1c29;display:flex;gap:13px;align-items:center;margin-bottom:20px;overflow-wrap:anywhere}.status strong{font-size:13px;color:#d8eff9;font-weight:550}.status p{margin:3px 0 0;font-size:12px;color:#9db6ce;overflow-wrap:anywhere}.status .secondary{margin-top:11px}.spinner{width:19px;height:19px;border:2px solid #29485c;border-top-color:var(--green);border-radius:50%;animation:spin 1s linear infinite;flex-shrink:0}@keyframes spin{to{transform:rotate(360deg)}}.error{background:#271724;border-color:#704055}.error strong{color:#ffb3be}.error p{white-space:pre-wrap;color:#d3a5b3}.notice{font-size:12px;color:#9fb5cc;margin:0 0 20px;line-height:1.8}.beat{border:1px solid #2b3c53;background:#0b1420;border-radius:11px;padding:19px;margin-top:20px}.beat:first-child{margin-top:0}.beat-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px;padding-bottom:12px;border-bottom:1px solid #27394c}.beat-title h3{font-size:15px;margin:0;font-weight:550}.beat-title h3:before{content:'';display:inline-block;width:3px;height:13px;background:linear-gradient(var(--green),var(--violet));margin-right:10px;vertical-align:-1px}.pill{font:11px/1.6 "SFMono-Regular",Consolas,monospace;border:1px solid #365569;border-radius:5px;padding:3px 8px;color:#a0e5ef;background:#102936}video{display:block;width:100%;background:#03060b;border:1px solid #243c51;border-radius:8px;max-height:460px;aspect-ratio:16/9;object-fit:contain}.shot{margin:0 0 16px;padding-bottom:16px;border-bottom:1px solid #253447;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:12px 16px;align-items:start}.shot video{grid-column:1;grid-row:1/span 2}.shot>details{grid-column:2;grid-row:1;min-width:0;background:#101e2d;border:1px solid #2b4058;border-radius:7px;padding:9px 10px}.shot>details>summary{color:#bdd4ec;font-size:12px;line-height:1.6}.shot>details .row{gap:6px;flex-wrap:wrap}.shot>details select{flex:1;min-width:120px;max-width:100%;font-size:11px;width:100%}.shot>details .secondary{padding:5px 8px;font-size:11px}.source-info{grid-column:1/-1;font-size:11px;color:#8fa7c0;line-height:1.65}.trim{grid-column:2;grid-row:2;display:flex;align-items:center;gap:8px;font-size:11px;margin-top:0;flex-wrap:wrap}.trim label{display:flex;gap:5px;align-items:center;color:#a7bdd5;flex:1;min-width:100px}.trim input{width:72px;min-width:0;flex:1;padding:6px;max-width:105px;font-size:12px}.trim button{font-size:11px;padding:7px 10px;width:100%;margin-top:2px}.beat textarea{min-height:86px;background:#080e18;font-size:13px}.beat>.label{margin-top:20px;gap:16px}.beat>.label .hint{font-size:11px;text-align:right}.transcript{grid-column:1/-1;font-size:11px;color:#97adc7;margin:0;padding:9px 11px;background:#111d2d;border-left:2px solid #637da9;border-radius:0 4px 4px 0}.review-footer{border:1px solid #375464;border-radius:10px;background:linear-gradient(130deg,#102333,#101a2c);margin-top:22px;padding:18px}.review-footer .row{margin-top:15px;align-items:stretch}.review-footer input[type=text]{flex:1;min-width:100px;font-size:12px}.review-footer .check{font-size:12px;margin-top:0;color:#d5e8f5;line-height:1.85}.review-footer #confirm{flex-shrink:0}.result-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:4px 0 18px;flex-wrap:wrap}.result-head h3{margin:0;font-size:19px;font-weight:550}.result-head h3:before{content:'✓';display:inline-grid;place-items:center;width:25px;height:25px;background:#153b35;color:#81eccb;border:1px solid #2b665b;border-radius:50%;font-size:13px;margin-right:10px}#finalVideo{max-height:none;box-shadow:0 15px 35px #0004}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:21px}.actions>*{flex:1;min-width:140px;padding:12px 14px}.editor-note{font-size:12px;color:#9ab2cc;margin:15px 0 10px;overflow-wrap:anywhere}.events{margin-top:24px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:#8da4c0}.events summary{cursor:pointer}.events ol{padding-left:22px;margin-bottom:0;max-height:220px;overflow:auto}.events li{margin:7px 0;line-height:1.9}.history{margin-top:22px;padding:0 5px}.history h3{font-size:11px;letter-spacing:.6px;margin:0 0 9px;color:#819bb9;font-weight:500}.history button{display:block;width:100%;min-width:0;text-align:left;background:transparent;border:0;border-bottom:1px solid #223044;padding:12px 0;font-size:11px;color:#8da4bf;line-height:1.7}.history button:hover strong{color:#97e8ef}.history button strong{color:#c1d2e6;font-size:12px;font-weight:450;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}.hidden{display:none!important}#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#172b3c;color:#dff5ff;border:1px solid #52798e;padding:13px 22px;border-radius:9px;z-index:9;font-size:13px;line-height:1.8;max-width:90vw;box-shadow:0 12px 50px #0008}#uploadProgress{height:3px;background:#1b3143;margin-top:13px;border-radius:2px;overflow:hidden}#uploadProgress i{height:100%;display:block;width:0;background:linear-gradient(90deg,var(--green),var(--violet))}#referenceAudio{position:static;width:100%;height:auto;opacity:1;font-size:11px;color:#94acc6;padding:7px;border:1px solid #304058;background:#0a121e;border-radius:8px}#referenceAudio::file-selector-button{background:#203449;color:#cbe3f5;border:1px solid #3c5972;border-radius:5px;padding:5px 9px;margin-right:9px;cursor:pointer;font-size:11px}#referenceNote{font-size:11px;margin:8px 0;overflow-wrap:anywhere}#clearReference{font-size:11px;padding:4px 9px}#subtitlePosition{width:100%}#downloadReport{display:inline-block;text-underline-offset:4px;color:#9cbbd7}#draftSave{font-size:11px;margin:14px 0 0;color:#9ab5d1}::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-track{background:#0a111c}::-webkit-scrollbar-thumb{background:#304359;border-radius:10px}::selection{background:#285468;color:#fff}
-@media(min-width:1500px){.workspace{grid-template-columns:370px minmax(0,1fr);gap:28px}.card{padding:27px}.output-card{padding:28px 32px}}
-@media(max-width:1120px){header,main{padding-left:24px;padding-right:24px}.workspace{grid-template-columns:320px minmax(0,1fr);gap:18px}.card{padding:20px}.output-card{padding:20px}.shot{grid-template-columns:1fr;gap:10px}.shot video{grid-column:1;grid-row:1}.shot>details{grid-column:1;grid-row:2}.trim{grid-column:1;grid-row:3}.trim label{min-width:110px;flex:0 1 auto}.trim button{width:auto;flex:1;margin-top:0}.shot>details .row{flex-wrap:nowrap}.shot>details select{min-width:0}.intro-aside{display:none}.step:not(:last-child):after{margin:0 7px}.stagebar{padding:13px 10px}.review-footer .row{flex-wrap:wrap}.review-footer #confirm{flex:1;min-width:170px}}
-@media(max-width:860px){header{height:69px}.brand small{display:none}main{margin-top:25px}.intro{margin-bottom:23px}.intro h1{font-size:29px}.intro p{font-size:12px}.workspace{grid-template-columns:1fr;gap:24px}.card{padding:24px}.output-card{min-height:0}.empty{min-height:340px}.form-section+.form-section{margin-top:20px;padding-top:19px}.history{margin-bottom:2px}.shot{grid-template-columns:1fr 1fr}.shot video{grid-column:1;grid-row:1/span 2}.shot>details{grid-column:2;grid-row:1}.trim{grid-column:2;grid-row:2}.trim button{width:100%;flex:auto}.history button{padding:9px 0}.output-heading span{font-size:10px}}
-@media(max-width:560px){header{padding:0 16px}.brand{font-size:22px;gap:8px}.mark{width:31px;height:31px;font-size:20px}.local{font-size:10px;padding:5px 7px}.local:before{font-size:6px;margin-right:5px}main{padding:0 14px;margin:22px auto 35px}.intro h1{font-size:27px}.intro p{max-width:360px;font-size:12px}.eyebrow{font-size:9px;letter-spacing:2px}.card{padding:19px;border-radius:13px}.output-heading{margin-bottom:18px}.output-heading h2{font-size:16px}.output-heading>span{max-width:115px;text-align:right}.stagebar{font-size:10px;padding:12px 9px;gap:0}.step{gap:5px}.step b{width:21px;height:21px;font-size:9px}.step:not(:last-child):after{margin:0 5px}.empty{min-height:300px}.empty h3{font-size:18px}.empty p{font-size:11px}.empty:after{width:280px;height:280px}.preview-note{gap:9px 14px;font-size:10px}.shot{grid-template-columns:1fr}.shot video{grid-column:1;grid-row:1}.shot>details{grid-column:1;grid-row:2}.trim{grid-column:1;grid-row:3;gap:7px}.trim label{min-width:100px;flex:1}.trim button{width:100%;flex:1 1 100%}.beat{padding:14px}.beat>.label{align-items:flex-start}.beat>.label .hint{max-width:170px;font-size:10px}.review-footer{padding:14px}.review-footer .row{flex-direction:column}.review-footer input[type=text],.review-footer #confirm{width:100%;min-width:0;min-height:40px}.actions>*{width:100%;flex:1 1 100%}.result-head .pill{font-size:10px}.result-head h3{font-size:17px}#toast{padding:11px 16px;font-size:12px;width:max-content;max-width:calc(100vw - 30px)}}
+:root{color-scheme:dark;--bg:#000;--bay:#000;--ink:#fff;--muted:#8a8a8a;--line:#2a2a2a;--paper:#fff;--danger:#ff8f92;--warn:#e4c27a;--ok:#c5d7b8}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;overflow:hidden;display:flex;flex-direction:column;background:#000;color:#fff;font:14px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+button,a,input,textarea,select{outline-offset:3px}
+button,a,label,summary{-webkit-tap-highlight-color:transparent}
+button{cursor:pointer}
+button:disabled{opacity:.38;cursor:default}
+#analyze:disabled{cursor:wait}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--paper)}
+header{flex:0 0 76px;display:grid;grid-template-columns:200px minmax(0,1fr) auto;align-items:center;gap:28px;padding:0 40px;background:#000}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:28px;height:22px;border:1.5px solid var(--paper);border-radius:3px;position:relative}
+.mark:before{content:"";position:absolute;inset:5px 8px;border:1.5px solid var(--paper);border-radius:50%}
+.brand-name{font-size:18px;font-weight:600;letter-spacing:-.2px;line-height:1.15}
+.brand-name small{display:block;margin-top:3px;font-size:11px;font-weight:400;letter-spacing:1.8px;color:#8a8a8a}
+.header-tools{display:flex;align-items:center;gap:14px;min-width:0}
+.lang-switch{display:flex;border:1px solid #3a3a3a;border-radius:999px;overflow:hidden;flex:none}
+.lang-switch button{background:transparent;border:0;color:#8a8a8a;padding:4px 10px;font-size:12px;line-height:1.4}
+.lang-switch button.current{background:#fff;color:#000}
+.local{font-size:12px;letter-spacing:.2px;color:#8a8a8a;white-space:nowrap}
+main{flex:1;min-height:0;margin:0;padding:8px 40px 28px;display:flex}
+.workspace{flex:1;min-width:0;min-height:0;display:grid;grid-template-columns:minmax(340px,420px) minmax(0,1fr);gap:56px}
+.workspace>*{min-width:0;min-height:0}
+aside,.output-card{overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+aside{display:flex;flex-direction:column;gap:28px;padding:20px 8px 40px 0}
+.card{background:transparent;border:0;border-radius:0;padding:0}
+.card h2{font-size:22px;margin:0;font-weight:500;letter-spacing:-.3px}
+.panel-heading{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:32px}
+.panel-index{font:10px/1 ui-monospace,"SFMono-Regular",Consolas,monospace;letter-spacing:1.4px;color:var(--muted)}
+.section-caption{font-size:11px;color:var(--muted);display:flex;gap:8px;align-items:center;margin:0 0 8px}
+.section-caption b{font:10px ui-monospace,"SFMono-Regular",Consolas,monospace;color:var(--ink);font-weight:500}
+.form-section+.form-section{margin-top:40px}
+.label{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-size:12px;font-weight:550;margin:12px 0 6px}
+.label:first-child{margin-top:0}
+.hint{font-size:11px;font-weight:400;color:var(--muted);line-height:1.5}
+.drop{border:1px solid #2a2a2a;border-radius:2px;background:transparent;padding:28px 16px;text-align:center;display:block;cursor:pointer}
+.drop:hover,.drop.drag{border-color:var(--paper);background:#161614}
+.drop svg{width:22px;height:22px;margin-bottom:6px;color:var(--paper)}
+.drop strong{display:block;font-size:12px;font-weight:550}
+.drop span{font-size:11px;color:var(--muted)}
+input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
+#inputForm:has(#files:focus-visible) .drop{outline:2px solid var(--paper);outline-offset:3px}
+#fileList{font-size:11px;color:var(--muted);padding:0;list-style:none;max-height:84px;overflow:auto;margin:8px 0 0}
+#fileList li{padding:5px 0;display:flex;justify-content:space-between;align-items:center;gap:8px}
+#fileList li>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#fileList button{background:transparent;border:0;color:var(--ink);padding:0 4px;font-size:16px}
+textarea,input[type=number],input[type=text],select{width:100%;border:1px solid #3a3934;border-radius:7px;background:#0b0b0a;padding:8px 10px;color:var(--ink)}
+textarea{resize:vertical;min-height:72px;line-height:1.7}
+#prompt{min-height:220px;font-size:16px;line-height:1.85;padding:18px 16px;background:transparent}
+label[for="prompt"]{font-size:16px;font-weight:500;margin:0 0 14px}
+textarea::placeholder{color:#6f6c64}
+textarea:focus,input:focus,select:focus{border-color:#8d897f}
+select{cursor:pointer}
+select option{background:#141413;color:var(--ink)}
+.row{display:flex;gap:10px;align-items:center}
+.row>div{flex:1;min-width:0}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:12px;margin-top:8px;color:var(--muted);cursor:pointer}
+input[type=checkbox]{accent-color:#f4f1ea;margin:3px 0 0;width:14px;height:14px;flex-shrink:0}
+.primary,.secondary{border-radius:7px;padding:8px 12px;font-weight:550;text-decoration:none;display:inline-flex;justify-content:center;align-items:center;gap:6px;font-size:12px;line-height:1.4;border:1px solid transparent}
+.primary{background:var(--paper);color:#141414}
+.primary:not(:disabled):hover{background:#fff}
+.secondary{background:transparent;color:var(--ink);border-color:#45433c}
+.secondary:not(:disabled):hover{border-color:var(--paper)}
+.wide{width:100%;margin-top:8px;min-height:40px}
+.footnote{font-size:10px;color:var(--muted);text-align:center;margin:8px 0 0}
+.models{margin-top:14px;color:var(--muted);font-size:11px}
+.models summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:10px}
+.models summary>span:first-child:before{content:"+";margin-right:6px}
+.models[open] summary>span:first-child:before{content:"–"}
+.model-list{margin:8px 0 0;padding:0;list-style:none}
+.model-list li{display:flex;justify-content:space-between;padding:6px 0;gap:8px}
+.ok{color:var(--ok)}.bad{color:var(--danger)}.pending{color:var(--warn)}
+.output-card{height:100%;display:flex;flex-direction:column;padding:20px 4px 48px 8px;position:relative;background:transparent}
+.output-heading,.stage-hint{display:none}
+.output-heading h2{font-size:15px}
+.output-heading span{font-size:11px;color:var(--muted)}
+.stagebar{display:flex;justify-content:center;gap:6px;margin:0 auto;width:min(680px,100%)}
+.step{appearance:none;min-width:0;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px 12px;border:0;border-radius:999px;background:transparent;color:#8a8a8a;font:inherit;line-height:1;font-size:13px;white-space:nowrap}
+.step:disabled{opacity:1;color:#4a4a4a;cursor:default}
+.step[data-view="voice"],.step[data-view="voice"].reached{color:#3a3a3a;pointer-events:none;cursor:default}
+.step:not(:disabled):hover{color:#fff}
+.step b{font:11px ui-monospace,"SFMono-Regular",Consolas,monospace;font-weight:500}
+.step.reached{color:#bdbdbd}
+.step.current{color:#000;background:#fff;font-weight:550}
+.stage-hint{margin:0 0 8px;font-size:11px;color:var(--muted);flex:none}
+.facts{margin:0;display:grid;gap:12px}
+.facts div{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px}
+.facts dt{color:var(--muted);font-size:12px}
+.facts dd{margin:0;overflow-wrap:anywhere}
+.facts ul{margin:0;padding-left:16px}
+#materialFiles li+li{margin-top:3px}
+#empty,#materials,#voiceStep,#review,#result{flex:1 0 auto;min-height:0}
+.empty{min-height:68vh;display:flex;align-items:center;justify-content:center;text-align:center;background:transparent}
+.empty svg{width:54px;height:54px;color:#d9d3c6}
+.empty h3{font-size:20px;font-weight:550;margin:16px 0 6px}
+.empty p{color:var(--muted);margin:0;font-size:12px}
+.preview-note{display:flex;gap:16px;justify-content:center;color:var(--muted);font-size:11px;margin-top:12px;flex:none}
+.status{border:0;border-radius:0;padding:0 0 20px;display:flex;gap:10px;align-items:center;margin:0;flex:none;background:transparent}
+.status>div{display:flex;align-items:baseline;gap:10px;min-width:0;flex:1}
+.status strong{font-size:12px;font-weight:600;flex:none}
+.status p{margin:0;font-size:12px;color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.status .secondary{flex:none}
+.status .secondary{margin-top:8px}
+.spinner{width:14px;height:14px;border:2px solid #3a3934;border-top-color:var(--paper);border-radius:50%;animation:spin 1s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error{background:#241416;border-color:#6a3036}
+.error strong{color:#ffb4b6}
+.error p{white-space:pre-wrap;color:#e4b4b6}
+.notice{font-size:12px;color:var(--muted);margin:0 0 10px}
+#review{display:flex;flex-direction:column;gap:18px}
+.deck-bar{display:flex;align-items:center;gap:8px;flex:none}
+.deck-bar .secondary{width:34px;height:34px;padding:0;flex:none}
+.deck-meta{flex:1;min-width:0;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+#deckIndex{font:12px ui-monospace,"SFMono-Regular",Consolas,monospace;letter-spacing:.12em}
+#deckTitle{color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.deck-viewport{flex:none;height:48vh;min-height:320px;overflow:hidden;background:#000;border:1px solid #2a2a2a}
+.deck-track{display:flex;height:100%;transition:transform .32s cubic-bezier(.2,.7,.2,1);will-change:transform}
+.shot{height:100%;min-width:0;display:flex;flex-direction:column;gap:8px;padding:8px}
+.gate{flex:1;min-height:0;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.gate video,video{display:block;width:100%;height:100%;max-height:none;aspect-ratio:auto;object-fit:contain;background:#000;border:0;border-radius:0}
+.shot-tools{flex:none;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.shot-tools details{flex:1 1 220px;min-width:0;background:#161614;border-radius:7px;padding:6px 8px}
+.shot-tools summary{cursor:pointer;font-size:12px;color:#d9d3c6}
+.shot-tools .row{margin-top:6px;gap:6px}
+.shot-tools select{flex:1;min-width:0;font-size:11px;width:auto}
+.shot-tools .secondary,.trim button{padding:5px 8px;font-size:11px}
+.trim{display:flex;align-items:center;gap:6px;flex:1 1 240px}
+.trim label{display:flex;gap:4px;align-items:center;color:#c8c2b6;font-size:11px;flex:1;min-width:0}
+.trim input{width:72px;min-width:0;flex:1;padding:5px 6px;font-size:12px}
+.source-info{display:none}
+.transcript{flex:none;font-size:11px;color:var(--muted);margin:0;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;border-left:2px solid #5c584e;padding-left:8px}
+.deck-dots{display:flex;gap:5px;justify-content:center;overflow:auto;flex:none;min-width:0;max-width:46%}
+.dot{width:16px;height:6px;padding:0;border:0;border-radius:1px;background:#3a3934;flex:none}
+.dot.current{background:var(--paper)}
+#narrationDock{flex:none}
+.beat-narration{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center}
+.beat-narration .label{margin:0}
+.beat-narration textarea{grid-column:1/-1;min-height:40px}
+.beat-narration .notice{grid-column:1/-1;margin:0}
+#draftSave{flex:none;min-height:1.2em;margin:0;font-size:11px}
+.review-footer{flex:none;display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding-top:2px}
+.review-footer .check{margin:0;flex:1 1 16rem;min-width:0;color:#d9d3c6}
+.review-actions{display:flex;align-items:center;gap:8px;flex:0 1 auto;margin-left:auto}
+.reviewer-field{display:flex;align-items:center;gap:6px;flex:none}
+.reviewer-field span{font-size:11px;color:var(--muted);white-space:nowrap}
+#reviewer{width:8.5rem;max-width:34vw;flex:none;padding:7px 8px}
+.review-footer #confirm{flex:none;white-space:nowrap}
+#result{display:flex;flex-direction:column;gap:8px;overflow:auto}
+.result-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:none}
+.result-head h3{margin:0;font-size:16px;font-weight:600}
+.pill{font:11px ui-monospace,"SFMono-Regular",Consolas,monospace;color:#d9d3c6;border:1px solid #45433c;border-radius:99px;padding:2px 8px}
+#finalVideo{flex:1;min-height:0;height:160px;width:100%;background:#000;border-radius:4px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;flex:none}
+.actions>*{flex:1;min-width:120px}
+.editor-note{font-size:12px;color:var(--muted);margin:0;overflow-wrap:anywhere}
+#voiceStep{display:flex;flex-direction:column;justify-content:center;gap:12px;max-width:460px}
+#materials{overflow:auto}
+.events{margin-top:8px;font-size:11px;color:var(--muted);flex:none}
+.events summary{cursor:pointer}
+.events ol{padding-left:18px;margin:6px 0 0;max-height:120px;overflow:auto}
+.history{padding:8px 4px 0}
+.history h3{font-size:10px;letter-spacing:1.2px;margin:0 0 4px;color:var(--muted);font-weight:500}
+.history button{display:block;width:100%;text-align:left;background:transparent;border:0;padding:8px 0;font-size:11px;color:var(--muted)}
+.history button strong{color:#d9d3c6;font-size:12px;font-weight:500;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.history button:hover strong{color:var(--paper)}
+.hidden{display:none!important}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#f4f1ea;color:#141414;padding:10px 16px;border-radius:8px;z-index:9;font-size:13px;max-width:min(560px,92vw)}
+#uploadProgress{height:2px;background:#2a2926;margin-top:10px;overflow:hidden}
+#uploadProgress i{height:100%;display:block;width:0;background:var(--paper)}
+#referenceAudio{position:static;width:100%;height:auto;opacity:1;font-size:11px;color:var(--muted);padding:6px;border:1px solid #3a3934;background:#0b0b0a;border-radius:7px}
+#referenceAudio::file-selector-button{background:#22211e;color:var(--ink);border:1px solid #45433c;border-radius:5px;padding:4px 8px;margin-right:8px;cursor:pointer;font-size:11px}
+#referenceNote{font-size:11px;margin:6px 0}
+#clearReference{font-size:11px;padding:4px 8px}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#3a3a3a;border-radius:8px;border:2px solid #000}
+::selection{background:#f4f1ea;color:#141414}
+@media(max-width:980px){
+  body{height:auto;overflow:auto}
+  header{height:auto;display:flex;flex-wrap:wrap;padding:10px 12px;gap:10px}
+  .header-tools{margin-left:auto}
+  .stagebar{order:3;flex:1 1 100%;margin-top:8px;width:100%}
+  main{display:block;padding:12px}
+  .workspace{display:block}
+  aside{overflow:visible;margin-bottom:12px}
+  .output-card{height:auto;min-height:78vh;overflow:visible}
+  .deck-viewport{height:46vh;flex:none}
+  #finalVideo{height:42vh}
+  .review-footer .check,.review-actions{flex:1 1 100%;margin-left:0}
+  .review-actions{justify-content:flex-end}
+}
+@media(max-width:640px){
+  header{padding:0 12px}
+  .brand-name small{display:none}
+  .local{display:none}
+  .reviewer-field{flex:1}
+  #reviewer{width:7.5rem}
+  .shot-tools{display:block}
+  .actions>*{flex:1 1 100%}
+}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;animation-iteration-count:1!important}}
 </style>
 </head>
 <body>
-<header><div class="brand"><span class="mark">↗</span>QuickCut <small>本地剪辑工作台</small></div><span class="local">素材与模型留在本机</span></header>
+<header><div class="brand"><span class="mark" aria-hidden="true"></span><div class="brand-name">QuickCut<small data-i18n="剪辑工作室">剪辑工作室</small></div></div><div class="stagebar" id="steps" role="tablist" aria-label="剪辑步骤" data-i18n-aria-label="剪辑步骤"><button class="step" type="button" disabled data-view="materials"><b>1</b><span data-i18n="素材">素材</span></button><button class="step" type="button" disabled data-view="review"><b>2</b><span data-i18n="选镜">选镜</span></button><button class="step" type="button" disabled data-view="review"><b>3</b><span data-i18n="确认">确认</span></button><button class="step" type="button" disabled data-view="voice" title="配音会在确认后自动进行" data-i18n-title="配音会在确认后自动进行" aria-disabled="true"><b>4</b><span data-i18n="配音">配音</span></button><button class="step" type="button" disabled data-view="result"><b>5</b><span data-i18n="成片">成片</span></button></div><div class="header-tools"><div class="lang-switch" id="langSwitch" role="group" aria-label="界面语言" data-i18n-aria-label="界面语言"><button type="button" data-lang="zh" class="current" aria-pressed="true">中文</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div><span class="local" data-i18n="素材与模型留在本机">素材与模型留在本机</span></div></header>
 <main>
-<div class="intro"><div class="intro-copy"><div class="eyebrow">QUICKCUT / LOCAL STUDIO</div><h1>把素材，剪成<em>一个故事。</em></h1><p>导入视频，写下想法。确认选镜和旁白后，带着可编辑工程继续创作。</p></div><div class="intro-aside"><b>让想法进入时间线</b>素材 · 方案 · 可编辑工程</div></div>
 <div class="workspace">
 <aside>
 <form id="inputForm" class="card">
-<div class="panel-heading"><h2>开始一个剪辑</h2><span class="panel-index">NEW PROJECT</span></div>
-<section class="form-section" aria-label="素材导入"><p class="section-caption"><b>01</b> 素材导入</p>
-<label class="drop" id="drop" for="files"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V4m-4 4 4-4 4 4M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg><strong>拖入视频，或点击选择</strong><span>最多 12 个视频 · 单个不超过 4 GB</span></label>
-<input id="files" type="file" multiple accept="video/*,.mkv,.webm,.m4v,.avi" aria-label="选择视频"><ul id="fileList"></ul>
+<div class="panel-heading"><h2 data-i18n="素材台">素材台</h2><span class="panel-index">ROLL</span></div>
+<section class="form-section" aria-label="素材导入" data-i18n-aria-label="素材导入"><p class="section-caption"><b>01</b> <span data-i18n="素材导入">素材导入</span></p>
+<label class="drop" id="drop" for="files"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V4m-4 4 4-4 4 4M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg><strong data-i18n="拖入视频，或点击选择">拖入视频，或点击选择</strong><span data-i18n="最多 12 个视频 · 单个不超过 4 GB">最多 12 个视频 · 单个不超过 4 GB</span></label>
+<input id="files" type="file" multiple accept="video/*,.mkv,.webm,.m4v,.avi" aria-label="选择视频" data-i18n-aria-label="选择视频"><ul id="fileList"></ul>
 </section>
-<section class="form-section" aria-label="剪辑要求"><p class="section-caption"><b>02</b> 剪辑要求</p>
-<label class="label" for="prompt">你想怎么剪？</label><textarea id="prompt" maxlength="2000" placeholder="例如：剪一段轻松的公园漫步。先展示环境，中间保留讲解，最后用自然风景收尾。旁白简短自然。" required></textarea>
-<div class="row"><div><label class="label" for="duration">目标时长</label><select id="duration"><option value="15">15 秒</option><option value="30" selected>30 秒</option><option value="60">60 秒</option><option value="90">90 秒</option></select></div><div><label class="label" for="origin">素材来源</label><select id="origin"><option value="user">我的素材</option><option value="external">获授权的公开素材</option></select></div></div>
+<section class="form-section" aria-label="剪辑要求" data-i18n-aria-label="剪辑要求"><p class="section-caption"><b>02</b> <span data-i18n="剪辑要求">剪辑要求</span></p>
+<label class="label" for="prompt" data-i18n="你想怎么剪？">你想怎么剪？</label><textarea id="prompt" maxlength="2000" placeholder="例如：剪一段轻松的公园漫步。先展示环境，中间保留讲解，最后用自然风景收尾。旁白简短自然。" data-i18n-placeholder="例如：剪一段轻松的公园漫步。先展示环境，中间保留讲解，最后用自然风景收尾。旁白简短自然。" required></textarea>
+<div class="row"><div><label class="label" for="duration" data-i18n="目标时长">目标时长</label><select id="duration"><option value="15" data-i18n="15 秒">15 秒</option><option value="30" selected data-i18n="30 秒">30 秒</option><option value="60" data-i18n="60 秒">60 秒</option><option value="90" data-i18n="90 秒">90 秒</option></select></div><div><label class="label" for="origin" data-i18n="素材来源">素材来源</label><select id="origin"><option value="user" data-i18n="我的素材">我的素材</option><option value="external" data-i18n="获授权的公开素材">获授权的公开素材</option></select></div></div>
 </section>
-<section class="form-section" aria-label="声音与字幕"><p class="section-caption"><b>03</b> 声音与字幕</p>
-<label class="label" for="referenceAudio">参考音频（WAV，可选）</label><input id="referenceAudio" type="file" accept=".wav,audio/wav,audio/x-wav" aria-label="参考音频（WAV，可选）"><p id="referenceNote" class="hint">正在读取默认音色…</p><button id="clearReference" class="secondary hidden" type="button">使用默认音色</button>
-<label class="label" for="subtitlePosition">旁白字幕位置</label><select id="subtitlePosition"><option value="bottom">底部</option><option value="top">顶部（原片已有底部字幕时）</option></select>
-<label class="check"><input type="checkbox" id="autoOpen" checked><span>生成后自动打开剪映专业版</span></label>
+<section class="form-section" aria-label="声音与字幕" data-i18n-aria-label="声音与字幕"><p class="section-caption"><b>03</b> <span data-i18n="声音与字幕">声音与字幕</span></p>
+<label class="label" for="referenceAudio" data-i18n="参考音频（WAV，可选）">参考音频（WAV，可选）</label><input id="referenceAudio" type="file" accept=".wav,audio/wav,audio/x-wav" aria-label="参考音频（WAV，可选）" data-i18n-aria-label="参考音频（WAV，可选）"><p id="referenceNote" class="hint">正在读取默认音色…</p><button id="clearReference" class="secondary hidden" type="button" data-i18n="使用默认音色">使用默认音色</button>
+<label class="label" for="subtitlePosition" data-i18n="旁白字幕位置">旁白字幕位置</label><select id="subtitlePosition"><option value="bottom" data-i18n="底部">底部</option><option value="top" data-i18n="顶部（原片已有底部字幕时）">顶部（原片已有底部字幕时）</option></select>
+<label class="check"><input type="checkbox" id="autoOpen" checked><span data-i18n="生成后自动打开剪映专业版">生成后自动打开剪映专业版</span></label>
 </section>
 <div class="form-actions">
-<button class="primary wide" id="analyze" type="submit">分析素材，生成方案 <span aria-hidden="true">↗</span></button>
+<button class="primary wide" id="analyze" type="submit"><span data-i18n="分析素材，生成方案">分析素材，生成方案</span> <span aria-hidden="true">↗</span></button>
 <div id="uploadProgress" class="hidden"><i></i></div><p class="footnote" id="inputNote">真实模型在本机运行，分析与配音可能需要数分钟。</p>
 </div>
-<details class="models"><summary><span>本地运行环境</span><span id="healthLabel">检查中…</span></summary><ul id="modelList" class="model-list"></ul><button type="button" class="secondary" id="refreshHealth" style="font-size:11px;padding:4px 9px;margin-top:8px">重新检查</button></details>
+<details class="models"><summary><span data-i18n="本地运行环境">本地运行环境</span><span id="healthLabel">检查中…</span></summary><ul id="modelList" class="model-list"></ul><button type="button" class="secondary" id="refreshHealth" style="font-size:11px;padding:4px 9px;margin-top:8px" data-i18n="重新检查">重新检查</button></details>
 </form>
-<div class="history"><h3>最近的剪辑</h3><div id="history"></div></div>
+<div class="history"><h3 data-i18n="最近的剪辑">最近的剪辑</h3><div id="history"></div></div>
 </aside>
-<section class="card output-card" aria-label="剪辑方案与成片">
-<div class="output-heading"><h2>剪辑工作区</h2><span>方案确认与成片预览</span></div>
-<div class="stagebar" id="steps" role="tablist" aria-label="剪辑步骤"><button class="step" type="button" disabled data-view="materials"><b>1</b><span>素材</span></button><button class="step" type="button" disabled data-view="review"><b>2</b><span>选镜</span></button><button class="step" type="button" disabled data-view="review"><b>3</b><span>确认</span></button><button class="step" type="button" disabled data-view="voice"><b>4</b><span>配音</span></button><button class="step" type="button" disabled data-view="result"><b>5</b><span>成片</span></button></div>
+<section class="card output-card" aria-label="剪辑方案与成片" data-i18n-aria-label="剪辑方案与成片">
 <p class="stage-hint" id="stageHint">分析完成后，可以点已走过的步骤回去查看。</p>
 <div id="status" class="hidden" role="status" aria-live="polite"></div>
-<div id="empty" class="empty"><div><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="8" y="15" width="48" height="34" rx="5"/><path d="m28 25 12 7-12 7V25ZM17 10v5m10-5v5m10-5v5m10-5v5M17 49v5m10-5v5m10-5v5m10-5v5"/></svg><h3>你的下一个故事，从这里开始</h3><p>先导入视频，方案与预览会显示在这里。</p></div></div>
-<div id="materials" class="hidden"><p class="notice" id="materialNote"></p><dl class="facts"><div><dt>要求</dt><dd id="materialPrompt"></dd></div><div><dt>时长</dt><dd id="materialDuration"></dd></div><div><dt>文件</dt><dd><ul id="materialFiles"></ul></dd></div></dl></div>
-<div id="voiceStep" class="hidden"><p class="notice">配音在确认方案之后自动完成，这里没有单独的编辑页。要改旁白或镜头，回到确认，再生成一次成片。</p><button id="backToReview" class="secondary" type="button">回到确认</button></div>
-<div id="review" class="hidden"><p class="notice">查看真实候选画面，按需要调整入出点和旁白。播放片段确认内容后，再生成成片。</p><div id="beats"></div><p id="draftSave" class="hint" role="status"></p><div class="review-footer"><label class="check"><input type="checkbox" id="approved"><span>我已检查选镜、入出点与旁白内容，确认生成。</span></label><div class="row"><input type="text" id="reviewer" value="本机用户" maxlength="100" aria-label="确认者"><button id="confirm" class="primary" type="button">确认并生成成片 ↗</button></div></div></div>
-<div id="result" class="hidden"><div class="result-head"><h3>剪辑已完成</h3><span class="pill" id="resultDuration"></span></div><video id="finalVideo" controls playsinline preload="metadata"></video><div class="actions"><a id="downloadVideo" class="primary" download>下载剪辑视频 ↓</a><a id="downloadProject" class="secondary" download>下载剪映工程</a><button id="openEditor" class="secondary" type="button">打开剪映 ↗</button></div><p id="editorNote" class="editor-note"></p><a id="downloadReport" class="hint" target="_blank">查看本次生成记录</a></div>
-<div class="preview-note" id="previewNote"><span>真实模型选镜</span><span>参考音色配音</span><span>独立画面、声音与字幕</span></div>
-<details class="events hidden" id="events"><summary>查看运行进度</summary><ol id="eventList"></ol></details>
+<div id="empty" class="empty"><div><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="8" y="15" width="48" height="34" rx="5"/><path d="m28 25 12 7-12 7V25ZM17 10v5m10-5v5m10-5v5m10-5v5M17 49v5m10-5v5m10-5v5m10-5v5"/></svg><h3 data-i18n="你的下一个故事，从这里开始">你的下一个故事，从这里开始</h3><p data-i18n="先导入视频，方案与预览会显示在这里。">先导入视频，方案与预览会显示在这里。</p></div></div>
+<div id="materials" class="hidden"><p class="notice" id="materialNote"></p><dl class="facts"><div><dt data-i18n="要求">要求</dt><dd id="materialPrompt"></dd></div><div><dt data-i18n="时长">时长</dt><dd id="materialDuration"></dd></div><div><dt data-i18n="文件">文件</dt><dd><ul id="materialFiles"></ul></dd></div></dl></div>
+<div id="voiceStep" class="hidden"><p class="notice" data-i18n="配音在确认方案之后自动完成，这里没有单独的编辑页。要改旁白或镜头，回到确认，再生成一次成片。">配音在确认方案之后自动完成，这里没有单独的编辑页。要改旁白或镜头，回到确认，再生成一次成片。</p><button id="backToReview" class="secondary" type="button" data-i18n="回到确认">回到确认</button></div>
+<div id="review" class="hidden"><div class="deck-bar"><button id="deckPrev" class="secondary" type="button" aria-label="上一镜" data-i18n-aria-label="上一镜">←</button><div class="deck-meta"><span id="deckIndex">01 / 01</span><span id="deckTitle"></span></div><div id="deckDots" class="deck-dots" role="tablist" aria-label="镜头" data-i18n-aria-label="镜头"></div><button id="deckNext" class="secondary" type="button" aria-label="下一镜" data-i18n-aria-label="下一镜">→</button></div><div class="deck-viewport" id="deckViewport"><div id="beats" class="deck-track"></div></div><div id="narrationDock"></div><p id="draftSave" class="hint" role="status"></p><div class="review-footer"><label class="check"><input type="checkbox" id="approved"><span data-i18n="我已检查选镜、入出点和旁白，确认生成。">我已检查选镜、入出点和旁白，确认生成。</span></label><div class="row"><input type="text" id="reviewer" placeholder="本机用户" data-i18n-placeholder="本机用户" maxlength="100" aria-label="确认者" data-i18n-aria-label="确认者"><button id="confirm" class="primary" type="button" data-i18n="确认并生成成片 ↗">确认并生成成片 ↗</button></div></div></div>
+<div id="result" class="hidden"><div class="result-head"><h3 data-i18n="剪辑已完成">剪辑已完成</h3><span class="pill" id="resultDuration"></span></div><video id="finalVideo" controls playsinline preload="metadata"></video><div class="actions"><a id="downloadVideo" class="primary" download data-i18n="下载剪辑视频 ↓">下载剪辑视频 ↓</a><a id="downloadProject" class="secondary" download data-i18n="下载剪映工程">下载剪映工程</a><button id="openEditor" class="secondary" type="button" data-i18n="打开剪映 ↗">打开剪映 ↗</button></div><p id="editorNote" class="editor-note"></p><a id="downloadReport" class="hint" target="_blank" data-i18n="查看本次生成记录">查看本次生成记录</a></div>
+<div class="preview-note" id="previewNote"><span data-i18n="真实模型选镜">真实模型选镜</span><span data-i18n="参考音色配音">参考音色配音</span><span data-i18n="独立画面、声音与字幕">独立画面、声音与字幕</span></div>
+<details class="events hidden" id="events"><summary data-i18n="查看运行进度">查看运行进度</summary><ol id="eventList"></ol></details>
 </section>
 </div>
 </main>
 <div id="toast" class="hidden" role="alert"></div>
 <script>
-const $=id=>document.getElementById(id);let token='',defaultVoiceLabel='默认音色',files=[],current=null,lastView='',draftView=null,polling=false,toastTimer,saveTimer,editPending=false,reviewDirty=false,editVersion=0,preferredIndex=null,latest=null;
+const english = {
+  "QuickCut · 本地剪辑工作台": "QuickCut · Local Editing Studio",
+  "剪辑工作室": "Editing Studio",
+  "剪辑步骤": "Editing steps",
+  "素材": "Media",
+  "选镜": "Shots",
+  "确认": "Review",
+  "配音": "Voiceover",
+  "成片": "Final Cut",
+  "配音会在确认后自动进行": "Voiceover is generated after approval",
+  "界面语言": "Interface language",
+  "素材与模型留在本机": "Media and models stay on this device",
+  "素材台": "Media Desk",
+  "素材导入": "Import Media",
+  "拖入视频，或点击选择": "Drop videos here or click to browse",
+  "最多 12 个视频 · 单个不超过 4 GB": "Up to 12 videos · 4 GB each",
+  "选择视频": "Choose videos",
+  "剪辑要求": "Editing Brief",
+  "你想怎么剪？": "How would you like to edit it?",
+  "例如：剪一段轻松的公园漫步。先展示环境，中间保留讲解，最后用自然风景收尾。旁白简短自然。": "Example: Make a relaxed park vlog. Open with an establishing shot, keep the commentary in the middle, and finish with a scenic shot. Keep the voiceover short and natural.",
+  "目标时长": "Target duration",
+  "15 秒": "15 sec",
+  "30 秒": "30 sec",
+  "60 秒": "60 sec",
+  "90 秒": "90 sec",
+  "素材来源": "Media source",
+  "我的素材": "My footage",
+  "获授权的公开素材": "Licensed public footage",
+  "声音与字幕": "Audio and Captions",
+  "参考音频（WAV，可选）": "Reference audio (WAV, optional)",
+  "正在读取默认音色…": "Loading the default voice…",
+  "使用默认音色": "Use default voice",
+  "旁白字幕位置": "Voiceover caption position",
+  "底部": "Bottom",
+  "顶部（原片已有底部字幕时）": "Top (if footage already has captions at the bottom)",
+  "生成后自动打开剪映专业版": "Open Jianying Pro after rendering",
+  "分析素材，生成方案": "Analyze and Plan",
+  "真实模型在本机运行，分析与配音可能需要数分钟。": "Analysis and voiceover run locally and may take a few minutes.",
+  "本地运行环境": "Local Runtime",
+  "检查中…": "Checking…",
+  "重新检查": "Check again",
+  "最近的剪辑": "Recent Edits",
+  "剪辑方案与成片": "Edit plan and final cut",
+  "分析完成后，可以点已走过的步骤回去查看。": "Once analysis finishes, select an earlier step to revisit it.",
+  "你的下一个故事，从这里开始": "Your next story starts here",
+  "先导入视频，方案与预览会显示在这里。": "Import videos to see the edit plan and preview here.",
+  "要求": "Brief",
+  "时长": "Duration",
+  "文件": "Files",
+  "配音在确认方案之后自动完成，这里没有单独的编辑页。要改旁白或镜头，回到确认，再生成一次成片。": "Voiceover is generated after approval. To change the narration or shots, return to Review and render again.",
+  "回到确认": "Back to Review",
+  "上一镜": "Previous shot",
+  "下一镜": "Next shot",
+  "镜头": "Shots",
+  "我已检查选镜、入出点和旁白，确认生成。": "I've reviewed the shots, trim points, and narration. Ready to render.",
+  "确认者": "Reviewer",
+  "确认并生成成片 ↗": "Approve and Render ↗",
+  "剪辑已完成": "Edit Complete",
+  "下载剪辑视频 ↓": "Download Video ↓",
+  "下载剪映工程": "Download Jianying Project",
+  "打开剪映 ↗": "Open Jianying ↗",
+  "查看本次生成记录": "View Render Report",
+  "真实模型选镜": "AI shot selection",
+  "参考音色配音": "Reference voiceover",
+  "独立画面、声音与字幕": "Separate video, audio, and caption tracks",
+  "查看运行进度": "View Progress",
+  "默认音色": "Default voice",
+  "已创建": "Created",
+  "排队中": "Queued",
+  "分析中": "Analyzing",
+  "待确认": "Ready for Review",
+  "生成中": "Rendering",
+  "已完成": "Completed",
+  "需要处理": "Needs Attention",
+  "已中断": "Interrupted",
+  "最多导入 12 个视频": "You can import up to 12 videos.",
+  "已就绪": "Ready",
+  "待处理": "Pending",
+  "部分待处理": "Some checks are pending",
+  "连接失败": "Connection failed",
+  "请选择不超过 20 MB 的 WAV 参考音频": "Choose a WAV reference file up to 20 MB.",
+  "尚无剪辑记录": "No recent edits",
+  "请先选择视频": "Choose at least one video.",
+  "服务返回异常，请检查连接": "Unexpected server response. Check your connection.",
+  "导入失败": "Import failed",
+  "视频导入失败，请检查本地服务": "Video import failed. Check the local service.",
+  "点上面的步骤可以回去查看。改镜头或旁白后，需要重新确认才会生成新成片。": "Select a step above to revisit it. After changing shots or narration, approve the plan again to render a new cut.",
+  "这是当前任务已经导入的视频和要求。要换视频或改这句话，用左侧重新开始一次分析。": "These are the videos and brief for this edit. To change them, start a new analysis in the media desk.",
+  "未记录要求": "No brief recorded",
+  "返回方案修改": "Return to Review",
+  "保留素材，重新分析": "Keep Media and Retry Analysis",
+  "方案尚未准备好": "The edit plan is still being prepared.",
+  "请检查镜头入出点；草稿暂存在本浏览器。": "Check the shot trim points. Your draft is saved in this browser.",
+  "浏览器暂存不可用，正在尝试保存到本机服务。": "Browser storage is unavailable. Trying to save to the local service.",
+  "已恢复本浏览器暂存的草稿，尚未确认。": "Draft restored from this browser. Approval is still required.",
+  "草稿会自动保存；生成成片仍需你确认。": "Drafts save automatically. Approve the plan to render.",
+  "正在检查修改后的旁白…": "Checking the revised narration…",
+  "草稿已在本浏览器暂存，正在保存…": "Draft stored in this browser. Saving to the local service…",
+  "草稿已保存，尚未确认。": "Draft saved. Approval is still required.",
+  "开场": "Opening",
+  "展开": "Development",
+  "收尾": "Closing",
+  "这一段还没有镜头，可以在下面增加一个。": "This section has no shots yet. Add one below.",
+  "换镜头 / 调整顺序": "Replace or reorder shots",
+  "移除": "Remove",
+  "镜头起点（秒）": "Shot start (seconds)",
+  "镜头终点（秒）": "Shot end (seconds)",
+  "入点": "In",
+  "出点": "Out",
+  "秒": "sec",
+  "播放所选片段": "Play Selection",
+  "浏览器暂时无法播放这个格式，请使用 MP4 视频": "This format cannot be played in the browser. Use an MP4 video.",
+  "用户素材": "Your footage",
+  "公开素材": "Public footage",
+  "旁白": "Narration",
+  "＋ 增加一个镜头": "＋ Add a Shot",
+  "没有更多候选镜头": "No more candidate shots",
+  "选镜已更新，原有镜头的入出点已保留；请检查新镜头。": "Shots updated. Existing trim points were kept. Review the new shots.",
+  "正在保存草稿，请稍后确认。": "Saving the draft. Try approving again in a moment.",
+  "请先检查并勾选确认": "Review the edit and check the approval box.",
+  "剪映工程已准备好。": "The Jianying project is ready.",
+  "剪映已启动": "Jianying launched",
+  "这一阶段需要处理": "This step needs attention",
+  "正在把素材变成故事": "Putting your story together",
+  "详细原因显示在上方，原始视频与运行记录会保留。": "See the details above. Your original videos and run history are saved.",
+  "可以留在这里查看进度，刷新页面也不会丢失任务。": "Check progress here. Your job will continue if you refresh.",
+  "无法连接本地工作台，请重新启动服务。": "Could not connect to QuickCut. Restart the local service.",
+  "移除 {0}": "Remove {0}",
+  "{0} 超过 4 GB": "{0} exceeds 4 GB.",
+  "本次使用：{0} · WAV 1–30 秒，最大 20 MB": "Using {0} · WAV, 1–30 sec, up to 20 MB",
+  "默认音色：{0}。可上传 1–30 秒、最大 20 MB 的人声 WAV。": "Default voice: {0}. You can upload a 1–30 sec voice recording in WAV format, up to 20 MB.",
+  "正在导入视频 {0}%": "Importing video {0}%",
+  "{0} 秒": "{0} sec",
+  "第 {0} 镜": "Shot {0}",
+  "服务未保存：{0}。当前编辑仍在本浏览器暂存。": "The service could not save your draft: {0}. Your edits are still stored in this browser.",
+  "这句需要修改：{0}": "Revise this line: {0}",
+  "{0} · 镜头 {1}": "{0} · Shot {1}",
+  "{0} · 还没有镜头": "{0} · No shots yet",
+  "替换{0}镜头{1}": "Replace {0} shot {1}",
+  "{0} · 候选区间 {1}–{2} 秒": "{0} · Available range {1}–{2} sec",
+  "原声识别（请核对）：{0}": "Source transcript (review for accuracy): {0}",
+  "建议不超过 {0} 字（不计标点）": "Suggested limit: {0} characters, excluding punctuation",
+  "{0}旁白": "{0} narration",
+  "{0} 秒 · 可编辑四轨工程": "{0} sec · Editable four-track project",
+  "已排队；模型依次运行以控制内存": "Queued while local models run one at a time.",
+  "请检查选镜、入出点和旁白，确认后生成": "Review the shots, trim points, and narration before rendering.",
+  "剪辑视频与剪映工程已生成": "Video and Jianying project are ready.",
+  "服务已关闭，任务未继续运行": "The service stopped and interrupted this job.",
+  "服务已重启。素材与草案已保留，可返回方案继续生成。": "The service restarted. Your media and draft were saved. Return to Review to continue.",
+  "已回到方案。可以修改镜头和旁白，再次确认后生成新成片；刚才的成片仍可查看。": "You are back in Review. Edit the shots or narration and approve again to render a new cut. You can still view the previous cut.",
+  "本机用户": "Local user",
+  "请填写完整中文旁白后再确认。": "Enter a complete Chinese narration before approving.",
+  "请将旁白改成与画面相符的中文完整句。": "Rewrite the narration as a complete Chinese sentence that matches the footage.",
+  "旁白缺少句末标点，可能是残句；请核对并改成完整句后确认。": "The narration has no closing punctuation and may be incomplete. Check and complete the sentence before approving.",
+  "旁白超出朗读预算：最多 {0} 字（不计标点），当前 {1} 字，请改短后确认。": "Narration exceeds the limit of {0} characters excluding punctuation. Shorten the current {1} characters before approving.",
+  "视频与工程已保存": "Video and project saved",
+  "检查真实模型与运行环境": "Checking local models and runtime",
+  "分析真实视频、抽帧并识别原声": "Analyzing footage, extracting frames, and transcribing audio",
+  "用真实中文视觉模型检索镜头": "Retrieving shots with the Chinese vision model",
+  "素材和实现指纹一致，复用此前真实模型检索结果": "Reusing cached retrieval results for matching footage and configuration",
+  "Qwen 正在查看候选画面、选择镜头并起草旁白": "Qwen is reviewing candidates, selecting shots, and drafting narration",
+  "IndexTTS2 正在用参考音频生成真实旁白": "IndexTTS2 is generating narration from the reference audio",
+  "对齐画面、原声、旁白和字幕": "Aligning footage, source audio, narration, and captions",
+  "渲染剪辑视频并打包可编辑剪映工程": "Rendering the video and packaging an editable Jianying project",
+  "默认音色尚未配置": "Default voice is not configured",
+  "视频和工程已生成。请保存并完全退出剪映，再点击“打开剪映”。": "Video and project are ready. Save your work, quit Jianying, and click Open Jianying again.",
+  "完成，用时 {0} 秒": "Finished in {0} sec",
+  "按真实配音时长适配，第 {0} 轮": "Adjusting to the actual voiceover duration, pass {0}",
+  "剪映已启动，请在草稿列表打开 {0}": "Jianying launched. Open {0} from the drafts list."
+};
+
+let language='zh';
+try { if(localStorage.getItem('quickcut-language')==='en')language='en'; } catch {}
+const locale=()=>language==='en'?'en-US':'zh-CN';
+const msg=key=>()=>language==='en'&&Object.hasOwn(english,key)?english[key]:key;
+const render=value=>typeof value==='function'?value():String(value??'');
+function tr(parts,...values){
+  const key=parts.reduce((text,part,index)=>text+(index?'{'+(index-1)+'}':'')+part,'');
+  return ()=>render(msg(key)).replace(/\{(\d+)\}/g,(_,index)=>render(values[index]));
+}
+function serverMessage(value){
+  if(typeof value!=='string')return String(value??'');
+  const finished=value.match(/^完成，用时 (\d+(?:\.\d+)?) 秒$/);
+  if(finished)return tr`完成，用时 ${finished[1]} 秒`;
+  const pass=value.match(/^按真实配音时长适配，第 (\d+) 轮$/);
+  if(pass)return tr`按真实配音时长适配，第 ${pass[1]} 轮`;
+  const budget=value.match(/^旁白超出朗读预算：最多 (\d+) 字（不计标点），当前 (\d+) 字，请改短后确认。$/);
+  if(budget)return tr`旁白超出朗读预算：最多 ${budget[1]} 字（不计标点），当前 ${budget[2]} 字，请改短后确认。`;
+  const editor=value.match(/^剪映已启动，请在草稿列表打开 (.+)$/);
+  if(editor)return tr`剪映已启动，请在草稿列表打开 ${editor[1]}`;
+  return msg(value);
+}
+function uiError(key){
+  const error=new Error(key);
+  error.uiMessage=msg(key);
+  return error;
+}
+const bindings=new WeakMap();
+function setText(node,value){
+  if(typeof value==='function'){
+    const text=document.createTextNode(render(value));
+    bindings.set(text,value);
+    node.replaceChildren(text);
+  }else node.textContent=render(value);
+}
+const attributeBindings=new WeakMap();
+function setAttr(node,name,value){
+  if(typeof value==='function'){
+    const attributes=attributeBindings.get(node)||new Map();
+    attributes.set(name,value);
+    attributeBindings.set(node,attributes);
+  }
+  node.setAttribute(name,render(value));
+}
+function applyLanguage(){
+  document.documentElement.lang=language==='en'?'en':'zh-CN';
+  document.title=render(msg('QuickCut · 本地剪辑工作台'));
+  for(const node of document.querySelectorAll('[data-i18n]'))node.textContent=render(msg(node.dataset.i18n));
+  for(const name of ['aria-label','title','placeholder']){
+    for(const node of document.querySelectorAll('[data-i18n-'+name+']')){
+      node.setAttribute(name,render(msg(node.getAttribute('data-i18n-'+name))));
+    }
+  }
+  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_ELEMENT|NodeFilter.SHOW_TEXT);
+  for(let node=walker.nextNode();node;node=walker.nextNode()){
+    const translate=bindings.get(node);
+    if(translate)node.nodeValue=render(translate);
+    const attributes=attributeBindings.get(node);
+    if(attributes)for(const [name,value] of attributes)node.setAttribute(name,render(value));
+  }
+  for(const button of document.querySelectorAll('#langSwitch button')){
+    const selected=button.dataset.lang===language;
+    button.classList.toggle('current',selected);
+    button.setAttribute('aria-pressed',String(selected));
+  }
+}
+for(const button of document.querySelectorAll('#langSwitch button')){
+  button.onclick=()=>{
+    language=button.dataset.lang;
+    try { localStorage.setItem('quickcut-language',language); } catch {}
+    applyLanguage();
+  };
+}
+const $=id=>document.getElementById(id);let token='',defaultVoiceLabel='默认音色',files=[],current=null,lastView='',draftView=null,polling=false,toastTimer,saveTimer,editPending=false,reviewDirty=false,editVersion=0,preferredIndex=null,latest=null,deckAt=0;
 const statusNames={created:'已创建',queued:'排队中',analyzing:'分析中',needs_review:'待确认',rendering:'生成中',completed:'已完成',failed:'需要处理',interrupted:'已中断'};
-const el=(tag,text,cls)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(cls)node.className=cls;return node;};
-function toast(message){$('toast').textContent=message;$('toast').classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.add('hidden'),7000);}
+const el=(tag,text,cls)=>{const node=document.createElement(tag);if(text!==undefined)setText(node,text);if(cls)node.className=cls;return node;};
+function toast(message){setText($('toast'),message);$('toast').classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.add('hidden'),7000);}
 async function request(url,options={}){options.headers={...(options.headers||{}),'x-quickcut-token':token};const res=await fetch(url,options);const data=await res.json();if(!res.ok)throw new Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail||data));return data;}
-function showFiles(){const list=$('fileList');list.replaceChildren();files.forEach((file,i)=>{const li=el('li');li.append(el('span',file.name+' · '+(file.size/1048576).toFixed(1)+' MB'));const remove=el('button','×');remove.type='button';remove.setAttribute('aria-label','移除 '+file.name);remove.onclick=()=>{files.splice(i,1);showFiles();};li.append(remove);list.append(li);});}
-function addFiles(incoming){for(const file of incoming){if(files.length>=12){toast('最多导入 12 个视频');break;}if(file.size>4*1024**3){toast(file.name+' 超过 4 GB');continue;}if(!files.some(f=>f.name===file.name&&f.size===file.size))files.push(file);}showFiles();}
+function showFiles(){const list=$('fileList');list.replaceChildren();files.forEach((file,i)=>{const li=el('li');li.append(el('span',file.name+' · '+(file.size/1048576).toFixed(1)+' MB'));const remove=el('button','×');remove.type='button';setAttr(remove,'aria-label',tr`移除 ${file.name}`);remove.onclick=()=>{files.splice(i,1);showFiles();};li.append(remove);list.append(li);});}
+function addFiles(incoming){for(const file of incoming){if(files.length>=12){toast(msg('最多导入 12 个视频'));break;}if(file.size>4*1024**3){toast(tr`${file.name} 超过 4 GB`);continue;}if(!files.some(f=>f.name===file.name&&f.size===file.size))files.push(file);}showFiles();}
 $('files').onchange=e=>addFiles(e.target.files);['dragenter','dragover'].forEach(name=>$('drop').addEventListener(name,e=>{e.preventDefault();$('drop').classList.add('drag');}));['dragleave','drop'].forEach(name=>$('drop').addEventListener(name,e=>{e.preventDefault();$('drop').classList.remove('drag');}));$('drop').addEventListener('drop',e=>addFiles(e.dataTransfer.files));
-async function health(){try{const data=await request('/api/health');$('modelList').replaceChildren();for(const item of data.checks){const li=el('li');li.append(el('span',item.name),el('span',item.ready?'已就绪':'待处理',item.ready?'ok':'pending'));li.title=item.detail||'';$('modelList').append(li);}$('healthLabel').textContent=data.ready?'已就绪':'部分待处理';$('healthLabel').className=data.ready?'ok':'pending';}catch(err){$('healthLabel').textContent='连接失败';}}
+async function health(){try{const data=await request('/api/health');$('modelList').replaceChildren();for(const item of data.checks){const li=el('li');li.append(el('span',item.name),el('span',item.ready?msg('已就绪'):msg('待处理'),item.ready?'ok':'pending'));setAttr(li,'title',serverMessage(item.detail));$('modelList').append(li);}setText($('healthLabel'),data.ready?msg('已就绪'):msg('部分待处理'));$('healthLabel').className=data.ready?'ok':'pending';}catch(err){setText($('healthLabel'),msg('连接失败'));}}
 $('refreshHealth').onclick=health;
-function referenceNote(){const selected=$('referenceAudio').files[0];$('referenceNote').textContent=selected?'本次使用：'+selected.name+' · WAV 1–30 秒，最大 20 MB':'默认音色：'+defaultVoiceLabel+'。可上传 1–30 秒、最大 20 MB 的人声 WAV。';$('clearReference').classList.toggle('hidden',!selected);}
-$('referenceAudio').onchange=()=>{const file=$('referenceAudio').files[0];if(file&&(!/\.wav$/i.test(file.name)||file.size>20*1024**2)){toast('请选择不超过 20 MB 的 WAV 参考音频');$('referenceAudio').value='';}referenceNote();};
+function referenceNote(){const selected=$('referenceAudio').files[0];setText($('referenceNote'),selected?tr`本次使用：${selected.name} · WAV 1–30 秒，最大 20 MB`:tr`默认音色：${msg(defaultVoiceLabel)}。可上传 1–30 秒、最大 20 MB 的人声 WAV。`);$('clearReference').classList.toggle('hidden',!selected);}
+$('referenceAudio').onchange=()=>{const file=$('referenceAudio').files[0];if(file&&(!/\.wav$/i.test(file.name)||file.size>20*1024**2)){toast(msg('请选择不超过 20 MB 的 WAV 参考音频'));$('referenceAudio').value='';}referenceNote();};
 $('clearReference').onclick=()=>{$('referenceAudio').value='';referenceNote();};
-async function history(){try{const data=await request('/api/jobs');$('history').replaceChildren();if(!data.length)$('history').append(el('p','尚无剪辑记录','hint'));for(const item of data.slice(0,6)){const b=el('button');b.type='button';b.append(el('strong',item.prompt),el('span',(statusNames[item.status]||item.status)+' · '+new Date(item.created_at).toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})));b.onclick=()=>selectJob(item.job_id);$('history').append(b);}}catch(err){}}
+async function history(){try{const data=await request('/api/jobs');$('history').replaceChildren();if(!data.length)$('history').append(el('p',msg('尚无剪辑记录'),'hint'));for(const item of data.slice(0,6)){const b=el('button');b.type='button';b.append(el('strong',item.prompt),el('span',()=>render(msg(statusNames[item.status]||item.status))+' · '+new Date(item.created_at).toLocaleString(locale(),{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})));b.onclick=()=>selectJob(item.job_id);$('history').append(b);}}catch(err){}}
 function selectJob(id){if(draftView&&current&&reviewDirty)rememberReview();clearTimeout(saveTimer);current=id;preferredIndex=null;latest=null;reviewDirty=false;$('review').classList.add('hidden');$('result').classList.add('hidden');$('materials').classList.add('hidden');$('voiceStep').classList.add('hidden');$('finalVideo').pause();localStorage.setItem('quickcut-job',id);lastView='';draftView=null;poll();}
 function busy(value){$('analyze').disabled=value;}
-$('inputForm').onsubmit=e=>{e.preventDefault();if(!files.length)return toast('请先选择视频');const data=new FormData();const reference=$('referenceAudio').files[0];if(reference)data.append('reference_audio',reference);files.forEach(file=>data.append('files',file));data.append('prompt',$('prompt').value);data.append('duration',$('duration').value);data.append('origin',$('origin').value);data.append('subtitle_position',$('subtitlePosition').value);data.append('open_editor',$('autoOpen').checked);busy(true);$('uploadProgress').classList.remove('hidden');const xhr=new XMLHttpRequest();xhr.open('POST','/api/jobs');xhr.setRequestHeader('x-quickcut-token',token);xhr.upload.onprogress=e=>{if(e.lengthComputable){const percent=Math.round(e.loaded/e.total*100);$('uploadProgress').firstChild.style.width=percent+'%';$('inputNote').textContent='正在导入视频 '+percent+'%';}};xhr.onload=()=>{busy(false);$('uploadProgress').classList.add('hidden');$('inputNote').textContent='真实模型在本机运行，分析与配音可能需要数分钟。';let result;try{result=JSON.parse(xhr.responseText);}catch(err){return toast('服务返回异常，请检查连接');}if(xhr.status>=400)return toast(result.detail||'导入失败');selectJob(result.job_id);history();};xhr.onerror=()=>{busy(false);toast('视频导入失败，请检查本地服务');};xhr.send(data);};
+$('inputForm').onsubmit=e=>{e.preventDefault();if(!files.length)return toast(msg('请先选择视频'));const data=new FormData();const reference=$('referenceAudio').files[0];if(reference)data.append('reference_audio',reference);files.forEach(file=>data.append('files',file));data.append('prompt',$('prompt').value);data.append('duration',$('duration').value);data.append('origin',$('origin').value);data.append('subtitle_position',$('subtitlePosition').value);data.append('open_editor',$('autoOpen').checked);busy(true);$('uploadProgress').classList.remove('hidden');const xhr=new XMLHttpRequest();xhr.open('POST','/api/jobs');xhr.setRequestHeader('x-quickcut-token',token);xhr.upload.onprogress=e=>{if(e.lengthComputable){const percent=Math.round(e.loaded/e.total*100);$('uploadProgress').firstChild.style.width=percent+'%';setText($('inputNote'),tr`正在导入视频 ${percent}%`);}};xhr.onload=()=>{busy(false);$('uploadProgress').classList.add('hidden');setText($('inputNote'),msg('真实模型在本机运行，分析与配音可能需要数分钟。'));let result;try{result=JSON.parse(xhr.responseText);}catch(err){return toast(msg('服务返回异常，请检查连接'));}if(xhr.status>=400)return toast(result.detail?serverMessage(result.detail):msg('导入失败'));selectJob(result.job_id);history();};xhr.onerror=()=>{busy(false);toast(msg('视频导入失败，请检查本地服务'));};xhr.send(data);};
 function stageIndex(data){if(!data)return -1;let n=0;if(['B','C','retrieve'].includes(data.stage))n=1;if(data.status==='needs_review')n=2;if(['E','D','D/E','voice'].includes(data.stage)||data.status==='rendering')n=3;if(data.stage==='F'||data.status==='completed'||data.result)n=4;return n;}
-function stepEnabled(index,data){if(!data||!current)return false;if(['queued','analyzing','rendering'].includes(data.status))return false;if(index===0)return true;if(index===1||index===2)return data.status==='needs_review'||data.status==='completed'||!!data.can_review;if(index===3)return !!(data.result||data.status==='completed');if(index===4)return !!data.downloads;return false;}
-function paintSteps(data){const progress=stageIndex(data);let index=preferredIndex;if(index==null||!stepEnabled(index,data)){if(data.status==='completed'&&data.downloads)index=4;else if(data.status==='needs_review'&&data.draft)index=2;else index=null;}[...$('steps').children].forEach((node,i)=>{const enabled=stepEnabled(i,data);node.disabled=!enabled;node.classList.toggle('reached',progress>=0&&i<=progress);node.classList.toggle('current',index===i);if(index===i)node.setAttribute('aria-current','step');else node.removeAttribute('aria-current');});$('stageHint').textContent=data&&stepEnabled(2,data)?'点上面的步骤可以回去查看。改镜头或旁白后，需要重新确认才会生成新成片。':'分析完成后，可以点已走过的步骤回去查看。';return index;}
-function showPanel(name){for(const id of ['empty','materials','review','voiceStep','result'])$(id).classList.toggle('hidden',id!==name);$('previewNote').classList.toggle('hidden',name==='empty');if(name!=='result')$('finalVideo').pause();}
-function drawMaterials(data){$('materialNote').textContent='这是当前任务已经导入的视频和要求。要换视频或改这句话，用左侧重新开始一次分析。';$('materialPrompt').textContent=data.prompt||'未记录要求';$('materialDuration').textContent=data.duration?data.duration+' 秒':'';$('materialFiles').replaceChildren();for(const name of data.file_names||[])$('materialFiles').append(el('li',name));}
-async function openStep(index){if(!latest||!stepEnabled(index,latest))return;const name=['materials','review','review','voiceStep','result'][index];if(name==='review'&&latest.status!=='needs_review'){try{await request('/api/jobs/'+current+'/return-review',{method:'POST'});preferredIndex=index;lastView='';await poll();}catch(err){toast(err.message);}return;}preferredIndex=index;applyView(latest);}
+function stepEnabled(index,data){if(!data||!current)return false;if(['queued','analyzing','rendering'].includes(data.status))return false;if(index===0)return true;if(index===1||index===2)return data.status==='needs_review'||data.status==='completed'||!!data.can_review;if(index===3)return false;if(index===4)return !!data.downloads;return false;}
+function paintSteps(data){const progress=stageIndex(data);let index=preferredIndex;if(index==null||!stepEnabled(index,data)){if(data.status==='completed'&&data.downloads)index=4;else if(data.status==='needs_review'&&data.draft)index=2;else index=null;}[...$('steps').children].forEach((node,i)=>{const enabled=stepEnabled(i,data);node.disabled=!enabled;node.classList.toggle('reached',progress>=0&&i<=progress);node.classList.toggle('current',index===i);if(index===i)node.setAttribute('aria-current','step');else node.removeAttribute('aria-current');});setText($('stageHint'),data&&stepEnabled(2,data)?msg('点上面的步骤可以回去查看。改镜头或旁白后，需要重新确认才会生成新成片。'):msg('分析完成后，可以点已走过的步骤回去查看。'));return index;}
+function showPanel(name){for(const id of ['empty','materials','review','voiceStep','result'])$(id).classList.toggle('hidden',id!==name);$('previewNote').classList.toggle('hidden',name!=='empty');if(name!=='result')$('finalVideo').pause();if(name!=='review')document.querySelectorAll('#beats video').forEach(video=>video.pause());if(name==='review')requestAnimationFrame(()=>showDeck(deckAt));}
+function drawMaterials(data){setText($('materialNote'),msg('这是当前任务已经导入的视频和要求。要换视频或改这句话，用左侧重新开始一次分析。'));setText($('materialPrompt'),data.prompt||msg('未记录要求'));setText($('materialDuration'),data.duration?tr`${data.duration} 秒`:'');$('materialFiles').replaceChildren();for(const name of data.file_names||[])$('materialFiles').append(el('li',name));}
+async function openStep(index){if(!latest||!stepEnabled(index,latest))return;const name=['materials','review','review','voiceStep','result'][index];if(name==='review'&&latest.status!=='needs_review'){try{await request('/api/jobs/'+current+'/return-review',{method:'POST'});preferredIndex=index;lastView='';await poll();}catch(err){toast(err.uiMessage||serverMessage(err.message));}return;}preferredIndex=index;const shown=applyView(latest);if(shown==='result'&&latest.downloads)drawResult(latest);}
 function applyView(data){if(['queued','analyzing','rendering'].includes(data.status))preferredIndex=null;const index=paintSteps(data);const names=['materials','review','review','voiceStep','result'];let name=index==null?'empty':names[index];if(name==='review'&&!data.draft)name='empty';if(name==='result'&&!data.downloads)name='empty';showPanel(name);if(name==='materials')drawMaterials(data);return name;}
-function statusBox(data){const box=$('status');box.replaceChildren();box.className='status';const running=['queued','analyzing','rendering'].includes(data.status);if(running)box.append(el('span',undefined,'spinner'));if(data.status==='failed'||data.status==='interrupted')box.classList.add('error');const text=el('div');text.append(el('strong',statusNames[data.status]||data.status),el('p',data.message||''));if(data.error)text.append(el('p',(data.error.stage||'')+' · '+data.error.code));if(data.can_review&&['failed','interrupted'].includes(data.status)){const retry=el('button','返回方案修改','secondary');retry.type='button';retry.onclick=async()=>{try{await request('/api/jobs/'+current+'/return-review',{method:'POST'});lastView='';poll();}catch(err){toast(err.message);}};text.append(retry);}else if(['failed','interrupted'].includes(data.status)){const retry=el('button','保留素材，重新分析','secondary');retry.type='button';retry.onclick=async()=>{try{await request('/api/jobs/'+current+'/retry-analysis',{method:'POST'});lastView='';poll();}catch(err){toast(err.message);}};text.append(retry);}box.append(text);}
+function statusBox(data){const box=$('status');box.replaceChildren();box.className='status';const running=['queued','analyzing','rendering'].includes(data.status);if(running)box.append(el('span',undefined,'spinner'));if(data.status==='failed'||data.status==='interrupted')box.classList.add('error');const text=el('div');text.append(el('strong',msg(statusNames[data.status]||data.status)),el('p',serverMessage(data.message)));if(data.error)text.append(el('p',(data.error.stage||'')+' · '+data.error.code));if(data.can_review&&['failed','interrupted'].includes(data.status)){const retry=el('button',msg('返回方案修改'),'secondary');retry.type='button';retry.onclick=async()=>{try{await request('/api/jobs/'+current+'/return-review',{method:'POST'});lastView='';poll();}catch(err){toast(err.uiMessage||serverMessage(err.message));}};text.append(retry);}else if(['failed','interrupted'].includes(data.status)){const retry=el('button',msg('保留素材，重新分析'),'secondary');retry.type='button';retry.onclick=async()=>{try{await request('/api/jobs/'+current+'/retry-analysis',{method:'POST'});lastView='';poll();}catch(err){toast(err.uiMessage||serverMessage(err.message));}};text.append(retry);}box.append(text);}
 
+
+function showDeck(index,retry){
+  const slides=[...$('beats').children];
+  const dots=$('deckDots');
+  if(!slides.length){deckAt=0;$('deckIndex').textContent='00 / 00';$('deckTitle').textContent='';$('deckPrev').disabled=true;$('deckNext').disabled=true;if(dots)dots.replaceChildren();return;}
+  deckAt=Math.max(0,Math.min(index,slides.length-1));
+  const width=$('deckViewport').clientWidth;
+  if(width>=2){slides.forEach(node=>{node.style.flex='0 0 '+width+'px';node.style.width=width+'px';});$('beats').style.width=(width*slides.length)+'px';$('beats').style.transform='translate3d('+(-deckAt*width)+'px,0,0)';}
+  else if(retry!==false&&!$('review').classList.contains('hidden'))requestAnimationFrame(()=>showDeck(deckAt,false));
+  const slide=slides[deckAt];
+  $('deckIndex').textContent=String(deckAt+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+  setText($('deckTitle'),slide.shotTitle||'');
+  $('deckPrev').disabled=deckAt===0;
+  $('deckNext').disabled=deckAt===slides.length-1;
+  slides.forEach((node,i)=>{node.classList.toggle('is-current',i===deckAt);node.toggleAttribute('inert',i!==deckAt);});
+  document.querySelectorAll('#narrationDock .beat-narration').forEach(node=>node.classList.toggle('hidden',node.dataset.beat!==slide.dataset.beat));
+  if(dots){dots.replaceChildren();slides.forEach((node,i)=>{const dot=el('button','',i===deckAt?'dot current':'dot');dot.type='button';dot.dataset.index=String(i);setAttr(dot,'aria-label',tr`第 ${i+1} 镜`);if(i===deckAt)dot.setAttribute('aria-current','true');dots.append(dot);});}
+  const playing=slide.querySelector('video');
+  document.querySelectorAll('#beats video').forEach(video=>{if(video!==playing)video.pause();});
+  const begin=slide.querySelector('[data-edge="begin"]');
+  if(playing&&begin&&playing.readyState>=1)playing.currentTime=Number(begin.value);
+}
 function reviewKey(jobId,draft){return jobId+':needs_review:'+draft.draft_id+':'+draft.review_revision;}
 function localDraftKey(jobId){return 'quickcut-review-'+jobId;}
 function reviewSnapshot(validate=true){
-  if(!draftView)throw new Error('方案尚未准备好');
+  if(!draftView)throw uiError('方案尚未准备好');
   const view=draftView, body={draft_id:view.draft_id,review_revision:view.review_revision,selection_overrides:{},draft_text_edits:{},draft_boundaries:[],input_values:{}};
   for(const beat of view.beats){
     body.selection_overrides[beat.beat_id]=beat.shots.map(shot=>shot.candidate_id);
@@ -97,14 +555,14 @@ function reviewSnapshot(validate=true){
       const selector='[data-beat="'+beat.beat_id+'"][data-shot="'+shot.shot_index+'"]';
       const beginText=document.querySelector(selector+'[data-edge="begin"]').value,endText=document.querySelector(selector+'[data-edge="end"]').value;
       const begin=Math.round(Number(beginText)*1e6),end=Math.round(Number(endText)*1e6);
-      if(validate&&(!beginText||!endText||!Number.isFinite(begin)||!Number.isFinite(end)||begin>=end||begin<shot.available_range_us.begin||end>shot.available_range_us.end))throw new Error('请检查镜头入出点；草稿暂存在本浏览器。');
+      if(validate&&(!beginText||!endText||!Number.isFinite(begin)||!Number.isFinite(end)||begin>=end||begin<shot.available_range_us.begin||end>shot.available_range_us.end))throw uiError('请检查镜头入出点；草稿暂存在本浏览器。');
       body.input_values[beat.beat_id][shot.candidate_id]={begin:beginText,end:endText};
       body.draft_boundaries.push({beat_id:beat.beat_id,candidate_id:shot.candidate_id,segment_id:shot.segment_id,source_range_us:{begin,end}});
     }
   }
   return body;
 }
-function rememberReview(){try{localStorage.setItem(localDraftKey(current),JSON.stringify(reviewSnapshot(false)));}catch(err){$('draftSave').textContent='浏览器暂存不可用，正在尝试保存到本机服务。';}}
+function rememberReview(){try{localStorage.setItem(localDraftKey(current),JSON.stringify(reviewSnapshot(false)));}catch(err){setText($('draftSave'),msg('浏览器暂存不可用，正在尝试保存到本机服务。'));}}
 function restoreReview(){
   let saved;try{saved=JSON.parse(localStorage.getItem(localDraftKey(current))||'null');}catch(err){}
   if(saved&&saved.draft_id===draftView.draft_id&&saved.review_revision===draftView.review_revision){
@@ -112,65 +570,148 @@ function restoreReview(){
       const text=saved.draft_text_edits?.[beat.beat_id];if(typeof text==='string')document.querySelector('[data-narration="'+beat.beat_id+'"]').value=text;
       for(const shot of beat.shots){const values=saved.input_values?.[beat.beat_id]?.[shot.candidate_id];if(!values)continue;for(const edge of ['begin','end'])document.querySelector('[data-beat="'+beat.beat_id+'"][data-shot="'+shot.shot_index+'"][data-edge="'+edge+'"]').value=values[edge];}
     }
-    reviewDirty=true;$('draftSave').textContent='已恢复本浏览器暂存的草稿，尚未确认。';scheduleSave();
-  }else $('draftSave').textContent='草稿会自动保存；生成成片仍需你确认。';
+    reviewDirty=true;setText($('draftSave'),msg('已恢复本浏览器暂存的草稿，尚未确认。'));scheduleSave();
+  }else setText($('draftSave'),msg('草稿会自动保存；生成成片仍需你确认。'));
 }
-function setEditBusy(value){editPending=value;$('confirm').disabled=value;for(const node of document.querySelectorAll('#beats select,#beats button')){if(value){if(node.dataset.wasDisabled===undefined)node.dataset.wasDisabled=String(node.disabled);node.disabled=true;}else if(node.dataset.wasDisabled!==undefined){node.disabled=node.dataset.wasDisabled==='true';delete node.dataset.wasDisabled;}}}
-function reviewChanged(event){if(event?.target?.dataset.narration){const note=document.querySelector('[data-narration-warning="'+event.target.dataset.narration+'"]');if(note){note.textContent="正在检查修改后的旁白…";note.classList.remove("hidden");}}reviewDirty=true;editVersion++;$('approved').checked=false;rememberReview();$('draftSave').textContent='草稿已在本浏览器暂存，正在保存…';scheduleSave();}
+function setEditBusy(value){editPending=value;$('confirm').disabled=value;for(const node of document.querySelectorAll('#beats select,#beats button,#narrationDock button')){if(value){if(node.dataset.wasDisabled===undefined)node.dataset.wasDisabled=String(node.disabled);node.disabled=true;}else if(node.dataset.wasDisabled!==undefined){node.disabled=node.dataset.wasDisabled==='true';delete node.dataset.wasDisabled;}}}
+function reviewChanged(event){if(event?.target?.dataset.narration){const note=document.querySelector('[data-narration-warning="'+event.target.dataset.narration+'"]');if(note){setText(note,msg("正在检查修改后的旁白…"));note.classList.remove("hidden");}}reviewDirty=true;editVersion++;$('approved').checked=false;rememberReview();setText($('draftSave'),msg('草稿已在本浏览器暂存，正在保存…'));scheduleSave();}
 function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(saveReview,500);}
 async function saveReview(){
   if(!reviewDirty||!draftView)return;if(editPending){scheduleSave();return;}
   const jobId=current,view=draftView,version=editVersion;let body;
-  try{body=reviewSnapshot();}catch(err){$('draftSave').textContent=err.message;return;}
+  try{body=reviewSnapshot();}catch(err){setText($('draftSave'),err.uiMessage||serverMessage(err.message));return;}
   setEditBusy(true);
   try{
     const data=await request('/api/jobs/'+jobId+'/selection',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     if(jobId!==current||draftView!==view)return;
     draftView.review_revision=data.draft.review_revision;lastView=reviewKey(jobId,data.draft);
     reviewDirty=version!==editVersion;
-    if(reviewDirty){rememberReview();scheduleSave();}else{for(const beat of draftView.beats){const checked=data.draft.beats.find(item=>item.beat_id===beat.beat_id);beat.review_warnings=checked.review_warnings;beat.narration_review=checked.narration_review;}renderNarrationWarnings();localStorage.removeItem(localDraftKey(jobId));$('draftSave').textContent='草稿已保存，尚未确认。';}
-  }catch(err){if(jobId===current)$('draftSave').textContent='服务未保存：'+err.message+'。当前编辑仍在本浏览器暂存。';}
+    if(reviewDirty){rememberReview();scheduleSave();}else{for(const beat of draftView.beats){const checked=data.draft.beats.find(item=>item.beat_id===beat.beat_id);beat.review_warnings=checked.review_warnings;beat.narration_review=checked.narration_review;}renderNarrationWarnings();localStorage.removeItem(localDraftKey(jobId));setText($('draftSave'),msg('草稿已保存，尚未确认。'));}
+  }catch(err){if(jobId===current)setText($('draftSave'),tr`服务未保存：${err.uiMessage||msg(err.message)}。当前编辑仍在本浏览器暂存。`);}
   finally{setEditBusy(false);}
 }
 
-function renderNarrationWarnings(){for(const beat of draftView?.beats||[]){const note=document.querySelector('[data-narration-warning="'+beat.beat_id+'"]');if(!note)continue;const warnings=beat.review_warnings||[];note.textContent=warnings.length?'这句需要修改：'+warnings.map(item=>item.message).join(' '):'';note.classList.toggle('hidden',!warnings.length);}}
-function drawReview(draft){draftView=draft;reviewDirty=false;editVersion=0;$('beats').replaceChildren();$('approved').checked=false;draft.beats.forEach((beat,bi)=>{const card=el('section',undefined,'beat');const heading=el('div',undefined,'beat-title');heading.append(el('h3',['开场','展开','收尾'][bi]||beat.purpose),el('span',(beat.duration_budget_us/1e6).toFixed(1)+' 秒','pill'));card.append(heading);for(const shot of beat.shots){const block=el('div',undefined,'shot');const edit=el('details');const summary=el('summary','换镜头 / 调整顺序','hint');summary.style.cursor='pointer';const editRow=el('div',undefined,'row');editRow.style.margin='8px 0';const choice=el('select');choice.setAttribute('aria-label','替换'+beat.purpose+'镜头'+(shot.shot_index+1));for(const candidate of beat.available_candidates){const option=el('option',candidate.label);option.value=candidate.candidate_id;choice.append(option);}choice.value=shot.candidate_id;choice.onchange=()=>changeSelection(beat.beat_id,shot.shot_index,choice.value);editRow.append(choice);for(const [label,delta] of [['↑',-1],['↓',1]]){const order=el('button',label,'secondary');order.type='button';order.disabled=shot.shot_index+delta<0||shot.shot_index+delta>=beat.shots.length;order.onclick=()=>changeSelection(beat.beat_id,shot.shot_index,null,delta);editRow.append(order);}if(beat.shots.length>1){const remove=el('button','移除','secondary');remove.type='button';remove.onclick=()=>changeSelection(beat.beat_id,shot.shot_index,'remove');editRow.append(remove);}edit.append(summary,editRow);block.append(edit);const video=el('video');video.controls=true;video.playsInline=true;video.preload='metadata';video.src=shot.media_url;const start=el('input'),end=el('input');for(const input of [start,end]){input.type='number';input.step='.01';input.min=String(shot.available_range_us.begin/1e6);input.max=String(shot.available_range_us.end/1e6);}start.value=String(shot.source_range_us.begin/1e6);end.value=String(shot.source_range_us.end/1e6);start.dataset.beat=beat.beat_id;start.dataset.shot=shot.shot_index;start.dataset.edge='begin';end.dataset.beat=beat.beat_id;end.dataset.shot=shot.shot_index;end.dataset.edge='end';start.oninput=end.oninput=reviewChanged;start.setAttribute('aria-label','镜头起点（秒）');end.setAttribute('aria-label','镜头终点（秒）');const trim=el('div',undefined,'trim'),sl=el('label','入点'),se=el('label','出点');sl.append(start,el('span','秒'));se.append(end,el('span','秒'));const play=el('button','播放所选片段','secondary');play.type='button';play.onclick=()=>{video.currentTime=Number(start.value);video.play().catch(()=>toast('浏览器暂时无法播放这个格式，请使用 MP4 视频'));};video.ontimeupdate=()=>{if(!video.paused&&video.currentTime>=Number(end.value))video.pause();};video.onloadedmetadata=()=>{video.currentTime=Number(start.value);};trim.append(sl,se,play);block.append(video,trim,el('div',(shot.origin==='user'?'用户素材':'公开素材')+' · 候选区间 '+(shot.available_range_us.begin/1e6).toFixed(2)+'–'+(shot.available_range_us.end/1e6).toFixed(2)+' 秒','source-info'));if(shot.transcript)block.append(el('p','原声识别（请核对）：'+shot.transcript,'transcript'));card.append(block);}const add=el('button','＋ 增加一个镜头','secondary');add.type='button';add.style.fontSize='11px';add.onclick=()=>changeSelection(beat.beat_id,-1,'add');card.append(add);const label=el('label','旁白','label');label.append(el('span','建议不超过 '+beat.narration_max_chars+' 字（不计标点）','hint'));const text=el('textarea');text.value=beat.narration_draft;text.oninput=reviewChanged;text.maxLength=160;text.dataset.narration=beat.beat_id;text.setAttribute('aria-label',beat.purpose+'旁白');const warning=el('p',undefined,'notice hidden');warning.dataset.narrationWarning=beat.beat_id;warning.style.color='var(--danger)';warning.setAttribute('role','alert');card.append(label,text,warning);$('beats').append(card);});renderNarrationWarnings();restoreReview();setEditBusy(editPending);}
+function renderNarrationWarnings(){for(const beat of draftView?.beats||[]){const note=document.querySelector('[data-narration-warning="'+beat.beat_id+'"]');if(!note)continue;const warnings=beat.review_warnings||[];setText(note,warnings.length?tr`这句需要修改：${()=>warnings.map(item=>render(serverMessage(item.message))).join(' ')}`:'');note.classList.toggle('hidden',!warnings.length);}}
+function drawReview(draft){
+  const previous=[...$('beats').children][deckAt];
+  const keep=previous?previous.dataset.beat+'#'+previous.dataset.shot:'';
+  draftView=draft;reviewDirty=false;editVersion=0;$('beats').replaceChildren();$('narrationDock').replaceChildren();$('approved').checked=false;
+  const names=['开场','展开','收尾'].map(msg);
+  draft.beats.forEach((beat,bi)=>{
+    const beatName=names[bi]||beat.purpose;
+    const shots=beat.shots.length?beat.shots:[null];
+    shots.forEach((shot,si)=>{
+      const block=el('div',undefined,'shot');
+      block.dataset.beat=beat.beat_id;
+      block.dataset.shot=shot?String(shot.shot_index):'';
+      block.shotTitle=shot?tr`${beatName} · 镜头 ${si+1}`:tr`${beatName} · 还没有镜头`;
+      if(!shot){block.append(el('p',msg('这一段还没有镜头，可以在下面增加一个。'),'notice'));$('beats').append(block);return;}
+      const gate=el('div',undefined,'gate');
+      const video=el('video');video.controls=true;video.playsInline=true;video.preload='metadata';video.src=shot.media_url;
+      gate.append(video);
+      const edit=el('details');
+      const summary=el('summary',msg('换镜头 / 调整顺序'));
+      const editRow=el('div',undefined,'row');
+      const choice=el('select');setAttr(choice,'aria-label',tr`替换${beatName}镜头${shot.shot_index+1}`);
+      for(const candidate of beat.available_candidates){const option=el('option',candidate.label);option.value=candidate.candidate_id;choice.append(option);}
+      choice.value=shot.candidate_id;choice.onchange=()=>changeSelection(beat.beat_id,shot.shot_index,choice.value);editRow.append(choice);
+      for(const [label,delta] of [['↑',-1],['↓',1]]){const order=el('button',label,'secondary');order.type='button';order.disabled=shot.shot_index+delta<0||shot.shot_index+delta>=beat.shots.length;order.onclick=()=>changeSelection(beat.beat_id,shot.shot_index,null,delta);editRow.append(order);}
+      if(beat.shots.length>1){const remove=el('button',msg('移除'),'secondary');remove.type='button';remove.onclick=()=>changeSelection(beat.beat_id,shot.shot_index,'remove');editRow.append(remove);}
+      edit.append(summary,editRow);
+      const start=el('input'),end=el('input');
+      for(const input of [start,end]){input.type='number';input.step='.01';input.min=String(shot.available_range_us.begin/1e6);input.max=String(shot.available_range_us.end/1e6);}
+      start.value=String(shot.source_range_us.begin/1e6);end.value=String(shot.source_range_us.end/1e6);
+      start.dataset.beat=beat.beat_id;start.dataset.shot=shot.shot_index;start.dataset.edge='begin';
+      end.dataset.beat=beat.beat_id;end.dataset.shot=shot.shot_index;end.dataset.edge='end';
+      start.oninput=end.oninput=reviewChanged;setAttr(start,'aria-label',msg('镜头起点（秒）'));setAttr(end,'aria-label',msg('镜头终点（秒）'));
+      const trim=el('div',undefined,'trim'),sl=el('label',msg('入点')),se=el('label',msg('出点'));
+      sl.append(start,el('span',msg('秒')));se.append(end,el('span',msg('秒')));
+      const play=el('button',msg('播放所选片段'),'secondary');play.type='button';
+      play.onclick=()=>{video.currentTime=Number(start.value);video.play().catch(()=>toast(msg('浏览器暂时无法播放这个格式，请使用 MP4 视频')));};
+      video.ontimeupdate=()=>{if(!video.paused&&video.currentTime>=Number(end.value))video.pause();};
+      video.onloadedmetadata=()=>{if(block.classList.contains('is-current'))video.currentTime=Number(start.value);};
+      trim.append(sl,se,play);
+      const tools=el('div',undefined,'shot-tools');tools.append(edit,trim);
+      block.append(gate,tools,el('div',tr`${shot.origin==='user'?msg('用户素材'):msg('公开素材')} · 候选区间 ${(shot.available_range_us.begin/1e6).toFixed(2)}–${(shot.available_range_us.end/1e6).toFixed(2)} 秒`,'source-info'));
+      if(shot.transcript)block.append(el('p',tr`原声识别（请核对）：${shot.transcript}`,'transcript'));
+      $('beats').append(block);
+    });
+    const dock=el('div',undefined,'beat-narration');dock.dataset.beat=beat.beat_id;
+    const label=el('label',msg('旁白'),'label');label.append(el('span',tr`建议不超过 ${beat.narration_max_chars} 字（不计标点）`,'hint'));
+    const add=el('button',msg('＋ 增加一个镜头'),'secondary');add.type='button';add.onclick=()=>changeSelection(beat.beat_id,-1,'add');
+    const text=el('textarea');text.value=beat.narration_draft;text.oninput=reviewChanged;text.maxLength=160;text.dataset.narration=beat.beat_id;setAttr(text,'aria-label',tr`${beatName}旁白`);
+    const warning=el('p',undefined,'notice hidden');warning.dataset.narrationWarning=beat.beat_id;warning.style.color='var(--danger)';warning.setAttribute('role','alert');
+    dock.append(label,add,text,warning);$('narrationDock').append(dock);
+  });
+  renderNarrationWarnings();restoreReview();setEditBusy(editPending);
+  const built=[...$('beats').children];
+  const found=built.findIndex(node=>node.dataset.beat+'#'+node.dataset.shot===keep);
+  showDeck(found>=0?found:Math.min(deckAt,Math.max(0,built.length-1)));
+}
 async function changeSelection(beatId,index,value,delta=0){
   const jobId=current,view=draftView;if(!view||editPending)return;clearTimeout(saveTimer);
-  let body;try{body=reviewSnapshot();}catch(err){toast(err.message);resetChoices();return;}
+  let body;try{body=reviewSnapshot();}catch(err){toast(err.uiMessage||serverMessage(err.message));resetChoices();return;}
   rememberReview();const ids=body.selection_overrides[beatId];
   if(value==='remove')ids.splice(index,1);
-  else if(value==='add'){const beat=view.beats.find(b=>b.beat_id===beatId);const next=beat.available_candidates.find(c=>!ids.includes(c.candidate_id));if(!next)return toast('没有更多候选镜头');ids.push(next.candidate_id);}
+  else if(value==='add'){const beat=view.beats.find(b=>b.beat_id===beatId);const next=beat.available_candidates.find(c=>!ids.includes(c.candidate_id));if(!next)return toast(msg('没有更多候选镜头'));ids.push(next.candidate_id);}
   else if(delta)[ids[index],ids[index+delta]]=[ids[index+delta],ids[index]];
   else ids[index]=value;
-  setEditBusy(true);for(const node of document.querySelectorAll('#beats input,#beats textarea'))node.disabled=true;
+  setEditBusy(true);for(const node of document.querySelectorAll('#beats input,#beats textarea,#narrationDock textarea,#narrationDock button'))node.disabled=true;
   try{
     const data=await request('/api/jobs/'+jobId+'/selection',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     localStorage.removeItem(localDraftKey(jobId));
-    if(jobId===current){drawReview(data.draft);lastView=reviewKey(jobId,data.draft);toast('选镜已更新，原有镜头的入出点已保留；请检查新镜头。');}
-  }catch(err){if(jobId===current){toast(err.message);resetChoices();}}
-  finally{setEditBusy(false);for(const node of document.querySelectorAll('#beats input,#beats textarea'))node.disabled=false;}
+    if(jobId===current){drawReview(data.draft);lastView=reviewKey(jobId,data.draft);toast(msg('选镜已更新，原有镜头的入出点已保留；请检查新镜头。'));}
+  }catch(err){if(jobId===current){toast(err.uiMessage||serverMessage(err.message));resetChoices();}}
+  finally{setEditBusy(false);for(const node of document.querySelectorAll('#beats input,#beats textarea,#narrationDock textarea,#narrationDock button'))node.disabled=false;}
 }
-function resetChoices(){for(const beat of draftView?.beats||[])for(const shot of beat.shots){const choice=document.querySelector('select[aria-label="替换'+beat.purpose+'镜头'+(shot.shot_index+1)+'"]');if(choice)choice.value=shot.candidate_id;}}
+function resetChoices(){for(const beat of draftView?.beats||[])for(const shot of beat.shots){const choice=[...$('beats').children].find(node=>node.dataset.beat===beat.beat_id&&node.dataset.shot===String(shot.shot_index))?.querySelector('select');if(choice)choice.value=shot.candidate_id;}}
 $('confirm').onclick=async()=>{
-  if(editPending)return toast('正在保存草稿，请稍后确认。');
-  if(!$('approved').checked)return toast('请先检查并勾选确认');if(!draftView)return;
+  if(editPending)return toast(msg('正在保存草稿，请稍后确认。'));
+  if(!$('approved').checked)return toast(msg('请先检查并勾选确认'));if(!draftView)return;
   clearTimeout(saveTimer);const jobId=current,view=draftView;let saved;
-  try{saved=reviewSnapshot();}catch(err){return toast(err.message);}
+  try{saved=reviewSnapshot();}catch(err){return toast(err.uiMessage||serverMessage(err.message));}
   const texts=Object.fromEntries(Object.entries(saved.draft_text_edits).map(([id,text])=>[id,text.trim()]));
   const boundaries=saved.draft_boundaries.map(item=>({...item,shot_index:view.beats.find(beat=>beat.beat_id===item.beat_id).shots.find(shot=>shot.candidate_id===item.candidate_id).shot_index}));
   rememberReview();setEditBusy(true);
   try{
-    await request('/api/jobs/'+jobId+'/confirm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({draft_id:view.draft_id,review_revision:view.review_revision,approved_text_by_beat:texts,boundaries,reviewer:$('reviewer').value,confirmed:true})});
+    await request('/api/jobs/'+jobId+'/confirm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({draft_id:view.draft_id,review_revision:view.review_revision,approved_text_by_beat:texts,boundaries,reviewer:$('reviewer').value||'本机用户',confirmed:true})});
     localStorage.removeItem(localDraftKey(jobId));if(jobId===current){reviewDirty=false;lastView='';await poll();}
-  }catch(err){if(jobId===current)toast(err.message);}
+  }catch(err){if(jobId===current)toast(err.uiMessage||serverMessage(err.message));}
   finally{setEditBusy(false);}
 };
-function drawResult(data){$('finalVideo').src=data.downloads.video;$('downloadVideo').href=data.downloads.video+'?download=true';$('downloadProject').href=data.downloads.package;$('downloadReport').href=data.downloads.report;$('resultDuration').textContent=(data.result.duration_us/1e6).toFixed(1)+' 秒 · 可编辑四轨工程';$('editorNote').textContent=data.result.editor?.message||'剪映工程已准备好。';}
-$('openEditor').onclick=async()=>{$('openEditor').disabled=true;try{const data=await request('/api/jobs/'+current+'/open-editor',{method:'POST'});$('editorNote').textContent=data.message||'剪映已启动';toast(data.message||'剪映已启动');}catch(err){toast(err.message);}finally{$('openEditor').disabled=false;}};
-async function poll(){if(!current||polling)return;const jobId=current;polling=true;try{const data=await request('/api/jobs/'+jobId);if(jobId!==current)return;latest=data;statusBox(data);const panel=applyView(data);const reviewing=panel==='review',done=panel==='result';const key=reviewing?reviewKey(jobId,data.draft):jobId+':'+panel+':'+data.status;if(panel==='empty'){$('empty').querySelector('h3').textContent=data.status==='failed'?'这一阶段需要处理':'正在把素材变成故事';$('empty').querySelector('p').textContent=data.status==='failed'?'详细原因显示在上方，原始视频与运行记录会保留。':'可以留在这里查看进度，刷新页面也不会丢失任务。';}if(lastView!==key&&!(reviewing&&(editPending||reviewDirty))){if(reviewing)drawReview(data.draft);if(done)drawResult(data);lastView=key;history();}else if(done)$('editorNote').textContent=data.result?.editor?.message||'';$('events').classList.toggle('hidden',!data.events?.length);$('eventList').replaceChildren();for(const event of (data.events||[]))$('eventList').append(el('li',new Date(event.at).toLocaleTimeString('zh-CN')+' · '+event.message));}catch(err){if(jobId!==current)return;toast(err.message);if(err.message.includes('找不到')){current=null;localStorage.removeItem('quickcut-job');}}finally{polling=false;}}
+function drawResult(data){$('finalVideo').src=data.downloads.video;$('downloadVideo').href=data.downloads.video+'?download=true';$('downloadProject').href=data.downloads.package;$('downloadReport').href=data.downloads.report;setText($('resultDuration'),tr`${(data.result.duration_us/1e6).toFixed(1)} 秒 · 可编辑四轨工程`);setText($('editorNote'),data.result.editor?.message?serverMessage(data.result.editor.message):msg('剪映工程已准备好。'));}
+$('openEditor').onclick=async()=>{$('openEditor').disabled=true;try{const data=await request('/api/jobs/'+current+'/open-editor',{method:'POST'});setText($('editorNote'),data.message?serverMessage(data.message):msg('剪映已启动'));toast(data.message?serverMessage(data.message):msg('剪映已启动'));}catch(err){toast(err.uiMessage||serverMessage(err.message));}finally{$('openEditor').disabled=false;}};
+async function poll(){if(!current||polling)return;const jobId=current;polling=true;try{const data=await request('/api/jobs/'+jobId);if(jobId!==current)return;latest=data;statusBox(data);const panel=applyView(data);const reviewing=panel==='review',done=panel==='result';const key=reviewing?reviewKey(jobId,data.draft):jobId+':'+panel+':'+data.status;if(panel==='empty'){setText($('empty').querySelector('h3'),data.status==='failed'?msg('这一阶段需要处理'):msg('正在把素材变成故事'));setText($('empty').querySelector('p'),data.status==='failed'?msg('详细原因显示在上方，原始视频与运行记录会保留。'):msg('可以留在这里查看进度，刷新页面也不会丢失任务。'));}if(lastView!==key&&!(reviewing&&(editPending||reviewDirty))){if(reviewing)drawReview(data.draft);if(done)drawResult(data);lastView=key;history();}else if(done)setText($('editorNote'),data.result?.editor?.message?serverMessage(data.result.editor.message):msg('剪映工程已准备好。'));$('events').classList.toggle('hidden',!data.events?.length);$('eventList').replaceChildren();for(const event of (data.events||[]))$('eventList').append(el('li',()=>new Date(event.at).toLocaleTimeString(locale())+' · '+render(serverMessage(event.message))));}catch(err){if(jobId!==current)return;toast(err.uiMessage||serverMessage(err.message));if(err.message.includes('找不到')){current=null;localStorage.removeItem('quickcut-job');}}finally{polling=false;}}
 [...$('steps').children].forEach((node,index)=>node.onclick=()=>openStep(index));
 $('backToReview').onclick=()=>openStep(2);
-(async()=>{try{const config=await request('/api/config');token=config.token;defaultVoiceLabel=config.default_voice?.label||'默认音色';referenceNote();health();history();const saved=localStorage.getItem('quickcut-job');if(saved)selectJob(saved);setInterval(poll,2000);}catch(err){toast('无法连接本地工作台，请重新启动服务。');}})();
+
+function bindDeck(){
+  const viewport=$('deckViewport');
+  let startX=0,tracking=false;
+  viewport.addEventListener('pointerdown',event=>{if(event.button!==0||event.target.closest('input,textarea,select,button,summary,a,video,label'))return;tracking=true;startX=event.clientX;viewport.setPointerCapture(event.pointerId);});
+  viewport.addEventListener('pointerup',event=>{if(!tracking)return;tracking=false;const delta=event.clientX-startX;if(delta<=-48)showDeck(deckAt+1);else if(delta>=48)showDeck(deckAt-1);});
+  viewport.addEventListener('pointercancel',()=>{tracking=false;});
+  $('deckPrev').onclick=()=>showDeck(deckAt-1);
+  $('deckNext').onclick=()=>showDeck(deckAt+1);
+  $('deckDots').onclick=event=>{const dot=event.target.closest('[data-index]');if(dot)showDeck(Number(dot.dataset.index));};
+  window.addEventListener('resize',()=>{if(!$('review').classList.contains('hidden'))showDeck(deckAt);});
+  document.addEventListener('keydown',event=>{if($('review').classList.contains('hidden'))return;if(event.target.closest('input,textarea,select,video'))return;if(event.key==='ArrowLeft'){event.preventDefault();showDeck(deckAt-1);}if(event.key==='ArrowRight'){event.preventDefault();showDeck(deckAt+1);}});
+}
+bindDeck();
+
+for(const node of document.querySelectorAll('#empty [data-i18n]')){
+  const key=node.dataset.i18n;
+  delete node.dataset.i18n;
+  setText(node,msg(key));
+}
+for(const [id,key] of Object.entries({
+  referenceNote:'正在读取默认音色…',
+  inputNote:'真实模型在本机运行，分析与配音可能需要数分钟。',
+  healthLabel:'检查中…',
+  stageHint:'分析完成后，可以点已走过的步骤回去查看。'
+}))setText($(id),msg(key));
+applyLanguage();
+
+(async()=>{try{const config=await request('/api/config');token=config.token;defaultVoiceLabel=config.default_voice?.label||'默认音色';referenceNote();health();history();const saved=localStorage.getItem('quickcut-job');if(saved)selectJob(saved);setInterval(poll,2000);}catch(err){toast(msg('无法连接本地工作台，请重新启动服务。'));}})();
 </script>
 </body></html>
