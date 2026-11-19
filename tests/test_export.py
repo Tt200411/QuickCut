@@ -16,6 +16,7 @@ import pytest
 
 from quickcut import core, export, jianying, timeline_preview
 from quickcut.media import digest
+from quickcut.subtitle_layout import layout_subtitle
 from quickcut.timeline import compile_timeline
 
 
@@ -394,6 +395,68 @@ def test_bad_media_or_unknown_editor_never_publish(tmp_path, source_media, docs,
         export.export_project(*docs, root, tmp_path / "rejected", **options)
     assert not (tmp_path / "rejected").exists()
     assert not list(tmp_path.glob(".quickcut-export-*"))
+
+
+@pytest.mark.parametrize("size", [(320, 180), (180, 320)])
+def test_long_caption_export_and_install_rebuild_identical_styles(tmp_path, source_media, docs, monkeypatch, size):
+    timeline, _, voice = docs
+    text = ("清晨沿着山间小路慢慢向前，看到田野和远处的村庄。"
+            "保留 cafe\u0301 与 \U0001f469\u200d\U0001f4bb 的原文。\n已有换行也要保留。")
+    timeline["tracks"][3]["cues"][0]["text"] = text
+    voice["cues"][0]["text"] = voice["cues"][0]["local_subtitles"][0]["text"] = text
+    timeline["output"].update(width=size[0], height=size[1])
+    before = deepcopy(docs)
+    package = tmp_path / "long-caption"
+    export.export_project(*docs, source_media, package)
+    original = _load(package / "draft" / "draft_info.json")
+    assert (package / "captions.srt").read_text() == timeline_preview._srt(timeline["tracks"][3]["cues"])
+    assert _load(package / "inputs" / "timeline.json") == timeline
+    assert _load(package / "inputs" / "voice-package.json") == voice
+    monkeypatch.setattr(export, "is_editor_running", lambda: False)
+    installed = export.install_jianying_draft(package, tmp_path / "drafts", name="字幕重建")
+    rebuilt = _load(Path(installed["draft_directory"]) / "draft_info.json")
+    expected = layout_subtitle(text, width=size[0], height=size[1]).display_text
+    assert expected.count("\n") > text.count("\n")
+    for draft in (original, rebuilt):
+        assert len(draft["materials"]["texts"]) == 1
+        content = json.loads(draft["materials"]["texts"][0]["content"])
+        assert content["text"] == expected
+        assert content["styles"][0]["range"] == [0, len(expected.encode("utf-16-le")) // 2]
+        track = next(t for t in draft["tracks"] if t["type"] == "text")
+        assert len(track["segments"]) == 1
+        assert track["segments"][0]["target_timerange"] == {"start": 250_001, "duration": 250_000}
+    assert {k: v for k, v in original["materials"]["texts"][0].items() if k != "id"} == {
+        k: v for k, v in rebuilt["materials"]["texts"][0].items() if k != "id"}
+    assert docs == before
+
+
+@pytest.mark.parametrize("size", [(1920, 1080), (1080, 1920)])
+def test_draft_display_text_keeps_utf16_range_and_input_without_media(tmp_path, size):
+    timeline, manifest, voice = _documents()
+    text = "田野间的风吹过远处山坡，保留 cafe\u0301 和 \U0001f469\u200d\U0001f4bb，完整原文不能丢失。"
+    timeline["tracks"][3]["cues"][0]["text"] = text
+    voice["cues"][0]["text"] = voice["cues"][0]["local_subtitles"][0]["text"] = text
+    timeline["output"].update(width=size[0], height=size[1])
+    timeline_preview._validate(timeline, manifest, voice)
+    subtitle_only = {**timeline, "tracks": [timeline["tracks"][3]]}
+    before = deepcopy(subtitle_only)
+    draft, _ = jianying.build_draft(subtitle_only, [], tmp_path, name="字幕", draft_id="layout-test")
+    content = json.loads(draft["materials"]["texts"][0]["content"])
+    assert content["text"] == layout_subtitle(text, width=size[0], height=size[1]).display_text
+    assert "\n" in content["text"]
+    assert content["styles"][0]["range"] == [0, len(content["text"].encode("utf-16-le")) // 2]
+    assert draft["tracks"][0]["segments"][0]["target_timerange"] == {"start": 250_001, "duration": 250_000}
+    assert subtitle_only == before
+
+
+def test_pre_layout_adapter_package_is_rejected_before_rebuild(tmp_path):
+    assert jianying.ADAPTER_VERSION == "quickcut-jianying-mac-0.2.0"
+    report = {"kind": "ExportManifest", "schema_version": "0.1.0", "status": "generated",
+              "target": {"version": jianying.TARGET_VERSION, "editor": "JianyingPro",
+                         "platform": "macOS", "adapter_version": "quickcut-jianying-mac-0.1.0"}}
+    (tmp_path / "export-manifest.json").write_text(json.dumps(report), encoding="utf-8")
+    with pytest.raises(export.ExportError, match="未知工程适配器版本"):
+        export._verify_package(tmp_path)
 
 
 def test_relocation_rebuilds_all_paths_preserves_hashes_and_existing_registry(tmp_path, source_media, docs, monkeypatch):

@@ -15,6 +15,7 @@ from typing import Any
 
 from . import core
 from .media import digest, resolve_uri
+from .subtitle_layout import layout_subtitle
 
 Document = dict[str, Any]
 
@@ -531,7 +532,12 @@ def render_timeline_preview(
         subtitle_file = temp / "captions.srt"
         subtitle_file.write_text(subtitle_text, encoding="utf-8")
         if font:
-            (temp / "burn-captions.srt").write_text(_srt(frame_subtitles), encoding="utf-8")
+            display_subtitles = [
+                {**cue, "text": layout_subtitle(cue["text"], width=output["width"],
+                                               height=output["height"]).display_text}
+                for cue in frame_subtitles
+            ]
+            (temp / "burn-captions.srt").write_text(_srt(display_subtitles), encoding="utf-8")
             (temp / "fonts").mkdir()
             shutil.copyfile(font[0], temp / "fonts" / ("subtitle" + font[0].suffix.lower()))
         command = [ffmpeg, "-v", "error", "-xerror", "-nostdin", "-n", "-copyts"]
@@ -572,9 +578,17 @@ def render_timeline_preview(
             # even submillisecond cue boundaries correct at 120 or fractional fps.
             # libass force_style uses internal SSA alignment (top-center=6),
             # unlike an ASS Style line's numpad alignment (top-center=8).
+            # 显式覆盖 SRT 默认 ASS 坐标系；字号和边距以画布短边为基准，
+            # 避免竖屏按默认 PlayResY 放大字体，导致已折行字幕仍被裁切。
+            short_side = min(output["width"], output["height"])
+            font_size = short_side / 18
+            margin = short_side / 20
             picture_filter += (
                 ",settb=expr=1/100,setpts=N,subtitles=filename=burn-captions.srt:fontsdir=fonts:"
-                f"force_style='FontName={font[1]},FontSize=20,Outline=1.3,Shadow=0,MarginV=18,Alignment={6 if subtitle_position == 'top' else 2}',"
+                f"force_style='PlayResX={output['width']},PlayResY={output['height']},"
+                f"FontName={font[1]},FontSize={font_size:.3f},Outline={short_side / 360:.3f},"
+                f"Shadow=0,MarginL={round(margin)},MarginR={round(margin)},MarginV={round(margin)},"
+                f"Alignment={6 if subtitle_position == 'top' else 2}',"
                 f"settb=expr={time_base},setpts=N")
         filters.append(picture_filter + "[picture]")
         audio_labels = ["[silence]"]

@@ -16,6 +16,7 @@ import pytest
 
 from quickcut import core, timeline_preview as preview
 from quickcut.media import digest
+from quickcut.subtitle_layout import layout_subtitle
 from quickcut.timeline import compile_timeline
 
 
@@ -82,6 +83,62 @@ def media(tmp_path, ffmpeg):
     for asset in manifest["assets"] + voice["assets"]:
         asset["content_hash"] = digest(tmp_path / asset["uri"])
     return timeline, manifest, voice
+
+
+@pytest.mark.parametrize("size", [(320, 180), (180, 320)])
+@pytest.mark.parametrize("fps", [Fraction(25), Fraction(120), Fraction(30000, 1001)])
+def test_display_copy_keeps_contract_and_frame_clock(size, fps):
+    docs = _documents()
+    timeline, _, voice = docs
+    text = "清晨沿着山间小路慢慢向前，看到田野和远处的村庄。保留 Python 3.12 与所有空格。"
+    cue = timeline["tracks"][3]["cues"][0]
+    cue["text"] = voice["cues"][0]["text"] = voice["cues"][0]["local_subtitles"][0]["text"] = text
+    timeline["output"].update(width=size[0], height=size[1])
+    before = deepcopy(docs)
+    preview._validate(*docs)
+    framed = preview._frame_subtitles([cue], fps)
+    display = layout_subtitle(text, width=size[0], height=size[1])
+    assert "\n" in display.display_text
+    assert "".join(display.lines) == text
+    assert len(framed) == 1
+    assert framed[0]["text"] == text
+    assert framed[0]["timeline_range_us"] == {
+        key: math.ceil(Fraction(cue["timeline_range_us"][key], 1_000_000) * fps) * 10_000
+        for key in ("begin", "end")}
+    assert preview._srt([cue]) == f"1\n00:00:00,250 --> 00:00:00,500\n{text}\n"
+    assert docs == before
+    cue["text"] = display.display_text
+    with pytest.raises(preview.PreviewError, match="全局字幕"):
+        preview._validate(*docs)
+
+
+@pytest.mark.parametrize("size", [(320, 180), (180, 320)])
+def test_render_serializes_only_burn_copy_with_layout(media, tmp_path, monkeypatch, size):
+    timeline, manifest, voice = media
+    text = "清晨沿着山间小路慢慢向前，看到田野和远处的村庄。保留所有原文和时间。"
+    timeline["tracks"][3]["cues"][0]["text"] = text
+    voice["cues"][0]["text"] = voice["cues"][0]["local_subtitles"][0]["text"] = text
+    timeline["output"].update(width=size[0], height=size[1])
+    timeline["render_policy"]["preview_burn_subtitles"] = True
+    before = deepcopy(media)
+    captured = {}
+    original_write = Path.write_text
+
+    def capture(path, data, *args, **kwargs):
+        if path.name in ("captions.srt", "burn-captions.srt"):
+            captured[path.name] = data
+        return original_write(path, data, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "write_text", capture)
+    preview.render_timeline_preview(*media, tmp_path, tmp_path / "wrapped.mp4")
+    framed = preview._frame_subtitles(timeline["tracks"][3]["cues"], Fraction(25))
+    display = layout_subtitle(text, width=size[0], height=size[1]).display_text
+    assert display != text
+    assert captured["captions.srt"] == preview._srt(timeline["tracks"][3]["cues"])
+    assert captured["burn-captions.srt"] == preview._srt([{**framed[0], "text": display}])
+    assert captured["burn-captions.srt"].splitlines()[1] == preview._srt(framed).splitlines()[1]
+    assert (tmp_path / "wrapped.srt").read_text() == captured["captions.srt"]
+    assert media == before
 
 
 def test_accepts_current_d_without_mutating_inputs():
@@ -315,6 +372,45 @@ def test_caption_position_changes_actual_pixels_and_keeps_editable_text(tmp_path
     assert max(rows) < 120 if position == "top" else min(rows) > 120
     assert report["subtitle_position"] == position
     assert "可编辑字幕" in movie.with_suffix(".srt").read_text()
+
+
+@pytest.mark.parametrize("size", [(1280, 720), (720, 1280)])
+@pytest.mark.parametrize("position", ["top", "bottom"])
+def test_long_captions_have_safe_pixel_margins_on_real_render(tmp_path, media, ffmpeg, size, position):
+    timeline, _, voice = media
+    width, height = size
+    texts = [
+        "沿着山间小路慢慢向前，脚下是蜿蜒的步道，远处的山坡渐渐展开。",
+        "换一个角度看这段旅程：保留 Trail 01 和 1080p，检查中文标点与英文是否完整。",
+    ]
+    template = timeline["tracks"][3]["cues"][0]
+    timeline["tracks"][3]["cues"] = [
+        {**template, "subtitle_id": f"sub-{index}", "text": text,
+         "timeline_range_us": {"begin": begin, "end": end}}
+        for index, (text, begin, end) in enumerate(zip(texts, (250_000, 375_000), (375_000, 500_000)))
+    ]
+    voice["cues"][0].update(text="".join(texts), local_subtitles=[
+        {"text": cue["text"], "range_us": {key: value - 200_000 for key, value in cue["timeline_range_us"].items()}}
+        for cue in timeline["tracks"][3]["cues"]
+    ])
+    timeline["output"].update(width=width, height=height)
+    timeline["render_policy"].update(preview_burn_subtitles=True, subtitle_position=position)
+    before = deepcopy(media)
+    movie = tmp_path / "safe-captions.mp4"
+    preview.render_timeline_preview(*media, tmp_path, movie)
+    for timestamp in (0.28, 0.4):
+        pixels = _pixels(ffmpeg, movie, timestamp)
+        points = [(offset // 3 % width, offset // 3 // width)
+                  for offset in range(0, len(pixels), 3) if min(pixels[offset:offset + 3]) > 170]
+        assert len(points) > 100
+        xs, ys = zip(*points)
+        # 实际解码像素必须留出短边 5% 的安全区；不以 overflow=false 代替像素检查。
+        margin = min(size) / 20
+        assert margin <= min(xs) <= max(xs) < width - margin
+        assert margin <= min(ys) <= max(ys) < height - margin
+        assert max(ys) < height / 2 if position == "top" else min(ys) > height / 2
+    assert movie.with_suffix(".srt").read_text() == preview._srt(timeline["tracks"][3]["cues"])
+    assert media == before
 
 
 def test_missing_cjk_font_rejects_requested_burn_without_publishing(tmp_path, media, monkeypatch):
