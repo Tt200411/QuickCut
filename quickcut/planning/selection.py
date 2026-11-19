@@ -470,9 +470,9 @@ class OllamaSelector:
             selectable_ids = {item["candidate_id"] for item in evidence if item["selectable"]}
             capacities = sorted((c["duration_us"] for c in candidates
                                  if c["candidate_id"] in selectable_ids
-                                 and type(c.get("duration_us")) is int and c["duration_us"] > 0), reverse=True)[:8]
-            # Retain the short-beat limit when it can fill the budget. Longer
-            # sentence beats may need more real clips; the model still chooses.
+                                 and type(c.get("duration_us")) is int and c["duration_us"] > 0))[:8]
+            # Size the allowance for shorter candidates too: the best-looking
+            # clips need not be the longest. The model still chooses the shots.
             if sum(capacities[:max_shots]) < beat["duration_budget_us"]:
                 capacity = 0
                 for count, duration in enumerate(capacities, start=1):

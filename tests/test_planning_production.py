@@ -153,12 +153,13 @@ def test_validator_checks_frozen_outline_budget_and_request_identity(inputs, tmp
         confirm(draft)
 
 
-@pytest.mark.parametrize("story_text,expected_limits,expected_counts", [
-    ("林间风景", [3], [3]),
-    ("林间光影，沿路风景，轻松收束", [2, 2, 1], [1, 2, 1]),
+@pytest.mark.parametrize("story_text,durations,expected_limits,expected_counts", [
+    ("林间风景", [10, 10, 10, 10], [3], [3]),
+    ("林间光影，沿路风景，轻松收束", [10, 10, 10, 10], [2, 2, 1], [1, 2, 1]),
+    ("林间风景", [30, 10, 10, 10], [3], [3]),
 ])
 def test_selector_capacity_covers_thirty_seconds_without_changing_short_beats(
-        inputs, tmp_path, monkeypatch, story_text, expected_limits, expected_counts):
+        inputs, tmp_path, monkeypatch, story_text, durations, expected_limits, expected_counts):
     brief, manifest, _, _ = inputs
     brief["requirements"]["story"] = story_text
     fourth_asset, fourth_segment = copy.deepcopy(manifest["assets"][0]), copy.deepcopy(manifest["segments"][0])
@@ -166,10 +167,10 @@ def test_selector_capacity_covers_thirty_seconds_without_changing_short_beats(
     fourth_segment.update(segment_id="segment-3", asset_id="asset-3")
     manifest["assets"].append(fourth_asset)
     manifest["segments"].append(fourth_segment)
-    for asset in manifest["assets"]:
-        asset["duration_us"] = 10_000_000
-    for segment in manifest["segments"]:
-        segment["source_range_us"] = {"begin": 0, "end": 10_000_000}
+    for asset, duration in zip(manifest["assets"], durations):
+        asset["duration_us"] = duration * 1_000_000
+    for segment, duration in zip(manifest["segments"], durations):
+        segment["source_range_us"] = {"begin": 0, "end": duration * 1_000_000}
     request = build_retrieval_request(brief, manifest, build_outline(brief), broll_queries=False)
     candidates = envelope("CandidateSet", "candidates-live", "project-live", 1, fixtures_only=False, owner="B",
                           inputs=[ref(manifest), ref(request)])
@@ -185,7 +186,10 @@ def test_selector_capacity_covers_thirty_seconds_without_changing_short_beats(
         payloads.append(payload)
         prompt = json.loads(payload["prompt"])
         count = (prompt["beat"]["duration_budget_us"] + 9_999_999) // 10_000_000
-        ids = [c["candidate_id"] for c in prompt["candidates"] if c["selectable"]][:count]
+        # The model prefers the shorter clips even when one long clip could
+        # cover the entire beat. The schema must permit that genuine choice.
+        ids = [c["candidate_id"] for c in prompt["candidates"] if c["selectable"]
+               and c["source_range_us"]["end"] - c["source_range_us"]["begin"] == 10_000_000][:count]
         answer = {"shot_order": ids, "roles": {cid: "atmosphere" for cid in ids},
                   "reasons": {cid: "画面符合主题" for cid in ids}, "narration_draft": "林间风景静静展开。"}
         return io.BytesIO(json.dumps({"model": payload["model"], "done": True, "response": json.dumps(answer)}).encode())
@@ -193,6 +197,8 @@ def test_selector_capacity_covers_thirty_seconds_without_changing_short_beats(
     draft = draft_for((brief, manifest, candidates, request), tmp_path)
     assert [p["format"]["properties"]["shot_order"]["maxItems"] for p in payloads] == expected_limits
     assert [len(b["selected_candidate_ids"]) for b in draft["beats"]] == expected_counts
+    if durations[0] == 30:
+        assert draft["beats"][0]["selected_candidate_ids"] == ["q0-candidate-1", "q0-candidate-2", "q0-candidate-3"]
     result = confirm(draft)
     assert result.story_plan["status"] == "ready_for_edit"
     assert sum(shot["suggested_duration_us"] for beat in result.story_plan["beats"] for shot in beat["shots"]) == 30_000_000

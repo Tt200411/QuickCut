@@ -67,7 +67,27 @@ jobs:
       - name: 全量 pytest
         run: |
           set -euo pipefail
-          python -m pytest -q -ra --junitxml="$PIPELINE_OUTPUT/pytest.xml" | tee "$PIPELINE_OUTPUT/pytest.txt"
+          # Keep a stalled media subprocess from consuming the whole job, and
+          # expose its last test/stack in the check result as well as the logs.
+          set +e
+          PYTHONUNBUFFERED=1 timeout --kill-after=10s 300s python -m pytest -v -ra \
+            -o faulthandler_timeout=60 --junitxml="$PIPELINE_OUTPUT/pytest.xml" \
+            2>&1 | tee "$PIPELINE_OUTPUT/pytest.txt"
+          test_statuses=("${PIPESTATUS[@]}")
+          pytest_status=${test_statuses[0]}
+          if [ "$pytest_status" -eq 0 ]; then pytest_status=${test_statuses[1]}; fi
+          set -e
+          if [ "$pytest_status" -ne 0 ]; then
+            python - <<'PY'
+          import os
+          from pathlib import Path
+          log = Path(os.environ["PIPELINE_OUTPUT"]) / "pytest.txt"
+          tail = "\n".join(log.read_text(errors="replace").splitlines()[-80:])
+          message = tail.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+          print("::error title=Pytest failed or timed out::" + message)
+          PY
+          fi
+          exit "$pytest_status"
 
       - name: 真实合成媒体用例和十秒预览
         run: |
