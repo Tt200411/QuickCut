@@ -310,26 +310,34 @@ def _mix_narration(video: Path, audio: Path, output: Path, duration: float) -> N
     ffmpeg = _require_binary("ffmpeg")
     has_original_audio = _has_audio_stream(video)
     if has_original_audio:
-        # Keep the camera/production track underneath local narration.  Both
-        # inputs are explicitly rebased to t=0 and the original track is the
-        # first mix input, so the mix has a deterministic timeline even when
-        # the source contains a non-zero MP4 edit-list offset.
-        # Bound each silence generator itself, rather than relying on downstream
-        # EOF alone. Dynamic loudnorm outputs 192 kHz, so restore the common
-        # sample rate before padding/mixing short narration on older FFmpeg.
-        filter_complex = (
-            f"[0:a:0]asetpts=PTS-STARTPTS,aresample=48000:async=1:first_pts=0,volume=0.30,apad=whole_dur={duration:.6f},atrim=duration={duration:.6f}[orig];"
-            f"[1:a:0]asetpts=PTS-STARTPTS,aresample=48000:async=1:first_pts=0,loudnorm=I=-18:TP=-2:LRA=7,aresample=48000,apad=whole_dur={duration:.6f},atrim=duration={duration:.6f}[narr];"
-            "[orig][narr]amix=inputs=2:duration=first:dropout_transition=0:normalize=0,alimiter=limit=0.95:level=0:latency=1,asetpts=PTS-STARTPTS[aout]"
-        )
-        command = [
-            ffmpeg, "-hide_banner", "-loglevel", "error", "-i", str(video), "-i", str(audio),
-            "-map", "0:v:0", "-map", "[aout]", "-filter_complex", filter_complex,
-            "-t", f"{duration:.3f}", "-vf", "setpts=PTS-STARTPTS", "-c:v", "libx264",
-            "-preset", "veryfast", "-crf", "19", "-bf", "0", "-pix_fmt", "yuv420p",
-            "-c:a", "aac", "-b:a", "192k",
-            "-ar", "48000", "-ac", "2", "-movflags", "+faststart", str(output), "-y",
-        ]
+        # Finish loudnorm's short-input/EOF handling before the mixed-stream
+        # graph runs. Preserve the complete narration in float PCM, avoiding an
+        # extra integer quantization; only the mixing stage applies the target.
+        with tempfile.TemporaryDirectory(prefix="quickcut-mix-") as temporary:
+            normalized = Path(temporary) / "narration.wav"
+            subprocess.run([
+                ffmpeg, "-hide_banner", "-loglevel", "error", "-nostdin", "-i", str(audio), "-vn",
+                "-af", "asetpts=PTS-STARTPTS,aresample=48000:async=1:first_pts=0,"
+                       "loudnorm=I=-18:TP=-2:LRA=7,aresample=48000",
+                "-ar", "48000", "-ac", "2", "-c:a", "pcm_f32le", str(normalized), "-y",
+            ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            # Keep the camera track underneath narration. Both inputs are
+            # rebased to zero, bounded, and mixed with the original track first.
+            filter_complex = (
+                f"[0:a:0]asetpts=PTS-STARTPTS,aresample=48000:async=1:first_pts=0,volume=0.30,apad=whole_dur={duration:.6f},atrim=duration={duration:.6f}[orig];"
+                f"[1:a:0]asetpts=PTS-STARTPTS,aresample=48000:async=1:first_pts=0,apad=whole_dur={duration:.6f},atrim=duration={duration:.6f}[narr];"
+                "[orig][narr]amix=inputs=2:duration=first:dropout_transition=0:normalize=0,alimiter=limit=0.95:level=0:latency=1,asetpts=PTS-STARTPTS[aout]"
+            )
+            command = [
+                ffmpeg, "-hide_banner", "-loglevel", "error", "-i", str(video), "-i", str(normalized),
+                "-map", "0:v:0", "-map", "[aout]", "-filter_complex", filter_complex,
+                "-t", f"{duration:.3f}", "-vf", "setpts=PTS-STARTPTS", "-c:v", "libx264",
+                "-preset", "veryfast", "-crf", "19", "-bf", "0", "-pix_fmt", "yuv420p",
+                "-c:a", "aac", "-b:a", "192k",
+                "-ar", "48000", "-ac", "2", "-movflags", "+faststart", str(output), "-y",
+            ]
+            subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return
     else:
         command = [
             ffmpeg, "-hide_banner", "-loglevel", "error", "-i", str(video), "-i", str(audio),

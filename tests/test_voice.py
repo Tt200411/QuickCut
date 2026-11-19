@@ -61,7 +61,16 @@ def test_caption_render_keeps_original_audio(tmp_path):
 
 @pytest.mark.parametrize("has_original_audio", [True, False])
 @pytest.mark.parametrize("narration_duration", [2, 8])
-def test_narration_mix_rebases_and_bounds_both_streams(tmp_path, has_original_audio, narration_duration):
+def test_narration_mix_rebases_and_bounds_both_streams(tmp_path, monkeypatch, has_original_audio, narration_duration):
+    real_run = subprocess.run
+
+    def bounded_run(*args, **kwargs):
+        # A six-second synthetic clip normally renders in under one second.
+        # Kill a stuck child so this regression reports its actual command.
+        kwargs.setdefault("timeout", 30)
+        return real_run(*args, **kwargs)
+
+    monkeypatch.setattr(subprocess, "run", bounded_run)
     ffmpeg = _require_binary("ffmpeg")
     source = tmp_path / "source.mp4"
     narration = tmp_path / "narration.wav"
