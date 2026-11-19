@@ -8,6 +8,7 @@ from __future__ import annotations
 import base64
 import copy
 import hashlib
+import http.client
 import io
 import json
 import math
@@ -49,8 +50,11 @@ def narration_review(text: str, budget_us: int, *, max_chars: int | None = None)
     if not narration:
         warnings.append({"code": "NARRATION_EMPTY", "message": "请填写完整中文旁白后再确认。"})
     else:
-        if count > limit:
-            advisories.append({"code": "NARRATION_DURATION_ESTIMATE", "message": f"当前{count}个朗读字，超过粗估参考{limit}字；可确认后配音实测，必要时完整改写或调整画面，不能截尾。"})
+        if count > limit or estimated_us > budget_us:
+            advisories.append({"code": "NARRATION_DURATION_ESTIMATE", "message":
+                f"当前{count}个朗读字，字数参考为{limit}字；粗估朗读{estimated_us / 1_000_000:g}秒，"
+                f"计划画面{budget_us / 1_000_000:g}秒。字数或时长超出粗估参考，可确认后配音实测，"
+                "必要时完整改写或调整画面，不能截尾。"})
         if not any("\u4e00" <= char <= "\u9fff" for char in narration):
             warnings.append({"code": "NARRATION_NON_CHINESE", "message": "请将旁白改成与画面相符的中文完整句。"})
         sentence = narration.rstrip("\"'”’」』》）】)")
@@ -454,12 +458,15 @@ class OllamaSelector:
                 if not proposed_review["warnings"] and score(proposed_review) < score(review):
                     current, review = proposed, proposed_review
                     record["accepted"] = True
-            except (ValueError, OSError) as exc:
+            except (ValueError, OSError, http.client.HTTPException) as exc:
+                if isinstance(exc, http.client.IncompleteRead):
+                    record["raw_body"] = exc.partial.decode("utf-8", errors="replace")
                 if isinstance(exc, urllib.error.HTTPError):
                     try:
                         record["raw_body"] = exc.read().decode("utf-8", errors="replace")
-                    except OSError:
-                        pass
+                    except (OSError, http.client.HTTPException) as body_error:
+                        if isinstance(body_error, http.client.IncompleteRead):
+                            record["raw_body"] = body_error.partial.decode("utf-8", errors="replace")
                 record.update(status="failed", error=str(exc),
                               retryable=isinstance(exc, ValueError))
             record["elapsed_seconds"] = perf_counter() - started

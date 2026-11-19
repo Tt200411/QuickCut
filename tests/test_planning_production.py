@@ -1,8 +1,10 @@
 """Offline contract tests; real model acceptance is a separate recorded run."""
 import copy
 import hashlib
+import http.client
 import io
 import json
+from pathlib import Path
 
 import pytest
 from PIL import Image
@@ -588,6 +590,24 @@ def test_speech_estimate_excludes_punctuation_and_is_only_advisory():
     assert review["estimated_duration_us"] > 4_300_000
 
 
+@pytest.mark.parametrize("text,budget_us,max_chars", [
+    ("我们沿着小路慢慢地往前走。", 4_000_000, 15),  # Saved PR #10 reference.
+    ("好。", 1_000_000, None),  # Minimum character reference exceeds short budgets.
+])
+def test_duration_advisory_accounts_for_saved_or_minimum_character_reference(text, budget_us, max_chars):
+    from quickcut.planning.selection import narration_review
+    review = narration_review(text, budget_us, max_chars=max_chars)
+    assert review["character_count"] <= review["max_chars"]
+    assert review["estimated_duration_us"] > budget_us
+    assert review["warnings"] == []
+    assert review["status"] == "pending_confirmation"
+    assert review["advisories"][0]["code"] == "NARRATION_DURATION_ESTIMATE"
+    assert f"字数参考为{review['max_chars']}字" in review["advisories"][0]["message"]
+    assert f"计划画面{budget_us / 1_000_000:g}秒" in review["advisories"][0]["message"]
+    if max_chars is not None:
+        assert review["max_chars"] == max_chars
+
+
 def test_unknown_short_alias_is_never_silently_mapped(inputs, tmp_path, monkeypatch):
     requests = []
     def invalid_alias(request, *, timeout):
@@ -689,13 +709,25 @@ def test_narration_only_rewrite_preserves_selection_and_original_evidence(inputs
     assert len(requests) == 4
 
 
-def test_rewrite_service_failure_keeps_valid_selection_and_complete_long_text(inputs, tmp_path, model, monkeypatch):
+@pytest.mark.parametrize("failure", ["timeout", "incomplete_body", "bad_status", "incomplete_error_body"])
+def test_rewrite_service_failure_keeps_valid_selection_and_complete_long_text(inputs, tmp_path, model, monkeypatch, failure):
     from quickcut.planning import selection
     original = selection.open_ollama
     long_text = "店里坐着许多正在用餐的食客，远处也摆着好几张餐桌，门口还有几位客人。"
+    rewrite_calls = []
+    class IncompleteBody(io.BytesIO):
+        def read(self, *args):
+            raise http.client.IncompleteRead(b'{"done":', 100)
     def respond(request, *, timeout):
         payload = json.loads(request.data)
         if set(payload["format"]["properties"]) == {"narration_draft"}:
+            rewrite_calls.append(payload)
+            if failure == "incomplete_body":
+                return IncompleteBody()
+            if failure == "bad_status":
+                raise http.client.BadStatusLine("incomplete HTTP response")
+            if failure == "incomplete_error_body":
+                raise selection.urllib.error.HTTPError(request.full_url, 500, "model unavailable", {}, IncompleteBody())
             raise TimeoutError("rewrite unavailable")
         response = original(request, timeout=timeout)
         body = json.loads(response.read())
@@ -710,6 +742,17 @@ def test_rewrite_service_failure_keeps_valid_selection_and_complete_long_text(in
         assert not beat["narration_review"]["warnings"]
     raw = draft["model_calls"][0]["raw_response"]
     assert raw["narration_rewrites"][0]["status"] == "failed"
+    assert len(rewrite_calls) == 2  # The same complete text already fits the 15-second middle beat.
+    assert len(draft["model_attempts"]) == len(draft["beats"]) + 2
+    for call in draft["model_calls"]:
+        repairs = call["raw_response"].get("narration_rewrites", [])
+        if not repairs:
+            continue
+        assert len(repairs) == 1 and repairs[0]["retryable"] is False
+        archive = json.loads(Path(repairs[0]["archive_path"]).read_text())
+        assert archive == repairs[0]
+        if failure in {"incomplete_body", "incomplete_error_body"}:
+            assert archive["raw_body"] == '{"done":'
     assert raw["narration_result"]["text"] == long_text
     assert confirm(draft).story_plan["status"] == "ready_for_edit"
 

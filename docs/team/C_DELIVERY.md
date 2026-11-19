@@ -22,7 +22,7 @@ result = confirm_draft(
 
 `generate_draft` 必须消费真实、非 fixture 输入，并实际调用本地 Ollama。每段先合并同一源片段在不同 B 查询中的候选别名，再用一张带编号接触表请求模型选镜与中文旁白；不使用固定 `APPROVED` 文案，也不降级到 rule。输出为 `needs_review`，包含候选与源区间、实际模型选镜、`planned_shots` 的建议时长、中文草稿、旁白字数预算、冻结输入及其内容哈希、模型调用记录。`planned_shots` 应用于 UI 默认边界，不能另按平均时长重算。
 
-`confirm_draft` 使用服务器保存的冻结草案，不再次推理。确认必须逐段提供非空文本、实际确认者和含时区时间；记录绑定草案、镜头/素材版本/源区间及文本哈希，再通过现有 `plan` 和 StoryPlan validator。`plan_revision` 仅接受正整数，拒绝 bool、float、字符串；同草案改稿时保留文档 ID、发布新 revision，旧声音/时间线不能只修改引用后复用。旁白长度在确认前按段落预算检查，按每秒 4.2 字、实际可读时间为画面时长的 90%；例如 5 秒尾段最多 18 字（不计标点）。这只是生成前门槛，最终仍以 E 的真实 PCM 时长为准。
+`confirm_draft` 使用服务器保存的冻结草案，不再次推理。确认必须逐段提供非空文本、实际确认者和含时区时间；记录绑定草案、镜头/素材版本/源区间及文本哈希，再通过现有 `plan` 和 StoryPlan validator。`plan_revision` 仅接受正整数，拒绝 bool、float、字符串；同草案改稿时保留文档 ID、发布新 revision，旧声音/时间线不能只修改引用后复用。2026-11-19 的旁白修复将字数/时长估计改为非阻断提示：按每秒 2.5 个朗读字加 0.8 秒停顿粗估，字母和数字逐字符计数，不含标点和空格。`narration_max_chars` 名称保留但只作参考；旧草案保存的参考值和冻结输入不改写。超过字数参考或粗估时长超过画面预算都会提示，完整句仍可明确确认；最终由 E 的全文合成和真实 PCM 时长决定，并由 D/E 有界适配，不截尾。160 字符编辑安全上限仍然阻断确认。
 
 `selection_overrides={beat_id: [candidate_id, ...]}` 支持在冻结候选中替换或重排镜头；未传时保留原模型选择。`preview_selections(draft, selection_overrides=None)` 返回按 beat ID 索引的 `selected_candidate_ids/planned_shots`，用于 UI 重算时长，不推理、不批准。非法/重复 ID、跨段重复源片段及不合法容量会拒绝。修改后的镜头写 `decided_by=human_edit/assistant_edit`，`selection_edits` 记录原顺序、新顺序、确认者和时间；原始模型响应与调用身份保持原样，不能将人工选择写成模型输出。
 
@@ -34,9 +34,9 @@ result = confirm_draft(
 
 真实运行暴露了默认 4096 上下文不足和模型只返回旁白两项问题。现显式设置 `num_ctx=8192`、`num_predict=1024`，每段最多 8 个去重候选送模型，完整候选仍在冻结输入中，未提交候选 ID 另记。`format` 使用 JSON Schema，要求 `shot_order/reasons/roles/narration_draft`，选镜 ID 来自实际候选 enum；这是 Ollama 官方 [Generate API](https://docs.ollama.com/api/generate) 和[结构化输出](https://docs.ollama.com/capabilities/structured-outputs)支持的方式。格式错误最多再调用真实模型一次，两个请求和原始响应分别保存并通过 `model_attempts` 关联；HTTP 错误正文归档并显示，不能以 rule 代填。上述是真实失败后的修复，**修复后的完整运行仍待验收**。
 
-后续真实运行又发现模型全选长候选 ID，重复理由/角色键使输出预算耗尽。生产模型现使用 `C01/C02` 等短别名，`candidate_aliases` 保存其到完整 ID 的无损映射；开场/中段最多选 2 镜头，预算不超过 5 秒时最多 1 镜头。`reasons/roles` 只能对应实际所选短 ID。程序严格白名单还原，原始 `body/parsed` 保留模型短 ID，另存 `canonicalized`；这不是规则代选。模型只接收精简 ASR 摘要（文本最多 240 字、最多 3 个带源范围的 spans，标注省略数），完整 ASR/复核诊断仍保留于 `candidate_evidence` 及冻结输入。
+后续真实运行又发现模型全选长候选 ID，重复理由/角色键使输出预算耗尽。生产模型现使用 `C01/C02` 等短别名，`candidate_aliases` 保存其到完整 ID 的无损映射；容量允许时开场/中段最多选 2 镜头，预算不超过 5 秒时最多 1 镜头。当前版本按候选容量提高必要的选镜数量上限，最多 8 镜头，实际选择仍由模型决定。`reasons/roles` 只能对应实际所选短 ID。程序严格白名单还原，原始 `body/parsed` 保留模型短 ID，另存 `canonicalized`；这不是规则代选。模型只接收精简 ASR 摘要（文本最多 240 字、最多 3 个带源范围的 spans，标注省略数），完整 ASR/复核诊断仍保留于 `candidate_evidence` 及冻结输入。
 
-真实运行出现过超预算和残句旁白。当前产品边界将结构与内容分开：候选 ID、理由、角色等结构不合法仍拒绝并最多追加一次真实模型修复；结构合法的真实选镜则保留，原始旁白进入 `needs_review`，逐段 `narration_review/review_warnings` 标出超长、空白、非中文和缺少句末标点，HTML 明确提示需要修改。不会为修文案重新丢弃合法选镜，也不截字、补字或代写原文。生成提示要求较短的完整主题单句，schema 长度保守包含标点。`confirm_draft` 与 HTTP 确认接口共同严格校验非空、实际朗读字数、中文和句末标点；未修正文本不能进入 E。已有冻结草案和模型原始记录保持原样，用户或助手修改分别留证；标点检查不等于语义质量已获批准。
+真实运行出现过超预算和残句旁白。当前产品边界将结构与内容分开：候选 ID、理由、角色等结构不合法仍拒绝并最多追加一次真实模型格式修复；首次选镜响应未完成直接拒绝。结构合法的真实选镜保留，旁白缺少句末标点、空白、非中文、明显残句或超过 160 字符进入阻断 `warnings`，字数/粗估时长进入非阻断 `advisories`。初次生成和独立改写的 JSON Schema 不设 `maxLength`，避免解码器硬截句。存在内容或时长提示时，模型只重写整句旁白，最多两次，不重新选镜；只有无内容 warning 且优于当前文本的候选才会替换。改写图像按已选镜头顺序提供，生产模式缺少任一已选镜头的可读画面时跳过改写并留证。格式失败可在上限内重试，网络失败（包括 HTTP 响应中断）停止重试并保留当前文字；归档读写失败返回结构化错误并停止。原始响应、规范化选镜、独立改写请求/响应和最终文本哈希均保留，改写计入 `model_attempts`，不能自动批准。`confirm_draft` 与 HTTP 确认接口共同检查内容 warning；粗估超时不能替代真实配音测量。已有冻结草案和模型原始记录保持原样，用户或助手修改分别留证；这些文本启发式不等于语法、画面事实或听感已获批准。
 
 B 的顶层或任一 query `status=error` 会阻断 C，不能作为合法空集继续。B 的 `transcript_evidence` 与 A 的完整 segment transcript 核对；C 把 ASR 状态、span/range、review 状态及资产级诊断保留给模型与 StoryPlan。`needs_review` 不会被解释为转写已准确。
 

@@ -1,0 +1,328 @@
+{
+  "kind": "PR11ReviewEvidence",
+  "author_head": "c038a61446941598c4aa7563f976a34bd690b207",
+  "base_head": "5f942498fe1aa7f969ae528a3cd6337a70a35498",
+  "model": "qwen2.5vl:3b",
+  "real_model_inference": true,
+  "real_tts_rerun": false,
+  "human_approval": false,
+  "real_model_cases": [
+    {
+      "case": "historical_rewrite",
+      "beat_id": "beat-open",
+      "before": "阳明山国家公园的自然风光，山林小路和开阔风景，展现自然宁静的美",
+      "after": "您仔细看看七股山，阳明山国家公园的迎风面，您都可以看到树木受到风压作用。",
+      "review": {
+        "status": "pending_confirmation",
+        "warnings": [],
+        "advisories": [
+          {
+            "code": "NARRATION_DURATION_ESTIMATE",
+            "message": "当前33个朗读字，字数参考为23字；粗估朗读14秒，计划画面10秒。字数或时长超出粗估参考，可确认后配音实测，必要时完整改写或调整画面，不能截尾。"
+          }
+        ],
+        "estimated_duration_us": 14000000,
+        "estimate_basis": "按2.5字/秒加0.8秒粗估；汉字、字母、数字逐字符计数，不含标点；以配音实测为准",
+        "character_count": 33,
+        "max_chars": 23,
+        "approved": false
+      },
+      "seconds": 17.99,
+      "rewrites": [
+        {
+          "status": "reviewed",
+          "accepted": true,
+          "error": null,
+          "inference_executed": true,
+          "archive_path": "outputs/pr11-real-review-20261119/model-evidence/narration-2fa9abe5f226b7bc8592bfbfea73d2fac00ae7bc495a3b3a3864f89cac630280.json",
+          "archive_sha256": "bc469db9ee111146cf11bcd197d23b09e2a5c55b5665a70342299e67518fcab6"
+        },
+        {
+          "status": "reviewed",
+          "accepted": false,
+          "error": null,
+          "inference_executed": true,
+          "archive_path": "outputs/pr11-real-review-20261119/model-evidence/narration-69facfd062ddcfca4061d47c3542d841dac34d99d935b14199c77def40f299e0.json",
+          "archive_sha256": "b3fc924d44067fa397034f334b7f59496ef13329e1d6fca405919bd0c9eb7e6a"
+        }
+      ],
+      "selection_unchanged": true
+    },
+    {
+      "case": "historical_rewrite",
+      "beat_id": "beat-close",
+      "before": "秋冬季节登山健行赏景，也别忘了多带几",
+      "after": "秋冬季节登山健行赏景，也别忘了多带几件衣物保暖喔！",
+      "review": {
+        "status": "pending_confirmation",
+        "warnings": [],
+        "advisories": [
+          {
+            "code": "NARRATION_DURATION_ESTIMATE",
+            "message": "当前23个朗读字，字数参考为10字；粗估朗读10秒，计划画面5秒。字数或时长超出粗估参考，可确认后配音实测，必要时完整改写或调整画面，不能截尾。"
+          }
+        ],
+        "estimated_duration_us": 10000000,
+        "estimate_basis": "按2.5字/秒加0.8秒粗估；汉字、字母、数字逐字符计数，不含标点；以配音实测为准",
+        "character_count": 23,
+        "max_chars": 10,
+        "approved": false
+      },
+      "seconds": 10.67,
+      "rewrites": [
+        {
+          "status": "reviewed",
+          "accepted": true,
+          "error": null,
+          "inference_executed": true,
+          "archive_path": "outputs/pr11-real-review-20261119/model-evidence/narration-f94cb4a0a1b8978183f1b6a42f6cf67dac50950e69aa692b2db8eebd723d546c.json",
+          "archive_sha256": "7a802f9cba352835942195eda7f1898c4d3a420cd0c5d4006b0607c9ca326625"
+        },
+        {
+          "status": "reviewed",
+          "accepted": false,
+          "error": null,
+          "inference_executed": true,
+          "archive_path": "outputs/pr11-real-review-20261119/model-evidence/narration-b70234c10a982d759b76a14aec3ec4774463dac72dd77021d381c3be578f5708.json",
+          "archive_sha256": "b4f671608e2f37107fb698975712c678953ee41a1fbbf558a93e3447010d1aa1"
+        }
+      ],
+      "selection_unchanged": true
+    },
+    {
+      "case": "fresh_selection",
+      "beat_id": "beat-close",
+      "text": "秋冬季节登山健行赏景，也别忘了多带几件衣物保暖哦。",
+      "ids": [
+        "candidate-query-close-asset-72abd30fcd284c44aa0a99b87bde0370-r1-shot-105000000-113313000"
+      ],
+      "review": {
+        "status": "pending_confirmation",
+        "warnings": [],
+        "advisories": [
+          {
+            "code": "NARRATION_DURATION_ESTIMATE",
+            "message": "当前23个朗读字，字数参考为10字；粗估朗读10秒，计划画面5秒。字数或时长超出粗估参考，可确认后配音实测，必要时完整改写或调整画面，不能截尾。"
+          }
+        ],
+        "estimated_duration_us": 10000000,
+        "estimate_basis": "按2.5字/秒加0.8秒粗估；汉字、字母、数字逐字符计数，不含标点；以配音实测为准",
+        "character_count": 23,
+        "max_chars": 10,
+        "approved": false
+      },
+      "seconds": 17.2,
+      "inference_executed": true
+    }
+  ],
+  "voice_contract_fixture": {
+    "kind": "PR11VoiceContractReview",
+    "recorded_at": "2026-11-19T07:24:56.865623+00:00",
+    "fixtures_only": true,
+    "neural_inference_executed": false,
+    "speech_quality_evaluated": false,
+    "fixture_audio": "20 seconds constant nonzero PCM16 mono at 48000 Hz plus 180000 us sentence pause; not speech",
+    "source_draft": "outputs/workbench/ac91f60c01ca/draft.json",
+    "source_draft_sha256": "686989ff1e89cd9666933f4e4f25394aced80c0dc1d60c4d8b0b31544348f034",
+    "source_draft_modified": false,
+    "confirmation_kind": "assistant_review",
+    "approved_text": "山林小路延伸在绿色树木之间，路旁草木高低错落，远处山坡与近处树影一同铺满画面。",
+    "character_count": 36,
+    "beats": [
+      {
+        "beat_id": "beat-open",
+        "duration_budget_us": 10000000,
+        "frozen_reference_chars": 23,
+        "review": {
+          "status": "pending_confirmation",
+          "warnings": [],
+          "advisories": [
+            {
+              "code": "NARRATION_DURATION_ESTIMATE",
+              "message": "当前36个朗读字，字数参考为23字；粗估朗读15.2秒，计划画面10秒。字数或时长超出粗估参考，可确认后配音实测，必要时完整改写或调整画面，不能截尾。"
+            }
+          ],
+          "estimated_duration_us": 15200000,
+          "estimate_basis": "按2.5字/秒加0.8秒粗估；汉字、字母、数字逐字符计数，不含标点；以配音实测为准",
+          "character_count": 36,
+          "max_chars": 23,
+          "approved": false
+        }
+      },
+      {
+        "beat_id": "beat-middle",
+        "duration_budget_us": 15000000,
+        "frozen_reference_chars": 35,
+        "review": {
+          "status": "pending_confirmation",
+          "warnings": [],
+          "advisories": [
+            {
+              "code": "NARRATION_DURATION_ESTIMATE",
+              "message": "当前36个朗读字，字数参考为35字；粗估朗读15.2秒，计划画面15秒。字数或时长超出粗估参考，可确认后配音实测，必要时完整改写或调整画面，不能截尾。"
+            }
+          ],
+          "estimated_duration_us": 15200000,
+          "estimate_basis": "按2.5字/秒加0.8秒粗估；汉字、字母、数字逐字符计数，不含标点；以配音实测为准",
+          "character_count": 36,
+          "max_chars": 35,
+          "approved": false
+        }
+      },
+      {
+        "beat_id": "beat-close",
+        "duration_budget_us": 5000000,
+        "frozen_reference_chars": 10,
+        "review": {
+          "status": "pending_confirmation",
+          "warnings": [],
+          "advisories": [
+            {
+              "code": "NARRATION_DURATION_ESTIMATE",
+              "message": "当前36个朗读字，字数参考为10字；粗估朗读15.2秒，计划画面5秒。字数或时长超出粗估参考，可确认后配音实测，必要时完整改写或调整画面，不能截尾。"
+            }
+          ],
+          "estimated_duration_us": 15200000,
+          "estimate_basis": "按2.5字/秒加0.8秒粗估；汉字、字母、数字逐字符计数，不含标点；以配音实测为准",
+          "character_count": 36,
+          "max_chars": 10,
+          "approved": false
+        }
+      }
+    ],
+    "status": "passed",
+    "measured_status": "needs_retime",
+    "measured_cues": [
+      {
+        "cue_id": "cue-01",
+        "beat_id": "beat-open",
+        "text": "山林小路延伸在绿色树木之间，路旁草木高低错落，远处山坡与近处树影一同铺满画面。",
+        "duration_budget_us": 9800000,
+        "duration_us": 20180000,
+        "speech_end_us": 20000000,
+        "sentence_pause_us": 180000,
+        "tempo_ratio": 1.0,
+        "fit_status": "needs_retime",
+        "pcm_frames": 968640,
+        "audio_sha256": "sha256:b646e36394f92dec084f5f739aa12cefe85862afa3acd12df065f91e533f373c"
+      },
+      {
+        "cue_id": "cue-02",
+        "beat_id": "beat-middle",
+        "text": "山林小路延伸在绿色树木之间，路旁草木高低错落，远处山坡与近处树影一同铺满画面。",
+        "duration_budget_us": 14800000,
+        "duration_us": 20180000,
+        "speech_end_us": 20000000,
+        "sentence_pause_us": 180000,
+        "tempo_ratio": 1.0,
+        "fit_status": "needs_retime",
+        "pcm_frames": 968640,
+        "audio_sha256": "sha256:b646e36394f92dec084f5f739aa12cefe85862afa3acd12df065f91e533f373c"
+      },
+      {
+        "cue_id": "cue-03",
+        "beat_id": "beat-close",
+        "text": "山林小路延伸在绿色树木之间，路旁草木高低错落，远处山坡与近处树影一同铺满画面。",
+        "duration_budget_us": 4800000,
+        "duration_us": 20180000,
+        "speech_end_us": 20000000,
+        "sentence_pause_us": 180000,
+        "tempo_ratio": 1.0,
+        "fit_status": "needs_retime",
+        "pcm_frames": 968640,
+        "audio_sha256": "sha256:b646e36394f92dec084f5f739aa12cefe85862afa3acd12df065f91e533f373c"
+      }
+    ],
+    "fit_rounds": [
+      {
+        "iteration": 1,
+        "status": "needs_retime",
+        "request_id": "voice-fit-467af2e8ad817941bc4892a7affc50bda5b8d7d542f9b0947c62ad8647f5e5ed",
+        "cue_ranges": {
+          "cue-01": {
+            "begin": 200000,
+            "end": 10000000
+          },
+          "cue-02": {
+            "begin": 10200000,
+            "end": 25000000
+          },
+          "cue-03": {
+            "begin": 25200000,
+            "end": 30000000
+          }
+        },
+        "reply_status": "needs_retime",
+        "reply_fixtures_only": true
+      },
+      {
+        "iteration": 2,
+        "status": "needs_retime",
+        "request_id": "voice-fit-be7f495cab207929fdaee08f724c74f4a5b58479500155dfe2fde448e0314b06",
+        "cue_ranges": {
+          "cue-01": {
+            "begin": 200000,
+            "end": 10000000
+          },
+          "cue-02": {
+            "begin": 10200000,
+            "end": 25000000
+          },
+          "cue-03": {
+            "begin": 25200000,
+            "end": 30000000
+          }
+        },
+        "reply_status": "needs_retime",
+        "reply_fixtures_only": true
+      }
+    ],
+    "final_cues": [
+      {
+        "cue_id": "cue-01",
+        "beat_id": "beat-open",
+        "text": "山林小路延伸在绿色树木之间，路旁草木高低错落，远处山坡与近处树影一同铺满画面。",
+        "duration_budget_us": 9800000,
+        "duration_us": 20180000,
+        "speech_end_us": 20000000,
+        "sentence_pause_us": 180000,
+        "tempo_ratio": 1.0,
+        "fit_status": "needs_retime",
+        "pcm_frames": 968640,
+        "audio_sha256": "sha256:b646e36394f92dec084f5f739aa12cefe85862afa3acd12df065f91e533f373c"
+      },
+      {
+        "cue_id": "cue-02",
+        "beat_id": "beat-middle",
+        "text": "山林小路延伸在绿色树木之间，路旁草木高低错落，远处山坡与近处树影一同铺满画面。",
+        "duration_budget_us": 14800000,
+        "duration_us": 20180000,
+        "speech_end_us": 20000000,
+        "sentence_pause_us": 180000,
+        "tempo_ratio": 1.0,
+        "fit_status": "needs_retime",
+        "pcm_frames": 968640,
+        "audio_sha256": "sha256:b646e36394f92dec084f5f739aa12cefe85862afa3acd12df065f91e533f373c"
+      },
+      {
+        "cue_id": "cue-03",
+        "beat_id": "beat-close",
+        "text": "山林小路延伸在绿色树木之间，路旁草木高低错落，远处山坡与近处树影一同铺满画面。",
+        "duration_budget_us": 4800000,
+        "duration_us": 20180000,
+        "speech_end_us": 20000000,
+        "sentence_pause_us": 180000,
+        "tempo_ratio": 1.0,
+        "fit_status": "needs_retime",
+        "pcm_frames": 968640,
+        "audio_sha256": "sha256:b646e36394f92dec084f5f739aa12cefe85862afa3acd12df065f91e533f373c"
+      }
+    ],
+    "result_error": "VOICE_NEEDS_RETIME",
+    "next_owner": "C",
+    "complete_audio_preserved": true,
+    "exportable_timeline_returned": false,
+    "export_invoked": false,
+    "scope": "Confirmation and measured audio D/E contract only; no F export invoked because integration rejected overlong audio. Temporary fixture WAVs verified then removed."
+  }
+}
