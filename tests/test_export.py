@@ -208,14 +208,16 @@ def test_known_leading_silence_does_not_allow_missing_original_audio(tmp_path, s
     shutil.copytree(source_media, root)
     source = root / "bad-original.mkv"
     ffmpeg = core._ffmpeg_binary()
-    length = 0.4 if damage == "short_tail" else 1.6
-    command = [ffmpeg, "-v", "error", "-f", "lavfi", "-i", "color=c=green:s=160x120:r=25:d=1.6",
+    length = {"short_tail": 0.4, "interior_gap": 1.4, "all_selected_audio_missing": 0.5}[damage]
+    command = [ffmpeg, "-v", "error", "-copyts", "-f", "lavfi", "-i", "color=c=green:s=160x120:r=25:d=1.6",
         "-f", "lavfi", "-i", f"sine=frequency=440:sample_rate=48000:duration={length}"]
     if damage != "short_tail":
-        window = "0.4,0.6" if damage == "interior_gap" else "0.1,1.2"
-        # Ten-millisecond PCM frames align with Matroska's timestamp ticks.
-        # Resampler rounding must not accidentally reject an otherwise padded gap.
-        command += ["-af", f"asetnsamples=n=480:p=0,aselect='not(between(t,{window}))'"]
+        boundary, gap = (19_200, 9_600) if damage == "interior_gap" else (4_800, 52_800)
+        # Explicit timestamps preserve the missing interval on older FFmpeg too;
+        # dropping frames with aselect alone may be retimed into contiguous PCM.
+        # Ten-millisecond frames align exactly with Matroska's timestamp ticks.
+        command += ["-af", "asetnsamples=n=480:p=0,asettb=1/48000,"
+                    f"asetpts='(N+gte(N,{boundary})*{gap})/SR/TB'", "-enc_time_base:a", "1:48000"]
     subprocess.run(command + ["-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "pcm_s16le", str(source)],
                    check=True, capture_output=True)
     if damage != "short_tail":
