@@ -361,15 +361,18 @@ def test_configured_font_with_quoted_path_is_copied_safely(tmp_path, media, monk
 
 @pytest.mark.parametrize("position", ["top", "bottom"])
 def test_caption_position_changes_actual_pixels_and_keeps_editable_text(tmp_path, media, ffmpeg, position):
-    media[0]["output"].update(width=320, height=240)
+    # A 640x480 canvas keeps glyph strokes above subpixel size across Linux/macOS
+    # fonts. Preserve the brightness/count gate; test placement, not tiny-font AA.
+    width, height = 640, 480
+    media[0]["output"].update(width=width, height=height)
     media[0]["render_policy"]["subtitle_position"] = position
     movie = tmp_path / f"caption-{position}.mp4"
     report = preview.render_timeline_preview(*media, tmp_path, movie)
     pixels = _pixels(ffmpeg, movie, 0.3)
-    rows = [offset // (320 * 3) for offset in range(0, len(pixels), 3)
+    rows = [offset // (width * 3) for offset in range(0, len(pixels), 3)
             if min(pixels[offset:offset + 3]) > 170]
     assert len(rows) > 20
-    assert max(rows) < 120 if position == "top" else min(rows) > 120
+    assert max(rows) < height // 2 if position == "top" else min(rows) > height // 2
     assert report["subtitle_position"] == position
     assert "可编辑字幕" in movie.with_suffix(".srt").read_text()
 
