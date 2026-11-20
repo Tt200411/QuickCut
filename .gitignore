@@ -27,3 +27,7 @@ tmp/
 !/deliveries/
 !/deliveries/quickcut-20261117/
 !/deliveries/quickcut-20261117/**
+
+# Caption and narration demo approved for sharing.
+!/deliveries/caption-voice-demo-20261120/
+!/deliveries/caption-voice-demo-20261120/**

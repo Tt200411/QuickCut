@@ -28,6 +28,8 @@ again if speech exceeds a shot budget. Narration is never truncated to fit.
 Settings are saved with the render revision. Existing jobs without these fields
 keep compact captions and the configured delivery speed.
 
+The [90-second demo and editable project](deliveries/caption-voice-demo-20261120/README.md) show wide captions with 0.9x narration.
+
 ## Team implementation guide
 
 - [Automatic background music, starter catalog, and attribution](examples/music/README.md)
