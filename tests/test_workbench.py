@@ -426,6 +426,47 @@ def test_subtitle_position_is_explicit_and_validated(browser, position):
         assert read(jobs.directory(response.json()["job_id"]) / "settings.json")["subtitle_position"] == position
 
 
+def test_voice_step_can_switch_gender_and_store_caption_style(browser, monkeypatch, tmp_path):
+    from quickcut.production_pipeline import read
+    client, jobs, submitted = browser
+    male = tmp_path / "male.wav"
+    female = tmp_path / "female.wav"
+    male.write_bytes(reference_wav(duration=1.5))
+    female.write_bytes(reference_wav(duration=2))
+    monkeypatch.setattr("quickcut.workbench.VOICE_PRESETS", {
+        "male": {"label": "男声", "path": male},
+        "female": {"label": "女声", "path": female},
+    })
+    job_id = review_ready(client, jobs)
+    root = jobs.directory(job_id)
+    config = read(root / "voice-config.json")
+    config["cue_overrides"] = {"cue-a": {"reference_audio": "old.wav", "seed": 3}}
+    write_json(root / "voice-config.json", config)
+    original = (root / "reference/voice.wav").read_bytes()
+    body = confirmation()
+    body.update(voice="female", subtitle_size="large", subtitle_weight="bold", subtitle_color="yellow")
+    assert client.post(f"/api/jobs/{job_id}/confirm", json=body).status_code == 200
+    settings = read(root / "settings.json")
+    frozen = read(root / "voice-config.json")
+    assert (root / "reference/voice.wav").read_bytes() == female.read_bytes() != original
+    assert frozen["voice_label"] == "女声"
+    assert frozen["cue_overrides"]["cue-a"]["reference_audio"] == frozen["reference_audio"]
+    assert settings["voice"] == "female"
+    assert settings["subtitle_size"] == "large"
+    assert settings["subtitle_weight"] == "bold"
+    assert settings["subtitle_color"] == "yellow"
+    assert client.get(f"/api/jobs/{job_id}").json()["presentation"]["voice"] == "female"
+    rejected = confirmation()
+    rejected["voice"] = "child"
+    assert client.post(f"/api/jobs/{job_id}/confirm", json=rejected).status_code == 422
+    assert (root / "reference/voice.wav").read_bytes() == female.read_bytes()
+    rejected = confirmation()
+    rejected["subtitle_color"] = "purple"
+    assert client.post(f"/api/jobs/{job_id}/confirm", json=rejected).status_code == 422
+    assert read(root / "settings.json")["subtitle_color"] == "yellow"
+    assert submitted[-1][0] == job_id and submitted[-1][1] == "render"
+
+
 def test_job_freezes_default_voice_config_and_reference_bytes(browser):
     import hashlib
     from quickcut.production_pipeline import REPO, read

@@ -449,6 +449,18 @@ def test_draft_display_text_keeps_utf16_range_and_input_without_media(tmp_path, 
     assert subtitle_only == before
 
 
+def test_jianying_text_uses_the_selected_caption_style(tmp_path):
+    timeline, _, _ = _documents()
+    timeline["render_policy"].update(subtitle_size="large", subtitle_weight="bold", subtitle_color="yellow")
+    draft, _ = jianying.build_draft({**timeline, "tracks": [timeline["tracks"][3]]}, [], tmp_path,
+                                    name="字幕样式", draft_id="style-test")
+    content = json.loads(draft["materials"]["texts"][0]["content"])
+    style = content["styles"][0]
+    assert style["size"] == pytest.approx(8.0 * 1.35)
+    assert style["bold"] is True
+    assert style["fill"]["content"]["solid"]["color"] == [1.0, 1.0, 0.0]
+
+
 def test_pre_layout_adapter_package_is_rejected_before_rebuild(tmp_path):
     assert jianying.ADAPTER_VERSION == "quickcut-jianying-mac-0.2.0"
     report = {"kind": "ExportManifest", "schema_version": "0.1.0", "status": "generated",

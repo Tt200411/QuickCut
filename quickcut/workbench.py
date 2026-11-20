@@ -29,6 +29,15 @@ MAX_FILE_BYTES = 4 * 1024**3
 MAX_REFERENCE_BYTES = 20 * 1024**2
 VIDEO_SUFFIXES = {".mp4", ".mov", ".mkv", ".webm", ".m4v", ".avi"}
 TERMINAL = {"needs_review", "completed", "failed", "interrupted"}
+VOICE_PRESETS = {
+    "male": {"label": "男声", "path": "materials/reference-audio/20261117/男声.wav"},
+    "female": {"label": "女声", "path": "materials/reference-audio/20261117/魅力游移型女1.wav"},
+}
+SUBTITLE_CHOICES = {
+    "subtitle_size": {"small", "medium", "large"},
+    "subtitle_weight": {"regular", "bold"},
+    "subtitle_color": {"white", "yellow", "black"},
+}
 
 
 def _repo_path(value):
@@ -83,6 +92,48 @@ def _reference_info(path):
                 "size_bytes": path.stat().st_size, "rms": round(rms, 3)}
     except (OSError, EOFError, wave.Error, ValueError) as exc:
         raise HTTPException(422, f"参考 WAV 无效：{exc}") from exc
+
+
+def _apply_voice_preset(root, preset):
+    spec = VOICE_PRESETS.get(preset)
+    if spec is None:
+        raise HTTPException(422, "音色应为男声或女声")
+    source = _repo_path(spec["path"])
+    if not source.is_file():
+        raise HTTPException(422, f"找不到{spec['label']}参考音频")
+    info = _reference_info(source)
+    reference = root / "reference" / "voice.wav"
+    reference.parent.mkdir(parents=True, exist_ok=True)
+    reference.write_bytes(source.read_bytes())
+    config_path = root / "voice-config.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    resolved = str(reference.resolve())
+    config["reference_audio"] = resolved
+    config["voice_label"] = spec["label"]
+    overrides = config.get("cue_overrides") or {}
+    if isinstance(overrides, dict):
+        for item in overrides.values():
+            if isinstance(item, dict) and "reference_audio" in item:
+                item["reference_audio"] = resolved
+    write_json(config_path, config)
+    settings = pipeline.read(root / "settings.json")
+    settings["voice"] = preset
+    settings["reference_audio"] = {**info, "kind": "preset", "preset": preset,
+                                   "filename": source.name, "uri": str(source),
+                                   "path": "reference/voice.wav"}
+    write_json(root / "settings.json", settings)
+
+
+def _subtitle_fields(payload):
+    chosen = {}
+    for key, allowed in SUBTITLE_CHOICES.items():
+        if key not in payload or payload[key] in (None, ""):
+            continue
+        value = payload[key]
+        if value not in allowed:
+            raise HTTPException(422, "字幕字号、字重或颜色无效")
+        chosen[key] = value
+    return chosen
 
 
 class Jobs:
@@ -298,6 +349,15 @@ class Jobs:
         if data.get("result"):
             data["downloads"] = {"video": f"/api/jobs/{job_id}/files/video", "package": f"/api/jobs/{job_id}/files/package",
                                  "report": f"/api/jobs/{job_id}/files/report"}
+        settings_path = root / "settings.json"
+        if settings_path.is_file():
+            settings = pipeline.read(settings_path)
+            data["presentation"] = {
+                "voice": settings.get("voice") or "male",
+                "subtitle_size": settings.get("subtitle_size") or "medium",
+                "subtitle_weight": settings.get("subtitle_weight") or "regular",
+                "subtitle_color": settings.get("subtitle_color") or "white",
+            }
         return data
 
 
@@ -503,6 +563,14 @@ def create_app(*, root=None, runtime=None):
                              for item in validated if item["beat_id"] == beat["beat_id"])
                 if length > beat["duration_budget_us"]:
                     raise HTTPException(422, "这一段选中的镜头总长超过预算，请缩短入出点")
+            root = jobs.directory(job_id)
+            if payload.get("voice") not in (None, ""):
+                _apply_voice_preset(root, payload.get("voice"))
+            style = _subtitle_fields(payload)
+            if style:
+                settings = pipeline.read(root / "settings.json")
+                settings.update(style)
+                write_json(root / "settings.json", settings)
             confirmation = {"draft_id": payload["draft_id"], "reviewer": reviewer, "reviewed_at": pipeline.now(),
                             "confirmation_kind": confirmation_kind, "approved_text_by_beat": text, "boundaries": validated,
                             "revision": data.get("render_attempt", 0) + 1, "selection_overrides": data.get("selection_overrides")}
@@ -616,7 +684,8 @@ def create_app(*, root=None, runtime=None):
         path = resolve_uri(root, names[kind])
         if not path.is_file():
             raise HTTPException(404, "文件尚未生成")
-        return FileResponse(path, filename=path.name if download or kind == "package" else None)
+        return FileResponse(path, filename=path.name if download or kind == "package" else None,
+                            headers={"Cache-Control": "no-store"})
 
     @app.post("/api/jobs/{job_id}/open-editor")
     def editor(job_id: str):

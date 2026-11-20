@@ -344,8 +344,29 @@ def analyze(root, settings, runtime, progress, *, cancel_event=None):
     return draft
 
 
-def render(root, confirmation, runtime, progress, *, cancel_event=None):
+def apply_presentation(timeline, settings):
+    """把任务里的字幕位置和样式抄进时间线。没写的样式保持原来的样子。"""
     from copy import deepcopy
+    from .subtitle_style import STYLE_CHOICES
+    subtitle_position = settings.get("subtitle_position", "bottom")
+    if subtitle_position not in {"top", "bottom"}:
+        raise PipelineError("INVALID_SUBTITLE_POSITION", "字幕位置必须是顶部或底部", stage="F")
+    updated = deepcopy(timeline)
+    policy = updated.setdefault("render_policy", {})
+    policy["subtitle_position"] = subtitle_position
+    recorded = {"subtitle_position": subtitle_position}
+    for key, choices in STYLE_CHOICES.items():
+        if key not in settings:
+            continue
+        value = settings[key]
+        if value not in choices:
+            raise PipelineError("INVALID_SUBTITLE_STYLE", "字幕字号、字重或颜色无效", stage="F")
+        policy[key] = value
+        recorded[key] = value
+    return updated, recorded
+
+
+def render(root, confirmation, runtime, progress, *, cancel_event=None):
     from .planning.production import confirm_draft
     from .integration import complete_voice_timeline
     from .retiming import content_hash
@@ -441,13 +462,9 @@ def render(root, confirmation, runtime, progress, *, cancel_event=None):
         # Apply presentation settings before final freezing. Keep the original D
         # output and never rewrite its fit request, pending hash or E reply.
         trace("timeline-d.json", built.timeline, current=False)
-        subtitle_position = settings.get("subtitle_position", "bottom")
-        if subtitle_position not in {"top", "bottom"}:
-            raise PipelineError("INVALID_SUBTITLE_POSITION", "字幕位置必须是顶部或底部", stage="F")
         before_presentation = content_hash(built.timeline)
-        built.timeline = deepcopy(built.timeline)
-        built.timeline["render_policy"]["subtitle_position"] = subtitle_position
-        trace("presentation-policy.json", {"subtitle_position": subtitle_position,
+        built.timeline, recorded = apply_presentation(built.timeline, settings)
+        trace("presentation-policy.json", {**recorded,
             "source": "settings.json", "applied_before_final_freeze": True,
             "d_timeline_content_hash": before_presentation,
             "final_timeline_content_hash": content_hash(built.timeline),

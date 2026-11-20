@@ -13,6 +13,7 @@ import time
 import uuid
 
 from .subtitle_layout import layout_subtitle
+from .subtitle_style import resolve_subtitle_style
 
 # Display wrapping changes serialized text; reject older packages on rebuild.
 ADAPTER_VERSION = "quickcut-jianying-mac-0.2.0"
@@ -60,6 +61,7 @@ def build_draft(timeline: dict, resources: list[dict], draft_directory: Path, *,
     subtitle_position = timeline.get("render_policy", {}).get("subtitle_position", "bottom")
     if subtitle_position not in ("top", "bottom"):
         raise ValueError("subtitle_position must be top or bottom")
+    appearance = resolve_subtitle_style(timeline.get("render_policy"))
     now = time.time_ns() // 1000
     platform = {"app_id": 3704, "app_source": "lv", "app_version": target_version, "os": "mac"}
     content.update(id=draft_id, name=name, duration=timeline["duration_us"], new_version="75.0.0",
@@ -125,9 +127,9 @@ def build_draft(timeline: dict, resources: list[dict], draft_directory: Path, *,
                 text = layout_subtitle(item["text"], width=output["width"],
                                        height=output["height"]).display_text
                 style = {"fill": {"alpha": 1.0, "content": {"render_type": "solid", "solid": {
-                    "alpha": 1.0, "color": [1.0, 1.0, 1.0]}}},
-                    "range": [0, len(text.encode("utf-16-le")) // 2], "size": 8.0,
-                    "bold": False, "italic": False, "underline": False, "strokes": []}
+                    "alpha": 1.0, "color": list(appearance["primary"])}}},
+                    "range": [0, len(text.encode("utf-16-le")) // 2], "size": 8.0 * appearance["size_scale"],
+                    "bold": appearance["bold"], "italic": False, "underline": False, "strokes": []}
                 materials["texts"].append({"id": mid, "content": json.dumps({"text": text, "styles": [style]}, ensure_ascii=False),
                     "typesetting": 0, "alignment": 1, "letter_spacing": 0.0, "line_spacing": 0.02,
                     "line_feed": 1, "line_max_width": 0.82, "force_apply_line_max_width": False,
