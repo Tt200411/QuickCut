@@ -447,6 +447,10 @@ def render(root, confirmation, runtime, progress, *, cancel_event=None):
         before_presentation = content_hash(built.timeline)
         built.timeline = deepcopy(built.timeline)
         built.timeline["render_policy"]["subtitle_position"] = subtitle_position
+        if settings.get("auto_music", False):
+            from .music import attach_music
+            progress("music", "从授权曲库选择配乐并适配旁白音量")
+            built.timeline = attach_music(built.timeline, root, settings["prompt"])
         trace("presentation-policy.json", {"subtitle_position": subtitle_position,
             "source": "settings.json", "applied_before_final_freeze": True,
             "d_timeline_content_hash": before_presentation,
@@ -469,6 +473,7 @@ def render(root, confirmation, runtime, progress, *, cancel_event=None):
                   "package_directory": package.name, "revision": attempt,
                   "editor": {"status": "not_opened"}, "approval": str(attempt_root / "approval.json"),
                   "confirmation_kind": confirmation.get("confirmation_kind", "human"),
+                  "music": built.timeline.get("render_policy", {}).get("background_music"),
                   "revision_archive": str(attempt_root.relative_to(root))}
         trace("run-report.json", report)
         trace("attempt.json", {"revision": attempt, "status": "completed", "started_at": started,

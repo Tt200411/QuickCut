@@ -80,6 +80,37 @@ def _load(path):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def test_optional_music_is_mixed_packaged_and_kept_on_a_separate_native_track(docs, source_media, tmp_path):
+    from quickcut import music
+    from test_music import tone_catalog
+    catalog = tone_catalog(tmp_path / "music")
+    project = tmp_path / "project"
+    project.mkdir()
+    for filename in ("red.mp4", "blue.mp4", "speech.wav"):
+        shutil.copyfile(source_media / filename, project / filename)
+    timeline, manifest, voice = docs
+    prepared = music.attach_music(timeline, project, "旅行", catalog=catalog)
+    assert "background_music" not in timeline["render_policy"]
+    assert prepared["tracks"] == timeline["tracks"]
+    destination = tmp_path / "with-music"
+    result = export.export_project(prepared, manifest, voice, project, destination, preview=True, allow_fixtures=True)
+    verified, frozen, resources = export.verify_package(destination, allow_fixtures=True)
+    assert verified["document_id"] == result["document_id"]
+    assert frozen == prepared
+    assert (destination / "MUSIC_CREDITS.txt").is_file()
+    native = _load(destination / "draft/draft_info.json")
+    assert len(native["tracks"]) == 5
+    track = next(t for t in native["tracks"] if t["name"] == "QuickCut 背景音乐")
+    assert track["type"] == "audio" and len(track["segments"]) == 1
+    assert _load(destination / "preview.preview.json")["audio_mix"] == "source_audio_narration_and_prepared_music"
+    music_resource = next(r for r in resources if r["resource_key"] == prepared["render_policy"]["background_music"]["asset_id"])
+    assert music_resource["content_hash"] == prepared["render_policy"]["background_music"]["content_hash"]
+    mixed = tmp_path / "mixed.wav"
+    subprocess.run([core._ffmpeg_binary(), '-v', 'error', '-i', str(destination / 'preview.mp4'),
+                    '-vn', '-c:a', 'pcm_s16le', str(mixed)], check=True, capture_output=True)
+    assert _amplitude(mixed, 200) > .0003
+
+
 def _amplitude(path, frequency):
     with wave.open(str(path), "rb") as wav:
         samples = array.array("h", wav.readframes(wav.getnframes()))

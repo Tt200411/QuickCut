@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "tracks": [
+    {
+      "id": "reverie",
+      "title": "Reverie",
+      "artist": "Scott Buckley",
+      "source_url": "https://www.scottbuckley.com.au/library/reverie/",
+      "download_url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2020/03/sb_reverie.mp3",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "'Reverie' by Scott Buckley — CC BY 4.0. https://www.scottbuckley.com.au/",
+      "filename": "reverie.mp3",
+      "sha256": "ca1e7194d7d6f49127c77ff2f4011d07182525c826bb7ded3d3944e69ca678d2",
+      "tags": [
+        "旅行",
+        "文艺",
+        "艺术",
+        "博物馆",
+        "夕阳",
+        "夜景",
+        "温柔",
+        "散文",
+        "calm",
+        "art",
+        "travel",
+        "dreamy"
+      ],
+      "instrumental": true
+    },
+    {
+      "id": "childhood",
+      "title": "Childhood",
+      "artist": "Scott Buckley",
+      "source_url": "https://www.scottbuckley.com.au/library/childhood/",
+      "download_url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2019/01/sb_childhood.mp3",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "'Childhood' by Scott Buckley — CC BY 4.0. https://www.scottbuckley.com.au/",
+      "filename": "childhood.mp3",
+      "sha256": "7bc1a9bf1d57d1eb96dcfd9ead5d31371d378fa6c238fe7f59700cd6e5936460",
+      "tags": [
+        "家庭",
+        "亲子",
+        "童年",
+        "回忆",
+        "温馨",
+        "family",
+        "nostalgia"
+      ],
+      "instrumental": true
+    },
+    {
+      "id": "a-kind-of-hope",
+      "title": "A Kind Of Hope",
+      "artist": "Scott Buckley",
+      "source_url": "https://www.scottbuckley.com.au/library/a-kind-of-hope/",
+      "download_url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2022/10/AKindOfHope.mp3",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "'A Kind Of Hope' by Scott Buckley — CC BY 4.0. https://www.scottbuckley.com.au/",
+      "filename": "a-kind-of-hope.mp3",
+      "sha256": "d0dc554c0db9ea208b4f59e4f0c1b4446aa7ef622c7bfeffca278130a46c51f1",
+      "tags": [
+        "希望",
+        "成长",
+        "治愈",
+        "清晨",
+        "公园",
+        "hopeful",
+        "journey"
+      ],
+      "instrumental": true
+    }
+  ],
+  "usage_note": "Free with attribution. Include the provided credit in the video description when publishing. Local downloads are not committed to the repository."
+}

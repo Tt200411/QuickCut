@@ -138,3 +138,20 @@ def test_cancelled_fit_archives_pending_and_jobs_marks_interrupted(scenario):
         assert read_json(root / 'error.json')['code'] == 'CANCELLED'
     finally:
         jobs.close()
+
+
+def test_automatic_music_preserves_the_accepted_voice_fit_receipt(scenario, monkeypatch, tmp_path):
+    from test_music import tone_catalog
+    from quickcut.retiming import validate_voice_fit_receipt
+    root, runtime, _ = scenario
+    catalog = tone_catalog(tmp_path / 'catalog')
+    monkeypatch.setenv('QUICKCUT_MUSIC_CATALOG', str(catalog))
+    settings = read_json(root / 'settings.json')
+    settings.update(auto_music=True, prompt='旅行')
+    write_json(root / 'settings.json', settings)
+    report = pipeline.render(root, confirmation(1), runtime, lambda *args: None)
+    timeline = read_json(root / 'timeline.json')
+    assert timeline['render_policy']['background_music']['title'] == 'Generated test tone'
+    assert report['music']['content_hash'] == timeline['render_policy']['background_music']['content_hash']
+    validate_voice_fit_receipt(timeline, read_json(root / 'voice-package.json'),
+                               manifest=read_json(root / 'asset-manifest.json'))

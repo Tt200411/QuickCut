@@ -12,6 +12,8 @@
 
 ## Team implementation guide
 
+- [Automatic background music, starter catalog, and attribution](examples/music/README.md)
+
 Start with the [Chinese project guide](docs/PROJECT_GUIDE.zh-CN.md) for the shared product goal,
 coarse-to-fine multi-source workflow, local model choices, and the six-person implementation plan.
 It records the original prototype and multi-source plan; the maintained multi-source user entry point is now the HTML workbench above.

@@ -2,6 +2,7 @@
 from pathlib import Path
 from array import array
 import io
+import json
 import wave
 
 import pytest
@@ -580,3 +581,23 @@ def test_restart_recovers_completed_draft_during_first_voice_run(tmp_path):
         assert state["status"] == "interrupted" and state["can_review"] is True
         assert client.post(f"/api/jobs/{job.name}/return-review").status_code == 200
         assert client.get(f"/api/jobs/{job.name}").json()["draft"]["draft_id"] == frozen_draft()["draft_id"]
+
+
+def test_auto_music_request_is_captured_without_changing_default(browser, monkeypatch):
+    client, jobs, submitted = browser
+    monkeypatch.setattr("quickcut.music.catalog_status", lambda: {"available": True, "track_count": 3})
+    response = client.post('/api/jobs', data={'prompt': '旅行', 'duration': '30', 'auto_music': 'true'},
+                           files=[('files', ('travel.mp4', b'test-video', 'video/mp4'))])
+    assert response.status_code == 200
+    settings = json.loads((jobs.directory(response.json()['job_id']) / 'settings.json').read_text('utf-8'))
+    assert settings['auto_music'] is True
+    default_job = upload(client)
+    assert json.loads((jobs.directory(default_job) / 'settings.json').read_text('utf-8'))['auto_music'] is False
+
+
+def test_auto_music_requires_an_installed_catalog(browser, monkeypatch):
+    client, _, submitted = browser
+    monkeypatch.setattr("quickcut.music.catalog_status", lambda: {"available": False, "track_count": 0})
+    response = client.post('/api/jobs', data={'prompt': '旅行', 'auto_music': 'true'},
+                           files=[('files', ('travel.mp4', b'test-video', 'video/mp4'))])
+    assert response.status_code == 422 and not submitted
