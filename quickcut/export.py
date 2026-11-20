@@ -250,6 +250,8 @@ def export_project(timeline: dict, manifest: dict, voice: dict, project_root: st
     display_name = name or f"QuickCut-{timeline['project_id']}"
     _require(isinstance(display_name, str) and bool(display_name.strip()), "INVALID_NAME", "草稿名称不能为空")
     ffmpeg = core._ffmpeg_binary()
+    from .music import validate_music
+    music_path = validate_music(timeline, root)
     probe = renderer._ffprobe_binary()
     _require(bool(probe), "FFPROBE_REQUIRED", "工程导出需要 ffprobe 进行真实媒体校验")
     used = {clip["asset_id"] for track in tracks.values() for clip in track.get("clips", [])}
@@ -306,6 +308,21 @@ def export_project(timeline: dict, manifest: dict, voice: dict, project_root: st
                 "sample_rate": rate, "sample_rounding_error_us": float(Fraction(frames * 1_000_000, rate) - (bounds["end"] - bounds["begin"])),
                 "leading_silence_samples": extracted["leading_silence_samples"],
                 "trailing_silence_samples": extracted["trailing_silence_samples"]})
+        if music_path:
+            music = timeline["render_policy"]["background_music"]
+            _require(music["asset_id"] not in used, "TIMELINE_INVALID", "Music resource ID conflicts with an input asset")
+            filename = music["content_hash"].removeprefix("sha256:") + ".wav"
+            target = resource_dir / filename
+            shutil.copyfile(music_path, target)
+            _require(digest(target) == music["content_hash"], "MEDIA_HASH_MISMATCH", "Music changed during packaging")
+            resources.append({"resource_key": music["asset_id"], "asset_id": music["asset_id"], "asset_revision": 1,
+                "original_uri": music["uri"], "draft_uri": f"Resources/{filename}",
+                "packaged_uri": f"draft/Resources/{filename}", "content_hash": music["content_hash"],
+                "name": music["title"] + ".wav", "media_kind": "audio", "size_bytes": target.stat().st_size,
+                "duration_us": music["duration_us"], "sample_rate": music["sample_rate"]})
+            (stage / "MUSIC_CREDITS.txt").write_text(music["attribution"] + "\n" + music["source_url"] + "\n" +
+                music["license_url"] + "\nMusic was excerpted, normalized, faded, and attenuated during narration.\n"
+                "When publishing, include these credits in the video description.\n", encoding="utf-8")
         input_files = {"EditTimeline": "inputs/timeline.json", "AssetManifest": "inputs/asset-manifest.json",
                        "VoicePackage": "inputs/voice-package.json"}
         for doc in (timeline, manifest, voice):
@@ -381,12 +398,26 @@ def _verify_package(package_dir: str | Path, *, allow_fixtures: bool = False) ->
     keys = {r["resource_key"] for r in resources}
     expected = {c["asset_id"] for t in tracks.values() for c in t.get("clips", [])} | {
         f"source_audio:{c['clip_id']}" for c in tracks["source_audio"]["clips"]}
+    music = docs[0].get("render_policy", {}).get("background_music")
+    if music:
+        expected.add(music["asset_id"])
     _require(len(keys) == len(resources) and keys == expected, "PACKAGE_INVALID", "资源集合不匹配冻结时间线")
     clips = {f"source_audio:{c['clip_id']}": c for c in tracks["source_audio"]["clips"]}
     for resource in resources:
         uri = resource["packaged_uri"]
         _require(uri in seen and uri == "draft/" + resource["draft_uri"], "PACKAGE_INVALID", "资源路径不一致")
         _require(digest(resolve_uri(root, uri)) == resource["content_hash"], "MEDIA_HASH_MISMATCH", "资源映射hash不一致")
+        if music and resource["resource_key"] == music["asset_id"]:
+            from .music import validate_music
+            _require(resource["asset_id"] == music["asset_id"] and resource["content_hash"] == music["content_hash"]
+                     and resource["original_uri"] == music["uri"] and resource["media_kind"] == "audio"
+                     and resource["asset_revision"] == 1 and resource["duration_us"] == music["duration_us"]
+                     and resource["sample_rate"] == music["sample_rate"]
+                     and resource["size_bytes"] == resolve_uri(root, uri).stat().st_size,
+                     "PACKAGE_INVALID", "Background music resource differs from the frozen policy")
+            validate_music(docs[0], root, packaged_path=resolve_uri(root, uri))
+            _require("MUSIC_CREDITS.txt" in seen, "PACKAGE_INVALID", "Music attribution is missing")
+            continue
         asset = assets[resource["asset_id"]]
         _require(resource["asset_revision"] == asset["revision"] and resource["size_bytes"] == resolve_uri(root, uri).stat().st_size,
                  "PACKAGE_INVALID", "资源版本或大小不匹配")

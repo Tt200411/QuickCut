@@ -22,8 +22,9 @@ CAPABILITIES = {
     "source_audio": "independent PCM clips with timeline gains",
     "narration": "independent unchanged WAV clips with timeline gains",
     "subtitle": "independent editable text segments",
+    "background_music": "separate prepared PCM track with baked fades and speech attenuation",
     "media_relocation": "install regenerates private absolute paths from package URIs",
-    "unsupported": ["music", "sound_effect", "transitions", "effects", "speed changes",
+    "unsupported": ["unprepared music", "sound_effect", "transitions", "effects", "speed changes",
                     "gain envelopes", "ducking", "overlapping picture clips"],
 }
 
@@ -99,9 +100,16 @@ def build_draft(timeline: dict, resources: list[dict], draft_directory: Path, *,
             "roughcut_time_range": {"duration": -1, "start": -1},
             "sub_time_range": {"duration": -1, "start": -1}})
     names = {"video": "QuickCut 画面与空镜", "source_audio": "QuickCut 原声",
-             "narration": "QuickCut 配音", "subtitle": "QuickCut 字幕"}
+             "narration": "QuickCut 配音", "subtitle": "QuickCut 字幕", "background_music": "QuickCut 背景音乐"}
     content["tracks"] = []
-    for order, track in enumerate(timeline["tracks"]):
+    native_tracks = list(timeline["tracks"])
+    music = timeline.get("render_policy", {}).get("background_music")
+    if music:
+        native_tracks.append({"track_id": "track-background-music", "kind": "background_music", "clips": [{
+            "clip_id": "clip-background-music", "asset_id": music["asset_id"], "gain": 1.0,
+            "source_range_us": {"begin": 0, "end": timeline["duration_us"]},
+            "timeline_range_us": {"begin": 0, "end": timeline["duration_us"]}}]})
+    for order, track in enumerate(native_tracks):
         kind = track["kind"]
         native = {"id": _id(draft_id, f"track:{kind}:{track['track_id']}"), "type": "text" if kind == "subtitle" else
                   "video" if kind == "video" else "audio", "name": names[kind],

@@ -460,6 +460,8 @@ def render_timeline_preview(
     burn_subtitles = burn_requested and bool(frame_subtitles)
     root = Path(project_root).expanduser().resolve(strict=True)
     _require(root.is_dir(), "project_root 必须是目录")
+    from .music import validate_music
+    music_path = validate_music(timeline, root)
     destination = Path(output_path).expanduser().absolute()
     _require(destination.suffix.lower() == ".mp4", "预览输出必须是 .mp4")
     destinations = [destination, Path(srt_path).expanduser().absolute() if srt_path else destination.with_suffix(".srt"),
@@ -630,6 +632,12 @@ def render_timeline_preview(
                 filters.append(f"[{input_index}:a:0]asetpts=PTS-STARTPTS,volume={clip['gain']},adelay={offset}S:all=1[{label}]")
                 audio_labels.append(f"[{label}]")
                 input_index += 1
+        if music_path:
+            command += ["-i", str(music_path)]
+            label = f"music{input_index}"
+            filters.append(f"[{input_index}:a:0]asetpts=PTS-STARTPTS[{label}]")
+            audio_labels.append(f"[{label}]")
+            input_index += 1
         filters.append("".join(audio_labels) + f"amix=inputs={len(audio_labels)}:duration=longest:normalize=0:dropout_transition=0[mix]")
         movie = temp / "preview.mp4"
         command += ["-filter_complex_threads", "1", "-filter_complex", ";".join(filters),
@@ -667,7 +675,7 @@ def render_timeline_preview(
             "ffmpeg_binary": ffmpeg,
             "subtitle_frame_quantization": "ceil_global_timeline_boundaries",
             "srt_time_quantization": "floor_to_millisecond",
-            "audio_mix": "source_audio_and_narration_with_timeline_offsets_and_gains",
+            "audio_mix": "source_audio_narration_and_prepared_music" if music_path else "source_audio_and_narration_with_timeline_offsets_and_gains",
             "editor_project_exported": False, "editor_import_verified": False, "f_acceptance_completed": False,
             "notes": [("按时间线要求烧录预览字幕，同时保留独立全局 SRT。" if burn_subtitles else
                        "预览无烧录字幕，独立全局 SRT 保留编辑性。"),

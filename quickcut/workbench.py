@@ -334,6 +334,7 @@ def create_app(*, root=None, runtime=None):
 
     @app.get("/api/config")
     def config():
+        from .music import catalog_status
         try:
             _, _, voice = _voice_source(runtime)
             label = voice.get("voice_label") or Path(voice["reference_audio"]).stem
@@ -341,6 +342,7 @@ def create_app(*, root=None, runtime=None):
         except HTTPException:
             default_voice = {"label": "默认音色尚未配置", "ready": False}
         return {"token": token, "max_file_bytes": MAX_FILE_BYTES, "max_reference_bytes": MAX_REFERENCE_BYTES,
+                "music": catalog_status(),
                 "default_voice": default_voice,
                 "models": {"vision": "nllb-clip-base", "planning": runtime.model, "voice": "IndexTTS2"}}
 
@@ -357,7 +359,8 @@ def create_app(*, root=None, runtime=None):
     @app.post("/api/jobs")
     async def create_job(files: list[UploadFile] = File(...), prompt: str = Form(...), duration: float = Form(30),
                          origin: str = Form("user"), open_editor: bool = Form(True),
-                         subtitle_position: str = Form("bottom"), reference_audio: UploadFile | None = File(None)):
+                         subtitle_position: str = Form("bottom"), reference_audio: UploadFile | None = File(None),
+                         auto_music: bool = Form(False)):
         if not prompt.strip() or len(prompt) > 2000:
             raise HTTPException(422, "请输入 1–2000 字的剪辑要求")
         if not math.isfinite(duration) or not 10 <= duration <= 120:
@@ -366,6 +369,10 @@ def create_app(*, root=None, runtime=None):
             raise HTTPException(422, "请选择 1–12 个视频和有效素材来源")
         if subtitle_position not in {"top", "bottom"}:
             raise HTTPException(422, "旁白字幕位置应为顶部或底部")
+        if auto_music:
+            from .music import catalog_status
+            if not catalog_status()["available"]:
+                raise HTTPException(422, "配乐曲库尚未准备好，请先安装曲库或关闭自动配乐")
         if any(Path(file.filename or "").suffix.lower() not in VIDEO_SUFFIXES for file in files):
             raise HTTPException(422, "请选择 MP4、MOV、MKV、WebM、M4V 或 AVI 视频")
         if reference_audio and Path(reference_audio.filename or "").suffix.lower() != ".wav":
@@ -427,6 +434,7 @@ def create_app(*, root=None, runtime=None):
                                 "provenance_note": f"工作台导入：{name}；来源由提交者选择为 {origin}"})
             settings = {"project_id": "project-" + job_id, "prompt": prompt.strip(), "duration": duration,
                         "sources": sources, "open_editor": open_editor, "subtitle_position": subtitle_position,
+                        "auto_music": auto_music,
                         "voice_config": "voice-config.json", "voice_config_source": voice_source,
                         "reference_audio": reference}
             write_json(root / "settings.json", settings)
