@@ -2,9 +2,8 @@
 
 The script indexes with OpenCLIP and Whisper, localizes a prompt, trims the
 first timeline item, renders that edit, then builds a Qwen story with captions
-and local narration. Start it from the project virtualenv:
+and local narration. From the repository root, with the project virtualenv active:
 
-cd /Users/buluu/Documents/cv_final/QuickCut
 source .venv/bin/activate
 python scripts/run_full_demo.py
 
