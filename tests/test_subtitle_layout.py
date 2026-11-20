@@ -5,7 +5,34 @@ import unicodedata
 
 import pytest
 
-from quickcut.subtitle_layout import _clusters, _width, layout_subtitle
+from quickcut.subtitle_layout import _clusters, _width, layout_subtitle, layout_presentation_subtitle
+
+
+def test_wide_presentation_uses_one_line_when_the_text_fits():
+    text = "文艺复兴的故事，就藏在画里。"
+    assert len(layout_subtitle(text, width=720, height=1280).lines) == 2
+    wide = layout_presentation_subtitle(text, width=720, height=1280,
+                                      policy={"subtitle_layout": "wide"})
+    assert wide.lines == (text,)
+    assert not wide.overflow
+
+
+def test_wide_presentation_wraps_at_the_clause_without_losing_text():
+    text = "走进安静的教堂，光从彩窗里慢慢落下来。"
+    wide = layout_presentation_subtitle(text, width=720, height=1280,
+                                      policy={"subtitle_layout": "wide"})
+    assert wide.lines == ("走进安静的教堂，", "光从彩窗里慢慢落下来。")
+    assert "".join(wide.lines) == text
+    assert not wide.overflow
+
+
+def test_wide_presentation_adapts_to_font_size_and_preserves_legacy_layout():
+    text = "第一段旅途中的景色，第二段旅途中的回忆。"
+    common = dict(width=720, height=1280)
+    small = layout_presentation_subtitle(text, **common, policy={"subtitle_layout": "wide", "subtitle_size": "small"})
+    large = layout_presentation_subtitle(text, **common, policy={"subtitle_layout": "wide", "subtitle_size": "large"})
+    assert small.max_units > large.max_units
+    assert layout_presentation_subtitle(text, **common) == layout_subtitle(text, **common)
 
 
 @pytest.mark.parametrize("text", [

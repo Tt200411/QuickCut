@@ -25,7 +25,7 @@ def test_unknown_style_is_rejected():
         resolve_subtitle_style({"subtitle_color": "purple"})
 
 
-@pytest.mark.parametrize("key", ["subtitle_size", "subtitle_weight", "subtitle_color"])
+@pytest.mark.parametrize("key", ["subtitle_size", "subtitle_weight", "subtitle_color", "subtitle_layout"])
 @pytest.mark.parametrize("value", [None, [], {}, True, 1, "white,FontSize=100"])
 def test_malformed_style_is_a_validation_error(key, value):
     with pytest.raises(ValueError, match="字幕"):

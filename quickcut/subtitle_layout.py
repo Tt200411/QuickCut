@@ -108,14 +108,14 @@ def _units(text: str) -> list[str]:
     return units
 
 
-def _wrap(text: str, budget: int) -> tuple[list[str], list[int]]:
+def _wrap(text: str, budget: int, *, prefer_clauses: bool = False) -> tuple[list[str], list[int]]:
     units = _units(text)
     if not units:
         return [text], [0]
     widths = [sum(_width(cluster) for cluster in _clusters(unit)) for unit in units]
     count = len(units)
     # 依次最小化溢出、行数、参差及断点代价；固定遍历顺序保证确定性。
-    costs = [(0, 0, 0)] * (count + 1)
+    costs = [(0, 0, 0, 0) if prefer_clauses else (0, 0, 0)] * (count + 1)
     ends = [count] * count
     for start in range(count - 1, -1, -1):
         best = None
@@ -128,8 +128,13 @@ def _wrap(text: str, budget: int) -> tuple[list[str], list[int]]:
             boundary = units[end - 1]
             penalty = (0 if end == count or boundary.rstrip()[-1:] in _PUNCT
                        else 3 if boundary[-1:].isspace() else 24)
-            candidate = (tail[0] + max(0, width - budget) ** 2,
-                         tail[1] + 1, tail[2] + (budget - width) ** 2 + penalty)
+            if prefer_clauses:
+                candidate = (tail[0] + max(0, width - budget) ** 2,
+                             tail[1] + 1, tail[2] + penalty,
+                             tail[3] + (budget - width) ** 2)
+            else:
+                candidate = (tail[0] + max(0, width - budget) ** 2,
+                             tail[1] + 1, tail[2] + (budget - width) ** 2 + penalty)
             if best is None or candidate < best:
                 best, ends[start] = candidate, end
         costs[start] = best
@@ -143,7 +148,8 @@ def _wrap(text: str, budget: int) -> tuple[list[str], list[int]]:
     return lines, line_widths
 
 
-def layout_subtitle(text: str, *, width: int, height: int, max_units: int | None = None) -> SubtitleLayout:
+def layout_subtitle(text: str, *, width: int, height: int, max_units: int | None = None,
+                    prefer_clauses: bool = False) -> SubtitleLayout:
     """只插入显示换行，不删字、不截英文词、不限制总行数。
 
     默认横屏 40、竖屏 24、方屏 32 个 Unicode 估计单元：普通汉字为 2，
@@ -158,9 +164,33 @@ def layout_subtitle(text: str, *, width: int, height: int, max_units: int | None
     lines, widths = [], []
     parts = re.split(r"(\r\n|\r|\n)", text)
     for index in range(0, len(parts), 2):
-        wrapped, measured = _wrap(parts[index], budget)
+        wrapped, measured = _wrap(parts[index], budget, prefer_clauses=prefer_clauses)
         if index + 1 < len(parts):
             wrapped[-1] += parts[index + 1]
         lines.extend(wrapped)
         widths.extend(measured)
     return SubtitleLayout(tuple(lines), tuple(widths), budget, any(w > budget for w in widths))
+
+
+def layout_presentation_subtitle(text: str, *, width: int, height: int,
+                                 policy: dict | None = None) -> SubtitleLayout:
+    """Use the available caption width before wrapping a wide presentation.
+
+    The estimate shares the preview's font size and margins. Actual glyph
+    metrics still depend on the font; export frames must be checked visually.
+    Legacy layouts retain their existing wrapping and serialized text.
+    """
+    from .subtitle_style import resolve_subtitle_style
+
+    appearance = resolve_subtitle_style(policy)
+    if appearance["layout"] != "wide":
+        return layout_subtitle(text, width=width, height=height)
+    if width <= 0 or height <= 0:
+        raise ValueError("Canvas dimensions must be positive")
+    short_side = min(width, height)
+    font_size = short_side / 18 * appearance["size_scale"]
+    outline = short_side / 360 * appearance["size_scale"]
+    available = width - short_side / 10 - outline * 2
+    budget = max(2, int(available / font_size) * 2)
+    return layout_subtitle(text, width=width, height=height, max_units=budget,
+                           prefer_clauses=True)

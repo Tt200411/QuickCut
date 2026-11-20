@@ -200,7 +200,7 @@ let latest=null,preferredIndex=null,navigationVersion=0,polling=false;
 function toast(message){throw Error(message);}function statusBox(){}function history(){}
 for(let i=0;i<5;i++)$('steps').append(new Element('button'));
 $('empty').append(new Element('h3'),new Element('p'));
-for(const id of ['subtitleSize','subtitleWeight','subtitleColor'])$(id);
+for(const id of ['speechRate','subtitleLayout','subtitleSize','subtitleWeight','subtitleColor'])$(id);
 for(const value of ['reference','male','female']){
   const input=new Element('input');input.name='voicePreset';input.value=value;$('voiceChoices').append(input);
 }
@@ -232,13 +232,18 @@ let request=async(url,options)=>{
  await poll();
  assert.equal(draftView,frozenView);assert.equal($('approved').checked,true,'Polling the voice step retains review approval');
  pick('female');$('subtitleSize').value='large';$('subtitleSize').onchange();
+ $('speechRate').value='0.9';$('speechRate').onchange();
+ $('subtitleLayout').value='wide';$('subtitleLayout').onchange();
  await poll();assert.equal(voice('female').checked,true);assert.equal($('subtitleSize').value,'large');
+ assert.equal($('speechRate').value,'0.9');assert.equal($('subtitleLayout').value,'wide');
 
  // Loading another task must not inherit choices; a reload of the same draft restores only its own pending selections.
  current='two';data=makeData();paintVoice(data);
  assert.equal(voice('reference').checked,true);assert.equal($('subtitleSize').value,'medium');
+ assert.equal($('speechRate').value,'1');assert.equal($('subtitleLayout').value,'balanced');
  current='one';data=makeData();voiceDirty=false;delete paintVoice.job;paintVoice(data);
  assert.equal(voice('female').checked,true);assert.equal($('subtitleSize').value,'large');
+ assert.equal($('speechRate').value,'0.9');assert.equal($('subtitleLayout').value,'wide');
  data.draft.review_revision=1;paintVoice(data);
  assert.equal(voice('reference').checked,true,'A stale draft must not restore settings from an earlier review');
  assert.equal(storage.has(localPresentationKey(current)),false);
@@ -246,9 +251,13 @@ let request=async(url,options)=>{
  // Confirm emits the visible voice and captions once and disables all mutable controls while it is in flight.
  data=makeData();latest=data;paintVoice(data);$('approved').checked=true;
  pick('female');$('subtitleColor').value='yellow';$('subtitleColor').onchange();
+ $('speechRate').value='0.9';$('speechRate').onchange();
+ $('subtitleLayout').value='wide';$('subtitleLayout').onchange();
  const submitting=$('startVoiceover').onclick();
  assert.equal(confirmPosts,1);assert.equal(sent.voice,'female');assert.equal(sent.subtitle_color,'yellow');
+ assert.equal(sent.speech_rate,0.9);assert.equal(sent.subtitle_layout,'wide');
  assert.equal($('startVoiceover').disabled,true);assert.equal($('subtitleColor').disabled,true);
+ assert.equal($('speechRate').disabled,true);assert.equal($('subtitleLayout').disabled,true);
  await assert.rejects(async()=>submitConfirm(true),/正在保存/);
  assert.equal(confirmPosts,1);
  releaseConfirm();await submitting;

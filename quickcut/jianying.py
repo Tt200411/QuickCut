@@ -12,7 +12,7 @@ from pathlib import Path
 import time
 import uuid
 
-from .subtitle_layout import layout_subtitle
+from .subtitle_layout import layout_presentation_subtitle
 from .subtitle_style import STYLE_CHOICES, resolve_subtitle_style
 
 # Display wrapping changes serialized text; reject older packages on rebuild.
@@ -135,8 +135,8 @@ def build_draft(timeline: dict, resources: list[dict], draft_directory: Path, *,
                                          "speed": 1.0, "curve_speed": None})
             if kind == "subtitle":
                 mid = _id(draft_id, f"material:text:{item_key}")
-                text = layout_subtitle(item["text"], width=output["width"],
-                                       height=output["height"]).display_text
+                text = layout_presentation_subtitle(item["text"], width=output["width"],
+                                       height=output["height"], policy=timeline.get("render_policy")).display_text
                 style = {"fill": {"alpha": 1.0, "content": {"render_type": "solid", "solid": {
                     "alpha": 1.0, "color": list(appearance["primary"])}}},
                     "range": [0, len(text.encode("utf-16-le")) // 2], "size": 8.0 * appearance["size_scale"],
@@ -145,7 +145,8 @@ def build_draft(timeline: dict, resources: list[dict], draft_directory: Path, *,
                         "color": list(appearance["outline"])}}, "width": 0.05}] if styled_caption else []}
                 materials["texts"].append({"id": mid, "content": json.dumps({"text": text, "styles": [style]}, ensure_ascii=False),
                     "typesetting": 0, "alignment": 1, "letter_spacing": 0.0, "line_spacing": 0.02,
-                    "line_feed": 1, "line_max_width": 0.82, "force_apply_line_max_width": False,
+                    "line_feed": 1, "line_max_width": 0.9 if appearance["layout"] == "wide" else 0.82,
+                    "force_apply_line_max_width": False,
                     "check_flag": 15 if styled_caption else 7, "type": "subtitle", "global_alpha": 1.0})
                 segment.update(material_id=mid, clip=_clip_settings(subtitle=True, subtitle_position=subtitle_position),
                                uniform_scale={"on": True, "value": 1.0})

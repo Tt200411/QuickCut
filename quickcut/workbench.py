@@ -389,6 +389,8 @@ class Jobs:
             data["presentation"] = {
                 "voice": settings.get("voice") or "reference",
                 "reference_voice_label": _reference_voice_label(root, settings),
+                "speech_rate": settings.get("speech_rate", 1.0),
+                "subtitle_layout": settings.get("subtitle_layout") or "balanced",
                 "subtitle_size": settings.get("subtitle_size") or "medium",
                 "subtitle_weight": settings.get("subtitle_weight") or "regular",
                 "subtitle_color": settings.get("subtitle_color") or "white",
@@ -610,10 +612,15 @@ def create_app(*, root=None, runtime=None):
                     raise HTTPException(422, "这一段选中的镜头总长超过预算，请缩短入出点")
             root = jobs.directory(job_id)
             style = _subtitle_fields(payload)
+            speech_rate = payload.get("speech_rate")
+            if speech_rate is not None and (type(speech_rate) not in (int, float) or speech_rate not in {0.8, 0.9, 1.0, 1.1}):
+                raise HTTPException(422, "配音语速应为 0.8、0.9、1 或 1.1 倍")
             settings = pipeline.read(root / "settings.json")
             if payload.get("voice") not in (None, ""):
                 _apply_voice_preset(root, payload["voice"], settings)
             settings.update(style)
+            if speech_rate is not None:
+                settings["speech_rate"] = speech_rate
             write_json(root / "settings.json", settings)
             confirmation = {"draft_id": payload["draft_id"], "reviewer": reviewer, "reviewed_at": pipeline.now(),
                             "confirmation_kind": confirmation_kind, "approved_text_by_beat": text, "boundaries": validated,

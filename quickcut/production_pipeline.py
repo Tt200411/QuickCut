@@ -424,7 +424,10 @@ def render(root, confirmation, runtime, progress, *, cancel_event=None):
         progress("E", "IndexTTS2 正在用参考音频生成真实旁白")
         unload_qwen(runtime)
         # Workers read immutable inputs for this revision, never a mutable alias.
-        trace("voice-config.json", read(runtime.voice_config), current=False)
+        voice_config = read(runtime.voice_config)
+        if "speech_rate" in settings:
+            voice_config["delivery_rate"] = settings["speech_rate"]
+        trace("voice-config.json", voice_config, current=False)
         base = {"root": str(root), "story": str(attempt_root / "story-plan.json"),
                 "config": str(attempt_root / "voice-config.json")}
         revision = (attempt - 1) * 10 + 1
