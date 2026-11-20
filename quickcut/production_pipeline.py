@@ -451,6 +451,9 @@ def render(root, confirmation, runtime, progress, *, cancel_event=None):
             from .music import attach_music
             progress("music", "从授权曲库选择配乐并适配旁白音量")
             built.timeline = attach_music(built.timeline, root, settings["prompt"])
+            # Selection and envelope evidence belong to this render attempt,
+            # including when F fails or a later revision chooses differently.
+            trace("music-selection.json", read(root / "music-selection.json"))
         trace("presentation-policy.json", {"subtitle_position": subtitle_position,
             "source": "settings.json", "applied_before_final_freeze": True,
             "d_timeline_content_hash": before_presentation,

@@ -111,6 +111,28 @@ def test_optional_music_is_mixed_packaged_and_kept_on_a_separate_native_track(do
     assert _amplitude(mixed, 200) > .0003
 
 
+@pytest.mark.parametrize('collision', ['input_asset', 'extracted_audio'])
+def test_music_resource_collision_rejects_before_publishing(docs, source_media, tmp_path, collision):
+    from quickcut import music
+    from test_music import tone_catalog
+    project = tmp_path / 'project'
+    project.mkdir()
+    for filename in ('red.mp4', 'blue.mp4', 'speech.wav'):
+        shutil.copyfile(source_media / filename, project / filename)
+    timeline, manifest, voice = docs
+    prepared = music.attach_music(timeline, project, '旅行', catalog=tone_catalog(tmp_path / 'music'))
+    source_track = next(track for track in prepared['tracks'] if track['kind'] == 'source_audio')
+    conflict_id = ('red' if collision == 'input_asset' else
+                   'source_audio:' + source_track['clips'][0]['clip_id'])
+    prepared['render_policy']['background_music']['asset_id'] = conflict_id
+    destination = tmp_path / 'conflicting-music'
+    with pytest.raises(export.ExportError, match='Music resource ID conflicts') as error:
+        export.export_project(prepared, manifest, voice, project, destination)
+    assert error.value.code == 'TIMELINE_INVALID'
+    assert not destination.exists()
+    assert not list(tmp_path.glob('.quickcut-export-*'))
+
+
 def _amplitude(path, frequency):
     with wave.open(str(path), "rb") as wav:
         samples = array.array("h", wav.readframes(wav.getnframes()))

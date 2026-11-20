@@ -310,7 +310,9 @@ def export_project(timeline: dict, manifest: dict, voice: dict, project_root: st
                 "trailing_silence_samples": extracted["trailing_silence_samples"]})
         if music_path:
             music = timeline["render_policy"]["background_music"]
-            _require(music["asset_id"] not in used, "TIMELINE_INVALID", "Music resource ID conflicts with an input asset")
+            _require(music["asset_id"] not in used and music["asset_id"] not in {
+                resource["resource_key"] for resource in resources},
+                "TIMELINE_INVALID", "Music resource ID conflicts with an input or extracted audio resource")
             filename = music["content_hash"].removeprefix("sha256:") + ".wav"
             target = resource_dir / filename
             shutil.copyfile(music_path, target)

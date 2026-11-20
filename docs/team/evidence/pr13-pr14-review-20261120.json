@@ -1,0 +1,119 @@
+{
+  "status": "passed",
+  "source_job": "ac91f60c01ca",
+  "neural_inference_executed": false,
+  "tts": "Existing approved male-reference IndexTTS WAVs reused unchanged",
+  "original_document_hashes": {
+    "timeline.json": "18ee0c78f5317b15472bad9b9a3a33c65f45380c69f3a6ad121adeb3f22a3052",
+    "asset-manifest.json": "e35dbcf7edc95c5f798ac8dee8183fcb260ca2674e8eb737d1be3651de6b6a4b",
+    "voice-package.json": "e21f9e4eafc40a1d81d080d5083b8edd0fd27d63b4e76956888f5d0a5b34d8bb"
+  },
+  "original_documents_unchanged": true,
+  "core_four_tracks_unchanged": true,
+  "de_voice_fit_receipt_unchanged": true,
+  "catalog_tracks_verified": 3,
+  "music": {
+    "version": 1,
+    "asset_id": "music-a0a7f56378596212ed7f61ba5a5314a8",
+    "uri": "audio/music/a0a7f56378596212ed7f61ba5a5314a865f5a16d2865bd2d409e1dd9385ec049.wav",
+    "content_hash": "sha256:0ce35100d0134735a92d9dd010dd015776b66aeff7d9e6a88cc5b12604f2079a",
+    "duration_us": 30000000,
+    "sample_rate": 48000,
+    "title": "Reverie",
+    "artist": "Scott Buckley",
+    "license": "CC-BY-4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "source_url": "https://www.scottbuckley.com.au/library/reverie/",
+    "attribution": "'Reverie' by Scott Buckley — CC BY 4.0. https://www.scottbuckley.com.au/"
+  },
+  "music_pcm": {
+    "frames": 1440000,
+    "sample_rate": 48000,
+    "channels": 2
+  },
+  "native_track_count": 5,
+  "package_verified": true,
+  "preview": "outputs/pr13-pr14-real-review-20261120/project/export-with-music/preview.mp4",
+  "package": "outputs/pr13-pr14-real-review-20261120/project/export-with-music",
+  "credits": "'Reverie' by Scott Buckley — CC BY 4.0. https://www.scottbuckley.com.au/\nhttps://www.scottbuckley.com.au/library/reverie/\nhttps://creativecommons.org/licenses/by/4.0/\nMusic was excerpted, normalized, faded, and attenuated during narration.\nWhen publishing, include these credits in the video description.\n",
+  "selection": {
+    "track": {
+      "version": 1,
+      "asset_id": "music-a0a7f56378596212ed7f61ba5a5314a8",
+      "uri": "audio/music/a0a7f56378596212ed7f61ba5a5314a865f5a16d2865bd2d409e1dd9385ec049.wav",
+      "content_hash": "sha256:0ce35100d0134735a92d9dd010dd015776b66aeff7d9e6a88cc5b12604f2079a",
+      "duration_us": 30000000,
+      "sample_rate": 48000,
+      "title": "Reverie",
+      "artist": "Scott Buckley",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "source_url": "https://www.scottbuckley.com.au/library/reverie/",
+      "attribution": "'Reverie' by Scott Buckley — CC BY 4.0. https://www.scottbuckley.com.au/"
+    },
+    "selection": {
+      "method": "local_catalog_tag_match",
+      "matched_tags": [],
+      "fallback_to_catalog_default": true
+    },
+    "mix_recipe": {
+      "version": 1,
+      "track_sha256": "ca1e7194d7d6f49127c77ff2f4011d07182525c826bb7ded3d3944e69ca678d2",
+      "duration_us": 30000000,
+      "sample_rate": 48000,
+      "speech_intervals_us": [
+        [
+          200000,
+          4833521
+        ],
+        [
+          10200000,
+          16368625
+        ],
+        [
+          25200000,
+          27807812
+        ]
+      ],
+      "start_us": 0,
+      "base_gain": 0.25,
+      "speech_gain": 0.06,
+      "rise_us": 1500000,
+      "fall_us": 3000000,
+      "loudness_target_lufs": -18,
+      "selection": {
+        "method": "local_catalog_tag_match",
+        "matched_tags": [],
+        "fallback_to_catalog_default": true
+      }
+    },
+    "envelope_baked_into_separate_pcm": true
+  },
+  "native_editor_visual_acceptance": false,
+  "author_heads": {
+    "PR13": "6e859985dc1930b5aa7358a765b8f91934716bb7",
+    "PR14": "02ba58f664f224a9ee622a7c8c16b9cce65c9ccd"
+  },
+  "base_head": "d1738570adde349330c3896a658f29494e2a54c6",
+  "browser_qa": {
+    "isolated_copy": true,
+    "viewport": [
+      1280,
+      720
+    ],
+    "shot_pages": 5,
+    "one_shared_narration_editor_per_beat": true,
+    "playback_start": 65.137752,
+    "playback_end": 70.187286,
+    "paused_at_selected_end": true,
+    "console_warnings_or_errors": [],
+    "zh_en_switch_observed": true,
+    "automatic_music_available": true,
+    "automatic_music_default_checked": false,
+    "voice_step_disabled": true
+  },
+  "local_tests": {
+    "passed": 1374,
+    "seconds": 49.1
+  }
+}

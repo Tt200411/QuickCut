@@ -155,3 +155,46 @@ def test_automatic_music_preserves_the_accepted_voice_fit_receipt(scenario, monk
     assert report['music']['content_hash'] == timeline['render_policy']['background_music']['content_hash']
     validate_voice_fit_receipt(timeline, read_json(root / 'voice-package.json'),
                                manifest=read_json(root / 'asset-manifest.json'))
+
+
+@pytest.mark.parametrize('fail_export', [False, True])
+def test_music_selection_and_mix_evidence_survive_later_revisions(scenario, monkeypatch, tmp_path, fail_export):
+    from test_music import tone_catalog
+    from quickcut import export
+    root, runtime, _ = scenario
+    monkeypatch.setenv('QUICKCUT_MUSIC_CATALOG', str(tone_catalog(tmp_path / 'catalog')))
+    settings = read_json(root / 'settings.json')
+    settings.update(auto_music=True, prompt='旅行')
+    write_json(root / 'settings.json', settings)
+    pipeline.render(root, confirmation(1), runtime, lambda *args: None)
+    first_dir = root / 'revisions/r1'
+    first = read_json(first_dir / 'music-selection.json')
+    assert first['selection']['matched_tags'] == ['旅行']
+    assert first['selection']['fallback_to_catalog_default'] is False
+    assert first['track'] == read_json(first_dir / 'timeline.json')['render_policy']['background_music']
+    before = snapshot(first_dir)
+
+    settings['prompt'] = 'quiet film'
+    write_json(root / 'settings.json', settings)
+    original_export = export.export_project
+
+    def next_export(*args, **kwargs):
+        # Evidence must already be frozen when F starts, even on failure.
+        second = read_json(root / 'revisions/r2/music-selection.json')
+        assert second['selection']['fallback_to_catalog_default'] is True
+        if fail_export:
+            raise pipeline.PipelineError('EXPORT_FAILED', 'deliberate export failure', stage='F')
+        return original_export(*args, **kwargs)
+
+    monkeypatch.setattr(export, 'export_project', next_export)
+    if fail_export:
+        with pytest.raises(pipeline.PipelineError, match='deliberate export failure'):
+            pipeline.render(root, confirmation(2), runtime, lambda *args: None)
+    else:
+        pipeline.render(root, confirmation(2), runtime, lambda *args: None)
+    second = read_json(root / 'revisions/r2/music-selection.json')
+    assert second == read_json(root / 'music-selection.json')
+    assert second['selection']['matched_tags'] == []
+    assert second['mix_recipe']['selection'] != first['mix_recipe']['selection']
+    assert second['track'] == read_json(root / 'revisions/r2/timeline.json')['render_policy']['background_music']
+    assert snapshot(first_dir) == before

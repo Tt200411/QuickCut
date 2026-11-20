@@ -99,7 +99,7 @@ let current='job',draftView,editPending=false,reviewDirty=false,editVersion=0,sa
 const nodes=[],elements=new Map(),storage=new Map();
 function el(tag,text='',cls=''){
   const node={tag,textContent:text,className:cls,dataset:{},style:{},children:[],value:'',disabled:false,checked:false,
-    append(...children){this.children.push(...children);},replaceChildren(){this.children=[];},
+    append(...children){this.children.push(...children);},replaceChildren(...children){this.children=[...children];},
     setAttribute(name,value){this[name]=value;}};
   node.classList={
     contains:cls=>node.className.split(' ').includes(cls),
