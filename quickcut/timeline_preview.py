@@ -15,7 +15,7 @@ from typing import Any
 
 from . import core
 from .media import digest, resolve_uri
-from .subtitle_layout import layout_subtitle
+from .subtitle_layout import layout_presentation_subtitle
 from .subtitle_style import resolve_subtitle_style
 
 Document = dict[str, Any]
@@ -540,8 +540,8 @@ def render_timeline_preview(
         subtitle_file.write_text(subtitle_text, encoding="utf-8")
         if font:
             display_subtitles = [
-                {**cue, "text": layout_subtitle(cue["text"], width=output["width"],
-                                               height=output["height"]).display_text}
+                {**cue, "text": layout_presentation_subtitle(cue["text"], width=output["width"],
+                                               height=output["height"], policy=timeline.get("render_policy")).display_text}
                 for cue in frame_subtitles
             ]
             (temp / "burn-captions.srt").write_text(_srt(display_subtitles), encoding="utf-8")

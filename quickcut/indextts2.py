@@ -3,6 +3,11 @@
 from __future__ import annotations
 
 import hashlib
+import math
+import os
+import shutil
+import subprocess
+import tempfile
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 import re
@@ -10,6 +15,19 @@ from threading import Lock
 
 
 _INFERENCE_LOCK = Lock()
+
+
+def _adjust_delivery(output, rate):
+    """Preserve pitch while slowing speech and leave headroom for a music bed."""
+    binary = os.getenv("QUICKCUT_FFMPEG") or shutil.which("ffmpeg")
+    if not binary:
+        raise ValueError("FFmpeg is required for adjusted voice delivery")
+    with tempfile.TemporaryDirectory(prefix=".delivery-", dir=output.parent) as directory:
+        adjusted = Path(directory) / "adjusted.wav"
+        subprocess.run([binary, "-v", "error", "-nostdin", "-i", str(output), "-af",
+                        f"atempo={rate},alimiter=limit=0.9:level=0:latency=1",
+                        "-c:a", "pcm_s16le", str(adjusted)], check=True, capture_output=True, timeout=120)
+        shutil.copyfile(adjusted, output)
 
 
 class IndexTTS2Backend:
@@ -26,6 +44,10 @@ class IndexTTS2Backend:
         self.device = config.get("device", "cpu")
         if not isinstance(self.device, str) or not re.fullmatch(r"cpu|mps|cuda(?::\d+)?", self.device):
             raise ValueError("IndexTTS2 device must be cpu, mps, cuda, or cuda:N")
+        self.delivery_rate = config.get("delivery_rate", 1.0)
+        if (type(self.delivery_rate) not in (int, float) or not math.isfinite(self.delivery_rate)
+                or not .75 <= self.delivery_rate <= 1.15):
+            raise ValueError("IndexTTS2 delivery_rate must be between 0.75 and 1.15")
         cache = self.model_dir / "hf_cache"
         self.aux_paths = {
             "w2v_bert": cache / "w2v-bert-2.0",
@@ -80,6 +102,8 @@ class IndexTTS2Backend:
             "local": True,
             "emotion_supported": False,
         }
+        if getattr(self, "delivery_rate", 1.0) != 1.0:
+            profile.update(delivery_rate=self.delivery_rate, delivery_filter="pitch_preserving_tempo_and_peak_limiter_v1")
         return reference, profile
 
     def synthesize(self, text, output, reference, seed):
@@ -112,3 +136,5 @@ class IndexTTS2Backend:
             self.model.infer(spk_audio_prompt=str(reference), text=text, output_path=str(output))
         if not output.is_file():
             raise ValueError("IndexTTS2 returned no WAV file")
+        if getattr(self, "delivery_rate", 1.0) != 1.0:
+            _adjust_delivery(output, self.delivery_rate)

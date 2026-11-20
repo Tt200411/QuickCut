@@ -13,6 +13,7 @@ STYLE_CHOICES = {
     "subtitle_size": frozenset(SIZES),
     "subtitle_weight": frozenset(WEIGHTS),
     "subtitle_color": frozenset(COLORS),
+    "subtitle_layout": frozenset({"balanced", "wide"}),
 }
 
 
@@ -30,10 +31,12 @@ def resolve_subtitle_style(policy: dict | None) -> dict:
     size = policy.get("subtitle_size", "medium")
     weight = policy.get("subtitle_weight", "regular")
     color = policy.get("subtitle_color", "white")
-    if (not all(isinstance(value, str) for value in (size, weight, color))
-            or size not in SIZES or weight not in WEIGHTS or color not in COLORS):
+    layout = policy.get("subtitle_layout", "balanced")
+    if (not all(isinstance(value, str) for value in (size, weight, color, layout))
+            or size not in SIZES or weight not in WEIGHTS or color not in COLORS
+            or layout not in STYLE_CHOICES["subtitle_layout"]):
         raise ValueError("字幕字号、字重或颜色无效")
     primary, outline = COLORS[color]
-    return {"size_scale": SIZES[size], "bold": WEIGHTS[weight],
+    return {"size_scale": SIZES[size], "bold": WEIGHTS[weight], "layout": layout,
             "primary": primary, "outline": outline,
             "primary_ass": _ass(primary), "outline_ass": _ass(outline)}

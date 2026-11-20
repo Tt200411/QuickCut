@@ -253,7 +253,7 @@ input[type=checkbox]{accent-color:#f4f1ea;margin:3px 0 0;width:14px;height:14px;
 <div id="status" class="hidden" role="status" aria-live="polite"></div>
 <div id="empty" class="empty"><div><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="8" y="15" width="48" height="34" rx="5"/><path d="m28 25 12 7-12 7V25ZM17 10v5m10-5v5m10-5v5m10-5v5M17 49v5m10-5v5m10-5v5m10-5v5"/></svg><h3 data-i18n="你的下一个故事，从这里开始">你的下一个故事，从这里开始</h3><p data-i18n="先导入视频，方案与预览会显示在这里。">先导入视频，方案与预览会显示在这里。</p></div></div>
 <div id="materials" class="hidden"><p class="notice" id="materialNote"></p><dl class="facts"><div><dt data-i18n="要求">要求</dt><dd id="materialPrompt"></dd></div><div><dt data-i18n="时长">时长</dt><dd id="materialDuration"></dd></div><div><dt data-i18n="文件">文件</dt><dd><ul id="materialFiles"></ul></dd></div></dl></div>
-<div id="voiceStep" class="hidden"><p class="notice" data-i18n="在这里选定配音和字幕。生成会使用确认页里已经勾选的镜头和旁白。">在这里选定配音和字幕。生成会使用确认页里已经勾选的镜头和旁白。</p><p class="label" data-i18n="配音音色">配音音色</p><div class="voice-choices"><label><input type="radio" name="voicePreset" value="reference" checked><span data-i18n="任务参考音色">任务参考音色</span></label><label><input type="radio" name="voicePreset" value="male"><span data-i18n="男声">男声</span></label><label><input type="radio" name="voicePreset" value="female"><span data-i18n="女声">女声</span></label></div><p id="taskVoiceNote" class="hint"></p><label class="label" for="subtitleSize" data-i18n="字幕字号">字幕字号</label><select id="subtitleSize"><option value="small" data-i18n="小">小</option><option value="medium" selected data-i18n="中">中</option><option value="large" data-i18n="大">大</option></select><label class="label" for="subtitleWeight" data-i18n="字幕字重">字幕字重</label><select id="subtitleWeight"><option value="regular" selected data-i18n="常规">常规</option><option value="bold" data-i18n="加粗">加粗</option></select><label class="label" for="subtitleColor" data-i18n="字幕颜色">字幕颜色</label><select id="subtitleColor"><option value="white" selected data-i18n="白色">白色</option><option value="yellow" data-i18n="黄色">黄色</option><option value="black" data-i18n="黑色">黑色</option></select><p id="subtitlePreview" class="subtitle-preview" data-i18n="我们坐车出发玩耍。">我们坐车出发玩耍。</p><div class="row"><button id="startVoiceover" class="primary" type="button" data-i18n="开始配音并生成 ↗">开始配音并生成 ↗</button><button id="backToReview" class="secondary" type="button" data-i18n="回到确认">回到确认</button></div></div>
+<div id="voiceStep" class="hidden"><p class="notice" data-i18n="在这里选定配音和字幕。生成会使用确认页里已经勾选的镜头和旁白。">在这里选定配音和字幕。生成会使用确认页里已经勾选的镜头和旁白。</p><p class="label" data-i18n="配音音色">配音音色</p><div class="voice-choices"><label><input type="radio" name="voicePreset" value="reference" checked><span data-i18n="任务参考音色">任务参考音色</span></label><label><input type="radio" name="voicePreset" value="male"><span data-i18n="男声">男声</span></label><label><input type="radio" name="voicePreset" value="female"><span data-i18n="女声">女声</span></label></div><p id="taskVoiceNote" class="hint"></p><label class="label" for="speechRate" data-i18n="配音语速">配音语速</label><select id="speechRate"><option value="0.8" data-i18n="慢速（0.8 倍）">慢速（0.8 倍）</option><option value="0.9" data-i18n="稍慢（0.9 倍）">稍慢（0.9 倍）</option><option value="1" selected data-i18n="正常（1 倍）">正常（1 倍）</option><option value="1.1" data-i18n="稍快（1.1 倍）">稍快（1.1 倍）</option></select><p class="hint" data-i18n="保持音色与音调；最终时长会按镜头适配，不截断旁白。">保持音色与音调；最终时长会按镜头适配，不截断旁白。</p><label class="label" for="subtitleLayout" data-i18n="字幕排版">字幕排版</label><select id="subtitleLayout"><option value="balanced" selected data-i18n="紧凑排版">紧凑排版</option><option value="wide" data-i18n="底部铺开，按断句换行">底部铺开，按断句换行</option></select><label class="label" for="subtitleSize" data-i18n="字幕字号">字幕字号</label><select id="subtitleSize"><option value="small" data-i18n="小">小</option><option value="medium" selected data-i18n="中">中</option><option value="large" data-i18n="大">大</option></select><label class="label" for="subtitleWeight" data-i18n="字幕字重">字幕字重</label><select id="subtitleWeight"><option value="regular" selected data-i18n="常规">常规</option><option value="bold" data-i18n="加粗">加粗</option></select><label class="label" for="subtitleColor" data-i18n="字幕颜色">字幕颜色</label><select id="subtitleColor"><option value="white" selected data-i18n="白色">白色</option><option value="yellow" data-i18n="黄色">黄色</option><option value="black" data-i18n="黑色">黑色</option></select><p id="subtitlePreview" class="subtitle-preview" data-i18n="我们坐车出发玩耍。">我们坐车出发玩耍。</p><div class="row"><button id="startVoiceover" class="primary" type="button" data-i18n="开始配音并生成 ↗">开始配音并生成 ↗</button><button id="backToReview" class="secondary" type="button" data-i18n="回到确认">回到确认</button></div></div>
 <div id="review" class="hidden"><div class="deck-bar"><button id="deckPrev" class="secondary" type="button" aria-label="上一镜" data-i18n-aria-label="上一镜">←</button><div class="deck-meta"><span id="deckIndex">01 / 01</span><span id="deckTitle"></span></div><div id="deckDots" class="deck-dots" role="tablist" aria-label="镜头" data-i18n-aria-label="镜头"></div><button id="deckNext" class="secondary" type="button" aria-label="下一镜" data-i18n-aria-label="下一镜">→</button></div><div class="deck-viewport" id="deckViewport"><div id="beats" class="deck-track"></div></div><div id="narrationDock"></div><p id="draftSave" class="hint" role="status"></p><div class="review-footer"><label class="check"><input type="checkbox" id="approved"><span data-i18n="我已检查选镜、入出点和旁白。">我已检查选镜、入出点和旁白。</span></label><div class="row"><button id="confirm" class="primary" type="button" data-i18n="确认，下一步">确认，下一步</button></div></div></div>
 <div id="result" class="hidden"><div class="result-head"><h3 data-i18n="剪辑已完成">剪辑已完成</h3><span class="pill" id="resultDuration"></span></div><video id="finalVideo" controls playsinline preload="metadata"></video><div class="actions"><a id="downloadVideo" class="primary" download data-i18n="下载剪辑视频 ↓">下载剪辑视频 ↓</a><a id="downloadProject" class="secondary" download data-i18n="下载剪映工程">下载剪映工程</a><button id="openEditor" class="secondary" type="button" data-i18n="打开剪映 ↗">打开剪映 ↗</button></div><p id="editorNote" class="editor-note"></p><p id="resultMusic" class="hint hidden"></p><a id="downloadReport" class="hint" target="_blank" data-i18n="查看本次生成记录">查看本次生成记录</a></div>
 <div class="preview-note" id="previewNote"><span data-i18n="真实模型选镜">真实模型选镜</span><span data-i18n="参考音色配音">参考音色配音</span><span data-i18n="独立画面、声音与字幕">独立画面、声音与字幕</span></div>
@@ -276,6 +276,16 @@ const english = {
   "在这里选择男声或女声，以及字幕字号、字重和颜色": "Choose a male or female voice, and the caption size, weight, and color",
   "在这里选定配音和字幕。生成会使用确认页里已经勾选的镜头和旁白。": "Choose the voice and captions here. Rendering uses the shots and narration you approved on Review.",
   "配音音色": "Voice",
+  "配音语速": "Narration speed",
+  "慢速（0.8 倍）": "Slow (0.8x)",
+  "稍慢（0.9 倍）": "Slightly slower (0.9x)",
+  "正常（1 倍）": "Normal (1x)",
+  "稍快（1.1 倍）": "Slightly faster (1.1x)",
+  "保持音色与音调；最终时长会按镜头适配，不截断旁白。": "Preserves voice and pitch. Timing adapts to the shots without cutting off narration.",
+  "字幕排版": "Caption layout",
+  "紧凑排版": "Compact",
+  "底部铺开，按断句换行": "Wide captions, wrap at pauses",
+
   "任务参考音色": "Task reference voice",
   "任务参考音色：{0}。只有选择男声或女声才会更换。": "Task reference voice: {0}. Only selecting Male or Female changes it.",
   "保留导入任务时的参考音频；只有明确选择男声或女声才会更换音色。": "Keep the reference audio imported with this job. Select Male or Female explicitly to change the voice.",
@@ -796,6 +806,8 @@ async function submitConfirm(withPresentation){
   if(withPresentation){
     const picked=document.querySelector('input[name="voicePreset"]:checked');
     body.voice=picked?picked.value:'reference';
+    body.speech_rate=Number($('speechRate').value);
+    body.subtitle_layout=$('subtitleLayout').value;
     body.subtitle_size=$('subtitleSize').value;
     body.subtitle_weight=$('subtitleWeight').value;
     body.subtitle_color=$('subtitleColor').value;
@@ -850,7 +862,7 @@ function localPresentationKey(jobId){return 'quickcut-presentation-'+jobId;}
 function presentationDraftKey(data){return data?.draft?data.draft.draft_id+':'+data.draft.review_revision:null;}
 function selectedPresentation(){
   return {voice:document.querySelector('input[name="voicePreset"]:checked')?.value||'reference',
-    subtitle_size:$('subtitleSize').value,subtitle_weight:$('subtitleWeight').value,subtitle_color:$('subtitleColor').value};
+    speech_rate:Number($('speechRate').value),subtitle_layout:$('subtitleLayout').value,subtitle_size:$('subtitleSize').value,subtitle_weight:$('subtitleWeight').value,subtitle_color:$('subtitleColor').value};
 }
 function rememberPresentation(){
   if(!current||latest?.status!=='needs_review')return;
@@ -860,7 +872,7 @@ function updateVoiceBusy(){
   const editable=!!latest&&latest.status==='needs_review'&&!editPending;
   $('startVoiceover').disabled=!editable||!draftView||!$('approved').checked;
   for(const input of document.querySelectorAll('input[name="voicePreset"]'))input.disabled=!editable||(input.value!=='reference'&&!voicePresets[input.value]?.available);
-  for(const id of ['subtitleSize','subtitleWeight','subtitleColor'])$(id).disabled=!editable;
+  for(const id of ['speechRate','subtitleLayout','subtitleSize','subtitleWeight','subtitleColor'])$(id).disabled=!editable;
 }
 function configureVoices(config){voicePresets=config.voice_presets||{};updateVoiceBusy();}
 function paintSubtitlePreview(){
@@ -868,6 +880,8 @@ function paintSubtitlePreview(){
   if(!node)return;
   const scale={small:0.75,medium:1,large:1.35}[$('subtitleSize').value]||1;
   const color={white:'#fff',yellow:'#ffe14a',black:'#111'}[$('subtitleColor').value]||'#fff';
+  node.style.maxWidth=$('subtitleLayout').value==='wide'?'90%':'60%';
+  node.style.marginLeft=node.style.marginRight='auto';
   node.style.fontSize=(22*scale)+'px';
   node.style.fontWeight=$('subtitleWeight').value==='bold'?'700':'500';
   node.style.color=color;
@@ -889,12 +903,14 @@ function paintVoice(data){
   }
   const voice=['reference','male','female'].includes(presentation.voice)?presentation.voice:'reference';
   for(const input of document.querySelectorAll('input[name="voicePreset"]'))input.checked=input.value===voice;
+  $('speechRate').value=[0.8,0.9,1,1.1].includes(presentation.speech_rate)?String(presentation.speech_rate):'1';
+  $('subtitleLayout').value=presentation.subtitle_layout==='wide'?'wide':'balanced';
   $('subtitleSize').value=['small','medium','large'].includes(presentation.subtitle_size)?presentation.subtitle_size:'medium';
   $('subtitleWeight').value=presentation.subtitle_weight==='bold'?'bold':'regular';
   $('subtitleColor').value=['white','yellow','black'].includes(presentation.subtitle_color)?presentation.subtitle_color:'white';
   updateVoiceBusy();paintSubtitlePreview();
 }
-for(const node of document.querySelectorAll('input[name="voicePreset"], #subtitleSize, #subtitleWeight, #subtitleColor')){
+for(const node of document.querySelectorAll('input[name="voicePreset"], #speechRate, #subtitleLayout, #subtitleSize, #subtitleWeight, #subtitleColor')){
   node.addEventListener('change',()=>{voiceDirty=true;rememberPresentation();paintSubtitlePreview();});
 }
 

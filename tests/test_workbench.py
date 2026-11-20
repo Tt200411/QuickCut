@@ -69,6 +69,32 @@ def review_ready(client, jobs):
     return job_id
 
 
+def test_wide_caption_and_narration_speed_round_trip(browser):
+    client, jobs, submitted = browser
+    job_id = review_ready(client, jobs)
+    response = client.post(f"/api/jobs/{job_id}/confirm", json={
+        **confirmation(), "subtitle_layout": "wide", "subtitle_size": "medium", "speech_rate": 0.9})
+    assert response.status_code == 200, response.text
+    settings = json.loads((jobs.directory(job_id) / "settings.json").read_text("utf-8"))
+    assert settings["subtitle_layout"] == "wide" and settings["speech_rate"] == 0.9
+    presentation = client.get(f"/api/jobs/{job_id}").json()["presentation"]
+    assert presentation["subtitle_layout"] == "wide" and presentation["speech_rate"] == 0.9
+    assert submitted[-1][1] == "render"
+
+
+@pytest.mark.parametrize("field,value", [("speech_rate", True), ("speech_rate", "0.9"),
+    ("speech_rate", 0), ("speech_rate", 2), ("speech_rate", []), ("subtitle_layout", "unknown")])
+def test_invalid_presentation_controls_do_not_mutate_a_job(browser, field, value):
+    client, jobs, submitted = browser
+    job_id = review_ready(client, jobs)
+    root = jobs.directory(job_id)
+    before = {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
+    response = client.post(f"/api/jobs/{job_id}/confirm", json={**confirmation(), field: value})
+    assert response.status_code == 422
+    assert before == {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
+    assert len(submitted) == 1
+
+
 def confirmation():
     return {"draft_id": frozen_draft()["draft_id"], "reviewer": "测试确认者", "confirmed": True,
             "approved_text_by_beat": {"beat-open": "看看公园。"}, "boundaries": [

@@ -10,6 +10,24 @@
 
 当前使用说明、环境和验收边界见 [HTML 工作台](docs/team/WORKBENCH.md)。下文保留的单视频原型和合成工程 demo 用于兼容与回归，不是网页的生产路径。
 
+## Narration and caption settings
+
+After reviewing the shots and narration, open **Voiceover** to choose caption size,
+weight, color and layout. **Wide captions, wrap at pauses** uses the available
+horizontal space before adding display-only line breaks, preferring punctuation
+and word boundaries. Short captions stay on one line. Larger sizes or longer
+sentences may require additional lines; preview the result before publishing.
+The MP4 and editable draft use the same layout. The original narration text and
+cue times are preserved.
+
+**Narration speed** offers 0.8x, 0.9x, 1x and 1.1x. IndexTTS2 generates the selected
+reference voice locally, then FFmpeg changes tempo while preserving pitch.
+The chosen rate is part of the synthesis cache key. Measured audio durations
+drive captions and timeline fitting; existing bounded fitting may adjust tempo
+again if speech exceeds a shot budget. Narration is never truncated to fit.
+Settings are saved with the render revision. Existing jobs without these fields
+keep compact captions and the configured delivery speed.
+
 ## Team implementation guide
 
 - [Automatic background music, starter catalog, and attribution](examples/music/README.md)
