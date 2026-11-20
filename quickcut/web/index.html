@@ -85,7 +85,6 @@ input[type=checkbox]{accent-color:#f4f1ea;margin:3px 0 0;width:14px;height:14px;
 .stagebar{display:flex;justify-content:center;gap:6px;margin:0 auto;width:min(680px,100%)}
 .step{appearance:none;min-width:0;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px 12px;border:0;border-radius:999px;background:transparent;color:#8a8a8a;font:inherit;line-height:1;font-size:13px;white-space:nowrap}
 .step:disabled{opacity:1;color:#4a4a4a;cursor:default}
-.step[data-view="voice"],.step[data-view="voice"].reached{color:#3a3a3a;pointer-events:none;cursor:default}
 .step:not(:disabled):hover{color:#fff}
 .step b{font:11px ui-monospace,"SFMono-Regular",Consolas,monospace;font-weight:500}
 .step.reached{color:#bdbdbd}
@@ -149,9 +148,6 @@ input[type=checkbox]{accent-color:#f4f1ea;margin:3px 0 0;width:14px;height:14px;
 .review-footer{flex:none;display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding-top:2px}
 .review-footer .check{margin:0;flex:1 1 16rem;min-width:0;color:#d9d3c6}
 .review-actions{display:flex;align-items:center;gap:8px;flex:0 1 auto;margin-left:auto}
-.reviewer-field{display:flex;align-items:center;gap:6px;flex:none}
-.reviewer-field span{font-size:11px;color:var(--muted);white-space:nowrap}
-#reviewer{width:8.5rem;max-width:34vw;flex:none;padding:7px 8px}
 .review-footer #confirm{flex:none;white-space:nowrap}
 #result{display:flex;flex-direction:column;gap:8px;overflow:auto}
 .result-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:none}
@@ -161,7 +157,10 @@ input[type=checkbox]{accent-color:#f4f1ea;margin:3px 0 0;width:14px;height:14px;
 .actions{display:flex;gap:8px;flex-wrap:wrap;flex:none}
 .actions>*{flex:1;min-width:120px}
 .editor-note{font-size:12px;color:var(--muted);margin:0;overflow-wrap:anywhere}
-#voiceStep{display:flex;flex-direction:column;justify-content:center;gap:12px;max-width:460px}
+#voiceStep{display:flex;flex-direction:column;justify-content:flex-start;gap:12px;max-width:520px;overflow:auto}
+.voice-choices{display:flex;flex-wrap:wrap;gap:8px}
+.voice-choices label{flex:1;display:flex;gap:8px;align-items:center;border:1px solid #2a2a2a;border-radius:8px;padding:8px 10px}
+.subtitle-preview{margin:4px 0 0;padding:16px 12px;background:#111;border-radius:8px;text-align:center;line-height:1.35}
 #materials{overflow:auto}
 .events{margin-top:8px;font-size:11px;color:var(--muted);flex:none}
 .events summary{cursor:pointer}
@@ -200,8 +199,6 @@ input[type=checkbox]{accent-color:#f4f1ea;margin:3px 0 0;width:14px;height:14px;
   header{padding:0 12px}
   .brand-name small{display:none}
   .local{display:none}
-  .reviewer-field{flex:1}
-  #reviewer{width:7.5rem}
   .shot-tools{display:block}
   .actions>*{flex:1 1 100%}
 }
@@ -221,7 +218,7 @@ input[type=checkbox]{accent-color:#f4f1ea;margin:3px 0 0;width:14px;height:14px;
 </style>
 </head>
 <body>
-<header><div class="brand"><span class="mark" aria-hidden="true"></span><div class="brand-name">QuickCut<small data-i18n="剪辑工作室">剪辑工作室</small></div></div><div class="stagebar" id="steps" role="tablist" aria-label="剪辑步骤" data-i18n-aria-label="剪辑步骤"><button class="step" type="button" disabled data-view="materials"><b>1</b><span data-i18n="素材">素材</span></button><button class="step" type="button" disabled data-view="review"><b>2</b><span data-i18n="选镜">选镜</span></button><button class="step" type="button" disabled data-view="review"><b>3</b><span data-i18n="确认">确认</span></button><button class="step" type="button" disabled data-view="voice" title="配音会在确认后自动进行" data-i18n-title="配音会在确认后自动进行" ><b>4</b><span data-i18n="配音">配音</span></button><button class="step" type="button" disabled data-view="result"><b>5</b><span data-i18n="成片">成片</span></button></div><div class="header-tools"><div class="lang-switch" id="langSwitch" role="group" aria-label="界面语言" data-i18n-aria-label="界面语言"><button type="button" data-lang="zh" class="current" aria-pressed="true">中文</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div><span class="local" data-i18n="素材与模型留在本机">素材与模型留在本机</span></div></header>
+<header><div class="brand"><span class="mark" aria-hidden="true"></span><div class="brand-name">QuickCut<small data-i18n="剪辑工作室">剪辑工作室</small></div></div><div class="stagebar" id="steps" role="tablist" aria-label="剪辑步骤" data-i18n-aria-label="剪辑步骤"><button class="step" type="button" disabled data-view="materials"><b>1</b><span data-i18n="素材">素材</span></button><button class="step" type="button" disabled data-view="review"><b>2</b><span data-i18n="选镜">选镜</span></button><button class="step" type="button" disabled data-view="review"><b>3</b><span data-i18n="确认">确认</span></button><button class="step" type="button" disabled data-view="voice" title="在这里选择男声或女声，以及字幕字号、字重和颜色" data-i18n-title="在这里选择男声或女声，以及字幕字号、字重和颜色" ><b>4</b><span data-i18n="配音">配音</span></button><button class="step" type="button" disabled data-view="result"><b>5</b><span data-i18n="成片">成片</span></button></div><div class="header-tools"><div class="lang-switch" id="langSwitch" role="group" aria-label="界面语言" data-i18n-aria-label="界面语言"><button type="button" data-lang="zh" class="current" aria-pressed="true">中文</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div><span class="local" data-i18n="素材与模型留在本机">素材与模型留在本机</span></div></header>
 <main>
 <div class="workspace">
 <aside>
@@ -256,8 +253,8 @@ input[type=checkbox]{accent-color:#f4f1ea;margin:3px 0 0;width:14px;height:14px;
 <div id="status" class="hidden" role="status" aria-live="polite"></div>
 <div id="empty" class="empty"><div><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="8" y="15" width="48" height="34" rx="5"/><path d="m28 25 12 7-12 7V25ZM17 10v5m10-5v5m10-5v5m10-5v5M17 49v5m10-5v5m10-5v5m10-5v5"/></svg><h3 data-i18n="你的下一个故事，从这里开始">你的下一个故事，从这里开始</h3><p data-i18n="先导入视频，方案与预览会显示在这里。">先导入视频，方案与预览会显示在这里。</p></div></div>
 <div id="materials" class="hidden"><p class="notice" id="materialNote"></p><dl class="facts"><div><dt data-i18n="要求">要求</dt><dd id="materialPrompt"></dd></div><div><dt data-i18n="时长">时长</dt><dd id="materialDuration"></dd></div><div><dt data-i18n="文件">文件</dt><dd><ul id="materialFiles"></ul></dd></div></dl></div>
-<div id="voiceStep" class="hidden"><p class="notice" data-i18n="配音在确认方案之后自动完成，这里没有单独的编辑页。要改旁白或镜头，回到确认，再生成一次成片。">配音在确认方案之后自动完成，这里没有单独的编辑页。要改旁白或镜头，回到确认，再生成一次成片。</p><button id="backToReview" class="secondary" type="button" data-i18n="回到确认">回到确认</button></div>
-<div id="review" class="hidden"><div class="deck-bar"><button id="deckPrev" class="secondary" type="button" aria-label="上一镜" data-i18n-aria-label="上一镜">←</button><div class="deck-meta"><span id="deckIndex">01 / 01</span><span id="deckTitle"></span></div><div id="deckDots" class="deck-dots" role="tablist" aria-label="镜头" data-i18n-aria-label="镜头"></div><button id="deckNext" class="secondary" type="button" aria-label="下一镜" data-i18n-aria-label="下一镜">→</button></div><div class="deck-viewport" id="deckViewport"><div id="beats" class="deck-track"></div></div><div id="narrationDock"></div><p id="draftSave" class="hint" role="status"></p><div class="review-footer"><label class="check"><input type="checkbox" id="approved"><span data-i18n="我已检查选镜、入出点和旁白，确认生成。">我已检查选镜、入出点和旁白，确认生成。</span></label><div class="row"><input type="text" id="reviewer" value="本机用户" placeholder="本机用户" data-i18n-placeholder="本机用户" maxlength="100" aria-label="确认者" data-i18n-aria-label="确认者"><button id="confirm" class="primary" type="button" data-i18n="确认并生成成片 ↗">确认并生成成片 ↗</button></div></div></div>
+<div id="voiceStep" class="hidden"><p class="notice" data-i18n="在这里选定配音和字幕。生成会使用确认页里已经勾选的镜头和旁白。">在这里选定配音和字幕。生成会使用确认页里已经勾选的镜头和旁白。</p><p class="label" data-i18n="配音音色">配音音色</p><div class="voice-choices"><label><input type="radio" name="voicePreset" value="reference" checked><span data-i18n="任务参考音色">任务参考音色</span></label><label><input type="radio" name="voicePreset" value="male"><span data-i18n="男声">男声</span></label><label><input type="radio" name="voicePreset" value="female"><span data-i18n="女声">女声</span></label></div><p id="taskVoiceNote" class="hint"></p><label class="label" for="subtitleSize" data-i18n="字幕字号">字幕字号</label><select id="subtitleSize"><option value="small" data-i18n="小">小</option><option value="medium" selected data-i18n="中">中</option><option value="large" data-i18n="大">大</option></select><label class="label" for="subtitleWeight" data-i18n="字幕字重">字幕字重</label><select id="subtitleWeight"><option value="regular" selected data-i18n="常规">常规</option><option value="bold" data-i18n="加粗">加粗</option></select><label class="label" for="subtitleColor" data-i18n="字幕颜色">字幕颜色</label><select id="subtitleColor"><option value="white" selected data-i18n="白色">白色</option><option value="yellow" data-i18n="黄色">黄色</option><option value="black" data-i18n="黑色">黑色</option></select><p id="subtitlePreview" class="subtitle-preview" data-i18n="我们坐车出发玩耍。">我们坐车出发玩耍。</p><div class="row"><button id="startVoiceover" class="primary" type="button" data-i18n="开始配音并生成 ↗">开始配音并生成 ↗</button><button id="backToReview" class="secondary" type="button" data-i18n="回到确认">回到确认</button></div></div>
+<div id="review" class="hidden"><div class="deck-bar"><button id="deckPrev" class="secondary" type="button" aria-label="上一镜" data-i18n-aria-label="上一镜">←</button><div class="deck-meta"><span id="deckIndex">01 / 01</span><span id="deckTitle"></span></div><div id="deckDots" class="deck-dots" role="tablist" aria-label="镜头" data-i18n-aria-label="镜头"></div><button id="deckNext" class="secondary" type="button" aria-label="下一镜" data-i18n-aria-label="下一镜">→</button></div><div class="deck-viewport" id="deckViewport"><div id="beats" class="deck-track"></div></div><div id="narrationDock"></div><p id="draftSave" class="hint" role="status"></p><div class="review-footer"><label class="check"><input type="checkbox" id="approved"><span data-i18n="我已检查选镜、入出点和旁白。">我已检查选镜、入出点和旁白。</span></label><div class="row"><button id="confirm" class="primary" type="button" data-i18n="确认，下一步">确认，下一步</button></div></div></div>
 <div id="result" class="hidden"><div class="result-head"><h3 data-i18n="剪辑已完成">剪辑已完成</h3><span class="pill" id="resultDuration"></span></div><video id="finalVideo" controls playsinline preload="metadata"></video><div class="actions"><a id="downloadVideo" class="primary" download data-i18n="下载剪辑视频 ↓">下载剪辑视频 ↓</a><a id="downloadProject" class="secondary" download data-i18n="下载剪映工程">下载剪映工程</a><button id="openEditor" class="secondary" type="button" data-i18n="打开剪映 ↗">打开剪映 ↗</button></div><p id="editorNote" class="editor-note"></p><p id="resultMusic" class="hint hidden"></p><a id="downloadReport" class="hint" target="_blank" data-i18n="查看本次生成记录">查看本次生成记录</a></div>
 <div class="preview-note" id="previewNote"><span data-i18n="真实模型选镜">真实模型选镜</span><span data-i18n="参考音色配音">参考音色配音</span><span data-i18n="独立画面、声音与字幕">独立画面、声音与字幕</span></div>
 <details class="events hidden" id="events"><summary data-i18n="查看运行进度">查看运行进度</summary><ol id="eventList"></ol></details>
@@ -276,6 +273,28 @@ const english = {
   "配音": "Voiceover",
   "成片": "Final Cut",
   "配音会在确认后自动进行": "Voiceover is generated after approval",
+  "在这里选择男声或女声，以及字幕字号、字重和颜色": "Choose a male or female voice, and the caption size, weight, and color",
+  "在这里选定配音和字幕。生成会使用确认页里已经勾选的镜头和旁白。": "Choose the voice and captions here. Rendering uses the shots and narration you approved on Review.",
+  "配音音色": "Voice",
+  "任务参考音色": "Task reference voice",
+  "任务参考音色：{0}。只有选择男声或女声才会更换。": "Task reference voice: {0}. Only selecting Male or Female changes it.",
+  "保留导入任务时的参考音频；只有明确选择男声或女声才会更换音色。": "Keep the reference audio imported with this job. Select Male or Female explicitly to change the voice.",
+  "男声": "Male",
+  "女声": "Female",
+  "字幕字号": "Caption size",
+  "小": "Small",
+  "中": "Medium",
+  "大": "Large",
+  "字幕字重": "Caption weight",
+  "常规": "Regular",
+  "加粗": "Bold",
+  "字幕颜色": "Caption color",
+  "白色": "White",
+  "黄色": "Yellow",
+  "黑色": "Black",
+  "我们坐车出发玩耍。": "We set off by car.",
+  "开始配音并生成 ↗": "Start voiceover and render ↗",
+  "要更换声音或字幕，先回到确认，再从这里生成。": "To change the voice or captions, return to Review and generate again from here.",
   "界面语言": "Interface language",
   "素材与模型留在本机": "Media and models stay on this device",
   "素材台": "Media Desk",
@@ -324,9 +343,8 @@ const english = {
   "上一镜": "Previous shot",
   "下一镜": "Next shot",
   "镜头": "Shots",
-  "我已检查选镜、入出点和旁白，确认生成。": "I've reviewed the shots, trim points, and narration. Ready to render.",
-  "确认者": "Reviewer",
-  "确认并生成成片 ↗": "Approve and Render ↗",
+  "我已检查选镜、入出点和旁白。": "I've reviewed the shots, trim points, and narration.",
+  "确认，下一步": "Confirm, next",
   "剪辑已完成": "Edit Complete",
   "下载剪辑视频 ↓": "Download Video ↓",
   "下载剪映工程": "Download Jianying Project",
@@ -420,7 +438,6 @@ const english = {
   "服务已关闭，任务未继续运行": "The service stopped and interrupted this job.",
   "服务已重启。素材与草案已保留，可返回方案继续生成。": "The service restarted. Your media and draft were saved. Return to Review to continue.",
   "已回到方案。可以修改镜头和旁白，再次确认后生成新成片；刚才的成片仍可查看。": "You are back in Review. Edit the shots or narration and approve again to render a new cut. You can still view the previous cut.",
-  "本机用户": "Local user",
   "请填写完整中文旁白后再确认。": "Enter a complete Chinese narration before approving.",
   "请将旁白改成与画面相符的中文完整句。": "Rewrite the narration as a complete Chinese sentence that matches the footage.",
   "旁白缺少句末标点，可能是残句；请核对并改成完整句后确认。": "The narration has no closing punctuation and may be incomplete. Check and complete the sentence before approving.",
@@ -611,7 +628,7 @@ function selectJob(id){if(draftView&&current&&reviewDirty)rememberReview();clear
 function busy(value){$('analyze').disabled=value;}
 $('inputForm').onsubmit=e=>{e.preventDefault();if(!files.length)return toast('请先选择视频');const data=new FormData();const reference=$('referenceAudio').files[0];if(reference)data.append('reference_audio',reference);files.forEach(file=>data.append('files',file));data.append('prompt',$('prompt').value);data.append('duration',$('duration').value);data.append('origin',$('origin').value);data.append('subtitle_position',$('subtitlePosition').value);data.append('open_editor',$('autoOpen').checked);data.append('auto_music',$('autoMusic').checked);busy(true);$('uploadProgress').classList.remove('hidden');const xhr=new XMLHttpRequest();xhr.open('POST','/api/jobs');xhr.setRequestHeader('x-quickcut-token',token);xhr.upload.onprogress=e=>{if(e.lengthComputable){const percent=Math.round(e.loaded/e.total*100);$('uploadProgress').firstChild.style.width=percent+'%';$('inputNote').textContent='正在导入视频 '+percent+'%';}};xhr.onload=()=>{busy(false);$('uploadProgress').classList.add('hidden');$('inputNote').textContent='真实模型在本机运行，分析与配音可能需要数分钟。';let result;try{result=JSON.parse(xhr.responseText);}catch(err){return toast('服务返回异常，请检查连接');}if(xhr.status>=400)return toast(result.detail||'导入失败');selectJob(result.job_id);history();};xhr.onerror=()=>{busy(false);toast('视频导入失败，请检查本地服务');};xhr.send(data);};
 function stageIndex(data){if(!data)return -1;let n=0;if(['B','C','retrieve'].includes(data.stage))n=1;if(data.status==='needs_review')n=2;if(['E','D','D/E','voice'].includes(data.stage)||data.status==='rendering')n=3;if(data.stage==='F'||data.status==='completed'||data.result)n=4;return n;}
-function stepEnabled(index,data){if(!data||!current)return false;if(['queued','analyzing','rendering'].includes(data.status))return false;if(index===0)return true;if(index===1||index===2)return data.status==='needs_review'||data.status==='completed'||!!data.can_review;if(index===3)return false;if(index===4)return !!data.downloads;return false;}
+function stepEnabled(index,data){if(!data||!current)return false;if(['queued','analyzing','rendering'].includes(data.status))return false;if(index===0)return true;if(index===1||index===2)return data.status==='needs_review'||data.status==='completed'||!!data.can_review;if(index===3)return (data.status==='needs_review'&&!!draftView&&$('approved').checked)||!!(data.result||data.status==='completed');if(index===4)return !!data.downloads;return false;}
 function paintSteps(data){const progress=stageIndex(data);let index=preferredIndex;if(index==null||!stepEnabled(index,data)){if(data.status==='completed'&&data.downloads)index=4;else if(data.status==='needs_review'&&data.draft)index=2;else index=null;}[...$('steps').children].forEach((node,i)=>{const enabled=stepEnabled(i,data);node.disabled=!enabled;node.classList.toggle('reached',progress>=0&&i<=progress);node.classList.toggle('current',index===i);if(index===i)node.setAttribute('aria-current','step');else node.removeAttribute('aria-current');});$('stageHint').textContent=data&&stepEnabled(2,data)?'点上面的步骤可以回去查看。改镜头或旁白后，需要重新确认才会生成新成片。':'分析完成后，可以点已走过的步骤回去查看。';return index;}
 function pauseInactiveVideos(name){if(name!=='result')$('finalVideo').pause();if(name!=='review')for(const video of $('review').querySelectorAll('video'))video.pause();}
 function showPanel(name){for(const id of ['empty','materials','review','voiceStep','result'])$(id).classList.toggle('hidden',id!==name);$('previewNote').classList.toggle('hidden',name==='empty');pauseInactiveVideos(name);}
@@ -629,7 +646,7 @@ async function openStep(index){
   }
   preferredIndex=index;applyView(latest);
 }
-function applyView(data){if(['queued','analyzing','rendering'].includes(data.status))preferredIndex=null;const index=paintSteps(data);const names=['materials','review','review','voiceStep','result'];let name=index==null?'empty':names[index];if(name==='review'&&!data.draft)name='empty';if(name==='result'&&!data.downloads)name='empty';showPanel(name);if(name==='materials')drawMaterials(data);return name;}
+function applyView(data){if(['queued','analyzing','rendering'].includes(data.status))preferredIndex=null;const index=paintSteps(data);const names=['materials','review','review','voiceStep','result'];let name=index==null?'empty':names[index];if(name==='review'&&!data.draft)name='empty';if(name==='result'&&!data.downloads)name='empty';showPanel(name);if(name==='materials')drawMaterials(data);if(name==='voiceStep')paintVoice(data);return name;}
 function statusBox(data){const box=$('status');box.replaceChildren();box.className='status';const running=['queued','analyzing','rendering'].includes(data.status);if(running)box.append(el('span',undefined,'spinner'));if(data.status==='failed'||data.status==='interrupted')box.classList.add('error');const text=el('div');text.append(el('strong',statusNames[data.status]||data.status),el('p',data.message||''));if(data.error)text.append(el('p',(data.error.stage||'')+' · '+data.error.code));if(data.can_review&&['failed','interrupted'].includes(data.status)){const retry=el('button','返回方案修改','secondary');retry.type='button';retry.onclick=async()=>{try{await request('/api/jobs/'+current+'/return-review',{method:'POST'});lastView='';poll();}catch(err){toast(err.message);}};text.append(retry);}else if(['failed','interrupted'].includes(data.status)){const retry=el('button','保留素材，重新分析','secondary');retry.type='button';retry.onclick=async()=>{try{await request('/api/jobs/'+current+'/retry-analysis',{method:'POST'});lastView='';poll();}catch(err){toast(err.message);}};text.append(retry);}box.append(text);}
 
 
@@ -685,7 +702,7 @@ function restoreReview(){
     reviewDirty=true;$('draftSave').textContent='已恢复本浏览器暂存的草稿，尚未确认。';scheduleSave();
   }else $('draftSave').textContent='草稿会自动保存；生成成片仍需你确认。';
 }
-function setEditBusy(value){editPending=value;$('confirm').disabled=value;for(const node of document.querySelectorAll('#beats select,#beats button,#narrationDock button')){if(value){if(node.dataset.wasDisabled===undefined)node.dataset.wasDisabled=String(node.disabled);node.disabled=true;}else if(node.dataset.wasDisabled!==undefined){node.disabled=node.dataset.wasDisabled==='true';delete node.dataset.wasDisabled;}}}
+function setEditBusy(value){editPending=value;$('confirm').disabled=value;updateVoiceBusy();for(const node of document.querySelectorAll('#beats select,#beats button,#narrationDock button')){if(value){if(node.dataset.wasDisabled===undefined)node.dataset.wasDisabled=String(node.disabled);node.disabled=true;}else if(node.dataset.wasDisabled!==undefined){node.disabled=node.dataset.wasDisabled==='true';delete node.dataset.wasDisabled;}}}
 function reviewChanged(event){if(event?.target?.dataset.narration)pendingNarrationReview(event.target.dataset.narration);reviewDirty=true;editVersion++;$('approved').checked=false;rememberReview();$('draftSave').textContent='草稿已在本浏览器暂存，正在保存…';scheduleSave();}
 function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(saveReview,500);}
 async function saveReview(){
@@ -768,25 +785,48 @@ async function changeSelection(beatId,index,value,delta=0){
   finally{setEditBusy(false);for(const node of document.querySelectorAll('#beats input,#beats textarea'))node.disabled=false;}
 }
 function resetChoices(){for(const beat of draftView?.beats||[])for(const shot of beat.shots){const choice=document.querySelector('select[aria-label="替换'+beat.purpose+'镜头'+(shot.shot_index+1)+'"]');if(choice)choice.value=shot.candidate_id;}}
-$('confirm').onclick=async()=>{
+async function submitConfirm(withPresentation){
   if(editPending)return toast('正在保存草稿，请稍后确认。');
   if(!$('approved').checked)return toast('请先检查并勾选确认');if(!draftView)return;
   clearTimeout(saveTimer);const jobId=current,view=draftView;let saved;
   try{saved=reviewSnapshot();}catch(err){return toast(err.message);}
   const texts=Object.fromEntries(Object.entries(saved.draft_text_edits).map(([id,text])=>[id,text.trim()]));
   const boundaries=saved.draft_boundaries.map(item=>({...item,shot_index:view.beats.find(beat=>beat.beat_id===item.beat_id).shots.find(shot=>shot.candidate_id===item.candidate_id).shot_index}));
+  const body={draft_id:view.draft_id,review_revision:view.review_revision,approved_text_by_beat:texts,boundaries,reviewer:'本机用户',confirmed:true};
+  if(withPresentation){
+    const picked=document.querySelector('input[name="voicePreset"]:checked');
+    body.voice=picked?picked.value:'reference';
+    body.subtitle_size=$('subtitleSize').value;
+    body.subtitle_weight=$('subtitleWeight').value;
+    body.subtitle_color=$('subtitleColor').value;
+  }
   rememberReview();setEditBusy(true);
   try{
-    await request('/api/jobs/'+jobId+'/confirm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({draft_id:view.draft_id,review_revision:view.review_revision,approved_text_by_beat:texts,boundaries,reviewer:$('reviewer').value,confirmed:true})});
-    localStorage.removeItem(localDraftKey(jobId));if(jobId===current){reviewDirty=false;lastView='';await poll();}
+    await request('/api/jobs/'+jobId+'/confirm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    localStorage.removeItem(localDraftKey(jobId));localStorage.removeItem(localPresentationKey(jobId));if(jobId===current){voiceDirty=false;reviewDirty=false;lastView='';await poll();}
   }catch(err){if(jobId===current)toast(err.message);}
   finally{setEditBusy(false);}
+}
+function acceptReview(){
+  if(editPending)return toast('正在保存草稿，请稍后确认。');
+  if(!$('approved').checked)return toast('请先检查并勾选确认');
+  if(!draftView)return;
+  try{reviewSnapshot();}catch(err){return toast(err.message);}
+  openStep(3);
+}
+$('confirm').onclick=()=>acceptReview();
+$('startVoiceover').onclick=()=>{
+  if(!latest||latest.status!=='needs_review')return toast('要更换声音或字幕，先回到确认，再从这里生成。');
+  return submitConfirm(true);
 };
 function drawResult(data){
   const music=data.result.music;
   $('resultMusic').classList.toggle('hidden',!music);
   setText($('resultMusic'),music?tr`配乐：${music.title}。发布时请保留署名：${music.attribution}`:'');
-  $('finalVideo').src=data.downloads.video;
+  const revision=data.result?.revision!=null?String(data.result.revision):(data.updated_at||'');
+  const video=data.downloads.video+(revision?'?revision='+encodeURIComponent(revision):'');
+  const player=$('finalVideo');
+  if(player.getAttribute('src')!==video){player.pause();player.removeAttribute('src');player.load();player.src=video;}
   $('downloadVideo').href=data.downloads.video+'?download=true';
   $('downloadProject').href=data.downloads.package;
   $('downloadReport').href=data.downloads.report;
@@ -801,9 +841,62 @@ function configureMusic(config){
   setText($('musicNote'),msg(available?'使用本地免费授权曲库，发布视频时请保留配乐署名。':'本地曲库尚未安装，暂不可自动配乐。'));
 }
 $('openEditor').onclick=async()=>{$('openEditor').disabled=true;try{const data=await request('/api/jobs/'+current+'/open-editor',{method:'POST'});setText($('editorNote'),data.message?serverMessage(data.message):msg('剪映已启动'));toast(data.message?serverMessage(data.message):msg('剪映已启动'));}catch(err){toast(err.uiMessage||serverMessage(err.message));}finally{$('openEditor').disabled=false;}};
-async function poll(){if(!current||polling)return;const jobId=current;polling=true;try{const data=await request('/api/jobs/'+jobId);if(jobId!==current)return;latest=data;statusBox(data);const panel=applyView(data);const reviewing=panel==='review',done=panel==='result';const key=reviewing?reviewKey(jobId,data.draft):jobId+':'+panel+':'+data.status;if(panel==='empty'){setText($('empty').querySelector('h3'),data.status==='failed'?msg('这一阶段需要处理'):msg('正在把素材变成故事'));setText($('empty').querySelector('p'),data.status==='failed'?msg('详细原因显示在上方，原始视频与运行记录会保留。'):msg('可以留在这里查看进度，刷新页面也不会丢失任务。'));}if(lastView!==key&&!(reviewing&&(editPending||reviewDirty))){if(reviewing){drawReview(data.draft);showDeck(deckAt);}if(done)drawResult(data);lastView=key;history();}else if(done)setText($('editorNote'),data.result?.editor?.message?serverMessage(data.result.editor.message):msg('剪映工程已准备好。'));$('events').classList.toggle('hidden',!data.events?.length);$('eventList').replaceChildren();for(const event of (data.events||[]))$('eventList').append(el('li',()=>new Date(event.at).toLocaleTimeString(locale())+' · '+render(serverMessage(event.message))));applyLanguage();}catch(err){if(jobId!==current)return;toast(err.uiMessage||serverMessage(err.message));if(err.message.includes('找不到')){current=null;localStorage.removeItem('quickcut-job');}}finally{polling=false;}}
+async function poll(){if(!current||polling)return;const jobId=current;polling=true;try{const data=await request('/api/jobs/'+jobId);if(jobId!==current)return;latest=data;statusBox(data);const panel=applyView(data);const reviewing=panel==='review',done=panel==='result';const key=reviewing?reviewKey(jobId,data.draft):jobId+':'+panel+':'+data.status;if(panel==='empty'){setText($('empty').querySelector('h3'),data.status==='failed'?msg('这一阶段需要处理'):msg('正在把素材变成故事'));setText($('empty').querySelector('p'),data.status==='failed'?msg('详细原因显示在上方，原始视频与运行记录会保留。'):msg('可以留在这里查看进度，刷新页面也不会丢失任务。'));}if(lastView!==key&&!(reviewing&&(editPending||reviewDirty))){if(reviewing){drawReview(data.draft);showDeck(deckAt);}if(done)drawResult(data);lastView=key;history();}else if(done)setText($('editorNote'),data.result?.editor?.message?serverMessage(data.result.editor.message):msg('剪映工程已准备好。'));$('events').classList.toggle('hidden',!data.events?.length);$('eventList').replaceChildren();for(const event of (data.events||[]))$('eventList').append(el('li',()=>new Date(event.at).toLocaleTimeString(locale())+' · '+render(serverMessage(event.message))));paintVoice(data);applyLanguage();}catch(err){if(jobId!==current)return;toast(err.uiMessage||serverMessage(err.message));if(err.message.includes('找不到')){current=null;localStorage.removeItem('quickcut-job');}}finally{polling=false;}}
 [...$('steps').children].forEach((node,index)=>node.onclick=()=>openStep(index));
 $('backToReview').onclick=()=>openStep(2);
+let voiceDirty=false;
+let voicePresets={};
+function localPresentationKey(jobId){return 'quickcut-presentation-'+jobId;}
+function presentationDraftKey(data){return data?.draft?data.draft.draft_id+':'+data.draft.review_revision:null;}
+function selectedPresentation(){
+  return {voice:document.querySelector('input[name="voicePreset"]:checked')?.value||'reference',
+    subtitle_size:$('subtitleSize').value,subtitle_weight:$('subtitleWeight').value,subtitle_color:$('subtitleColor').value};
+}
+function rememberPresentation(){
+  if(!current||latest?.status!=='needs_review')return;
+  try{localStorage.setItem(localPresentationKey(current),JSON.stringify({draft: presentationDraftKey(latest),presentation:selectedPresentation()}));}catch(err){}
+}
+function updateVoiceBusy(){
+  const editable=!!latest&&latest.status==='needs_review'&&!editPending;
+  $('startVoiceover').disabled=!editable||!draftView||!$('approved').checked;
+  for(const input of document.querySelectorAll('input[name="voicePreset"]'))input.disabled=!editable||(input.value!=='reference'&&!voicePresets[input.value]?.available);
+  for(const id of ['subtitleSize','subtitleWeight','subtitleColor'])$(id).disabled=!editable;
+}
+function configureVoices(config){voicePresets=config.voice_presets||{};updateVoiceBusy();}
+function paintSubtitlePreview(){
+  const node=$('subtitlePreview');
+  if(!node)return;
+  const scale={small:0.75,medium:1,large:1.35}[$('subtitleSize').value]||1;
+  const color={white:'#fff',yellow:'#ffe14a',black:'#111'}[$('subtitleColor').value]||'#fff';
+  node.style.fontSize=(22*scale)+'px';
+  node.style.fontWeight=$('subtitleWeight').value==='bold'?'700':'500';
+  node.style.color=color;
+  node.style.webkitTextStroke=$('subtitleColor').value==='black'?'0.6px #fff':'0.6px #000';
+}
+function paintVoice(data){
+  const key=presentationDraftKey(data);
+  setText($('taskVoiceNote'),data.presentation?.reference_voice_label?
+    tr`任务参考音色：${data.presentation.reference_voice_label}。只有选择男声或女声才会更换。`:
+    msg('保留导入任务时的参考音频；只有明确选择男声或女声才会更换音色。'));
+  if(voiceDirty&&paintVoice.job===current&&paintVoice.draft===key){updateVoiceBusy();return;}
+  voiceDirty=false;paintVoice.job=current;paintVoice.draft=key;
+  let presentation=data.presentation||{};
+  if(data.status==='needs_review'){
+    try{const saved=JSON.parse(localStorage.getItem(localPresentationKey(current))||'null');
+      if(saved&&saved.draft===key&&saved.presentation){presentation=saved.presentation;voiceDirty=true;}
+      else if(saved)localStorage.removeItem(localPresentationKey(current));
+    }catch(err){}
+  }
+  const voice=['reference','male','female'].includes(presentation.voice)?presentation.voice:'reference';
+  for(const input of document.querySelectorAll('input[name="voicePreset"]'))input.checked=input.value===voice;
+  $('subtitleSize').value=['small','medium','large'].includes(presentation.subtitle_size)?presentation.subtitle_size:'medium';
+  $('subtitleWeight').value=presentation.subtitle_weight==='bold'?'bold':'regular';
+  $('subtitleColor').value=['white','yellow','black'].includes(presentation.subtitle_color)?presentation.subtitle_color:'white';
+  updateVoiceBusy();paintSubtitlePreview();
+}
+for(const node of document.querySelectorAll('input[name="voicePreset"], #subtitleSize, #subtitleWeight, #subtitleColor')){
+  node.addEventListener('change',()=>{voiceDirty=true;rememberPresentation();paintSubtitlePreview();});
+}
 
 const baseShowPanel=showPanel;
 showPanel=function(name){baseShowPanel(name);if(name==='review')requestAnimationFrame(()=>showDeck(deckAt));};
@@ -834,6 +927,6 @@ for(const [id,key] of Object.entries({
 }))setText($(id),msg(key));
 applyLanguage();
 
-(async()=>{try{const config=await request('/api/config');token=config.token;configureMusic(config);defaultVoiceLabel=config.default_voice?.label||'默认音色';referenceNote();health().then(applyLanguage);history();const saved=localStorage.getItem('quickcut-job');if(saved)selectJob(saved);setInterval(poll,2000);}catch(err){toast(msg('无法连接本地工作台，请重新启动服务。'));}})();
+(async()=>{try{const config=await request('/api/config');token=config.token;configureMusic(config);configureVoices(config);defaultVoiceLabel=config.default_voice?.label||'默认音色';referenceNote();health().then(applyLanguage);history();const saved=localStorage.getItem('quickcut-job');if(saved)selectJob(saved);setInterval(poll,2000);}catch(err){toast(msg('无法连接本地工作台，请重新启动服务。'));}})();
 </script>
 </body></html>

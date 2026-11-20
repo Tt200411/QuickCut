@@ -24,11 +24,17 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 
 from .media import resolve_uri, write_json
 from . import production_pipeline as pipeline
+from .subtitle_style import STYLE_CHOICES
 
 MAX_FILE_BYTES = 4 * 1024**3
 MAX_REFERENCE_BYTES = 20 * 1024**2
 VIDEO_SUFFIXES = {".mp4", ".mov", ".mkv", ".webm", ".m4v", ".avi"}
 TERMINAL = {"needs_review", "completed", "failed", "interrupted"}
+VOICE_PRESETS = {
+    "male": {"label": "男声", "path": "materials/reference-audio/20261117/男声.wav"},
+    "female": {"label": "女声", "path": "materials/reference-audio/20261117/魅力游移型女1.wav"},
+}
+SUBTITLE_CHOICES = STYLE_CHOICES
 
 
 def _repo_path(value):
@@ -83,6 +89,85 @@ def _reference_info(path):
                 "size_bytes": path.stat().st_size, "rms": round(rms, 3)}
     except (OSError, EOFError, wave.Error, ValueError) as exc:
         raise HTTPException(422, f"参考 WAV 无效：{exc}") from exc
+
+
+def _voice_presets_status():
+    result = {}
+    for preset, spec in VOICE_PRESETS.items():
+        try:
+            _reference_info(_repo_path(spec["path"]))
+            available = True
+        except HTTPException:
+            available = False
+        result[preset] = {"label": spec["label"], "available": available}
+    return result
+
+
+def _reference_voice_label(root, settings):
+    original = root / "voice-reference-config.json"
+    if original.is_file():
+        config = pipeline.read(original)
+        if config.get("voice_label"):
+            return config["voice_label"]
+    reference = settings.get("voice_config_source", {}).get("reference", settings.get("reference_audio", {}))
+    return Path(reference.get("filename") or "任务参考音频").stem
+
+
+def _apply_voice_preset(root, preset, settings):
+    """Select a reference without rewriting the audio used by past revisions."""
+    if not isinstance(preset, str) or preset not in {"reference", *VOICE_PRESETS}:
+        raise HTTPException(422, "音色应为任务参考音色、男声或女声")
+    config_path = root / "voice-config.json"
+    current = pipeline.read(config_path)
+    original_path = root / "voice-reference-config.json"
+    original = pipeline.read(original_path) if original_path.is_file() else copy.deepcopy(current)
+    if preset == "reference":
+        config = copy.deepcopy(original)
+        reference = Path(config["reference_audio"])
+        info = _reference_info(reference)
+        metadata = settings.get("voice_config_source", {}).get("reference", settings.get("reference_audio", {}))
+        metadata = {**metadata, **info, "path": str(reference.relative_to(root))}
+    else:
+        spec = VOICE_PRESETS[preset]
+        source = _repo_path(spec["path"])
+        info = _reference_info(source)
+        audio = source.read_bytes()
+        if hashlib.sha256(audio).hexdigest() != info["sha256"]:
+            raise HTTPException(409, "参考音频已变化，请重试")
+        reference = root / "reference" / (info["sha256"] + ".wav")
+        if reference.exists() and reference.read_bytes() != audio:
+            raise HTTPException(409, "已保存的参考音频发生变化，请重新导入素材")
+        config = copy.deepcopy(current)
+        config["reference_audio"] = str(reference.resolve())
+        config["voice_label"] = spec["label"]
+        for item in config.get("cue_overrides", {}).values():
+            if "reference_audio" in item:
+                item["reference_audio"] = config["reference_audio"]
+        metadata = {**info, "kind": "preset", "preset": preset,
+                    "filename": source.name, "uri": str(source),
+                    "path": str(reference.relative_to(root))}
+    # All requested values and audio are validated before any task file changes.
+    if not original_path.exists():
+        write_json(original_path, original)
+    if preset != "reference" and not reference.exists():
+        reference.parent.mkdir(parents=True, exist_ok=True)
+        with reference.open("xb") as stream:
+            stream.write(audio)
+    write_json(config_path, config)
+    settings["voice"] = preset
+    settings["reference_audio"] = metadata
+
+
+def _subtitle_fields(payload):
+    chosen = {}
+    for key, allowed in SUBTITLE_CHOICES.items():
+        if key not in payload or payload[key] in (None, ""):
+            continue
+        value = payload[key]
+        if not isinstance(value, str) or value not in allowed:
+            raise HTTPException(422, "字幕字号、字重或颜色无效")
+        chosen[key] = value
+    return chosen
 
 
 class Jobs:
@@ -298,6 +383,16 @@ class Jobs:
         if data.get("result"):
             data["downloads"] = {"video": f"/api/jobs/{job_id}/files/video", "package": f"/api/jobs/{job_id}/files/package",
                                  "report": f"/api/jobs/{job_id}/files/report"}
+        settings_path = root / "settings.json"
+        if settings_path.is_file():
+            settings = pipeline.read(settings_path)
+            data["presentation"] = {
+                "voice": settings.get("voice") or "reference",
+                "reference_voice_label": _reference_voice_label(root, settings),
+                "subtitle_size": settings.get("subtitle_size") or "medium",
+                "subtitle_weight": settings.get("subtitle_weight") or "regular",
+                "subtitle_color": settings.get("subtitle_color") or "white",
+            }
         return data
 
 
@@ -344,6 +439,7 @@ def create_app(*, root=None, runtime=None):
         return {"token": token, "max_file_bytes": MAX_FILE_BYTES, "max_reference_bytes": MAX_REFERENCE_BYTES,
                 "music": catalog_status(),
                 "default_voice": default_voice,
+                "voice_presets": _voice_presets_status(),
                 "models": {"vision": "nllb-clip-base", "planning": runtime.model, "voice": "IndexTTS2"}}
 
     @app.get("/api/health")
@@ -415,6 +511,7 @@ def create_app(*, root=None, runtime=None):
             if reference_audio:
                 voice["voice_label"] = Path(reference_audio.filename).stem
             write_json(root / "voice-config.json", voice)
+            write_json(root / "voice-reference-config.json", voice)
             voice_source = {"uri": str(voice_source_path), "sha256": hashlib.sha256(voice_source_bytes).hexdigest(),
                             "frozen_at": pipeline.now(), "reference": reference,
                             "reference_policy": "one_frozen_reference_per_job", "normalized_cue_reference_ids": normalized_cues}
@@ -462,8 +559,8 @@ def create_app(*, root=None, runtime=None):
     def confirm(job_id: str, payload: dict):
         with jobs.lock:
             data = jobs.public(job_id)
-            if data["status"] != "needs_review":
-                raise HTTPException(409, "当前任务不在方案确认阶段")
+            if data["status"] != "needs_review" or job_id in jobs.active:
+                raise HTTPException(409, "当前任务不在方案确认阶段或仍在运行")
             if payload.get("draft_id") != data["draft"]["draft_id"]:
                 raise HTTPException(409, "方案版本已变化，请刷新")
             if payload.get("review_revision", 0) != data["draft"]["review_revision"]:
@@ -511,6 +608,13 @@ def create_app(*, root=None, runtime=None):
                              for item in validated if item["beat_id"] == beat["beat_id"])
                 if length > beat["duration_budget_us"]:
                     raise HTTPException(422, "这一段选中的镜头总长超过预算，请缩短入出点")
+            root = jobs.directory(job_id)
+            style = _subtitle_fields(payload)
+            settings = pipeline.read(root / "settings.json")
+            if payload.get("voice") not in (None, ""):
+                _apply_voice_preset(root, payload["voice"], settings)
+            settings.update(style)
+            write_json(root / "settings.json", settings)
             confirmation = {"draft_id": payload["draft_id"], "reviewer": reviewer, "reviewed_at": pipeline.now(),
                             "confirmation_kind": confirmation_kind, "approved_text_by_beat": text, "boundaries": validated,
                             "revision": data.get("render_attempt", 0) + 1, "selection_overrides": data.get("selection_overrides")}
@@ -624,7 +728,8 @@ def create_app(*, root=None, runtime=None):
         path = resolve_uri(root, names[kind])
         if not path.is_file():
             raise HTTPException(404, "文件尚未生成")
-        return FileResponse(path, filename=path.name if download or kind == "package" else None)
+        return FileResponse(path, filename=path.name if download or kind == "package" else None,
+                            headers={"Cache-Control": "no-store"})
 
     @app.post("/api/jobs/{job_id}/open-editor")
     def editor(job_id: str):

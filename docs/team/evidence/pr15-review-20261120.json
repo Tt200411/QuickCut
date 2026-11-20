@@ -1,0 +1,207 @@
+{
+  "status": "passed",
+  "source_job": "1c1bb824f8a9",
+  "reused_stages": [
+    "A",
+    "B",
+    "C"
+  ],
+  "executed_stages": [
+    "E",
+    "D",
+    "F"
+  ],
+  "neural_tts_executed": true,
+  "voice": "female",
+  "reference_sha256": "a44e2a19b3402b43bec9ee86c9cbbaf21f11ce4c0beaba1e19fa7a241fc949ec",
+  "original_reference_sha256": "f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb",
+  "tts_seconds": 121.64281933405437,
+  "new_cues": [
+    {
+      "cue_id": "cue-01",
+      "duration_us": 3210208,
+      "cache_hit": false
+    },
+    {
+      "cue_id": "cue-02",
+      "duration_us": 4684688,
+      "cache_hit": false
+    },
+    {
+      "cue_id": "cue-03",
+      "duration_us": 1684979,
+      "cache_hit": false
+    }
+  ],
+  "duration_us": 30000000,
+  "presentation": {
+    "subtitle_position": "top",
+    "subtitle_size": "large",
+    "subtitle_weight": "bold",
+    "subtitle_color": "yellow",
+    "source": "settings.json",
+    "applied_before_final_freeze": true,
+    "d_timeline_content_hash": "sha256:ea84791983ba59adec14e2dcf2b7c2a1d1c285df3eb47bb22d7b22b6b083e1f5",
+    "final_timeline_content_hash": "sha256:1278e11783497d65960020bf32f98ebdb1aa7ae1949c1afd9ad87594a96f492b",
+    "timing_changed": false,
+    "fit_receipt_changed": false
+  },
+  "original_inputs_unchanged": true,
+  "initial_reference_unchanged": true,
+  "package_verified": true,
+  "native_track_count": 4,
+  "native_styles": [
+    {
+      "fill": {
+        "alpha": 1.0,
+        "content": {
+          "render_type": "solid",
+          "solid": {
+            "alpha": 1.0,
+            "color": [
+              1.0,
+              1.0,
+              0.0
+            ]
+          }
+        }
+      },
+      "range": [
+        0,
+        15
+      ],
+      "size": 10.8,
+      "bold": true,
+      "italic": false,
+      "underline": false,
+      "strokes": [
+        {
+          "content": {
+            "solid": {
+              "alpha": 1.0,
+              "color": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "width": 0.05
+        }
+      ]
+    },
+    {
+      "fill": {
+        "alpha": 1.0,
+        "content": {
+          "render_type": "solid",
+          "solid": {
+            "alpha": 1.0,
+            "color": [
+              1.0,
+              1.0,
+              0.0
+            ]
+          }
+        }
+      },
+      "range": [
+        0,
+        23
+      ],
+      "size": 10.8,
+      "bold": true,
+      "italic": false,
+      "underline": false,
+      "strokes": [
+        {
+          "content": {
+            "solid": {
+              "alpha": 1.0,
+              "color": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "width": 0.05
+        }
+      ]
+    },
+    {
+      "fill": {
+        "alpha": 1.0,
+        "content": {
+          "render_type": "solid",
+          "solid": {
+            "alpha": 1.0,
+            "color": [
+              1.0,
+              1.0,
+              0.0
+            ]
+          }
+        }
+      },
+      "range": [
+        0,
+        9
+      ],
+      "size": 10.8,
+      "bold": true,
+      "italic": false,
+      "underline": false,
+      "strokes": [
+        {
+          "content": {
+            "solid": {
+              "alpha": 1.0,
+              "color": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "width": 0.05
+        }
+      ]
+    }
+  ],
+  "native_editor_visual_acceptance": false,
+  "confirmation_kind": "assistant_review",
+  "preview": "outputs/pr15-real-review-20261120/ui-jobs/f15e20261120/export-r1/preview.mp4",
+  "kind": "PR15ReviewEvidence",
+  "base": "b28ebb54620de0a532612d32d7a98cdfd145ca31",
+  "author_head": "00a61c9ef83d57d4751774bd3355251900650d67",
+  "local_test_result": {
+    "passed": 1426,
+    "seconds": 59.45
+  },
+  "browser": {
+    "viewport": [
+      1280,
+      720
+    ],
+    "body_width": 1280,
+    "default_preserves_task_reference": true,
+    "approval_then_voice_step": true,
+    "selection_survives_poll_and_reload": true,
+    "language_switch_checked": true,
+    "final_video_played_to_seconds": 30,
+    "console_warnings_errors": [],
+    "generation_submitted_via": "API; assistant_review; separate UI copy not submitted"
+  },
+  "source_document_sha256": {
+    "job.json": "7efe440f70a0e607544ce6db4f4c6566d0a2e90ed49fea170e1514e18aa8ab97",
+    "draft.json": "6cbf32034668448c6250a64ffda1dde71724c29a40b97128a3072161e6ecf1f3",
+    "brief.json": "5e0a0d8d62f7c9dd10f384813b2d9a2709446655755fca02fb292f8fd4dce622",
+    "asset-manifest.json": "9d75db6b5fe464cb939d6cadfb6791cbac8cfe9e54d1569e9a6d2bc73d2c1f7a",
+    "candidate-set.json": "f47a5ed0fb7d85ea577fdedb2406fdd9ea04d6855b6e278e03c1b3be9e07f485",
+    "retrieval-request.json": "26a9869707d69dafdcc2ebcb32231db8b1895f1d1ea778e52a6a8cfe0288d64e",
+    "settings.json": "13ff09a29269cb65aaa3c7d1dfad9568ed6aa4e330ddf24d30cae6cc36d55040",
+    "voice-config.json": "ce0c2334c55f6e7d619566d72aa066cd62baeeac105fe7165c44a074a8e9404b",
+    "reference/voice.wav": "f36cfc54d0d9ea8c99d102639913754b83c9ee22eb8fcb5deeb6b63ef0ad55cb"
+  }
+}

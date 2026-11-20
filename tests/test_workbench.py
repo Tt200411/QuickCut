@@ -427,6 +427,49 @@ def test_subtitle_position_is_explicit_and_validated(browser, position):
         assert read(jobs.directory(response.json()["job_id"]) / "settings.json")["subtitle_position"] == position
 
 
+def test_voice_step_can_switch_gender_and_store_caption_style(browser, monkeypatch, tmp_path):
+    from quickcut.production_pipeline import read
+    client, jobs, submitted = browser
+    male = tmp_path / "male.wav"
+    female = tmp_path / "female.wav"
+    male.write_bytes(reference_wav(duration=1.5))
+    female.write_bytes(reference_wav(duration=2))
+    monkeypatch.setattr("quickcut.workbench.VOICE_PRESETS", {
+        "male": {"label": "男声", "path": male},
+        "female": {"label": "女声", "path": female},
+    })
+    job_id = review_ready(client, jobs)
+    root = jobs.directory(job_id)
+    config = read(root / "voice-config.json")
+    config["cue_overrides"] = {"cue-a": {"reference_audio": "old.wav", "seed": 3}}
+    write_json(root / "voice-config.json", config)
+    original = (root / "reference/voice.wav").read_bytes()
+    body = confirmation()
+    body.update(voice="female", subtitle_size="large", subtitle_weight="bold", subtitle_color="yellow")
+    assert client.post(f"/api/jobs/{job_id}/confirm", json=body).status_code == 200
+    settings = read(root / "settings.json")
+    frozen = read(root / "voice-config.json")
+    assert (root / "reference/voice.wav").read_bytes() == original
+    assert Path(frozen["reference_audio"]).read_bytes() == female.read_bytes() != original
+    assert frozen["voice_label"] == "女声"
+    assert frozen["cue_overrides"]["cue-a"]["reference_audio"] == frozen["reference_audio"]
+    assert settings["voice"] == "female"
+    assert settings["subtitle_size"] == "large"
+    assert settings["subtitle_weight"] == "bold"
+    assert settings["subtitle_color"] == "yellow"
+    assert client.get(f"/api/jobs/{job_id}").json()["presentation"]["voice"] == "female"
+    rejected = confirmation()
+    rejected["voice"] = "child"
+    assert client.post(f"/api/jobs/{job_id}/confirm", json=rejected).status_code == 422
+    assert (root / "reference/voice.wav").read_bytes() == original
+    assert Path(frozen["reference_audio"]).read_bytes() == female.read_bytes()
+    rejected = confirmation()
+    rejected["subtitle_color"] = "purple"
+    assert client.post(f"/api/jobs/{job_id}/confirm", json=rejected).status_code == 422
+    assert read(root / "settings.json")["subtitle_color"] == "yellow"
+    assert submitted[-1][0] == job_id and submitted[-1][1] == "render"
+
+
 def test_job_freezes_default_voice_config_and_reference_bytes(browser):
     import hashlib
     from quickcut.production_pipeline import REPO, read
@@ -601,3 +644,88 @@ def test_auto_music_requires_an_installed_catalog(browser, monkeypatch):
     response = client.post('/api/jobs', data={'prompt': '旅行', 'auto_music': 'true'},
                            files=[('files', ('travel.mp4', b'test-video', 'video/mp4'))])
     assert response.status_code == 422 and not submitted
+
+
+@pytest.mark.parametrize("field,value", [
+    ("voice", []), ("voice", {}), ("voice", True),
+    ("subtitle_size", []), ("subtitle_weight", {}), ("subtitle_color", "purple"),
+])
+def test_invalid_voice_or_style_never_changes_task_files(browser, monkeypatch, tmp_path, field, value):
+    client, jobs, submitted = browser
+    female = tmp_path / "female.wav"
+    female.write_bytes(reference_wav(duration=2))
+    monkeypatch.setattr("quickcut.workbench.VOICE_PRESETS", {"female": {"label": "女声", "path": female}})
+    job_id = review_ready(client, jobs)
+    root = jobs.directory(job_id)
+    before = {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
+    body = {**confirmation(), "voice": "female", field: value}
+    response = client.post(f"/api/jobs/{job_id}/confirm", json=body)
+    assert response.status_code == 422, response.text
+    assert before == {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
+    assert len(submitted) == 1
+
+
+def test_uploaded_reference_remains_default_and_can_be_restored_after_presets(browser, monkeypatch, tmp_path):
+    import hashlib
+    from quickcut.production_pipeline import read
+    client, jobs, _ = browser
+    female = tmp_path / "female.wav"
+    female.write_bytes(reference_wav(duration=2))
+    monkeypatch.setattr("quickcut.workbench.VOICE_PRESETS", {"female": {"label": "女声", "path": female}})
+    audio = reference_wav(duration=1.75)
+    response = client.post("/api/jobs", data={"prompt": "剪辑"}, files=[
+        ("files", ("video.mp4", b"video", "video/mp4")),
+        ("reference_audio", ("我的音色.wav", audio, "audio/wav"))])
+    job_id = response.json()["job_id"]
+    root = jobs.directory(job_id)
+    write_json(root / "draft.json", frozen_draft())
+    jobs.update(job_id, status="needs_review")
+    presentation = client.get(f"/api/jobs/{job_id}").json()["presentation"]
+    assert presentation["voice"] == "reference"
+    assert presentation["reference_voice_label"] == "我的音色"
+    original_config = (root / "voice-config.json").read_bytes()
+    assert client.post(f"/api/jobs/{job_id}/confirm", json={**confirmation(), "voice": "reference"}).status_code == 200
+    assert (root / "voice-config.json").read_bytes() == original_config
+    assert (root / "reference/voice.wav").read_bytes() == audio
+    assert client.post(f"/api/jobs/{job_id}/confirm", json={**confirmation(), "voice": "female"}).status_code == 200
+    female_config = read(root / "voice-config.json")
+    female_path = Path(female_config["reference_audio"])
+    assert female_path.name == hashlib.sha256(female.read_bytes()).hexdigest() + ".wav"
+    assert female_path.read_bytes() == female.read_bytes()
+    assert client.post(f"/api/jobs/{job_id}/confirm", json={**confirmation(), "voice": "reference"}).status_code == 200
+    assert (root / "voice-config.json").read_bytes() == original_config
+    assert (root / "reference/voice.wav").read_bytes() == audio
+    assert female_path.read_bytes() == female.read_bytes()
+    settings = read(root / "settings.json")
+    assert settings["reference_audio"]["kind"] == "upload"
+    assert settings["reference_audio"]["sha256"] == hashlib.sha256(audio).hexdigest()
+
+
+def test_voice_presets_availability_and_missing_audio_are_explicit(browser, monkeypatch, tmp_path):
+    client, jobs, submitted = browser
+    male, female = tmp_path / "male.wav", tmp_path / "female.wav"
+    male.write_bytes(reference_wav(duration=2))
+    female.write_bytes(b"version https://git-lfs.github.com/spec/v1\n")
+    monkeypatch.setattr("quickcut.workbench.VOICE_PRESETS", {
+        "male": {"label": "男声", "path": male}, "female": {"label": "女声", "path": female}})
+    assert client.get("/api/config").json()["voice_presets"] == {
+        "male": {"label": "男声", "available": True}, "female": {"label": "女声", "available": False}}
+    job_id = review_ready(client, jobs)
+    root = jobs.directory(job_id)
+    before = {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
+    assert client.post(f"/api/jobs/{job_id}/confirm", json={**confirmation(), "voice": "female"}).status_code == 422
+    assert before == {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
+    assert len(submitted) == 1
+
+
+def test_active_review_transition_cannot_change_voice_or_style(browser):
+    client, jobs, submitted = browser
+    job_id = review_ready(client, jobs)
+    root = jobs.directory(job_id)
+    before = {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
+    jobs.active.add(job_id)
+    response = client.post(f"/api/jobs/{job_id}/confirm", json={**confirmation(), "voice": "reference", "subtitle_color": "yellow"})
+    assert response.status_code == 409
+    assert before == {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
+    assert len(submitted) == 1
+    jobs.active.remove(job_id)

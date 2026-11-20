@@ -16,6 +16,7 @@ from typing import Any
 from . import core
 from .media import digest, resolve_uri
 from .subtitle_layout import layout_subtitle
+from .subtitle_style import resolve_subtitle_style
 
 Document = dict[str, Any]
 
@@ -146,6 +147,10 @@ def _validate(timeline: Document, manifest: Document, voice: Document) -> tuple[
              "preview_burn_subtitles 必须是布尔值")
     _require(policy.get("subtitle_position", "bottom") in ("top", "bottom"),
              "subtitle_position 必须是 top 或 bottom")
+    try:
+        resolve_subtitle_style(policy)
+    except ValueError as exc:
+        raise PreviewError(str(exc)) from exc
     _no_effects(timeline)
     duration = _integer(timeline.get("duration_us"), "duration_us")
     output = timeline.get("output", {})
@@ -583,12 +588,15 @@ def render_timeline_preview(
             # 显式覆盖 SRT 默认 ASS 坐标系；字号和边距以画布短边为基准，
             # 避免竖屏按默认 PlayResY 放大字体，导致已折行字幕仍被裁切。
             short_side = min(output["width"], output["height"])
-            font_size = short_side / 18
+            appearance = resolve_subtitle_style(timeline.get("render_policy"))
+            font_size = short_side / 18 * appearance["size_scale"]
             margin = short_side / 20
             picture_filter += (
                 ",settb=expr=1/100,setpts=N,subtitles=filename=burn-captions.srt:fontsdir=fonts:"
                 f"force_style='PlayResX={output['width']},PlayResY={output['height']},"
-                f"FontName={font[1]},FontSize={font_size:.3f},Outline={short_side / 360:.3f},"
+                f"FontName={font[1]},FontSize={font_size:.3f},Bold={-1 if appearance['bold'] else 0},"
+                f"PrimaryColour={appearance['primary_ass']},OutlineColour={appearance['outline_ass']},"
+                f"Outline={short_side / 360 * appearance['size_scale']:.3f},"
                 f"Shadow=0,MarginL={round(margin)},MarginR={round(margin)},MarginV={round(margin)},"
                 f"Alignment={6 if subtitle_position == 'top' else 2}',"
                 f"settb=expr={time_base},setpts=N")

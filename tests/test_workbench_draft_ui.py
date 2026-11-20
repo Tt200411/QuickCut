@@ -24,6 +24,7 @@ const setTimeout=()=>1,clearTimeout=()=>{};
 const document={querySelector:key=>inputs.get(key),querySelectorAll:()=>[]};
 let request,redraws=0,messages=[];
 function toast(value){messages.push(value);}
+function updateVoiceBusy(){}
 function drawReview(draft){redraws++;draftView=draft;}
 async function poll(){}
 function view(revision=0){return {draft_id:'frozen',review_revision:revision,beats:[{beat_id:'b',purpose:'开场',shots:[{candidate_id:'c1',segment_id:'s1',shot_index:0,available_range_us:{begin:1000000,end:16000000}}],available_candidates:[{candidate_id:'c1'},{candidate_id:'c2'}]}]};}
@@ -90,6 +91,8 @@ def test_narration_duration_metrics_and_advisories_do_not_block_confirm(tmp_path
     html = (Path(__file__).parents[1] / "quickcut/web/index.html").read_text()
     assert "建议不超过" not in html
     assert "完整句级字幕，显示层会自动换行" in html
+    assert "确认，下一步" in html
+    assert "确认并生成成片" not in html
     assert "逐词对齐" not in html
     script = html.split("<script>", 1)[1].split("</script>", 1)[0]
     handlers = script[script.index("function reviewKey"):script.index("function drawResult")]
@@ -110,13 +113,19 @@ function el(tag,text='',cls=''){
 }
 const $=id=>{if(!elements.has(id))elements.set(id,el('div'));return elements.get(id);};
 const document={querySelector(selector){
-  const [,name,value]=selector.match(/^\[data-([\w-]+)="([^"]+)"\]$/);
+  const matched=String(selector).match(/^\[data-([\w-]+)="([^"]+)"\]$/);
+  if(!matched)return null;
+  const [,name,value]=matched;
   const key=name.replace(/-([a-z])/g,(_,letter)=>letter.toUpperCase());
-  return nodes.find(node=>node.dataset[key]===value);
+  return nodes.find(node=>node.dataset[key]===value)||null;
 },querySelectorAll:()=>[]};
 const localStorage={getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,value),removeItem:key=>storage.delete(key)};
 const setTimeout=()=>1,clearTimeout=()=>{};
-let request;function toast(message){throw new Error(message);}async function poll(){}
+let request,latest={status:'needs_review'},openedStep=null,voiceDirty=false;
+function updateVoiceBusy(){}
+function localPresentationKey(id){return 'quickcut-presentation-'+id;}
+function openStep(index){openedStep=index;}
+function toast(message){throw new Error(message);}async function poll(){}
 function view(revision=0){return {draft_id:'frozen',review_revision:revision,beats:[{
   beat_id:'b',purpose:'开场',duration_budget_us:2000000,narration_max_chars:2,
   narration_draft:'我们沿着公园小路慢慢走，看看身边的花草。',
@@ -141,13 +150,19 @@ function allText(node){return node.textContent+node.children.map(allText).join('
   assert.equal(field('warning').classList.contains('hidden'),true);
   assert.equal($('confirm').disabled,false);
 
-  // 软提示超过旧粗估时仍发送完整旁白。
-  let sent;
-  $('approved').checked=true;$('reviewer').value='测试确认者';
-  request=async(url,options)=>{assert.ok(url.endsWith('/confirm'));sent=JSON.parse(options.body);return {};};
+  // 软提示不阻断确认；确认只进入配音，完整旁白在配音步生成时发送。
+  let sent,posts=0;
+  $('approved').checked=true;
+  request=async(url,options)=>{posts++;assert.ok(url.endsWith('/confirm'));sent=JSON.parse(options.body);return {};};
   await $('confirm').onclick();
+  assert.equal(posts,0);
+  assert.equal(openedStep,3);
+  await $('startVoiceover').onclick();
+  assert.equal(posts,1);
   assert.equal(sent.approved_text_by_beat.b,field('').value);
   assert.equal(sent.confirmed,true);
+  assert.equal(sent.reviewer,'本机用户');
+  assert.equal(sent.voice,'reference');
 
   // 编辑时即时更新字数，排除标点和空白，并清除旧审阅结果。
   field('').value='枝条，轻轻摇动。 123 A';

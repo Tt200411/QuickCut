@@ -198,3 +198,38 @@ def test_music_selection_and_mix_evidence_survive_later_revisions(scenario, monk
     assert second['mix_recipe']['selection'] != first['mix_recipe']['selection']
     assert second['track'] == read_json(root / 'revisions/r2/timeline.json')['render_policy']['background_music']
     assert snapshot(first_dir) == before
+
+
+def test_voice_selection_preserves_previous_revision_reference_bytes(scenario, monkeypatch, tmp_path):
+    import hashlib
+    from quickcut.workbench import _apply_voice_preset
+    from test_workbench import reference_wav
+    root, runtime, controls = scenario
+    original = root / "reference/voice.wav"
+    original.parent.mkdir()
+    original.write_bytes(reference_wav(duration=1.25))
+    config = {"engine": "indextts2", "model_dir": str(tmp_path / "model"),
+              "reference_audio": str(original), "voice_label": "原任务参考"}
+    write_json(root / "voice-config.json", config)
+    write_json(root / "voice-reference-config.json", config)
+    settings = read_json(root / "settings.json")
+    settings.update(voice_config="voice-config.json", reference_audio={"kind": "upload", "filename": "original.wav"})
+    write_json(root / "settings.json", settings)
+    pipeline.render(root, confirmation(1), runtime, lambda *args: None)
+    first = root / "revisions/r1"
+    first_config = read_json(first / "voice-config.json")
+    reference_hash = hashlib.sha256(Path(first_config["reference_audio"]).read_bytes()).hexdigest()
+    evidence = snapshot(first)
+    female = tmp_path / "female.wav"
+    female.write_bytes(reference_wav(duration=2))
+    monkeypatch.setattr("quickcut.workbench.VOICE_PRESETS", {"female": {"label": "女声", "path": female}})
+    _apply_voice_preset(root, "female", settings)
+    write_json(root / "settings.json", settings)
+    pipeline.render(root, confirmation(2), runtime, lambda *args: None)
+    second_config = read_json(root / "revisions/r2/voice-config.json")
+    assert Path(second_config["reference_audio"]).read_bytes() == female.read_bytes()
+    assert second_config["reference_audio"] != first_config["reference_audio"]
+    assert read_json(root / "revisions/r2/settings.json")["reference_audio"]["sha256"] == hashlib.sha256(female.read_bytes()).hexdigest()
+    assert hashlib.sha256(Path(first_config["reference_audio"]).read_bytes()).hexdigest() == reference_hash
+    assert snapshot(first) == evidence
+    assert all(Path(call[1]["config"]).parent in {first, root / "revisions/r2"} for call in controls["calls"])

@@ -203,6 +203,9 @@ def test_explicit_measure_mode_cannot_hide_fit_request_metadata(residue):
     lambda t, m, v: t.update(render_policy="burn"),
     lambda t, m, v: t["render_policy"].update(preview_burn_subtitles="true"),
     lambda t, m, v: t["render_policy"].update(subtitle_position="middle"),
+    lambda t, m, v: t["render_policy"].update(subtitle_color=[]),
+    lambda t, m, v: t["render_policy"].update(subtitle_weight={}),
+    lambda t, m, v: t["render_policy"].update(subtitle_size="large,FontSize=100"),
     lambda t, m, v: v.update(status="needs_retime"),
     lambda t, m, v: v.update(errors=["失败"]),
     lambda t, m, v: t.update(fixtures_only=False),
@@ -377,9 +380,37 @@ def test_caption_position_changes_actual_pixels_and_keeps_editable_text(tmp_path
     assert "可编辑字幕" in movie.with_suffix(".srt").read_text()
 
 
+def test_selected_caption_size_weight_and_colors_change_real_pixels(tmp_path, media, ffmpeg):
+    media[0]["output"].update(width=640, height=480)
+    variants = [("small", "regular", "white"), ("large", "regular", "white"),
+                ("large", "bold", "white"), ("large", "bold", "yellow"),
+                ("large", "bold", "black")]
+    white_counts = []
+    for index, (size, weight, color) in enumerate(variants):
+        media[0]["render_policy"].update(subtitle_size=size, subtitle_weight=weight, subtitle_color=color)
+        before = deepcopy(media)
+        movie = tmp_path / f"style-{index}.mp4"
+        preview.render_timeline_preview(*media, tmp_path, movie)
+        pixels = _pixels(ffmpeg, movie, 0.3)
+        white_counts.append(sum(min(pixels[i:i + 3]) > 170 for i in range(0, len(pixels), 3)))
+        if color == "yellow":
+            assert sum(pixels[i] > 170 and pixels[i + 1] > 170 and pixels[i + 2] < 100
+                       for i in range(0, len(pixels), 3)) > 100
+        if color == "black":
+            # White contrasting outlines keep black captions visible; sources
+            # contain only red/blue pixels and black letterboxing.
+            assert white_counts[-1] > 100
+        assert movie.with_suffix(".srt").read_text() == preview._srt(media[0]["tracks"][3]["cues"])
+        assert media == before
+    assert white_counts[1] > white_counts[0] * 1.5
+    assert white_counts[2] > white_counts[1]
+    assert white_counts[3] < 20
+
+
 @pytest.mark.parametrize("size", [(1280, 720), (720, 1280)])
 @pytest.mark.parametrize("position", ["top", "bottom"])
-def test_long_captions_have_safe_pixel_margins_on_real_render(tmp_path, media, ffmpeg, size, position):
+@pytest.mark.parametrize("appearance", [{}, {"subtitle_size": "large", "subtitle_weight": "bold"}])
+def test_long_captions_have_safe_pixel_margins_on_real_render(tmp_path, media, ffmpeg, size, position, appearance):
     timeline, _, voice = media
     width, height = size
     texts = [
@@ -398,6 +429,7 @@ def test_long_captions_have_safe_pixel_margins_on_real_render(tmp_path, media, f
     ])
     timeline["output"].update(width=width, height=height)
     timeline["render_policy"].update(preview_burn_subtitles=True, subtitle_position=position)
+    timeline["render_policy"].update(appearance)
     before = deepcopy(media)
     movie = tmp_path / "safe-captions.mp4"
     preview.render_timeline_preview(*media, tmp_path, movie)
