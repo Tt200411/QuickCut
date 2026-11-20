@@ -472,7 +472,7 @@ def create_app(*, root=None, runtime=None):
             text = payload.get("approved_text_by_beat")
             expected = {beat["beat_id"] for beat in data["draft"]["beats"]}
             if not isinstance(text, dict) or set(text) != expected or any(not isinstance(value, str) or not value.strip() or len(value) > 160 for value in text.values()):
-                raise HTTPException(422, "请逐段填写 1–160 字旁白")
+                raise HTTPException(422, "请逐段填写 1–160 字符旁白")
             from .planning.selection import narration_review
             for beat in data["draft"]["beats"]:
                 review = narration_review(text[beat["beat_id"]], beat["duration_budget_us"], max_chars=beat["narration_max_chars"])
@@ -620,18 +620,22 @@ def create_app(*, root=None, runtime=None):
 
     @app.post("/api/jobs/{job_id}/open-editor")
     def editor(job_id: str):
-        data = jobs.get(job_id)
-        if data["status"] != "completed":
-            raise HTTPException(409, "工程尚未生成")
-        try:
-            opened = jobs.open_editor(jobs.directory(job_id))
-        except Exception as exc:
-            raise HTTPException(409, str(exc)) from exc
-        result = data["result"]
-        result["editor"] = opened
-        write_json(jobs.directory(job_id) / "run-report.json", result)
-        jobs.update(job_id, result=result)
-        return opened
+        # Returning to a draft preserves its last export. Do not let a new
+        # confirmation race with opening/updating that previous revision.
+        with jobs.lock:
+            data = jobs.get(job_id)
+            if (data["status"] not in {"completed", "needs_review"}
+                    or not data.get("result") or job_id in jobs.active):
+                raise HTTPException(409, "工程尚未生成或任务正在运行")
+            try:
+                opened = jobs.open_editor(jobs.directory(job_id))
+            except Exception as exc:
+                raise HTTPException(409, str(exc)) from exc
+            result = data["result"]
+            result["editor"] = opened
+            write_json(jobs.directory(job_id) / "run-report.json", result)
+            jobs.update(job_id, result=result)
+            return opened
 
     return app
 

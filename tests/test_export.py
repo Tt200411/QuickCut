@@ -16,6 +16,7 @@ import pytest
 
 from quickcut import core, export, jianying, timeline_preview
 from quickcut.media import digest
+from quickcut.subtitle_layout import layout_subtitle
 from quickcut.timeline import compile_timeline
 
 
@@ -124,15 +125,19 @@ def test_webm_measures_playable_stream_instead_of_longer_container(webm_source):
         export._inspect_media(webm_source, {"asset_id": "webm"}, tracks, core._ffmpeg_binary(), probe)
 
 
-def test_late_audio_start_is_padded_with_silence(tmp_path):
+@pytest.mark.parametrize("video_start,audio_start,source_begin", [
+    (0, 0.069, 0), (0, 1.2, 0), (0.4, 1.6, 200_001),
+])
+def test_late_audio_start_is_padded_with_silence(tmp_path, video_start, audio_start, source_begin):
     ffmpeg = core._ffmpeg_binary()
     if not timeline_preview._ffprobe_binary():
         pytest.skip("导出需要 ffprobe")
     root = tmp_path / "project"
     root.mkdir()
     source = root / "late.mp4"
-    subprocess.run([ffmpeg, "-v", "error", "-y", "-f", "lavfi", "-i", "color=c=green:s=160x120:r=25:d=2",
-        "-itsoffset", "0.069", "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=44100:duration=1.93",
+    subprocess.run([ffmpeg, "-v", "error", "-y", "-copyts", "-f", "lavfi", "-i", "color=c=green:s=160x120:r=25:d=2",
+        "-itsoffset", str(audio_start), "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=44100:duration=1.93",
+        "-vf", f"setpts=PTS+{video_start}/TB", "-fps_mode", "passthrough",
         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", str(source)], check=True, capture_output=True)
     probe = timeline_preview._probe(timeline_preview._ffprobe_binary(), source)
     audio = next(stream for stream in probe["streams"] if stream["codec_type"] == "audio")
@@ -147,7 +152,7 @@ def test_late_audio_start_is_padded_with_silence(tmp_path):
     manifest["assets"] = [dict(asset_id="late", revision=1, media_kind="video", uri="late.mp4",
         duration_us=2_000_000, content_hash=digest(source), audio={"present": True})]
     manifest["segments"] = [dict(segment_id="late", asset_id="late", asset_revision=1,
-        source_range_us={"begin": 0, "end": 800_000})]
+        source_range_us={"begin": source_begin, "end": source_begin + 800_000})]
     story = _envelope("StoryPlan", "story")
     story.update(status="ready_for_edit", unresolved_gaps=[], inputs=[timeline_preview._ref(d) for d in (manifest, brief)],
         narration_cues=[dict(cue_id="cue", beat_id="beat", text="可编辑字幕", duration_budget_us=500_000)],
@@ -156,7 +161,8 @@ def test_late_audio_start_is_padded_with_silence(tmp_path):
     voice["assets"][0]["content_hash"] = digest(speech)
     timeline = compile_timeline(brief, manifest, story, voice, output={"width": 160, "height": 120,
         "fps": {"numerator": 25, "denominator": 1}, "sample_rate": 48000})
-    report = export.export_project(timeline, manifest, voice, root, tmp_path / "export")
+    report = export.export_project(timeline, manifest, voice, root, tmp_path / "export", preview=True)
+    assert report["validation"]["preview"] == "passed"
     derived = next(item for item in report["resources"] if item.get("derived_for_clip_id"))
     assert derived["leading_silence_samples"] > 900
     wav_path = tmp_path / "export" / derived["packaged_uri"]
@@ -167,7 +173,81 @@ def test_late_audio_start_is_padded_with_silence(tmp_path):
     head = mono[: int(0.02 * 48000)]
     tone = mono[int(0.12 * 48000): int(0.2 * 48000)]
     assert max(abs(v) for v in head) == 0
-    assert max(abs(v) for v in tone) > 1000
+    if audio_start - video_start > 1:
+        assert derived["leading_silence_samples"] == 38_400
+        assert max(abs(v) for v in mono) == 0
+        # The empty original-audio slice must not remove or replace the narration.
+        mixed = root / "preview-audio.wav"
+        subprocess.run([ffmpeg, "-v", "error", "-i", str(tmp_path / "export" / "preview.mp4"),
+            "-map", "0:a:0", "-c:a", "pcm_s16le", str(mixed)], check=True, capture_output=True)
+        assert _amplitude(mixed, 1000) > 0.03
+    else:
+        assert max(abs(v) for v in tone) > 1000
+
+
+def test_audio_continuity_accepts_short_frames_sharing_a_container_tick(tmp_path):
+    source = tmp_path / "coarse-audio-timestamps.mkv"
+    subprocess.run([core._ffmpeg_binary(), "-v", "error", "-f", "lavfi", "-i",
+        "sine=frequency=440:sample_rate=48000:duration=0.4", "-af", "asetnsamples=n=32:p=0",
+        "-c:a", "pcm_s16le", str(source)], check=True, capture_output=True)
+    probe = timeline_preview._ffprobe_binary()
+    audio = next(stream for stream in timeline_preview._probe(probe, source)["streams"]
+                 if stream["codec_type"] == "audio")
+    frames = json.loads(subprocess.check_output([probe, "-v", "error", "-select_streams", "a:0",
+        "-show_frames", "-show_entries", "frame=pts,nb_samples", "-of", "json", str(source)]))["frames"]
+    assert audio["time_base"] == "1/1000"
+    assert len(frames) == 600
+    assert sum(frame["nb_samples"] for frame in frames) == 19200
+    assert any(a["pts"] == b["pts"] for a, b in zip(frames, frames[1:]))
+    timeline_preview._require_audio_continuity(probe, source, audio,
+        [{"begin": 0, "end": 400_000}], origin_us=0)
+
+
+@pytest.mark.parametrize("damage", ["interior_gap", "all_selected_audio_missing", "short_tail"])
+def test_known_leading_silence_does_not_allow_missing_original_audio(tmp_path, source_media, docs, damage):
+    root = tmp_path / "project"
+    shutil.copytree(source_media, root)
+    source = root / "bad-original.mkv"
+    ffmpeg = core._ffmpeg_binary()
+    length = {"short_tail": 0.4, "interior_gap": 1.4, "all_selected_audio_missing": 0.5}[damage]
+    command = [ffmpeg, "-v", "error", "-copyts", "-f", "lavfi", "-i", "color=c=green:s=160x120:r=25:d=1.6",
+        "-f", "lavfi", "-i", f"sine=frequency=440:sample_rate=48000:duration={length}"]
+    if damage != "short_tail":
+        boundary, gap = (19_200, 9_600) if damage == "interior_gap" else (4_800, 52_800)
+        # Explicit timestamps preserve the missing interval on older FFmpeg too;
+        # dropping frames with aselect alone may be retimed into contiguous PCM.
+        # Ten-millisecond frames align exactly with Matroska's timestamp ticks.
+        command += ["-af", "asetnsamples=n=480:p=0,asettb=1/48000,"
+                    f"asetpts='(N+gte(N,{boundary})*{gap})/SR/TB'", "-enc_time_base:a", "1:48000"]
+    subprocess.run(command + ["-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "pcm_s16le", str(source)],
+                   check=True, capture_output=True)
+    if damage != "short_tail":
+        frames = json.loads(subprocess.check_output([timeline_preview._ffprobe_binary(), "-v", "error",
+            "-select_streams", "a:0", "-show_frames", "-show_entries", "frame=pts_time,nb_samples",
+            "-of", "json", str(source)]))["frames"]
+        gaps = [(float(a["pts_time"]) + a["nb_samples"] / 48000, float(b["pts_time"]))
+                for a, b in zip(frames, frames[1:])
+                if float(b["pts_time"]) - float(a["pts_time"]) - a["nb_samples"] / 48000 > .1]
+        assert len(gaps) == 1, "Fixture must contain a real decoded audio timestamp gap"
+        assert sum(frame["nb_samples"] for frame in frames) < 1.6 * 48000
+        if damage == "interior_gap":
+            assert .2 < gaps[0][0] < gaps[0][1] < 1.0
+        else:
+            assert gaps[0][0] < .2 < 1.0 < gaps[0][1]
+        audio = next(stream for stream in timeline_preview._probe(timeline_preview._ffprobe_binary(), source)["streams"]
+                     if stream["codec_type"] == "audio")
+        timeline_preview._require_audio_continuity(timeline_preview._ffprobe_binary(), source, audio,
+            [{"begin": 20_000, "end": 80_000}], origin_us=0)  # An unused later gap must not reject this trim.
+    docs[1]["assets"][0].update(uri=source.name, content_hash=digest(source))
+    for consumer in ("preview", "export"):
+        destination = tmp_path / ("rejected.mp4" if consumer == "preview" else "rejected-package")
+        with pytest.raises((export.ExportError, timeline_preview.PreviewError),
+                           match="原声采样|真实音频采样|真实 audio 流"):
+            if consumer == "preview":
+                timeline_preview.render_timeline_preview(*docs, root, destination)
+            else:
+                export.export_project(*docs, root, destination, preview=True)
+        assert not destination.exists()
 
 
 def test_export_and_preview_accept_webm_without_declared_stream_duration(tmp_path, source_media, docs):
@@ -315,6 +395,86 @@ def test_bad_media_or_unknown_editor_never_publish(tmp_path, source_media, docs,
         export.export_project(*docs, root, tmp_path / "rejected", **options)
     assert not (tmp_path / "rejected").exists()
     assert not list(tmp_path.glob(".quickcut-export-*"))
+
+
+@pytest.mark.parametrize("size", [(320, 180), (180, 320)])
+def test_long_caption_export_and_install_rebuild_identical_styles(tmp_path, source_media, docs, monkeypatch, size):
+    timeline, _, voice = docs
+    text = ("清晨沿着山间小路慢慢向前，看到田野和远处的村庄。"
+            "保留 cafe\u0301 与 \U0001f469\u200d\U0001f4bb 的原文。\n已有换行也要保留。")
+    timeline["tracks"][3]["cues"][0]["text"] = text
+    voice["cues"][0]["text"] = voice["cues"][0]["local_subtitles"][0]["text"] = text
+    timeline["output"].update(width=size[0], height=size[1])
+    before = deepcopy(docs)
+    package = tmp_path / "long-caption"
+    export.export_project(*docs, source_media, package)
+    original = _load(package / "draft" / "draft_info.json")
+    assert (package / "captions.srt").read_text() == timeline_preview._srt(timeline["tracks"][3]["cues"])
+    assert _load(package / "inputs" / "timeline.json") == timeline
+    assert _load(package / "inputs" / "voice-package.json") == voice
+    monkeypatch.setattr(export, "is_editor_running", lambda: False)
+    installed = export.install_jianying_draft(package, tmp_path / "drafts", name="字幕重建")
+    rebuilt = _load(Path(installed["draft_directory"]) / "draft_info.json")
+    expected = layout_subtitle(text, width=size[0], height=size[1]).display_text
+    assert expected.count("\n") > text.count("\n")
+    for draft in (original, rebuilt):
+        assert len(draft["materials"]["texts"]) == 1
+        content = json.loads(draft["materials"]["texts"][0]["content"])
+        assert content["text"] == expected
+        assert content["styles"][0]["range"] == [0, len(expected.encode("utf-16-le")) // 2]
+        track = next(t for t in draft["tracks"] if t["type"] == "text")
+        assert len(track["segments"]) == 1
+        assert track["segments"][0]["target_timerange"] == {"start": 250_001, "duration": 250_000}
+    assert {k: v for k, v in original["materials"]["texts"][0].items() if k != "id"} == {
+        k: v for k, v in rebuilt["materials"]["texts"][0].items() if k != "id"}
+    assert docs == before
+
+
+@pytest.mark.parametrize("size", [(1920, 1080), (1080, 1920)])
+def test_draft_display_text_keeps_utf16_range_and_input_without_media(tmp_path, size):
+    timeline, manifest, voice = _documents()
+    text = "田野间的风吹过远处山坡，保留 cafe\u0301 和 \U0001f469\u200d\U0001f4bb，完整原文不能丢失。"
+    timeline["tracks"][3]["cues"][0]["text"] = text
+    voice["cues"][0]["text"] = voice["cues"][0]["local_subtitles"][0]["text"] = text
+    timeline["output"].update(width=size[0], height=size[1])
+    timeline_preview._validate(timeline, manifest, voice)
+    subtitle_only = {**timeline, "tracks": [timeline["tracks"][3]]}
+    before = deepcopy(subtitle_only)
+    draft, _ = jianying.build_draft(subtitle_only, [], tmp_path, name="字幕", draft_id="layout-test")
+    content = json.loads(draft["materials"]["texts"][0]["content"])
+    assert content["text"] == layout_subtitle(text, width=size[0], height=size[1]).display_text
+    assert "\n" in content["text"]
+    assert content["styles"][0]["range"] == [0, len(content["text"].encode("utf-16-le")) // 2]
+    assert draft["tracks"][0]["segments"][0]["target_timerange"] == {"start": 250_001, "duration": 250_000}
+    assert subtitle_only == before
+
+
+def test_pre_layout_adapter_package_is_rejected_before_rebuild(tmp_path):
+    assert jianying.ADAPTER_VERSION == "quickcut-jianying-mac-0.2.0"
+    report = {"kind": "ExportManifest", "schema_version": "0.1.0", "status": "generated",
+              "target": {"version": jianying.TARGET_VERSION, "editor": "JianyingPro",
+                         "platform": "macOS", "adapter_version": "quickcut-jianying-mac-0.1.0"}}
+    (tmp_path / "export-manifest.json").write_text(json.dumps(report), encoding="utf-8")
+    with pytest.raises(export.ExportError, match="旧版字幕布局") as error:
+        export._verify_package(tmp_path)
+    assert error.value.code == "PACKAGE_INVALID"
+    assert "重新导出工程包后再打开剪映" in str(error.value)
+    assert "不会直接重建旧包" in str(error.value)
+
+
+@pytest.mark.parametrize("adapter,editor,platform", [
+    ("unknown-adapter", "JianyingPro", "macOS"),
+    ("quickcut-jianying-mac-0.1.0", "OtherEditor", "macOS"),
+    ("quickcut-jianying-mac-0.1.0", "JianyingPro", "OtherPlatform"),
+])
+def test_unknown_adapter_target_keeps_original_rejection(tmp_path, adapter, editor, platform):
+    report = {"kind": "ExportManifest", "schema_version": "0.1.0", "status": "generated",
+              "target": {"version": jianying.TARGET_VERSION, "editor": editor,
+                         "platform": platform, "adapter_version": adapter}}
+    (tmp_path / "export-manifest.json").write_text(json.dumps(report), encoding="utf-8")
+    with pytest.raises(export.ExportError, match="^未知工程适配器版本$") as error:
+        export._verify_package(tmp_path)
+    assert error.value.code == "PACKAGE_INVALID"
 
 
 def test_relocation_rebuilds_all_paths_preserves_hashes_and_existing_registry(tmp_path, source_media, docs, monkeypatch):

@@ -135,6 +135,9 @@ def _inspect_media(path: Path, asset: dict, tracks: dict, ffmpeg: str, probe: st
             tolerance = 2 if kind == "video" else max(2, math.ceil(1_000_000 / int(stream["sample_rate"])))
             _require(max(ends) <= start - origin + length + tolerance, "MEDIA_UNREADABLE",
                      f"真实 {kind} 流不能覆盖源区间: {asset['asset_id']}")
+        renderer._require_audio_continuity(probe, path, streams.get("audio", {}),
+            [clip["source_range_us"] for clip in tracks.get("source_audio", {}).get("clips", [])
+             if clip["asset_id"] == asset["asset_id"]], origin_us=origin)
         if any(c["asset_id"] == asset["asset_id"] for c in tracks["narration"]["clips"]):
             _verify_narration_wav(path, asset)
         result = {"origin_us": origin, "duration_us": renderer._duration(video or streams["audio"])}
@@ -347,9 +350,14 @@ def _verify_package(package_dir: str | Path, *, allow_fixtures: bool = False) ->
     report = json.loads((root / "export-manifest.json").read_text(encoding="utf-8"))
     _require(report.get("kind") == "ExportManifest" and report.get("schema_version") == "0.1.0" and
              report.get("status") == "generated", "PACKAGE_INVALID", "需要当前 generated ExportManifest")
-    _target(report.get("target", {}).get("version"))
-    _require(report.get("target", {}).get("adapter_version") == jianying.ADAPTER_VERSION and
-             report["target"].get("editor") == "JianyingPro" and report["target"].get("platform") == "macOS",
+    target = report.get("target", {})
+    _target(target.get("version"))
+    if (target.get("adapter_version") == "quickcut-jianying-mac-0.1.0"
+            and target.get("editor") == "JianyingPro" and target.get("platform") == "macOS"):
+        raise ExportError("PACKAGE_INVALID", "该工程包使用旧版字幕布局（0.1.0）。请重新导出工程包后再打开剪映；"
+                          "新版字幕布局不会直接重建旧包，避免改变原工程的字幕。")
+    _require(target.get("adapter_version") == jianying.ADAPTER_VERSION and
+             target.get("editor") == "JianyingPro" and target.get("platform") == "macOS",
              "PACKAGE_INVALID", "未知工程适配器版本")
     seen = set()
     for item in report["files"]:

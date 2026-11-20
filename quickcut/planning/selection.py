@@ -8,10 +8,12 @@ from __future__ import annotations
 import base64
 import copy
 import hashlib
+import http.client
 import io
 import json
 import math
 import os
+import re
 import urllib.request
 import urllib.error
 from datetime import datetime, timezone
@@ -23,17 +25,13 @@ from typing import Any, Protocol
 from .contracts import PlanningError, UNSUPPORTED_STORY_BEAT, VLM_INVALID_PLAN
 
 
-# Calm Chinese narration is about 4.2 characters per second. Keep one tenth of
-# the shot for the pause after the sentence instead of subtracting a flat 0.8 s,
-# which used up most of a 3-second clause.
-NARRATION_CHARS_PER_SECOND = 4.2
-NARRATION_SPEECH_FRACTION = 0.9
-
-
 def narration_character_limit(budget_us: int) -> int:
-    """Estimated Chinese characters that fit the shot, punctuation excluded."""
-    seconds = max(0.0, budget_us / 1_000_000)
-    return max(2, int(seconds * NARRATION_CHARS_PER_SECOND * NARRATION_SPEECH_FRACTION))
+    """Legacy name: conservative speech-length reference, never a validity limit.
+
+    Keep the estimator aligned with narration_review and the workbench display.
+    Complete sentences may exceed this reference; actual TTS decides duration.
+    """
+    return max(2, int(max(0, budget_us / 1_000_000 - 0.8) * 2.5))
 
 
 def narration_character_count(text: str) -> int:
@@ -45,17 +43,37 @@ def narration_review(text: str, budget_us: int, *, max_chars: int | None = None)
     limit = narration_character_limit(budget_us) if max_chars is None else max_chars
     narration = text.strip()
     count = narration_character_count(narration)
-    warnings = []
+    warnings, advisories = [], []
+    estimated_us = round((count / 2.5 + 0.8) * 1_000_000) if count else 0
+    if len(text) > 160:
+        warnings.append({"code": "NARRATION_EDITOR_LIMIT", "message": "旁白超过编辑安全上限160字符，请重写完整短句，不要截字。"})
     if not narration:
         warnings.append({"code": "NARRATION_EMPTY", "message": "请填写完整中文旁白后再确认。"})
     else:
-        if count > limit:
-            warnings.append({"code": "NARRATION_TOO_LONG", "message": f"旁白超出朗读预算：最多 {limit} 字（不计标点），当前 {count} 字，请改短后确认。"})
+        if count > limit or estimated_us > budget_us:
+            advisories.append({"code": "NARRATION_DURATION_ESTIMATE", "message":
+                f"当前{count}个朗读字，字数参考为{limit}字；粗估朗读{estimated_us / 1_000_000:g}秒，"
+                f"计划画面{budget_us / 1_000_000:g}秒。字数或时长超出粗估参考，可确认后配音实测，"
+                "必要时完整改写或调整画面，不能截尾。"})
         if not any("\u4e00" <= char <= "\u9fff" for char in narration):
             warnings.append({"code": "NARRATION_NON_CHINESE", "message": "请将旁白改成与画面相符的中文完整句。"})
-        if not narration.rstrip("\"'”’」』》）】)").endswith(("。", "！", "？", ".", "!", "?")):
+        sentence = narration.rstrip("\"'”’」』》）】)")
+        if not sentence.endswith(("。", "！", "？", ".", "!", "?")):
             warnings.append({"code": "NARRATION_INCOMPLETE_SENTENCE", "message": "旁白缺少句末标点，可能是残句；请核对并改成完整句后确认。"})
+        else:
+            # Deliberately narrow heuristics, not a Chinese grammar or visual judge.
+            # A period must not hide an obvious unfinished quantity/object phrase.
+            content = sentence.rstrip("。！？.!?").rstrip()
+            if (not content or content.endswith(("，", "、", "：", "；", ",", ":", ";", "…"))
+                    or re.fullmatch(
+                        r"(?:(?:我们|我|大家|咱们)(?:先|再|也)?(?:去(?:超市|商店))?(?:买|带|拿)"
+                        r"|(?:也)?别忘了(?:多)?带)(?:了)?(?:些|几|一些|几个|几件|几瓶)", content)
+                    or re.search(r"[，,](?:展示|体现|以及|并且|但是|从而)$", content)
+                    or re.fullmatch(r"(?:餐厅|店|室|车厢)(?:里|内|内部)(?:热闹|温馨|安静)的氛围", content)):
+                warnings.append({"code": "NARRATION_INCOMPLETE_SENTENCE", "message": "旁白疑似在数量、连接词或逗号后中断；请重写完整短句，仅补句号不能修复残句。"})
     return {"status": "requires_edit" if warnings else "pending_confirmation", "warnings": warnings,
+            "advisories": advisories, "estimated_duration_us": estimated_us,
+            "estimate_basis": "按2.5字/秒加0.8秒粗估；汉字、字母、数字逐字符计数，不含标点；以配音实测为准",
             "character_count": count, "max_chars": limit, "approved": False}
 
 
@@ -338,6 +356,8 @@ class OllamaSelector:
                     path = selection.raw_response.get("archive_path")
                     if path:
                         Path(path).write_text(json.dumps(selection.raw_response, ensure_ascii=False, sort_keys=True), encoding="utf-8")
+                if context.get("draft_narration") and selection.ordered_candidate_ids:
+                    self._repair_narration(selection, beat=beat, candidates=candidates, context=context)
                 return selection
             except PlanningError as exc:
                 if not exc.detail.get("model_format_error"):
@@ -346,7 +366,123 @@ class OllamaSelector:
                 if number == limit:
                     exc.detail["attempts"] = attempts
                     raise
+            except OSError as exc:
+                # Evidence is required for production drafts. A failed write must
+                # stop the run, rather than returning an unarchived approval input.
+                error = _invalid_plan("规划证据归档读写失败，请检查目录权限和可用空间后重试",
+                                      beat=beat, context=context, raw=None)
+                error.detail.update(archive_io_error=True, archive_dir=str(self.archive_dir),
+                                    error=str(exc))
+                raise error from exc
         raise AssertionError("unreachable")
+
+    def _repair_narration(self, selection: Selection, *, beat, candidates, context) -> None:
+        """Rewrite text only, at most twice; keep the original selection/response intact."""
+        current = selection.narration_draft
+        review = narration_review(current, beat["duration_budget_us"])
+        if not review["warnings"] and not review["advisories"]:
+            return
+        by_id = {c["candidate_id"]: c for c in candidates}
+        selected = [by_id[cid] for cid in selection.ordered_candidate_ids]
+        mapping = []
+        images = self._images(selected, image_mapping=mapping)
+        records = []
+        original = current
+        visual_missing = bool(context.get("require_visual")) and not set(selection.ordered_candidate_ids).issubset(
+            {item["candidate_id"] for item in mapping})
+        if visual_missing:
+            # Never replace visually grounded narration with a blind rewrite.
+            selection.raw_response["narration_rewrite_skip_reason"] = "selected_visual_evidence_unavailable"
+        for number in range(1, 1 if visual_missing else 3):
+            instruction = {
+                "task": "只重写本段旁白，不重新选镜、不改变镜头顺序或角色。依据所附已选画面，写一句自然中文完整句。"
+                        "优先说完一个有画面支持的信息，避免名词短语、虚构动作、人物关系或用户经历。"
+                        "上一句可能在末尾中断，也可能只是过长；必须重写整句，不能截字或只补句号。"
+                        "字数仅为时长粗估，不是硬上限。短句已经完整就不要凑字数；完整表达优先。以。！？结束。"
+                        "只返回narration_draft；这是待审草稿，不代表批准或实测合格。",
+                "purpose": beat["purpose"], "story_theme": context.get("story_theme", ""),
+                "previous_text": current, "previous_tail": current[-16:],
+                "issues": review["warnings"] + review["advisories"],
+                "duration_budget_us": beat["duration_budget_us"],
+                "reference_chars": narration_character_limit(beat["duration_budget_us"]),
+                "selected_candidate_ids": selection.ordered_candidate_ids,
+                "image_mapping": mapping,
+                "evidence": [{"candidate_id": c["candidate_id"], "origin": c["origin"],
+                              "source_range_us": c.get("source_range_us")} for c in selected],
+            }
+            if records:
+                previous = records[-1]
+                instruction["previous_rewrite_feedback"] = {
+                    "error": previous.get("error"), "accepted": previous.get("accepted", False),
+                    "rejected_text": previous.get("parsed", {}).get("narration_draft"),
+                    "review": previous.get("review"),
+                }
+            payload = {"model": self.model, "prompt": json.dumps(instruction, ensure_ascii=False),
+                       "stream": False, "format": {"type": "object", "additionalProperties": False,
+                       "properties": {"narration_draft": {"type": "string", "minLength": 1}},
+                       "required": ["narration_draft"]},
+                       "options": {"temperature": 0, "num_ctx": 8192, "num_predict": 512},
+                       "keep_alive": context.get("keep_alive", "0s")}
+            if images:
+                payload["images"] = images
+            record = {"kind": "narration_rewrite", "rewrite_attempt": number, "model": self.model,
+                      "request": {"payload": payload, "started_at": datetime.now(timezone.utc).isoformat()},
+                      "inference_executed": False, "status": "requested"}
+            path = None
+            if self.archive_dir:
+                self.archive_dir.mkdir(parents=True, exist_ok=True)
+                call_id = hashlib.sha256(json.dumps(record, sort_keys=True).encode()).hexdigest()
+                path = self.archive_dir / f"narration-{call_id}.json"
+                record["archive_path"] = str(path.resolve())
+                path.write_text(json.dumps(record, ensure_ascii=False), encoding="utf-8")
+            started = perf_counter()
+            try:
+                request = urllib.request.Request(f"{self.base_url}/api/generate",
+                    data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST")
+                with open_ollama(request, timeout=self.timeout) as response:
+                    record["raw_body"] = response.read().decode("utf-8")
+                body = json.loads(record["raw_body"])
+                record["body"] = body
+                record["inference_executed"] = isinstance(body, dict) and body.get("done") is True
+                if not record["inference_executed"]:
+                    raise ValueError("旁白重写响应未完成")
+                parsed = json.loads(body["response"]) if isinstance(body.get("response"), str) else body.get("response")
+                if (not isinstance(parsed, dict) or set(parsed) != {"narration_draft"}
+                        or not isinstance(parsed["narration_draft"], str)):
+                    raise ValueError("旁白重写只能返回narration_draft字符串")
+                proposed = parsed["narration_draft"]
+                proposed_review = narration_review(proposed, beat["duration_budget_us"])
+                record.update(status="reviewed", parsed=parsed, review=proposed_review, accepted=False)
+                # Never replace a complete sentence with a fragment or a longer over-budget version.
+                score = lambda r: (bool(r["warnings"]), len(r["warnings"]), bool(r["advisories"]), r["character_count"])
+                if not proposed_review["warnings"] and score(proposed_review) < score(review):
+                    current, review = proposed, proposed_review
+                    record["accepted"] = True
+            except (ValueError, OSError, http.client.HTTPException) as exc:
+                if isinstance(exc, http.client.IncompleteRead):
+                    record["raw_body"] = exc.partial.decode("utf-8", errors="replace")
+                if isinstance(exc, urllib.error.HTTPError):
+                    try:
+                        record["raw_body"] = exc.read().decode("utf-8", errors="replace")
+                    except (OSError, http.client.HTTPException) as body_error:
+                        if isinstance(body_error, http.client.IncompleteRead):
+                            record["raw_body"] = body_error.partial.decode("utf-8", errors="replace")
+                record.update(status="failed", error=str(exc),
+                              retryable=isinstance(exc, ValueError))
+            record["elapsed_seconds"] = perf_counter() - started
+            records.append(record)
+            if path:
+                path.write_text(json.dumps(record, ensure_ascii=False, sort_keys=True), encoding="utf-8")
+            if (record["status"] == "failed" and not record.get("retryable")) or (not review["warnings"] and not review["advisories"]):
+                break
+        selection.narration_draft = current
+        selection.raw_response["narration_rewrites"] = records
+        selection.raw_response["narration_result"] = {"original_text": original, "text": current,
+            "text_sha256": hashlib.sha256(current.encode("utf-8")).hexdigest(), "review": review,
+            "approved": False}
+        archive = selection.raw_response.get("archive_path")
+        if archive:
+            Path(archive).write_text(json.dumps(selection.raw_response, ensure_ascii=False, sort_keys=True), encoding="utf-8")
 
     def _select_once(self, *, beat: dict[str, Any], candidates: list[dict[str, Any]], context: dict[str, Any]) -> Selection:
         allowed = [c["candidate_id"] for c in candidates]
@@ -445,19 +581,13 @@ class OllamaSelector:
                 "candidates.image_indices 指这些格子，而非多张图片。依照映射返回完整 candidate_id。"
             )
         narration_limit = narration_character_limit(beat["duration_budget_us"])
-        narration_target_max = max(1, narration_limit - 1)
-        narration_target_min = min(narration_target_max, max(4, int(narration_limit * 0.6)))
+        narration_target_max = max(16, narration_limit)
         if context.get("draft_narration"):
-            instruction["task"] += (
-                "同时返回 narration_draft：一句自然简洁的中文主题旁白，必须符合已选画面，"
-                "只作氛围/主题表达，不陈述用户未证实的经历。这是待用户确认草稿，不能自称已批准。"
-                f"建议只写 {narration_target_min}–{narration_target_max} 个汉字；"
-                f"总长最多 {narration_limit} 个字符（含标点），留出句末标点的位置。"
-                "用一个自然完整的短句，不要复述 ASR，不要堆叠地名，避免朗读超时。"
-            )
             instruction["narration_max_chars"] = narration_limit
-            instruction["narration_target_chars"] = {"min": narration_target_min, "max": narration_target_max}
-            instruction["narration_length_includes_punctuation"] = True
+            instruction["narration_target_chars"] = {"min": 1, "max": narration_target_max}
+            instruction["narration_length_includes_punctuation"] = False
+            instruction["narration_counting_rule"] = "汉字、字母和数字逐字符计数；标点和空格不计。这是时长粗估参考，不是硬上限，不必填满。"
+            instruction["narration_budget_is_advisory"] = True
             instruction["required_output"]["narration_draft"] = "待确认的中文旁白"
         instruction["story_theme"] = context.get("story_theme", "")
         instruction["previous_selected_segment_ids"] = context.get("previous_selected_segment_ids", [])
@@ -467,6 +597,19 @@ class OllamaSelector:
         reverse_aliases = {cid: alias for alias, cid in aliases.items()}
         max_shots = 1 if beat["duration_budget_us"] <= 5_000_000 else 2
         if aliases:
+            selectable_ids = {item["candidate_id"] for item in evidence if item["selectable"]}
+            capacities = sorted((c["duration_us"] for c in candidates
+                                 if c["candidate_id"] in selectable_ids
+                                 and type(c.get("duration_us")) is int and c["duration_us"] > 0))[:8]
+            # Size the allowance for shorter candidates too: the best-looking
+            # clips need not be the longest. The model still chooses the shots.
+            if sum(capacities[:max_shots]) < beat["duration_budget_us"]:
+                capacity = 0
+                for count, duration in enumerate(capacities, start=1):
+                    capacity += duration
+                    max_shots = max(max_shots, count)
+                    if capacity >= beat["duration_budget_us"]:
+                        break
             compact = []
             for item in evidence:
                 transcript = item["transcript_evidence"] or {}
@@ -485,13 +628,10 @@ class OllamaSelector:
                     },
                 })
             instruction["task"] = (
-                f"看图，为本段主题择优选择1到{max_shots}个镜头，不要全选。候选用短ID C01等表示，"
+                f"看图，为本段主题择优选择1到{max_shots}个镜头；容量允许时让所选源区间总时长覆盖本段预算。候选用短ID C01等表示，"
                 "图格编号不是候选ID。保留来源，不把用户上传或外部画面说成用户经历，不编造人物关系/因果。"
                 "输出完整JSON：shot_order为所选短ID，reasons和roles只包含这些所选短ID，理由每项不超过12字；"
                 "角色只能是establishing/detail/transition/atmosphere/broll。"
-                f"narration_draft是与所选图像相符的单句中文主题旁白，建议 {narration_target_min}–{narration_target_max} 个汉字，"
-                f"总长最多 {narration_limit} 个字符（包括标点），留出句末标点的位置。"
-                "必须用自然完整的主题短句，以。！？之一结束；不要复述ASR、不要堆叠地名、不要残句或截断句尾。"
                 "ASR仅作参考，needs_review不代表已证实；只选selectable=true。"
             )
             instruction["candidates"] = compact
@@ -502,6 +642,25 @@ class OllamaSelector:
             instruction.pop("required_output", None)
             instruction["beat"] = {"purpose": beat["purpose"], "duration_budget_us": beat["duration_budget_us"]}
             instruction["max_selected_shots"] = max_shots
+        if context.get("draft_narration"):
+            # Append after the compact-ID task so both production paths share rules.
+            instruction["task"] += (
+                "同时返回 narration_draft：面向听众的一句自然中文旁白，以。！？之一结束，待人工确认。"
+                "先确定所选画面中可见的主体和状态，只说一个有画面支持的信息；"
+                "不确定动作时描述静态状态，单张关键帧不能证明嬉戏、出发、购买等过程。"
+                "主题和ASR只提供参考，不得盖过实际画面；不要复述ASR、不要堆叠地名。"
+                "不虚构人物意图、地点、感受或用户经历；没有身份依据时不用我/我们。"
+                "使用日常口语，避免画面标签、空泛氛围词和展示/体现/感受美好等套话。"
+                f"本段粗估参考为 {narration_limit} 个朗读字，可在约 {narration_target_max} 字以内构思完整句（不计标点和空格）。"
+                "字数仅为参考，完整表达优先；短段也要先成句，更短也可以，不设最低字数、不凑字数。"
+                "超估算时删次要信息并整句改写，禁止截词、截句或只给残句补句号；以之后配音实测决定能否容纳。"
+                "输出前默读一遍：是否说完，是否有画面依据。示例只示范改写，不能套用到无关画面。"
+            )
+            instruction["narration_examples"] = [
+                {"visible": "猴子坐在台阶旁", "avoid": "猴子在树上嬉戏，展示", "prefer": "猴子坐在台阶旁。"},
+                {"visible": "超市内的货架", "avoid": "我们先去超市买些", "prefer": "货架上摆满了商品。"},
+                {"visible": "餐厅内有许多食客", "avoid": "餐厅里热闹的氛围", "prefer": "店里坐着不少食客。"},
+            ]
         selectable = [reverse_aliases.get(c["candidate_id"], c["candidate_id"]) for c in evidence if c["selectable"]]
         count_limit = min(max_shots, len(selectable)) if aliases else max(1, len(selectable))
         role_names = ["establishing", "transition", "detail", "atmosphere", "broll"]
@@ -523,8 +682,9 @@ class OllamaSelector:
         }
         if context.get("draft_narration"):
             response_schema["properties"]["narration_draft"] = {
+                # No decoding character cap: check the editor safety bound after
+                # generation and request a complete rewrite rather than slicing.
                 "type": "string", "minLength": 1,
-                "maxLength": narration_limit,
             }
             response_schema["required"].append("narration_draft")
         payload: dict[str, Any] = {
@@ -603,6 +763,13 @@ class OllamaSelector:
 
         if not isinstance(body, dict):
             raise _invalid_plan("Ollama 响应必须是 JSON object", beat=beat, context=context, raw=body)
+        if body.get("done") is False or (context.get("draft_narration") and body.get("done") is not True):
+            attempt.update(status="incomplete_response")
+            save_attempt(attempt)
+            error = _invalid_plan("Ollama 推理响应未完成，不能作为选镜或旁白草稿",
+                                  beat=beat, context=context, raw=body)
+            error.detail.update(attempt_record=dict(attempt))
+            raise error
         raw_text = body.get("response")
         try:
             parsed = json.loads(raw_text) if isinstance(raw_text, str) else raw_text

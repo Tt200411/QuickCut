@@ -12,7 +12,10 @@ from pathlib import Path
 import time
 import uuid
 
-ADAPTER_VERSION = "quickcut-jianying-mac-0.1.0"
+from .subtitle_layout import layout_subtitle
+
+# Display wrapping changes serialized text; reject older packages on rebuild.
+ADAPTER_VERSION = "quickcut-jianying-mac-0.2.0"
 TARGET_VERSION = "6.1.0"
 CAPABILITIES = {
     "video": "hard cuts, one picture track, 1x speed",
@@ -119,7 +122,8 @@ def build_draft(timeline: dict, resources: list[dict], draft_directory: Path, *,
                                          "speed": 1.0, "curve_speed": None})
             if kind == "subtitle":
                 mid = _id(draft_id, f"material:text:{item_key}")
-                text = item["text"]
+                text = layout_subtitle(item["text"], width=output["width"],
+                                       height=output["height"]).display_text
                 style = {"fill": {"alpha": 1.0, "content": {"render_type": "solid", "solid": {
                     "alpha": 1.0, "color": [1.0, 1.0, 1.0]}}},
                     "range": [0, len(text.encode("utf-16-le")) // 2], "size": 8.0,

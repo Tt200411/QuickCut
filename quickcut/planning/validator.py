@@ -6,7 +6,7 @@ from typing import Any
 from .contracts import (
     PlanningError, VLM_INVALID_PLAN, check_envelope, check_inputs, check_project, content_hash,
 )
-from .planning import build_outline, build_retrieval_request, candidates_for_beat, evidence_review, MONTAGE_POLICIES, THEMATIC_POLICY
+from .planning import build_outline, build_retrieval_request, candidates_for_beat, evidence_review, MONTAGE_POLICIES, THEMATIC_POLICY, validate_frozen_outline
 
 
 def validate_story_plan(
@@ -53,8 +53,11 @@ def _validate_story_plan(
                                   (manifest, "AssetManifest", "A"), (candidate_set, "CandidateSet", "B")):
             check_envelope(doc, expected_kind=kind, owner=owner)
         available = {**(upstream or {}), "Brief": brief, "AssetManifest": manifest, "CandidateSet": candidate_set}
-        outline = build_outline(brief)
         request = available.get("RetrievalRequest")
+        frozen = plan.get("decision_provenance", {}).get("frozen_outline")
+        if frozen is not None and request is None:
+            raise PlanningError(VLM_INVALID_PLAN, "校验冻结大纲需要原 RetrievalRequest", retryable=False)
+        outline = build_outline(brief) if frozen is None else validate_frozen_outline(brief, request, frozen)
         if request is None:
             request = build_retrieval_request(brief, manifest, outline)
             warnings.append("未提供 RetrievalRequest，按默认检索规则核对逐段候选")

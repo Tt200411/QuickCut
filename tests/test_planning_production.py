@@ -1,8 +1,10 @@
 """Offline contract tests; real model acceptance is a separate recorded run."""
 import copy
 import hashlib
+import http.client
 import io
 import json
+from pathlib import Path
 
 import pytest
 from PIL import Image
@@ -71,6 +73,140 @@ def draft_for(inputs, tmp_path):
 def confirm(draft):
     return confirm_draft(draft, approved_text_by_beat={b["beat_id"]: b["narration_draft"] for b in draft["beats"]},
                          reviewer="测试确认者", reviewed_at="2026-11-16T10:00:00+08:00")
+
+
+def _rehash_draft(draft):
+    draft.pop("draft_id", None)
+    draft["draft_id"] = content_hash(draft)
+
+
+def test_legacy_single_sentence_draft_keeps_frozen_three_beats(inputs, tmp_path, model, monkeypatch):
+    brief, manifest, candidates, _ = inputs
+    # Historical C used three beats even for this one-clause brief. Its actual
+    # request, candidate documents and model responses remain the confirmation inputs.
+    legacy_outline = build_outline(brief)
+    brief["requirements"]["story"] = "林间风景"
+    for beat, event in zip(legacy_outline, ["林间风景（建立出发情境）", "林间风景", "林间风景（完成情绪收束）"]):
+        beat["wish"]["event"] = event
+    request = build_retrieval_request(brief, manifest, legacy_outline, broll_queries=False)
+    with monkeypatch.context() as patch:
+        patch.setattr("quickcut.planning.production.build_outline", lambda _: copy.deepcopy(legacy_outline))
+        draft = draft_for((brief, manifest, candidates, request), tmp_path)
+    draft.pop("outline")  # Old files did not have the new explicit outline field.
+    for beat, limit in zip(draft["beats"], [23, 35, 10]):
+        beat["narration_max_chars"] = limit
+    _rehash_draft(draft)
+    frozen = copy.deepcopy(draft)
+    assert [b["beat_id"] for b in build_outline(brief)] == ["beat-01"]
+
+    def no_regeneration(*args, **kwargs):
+        raise AssertionError("Confirmation must not rebuild a frozen outline or rerun the model")
+    monkeypatch.setattr("quickcut.planning.planning.build_outline", no_regeneration)
+    monkeypatch.setattr("quickcut.planning.validator.build_outline", no_regeneration)
+    monkeypatch.setattr("quickcut.planning.selection.open_ollama", no_regeneration)
+    texts = {beat["beat_id"]: "林间风景静静展开。" for beat in draft["beats"]}
+    result = confirm_draft(draft, approved_text_by_beat=texts, reviewer="离线回放审核",
+                           reviewed_at="2026-11-19T10:00:00+08:00", confirmation_kind="assistant_review",
+                           plan_revision=2)
+    story = result.story_plan
+    assert story["status"] == "ready_for_edit"
+    assert story["revision"] == 2
+    assert [beat["beat_id"] for beat in story["beats"]] == ["beat-open", "beat-middle", "beat-close"]
+    assert [beat["wish"] for beat in story["decision_provenance"]["frozen_outline"]] == [beat["wish"] for beat in legacy_outline]
+    assert story["decision_provenance"]["input_hashes"] == frozen["input_hashes"]
+    assert result.run["raw_responses"] == frozen["model_calls"]
+    assert draft == frozen
+    assert len(model) == 3
+    assert validate_story_plan(story, brief=brief, manifest=manifest, candidate_set=candidates,
+                               upstream=draft["inputs"])["ok"]
+    texts["beat-close"] = "这句话比原来保存的十字预算更长。"
+    longer = confirm_draft(draft, approved_text_by_beat=texts, reviewer="离线回放审核",
+                           reviewed_at="2026-11-19T10:00:00+08:00")
+    assert longer.story_plan["narration_cues"][-1]["text"] == texts["beat-close"]
+    assert draft == frozen  # Legacy estimated limits remain frozen, but are advisory.
+
+
+@pytest.mark.parametrize("field,value", [("beat_id", "beat-forged"), ("retrieval_query_id", "query-forged"),
+                                         ("duration_budget_us", 10_000_001), ("order", 1),
+                                         ("wish", {"event": "伪造主题", "assertion": "user_wish", "verified": False})])
+def test_frozen_outline_cannot_override_upstream_even_with_new_draft_hash(inputs, tmp_path, model, field, value):
+    draft = draft_for(inputs, tmp_path)
+    draft["outline"][0][field] = value
+    _rehash_draft(draft)
+    with pytest.raises(PlanningError, match="冻结大纲"):
+        confirm(draft)
+
+
+def test_validator_checks_frozen_outline_budget_and_request_identity(inputs, tmp_path, model):
+    draft = draft_for(inputs, tmp_path)
+    result = confirm(draft)
+    for field, value in [("duration_budget_us", 10_000_001), ("beat_id", "beat-forged")]:
+        story = copy.deepcopy(result.story_plan)
+        story["decision_provenance"]["frozen_outline"][0][field] = value
+        report = validate_story_plan(story, brief=inputs[0], manifest=inputs[1], candidate_set=inputs[2],
+                                     upstream=draft["inputs"])
+        assert not report["ok"]
+        assert any("冻结大纲" in error for error in report["errors"])
+    # Matching outline/query edits cannot grant extra time beyond the frozen Brief.
+    draft["outline"][0]["duration_budget_us"] += 1
+    draft["inputs"]["RetrievalRequest"]["queries"][0]["duration_budget_us"] += 1
+    draft["input_hashes"]["RetrievalRequest"] = content_hash(draft["inputs"]["RetrievalRequest"])
+    _rehash_draft(draft)
+    with pytest.raises(PlanningError, match="冻结大纲"):
+        confirm(draft)
+
+
+@pytest.mark.parametrize("story_text,durations,expected_limits,expected_counts", [
+    ("林间风景", [10, 10, 10, 10], [3], [3]),
+    ("林间光影，沿路风景，轻松收束", [10, 10, 10, 10], [2, 2, 1], [1, 2, 1]),
+    ("林间风景", [30, 10, 10, 10], [3], [3]),
+])
+def test_selector_capacity_covers_thirty_seconds_without_changing_short_beats(
+        inputs, tmp_path, monkeypatch, story_text, durations, expected_limits, expected_counts):
+    brief, manifest, _, _ = inputs
+    brief["requirements"]["story"] = story_text
+    fourth_asset, fourth_segment = copy.deepcopy(manifest["assets"][0]), copy.deepcopy(manifest["segments"][0])
+    fourth_asset.update(asset_id="asset-3", uri="source-3.mp4")
+    fourth_segment.update(segment_id="segment-3", asset_id="asset-3")
+    manifest["assets"].append(fourth_asset)
+    manifest["segments"].append(fourth_segment)
+    for asset, duration in zip(manifest["assets"], durations):
+        asset["duration_us"] = duration * 1_000_000
+    for segment, duration in zip(manifest["segments"], durations):
+        segment["source_range_us"] = {"begin": 0, "end": duration * 1_000_000}
+    request = build_retrieval_request(brief, manifest, build_outline(brief), broll_queries=False)
+    candidates = envelope("CandidateSet", "candidates-live", "project-live", 1, fixtures_only=False, owner="B",
+                          inputs=[ref(manifest), ref(request)])
+    candidates.update(status="success", results=[
+        {"query_id": query["query_id"], "status": "ok", "candidates": [
+            {"candidate_id": f"q{i}-candidate-{j}", "segment_id": segment["segment_id"], "asset_revision": 1,
+             "ranking_score": 0.9 - j * .01, "evidence": ["actual_keyframe"]}
+            for j, segment in enumerate(manifest["segments"])]}
+        for i, query in enumerate(request["queries"])])
+    payloads = []
+    def respond(request, timeout):
+        payload = json.loads(request.data)
+        payloads.append(payload)
+        prompt = json.loads(payload["prompt"])
+        count = (prompt["beat"]["duration_budget_us"] + 9_999_999) // 10_000_000
+        # The model prefers the shorter clips even when one long clip could
+        # cover the entire beat. The schema must permit that genuine choice.
+        ids = [c["candidate_id"] for c in prompt["candidates"] if c["selectable"]
+               and c["source_range_us"]["end"] - c["source_range_us"]["begin"] == 10_000_000][:count]
+        answer = {"shot_order": ids, "roles": {cid: "atmosphere" for cid in ids},
+                  "reasons": {cid: "画面符合主题" for cid in ids}, "narration_draft": "林间风景静静展开。"}
+        return io.BytesIO(json.dumps({"model": payload["model"], "done": True, "response": json.dumps(answer)}).encode())
+    monkeypatch.setattr("quickcut.planning.selection.open_ollama", respond)
+    draft = draft_for((brief, manifest, candidates, request), tmp_path)
+    assert [p["format"]["properties"]["shot_order"]["maxItems"] for p in payloads] == expected_limits
+    assert [len(b["selected_candidate_ids"]) for b in draft["beats"]] == expected_counts
+    if durations[0] == 30:
+        assert draft["beats"][0]["selected_candidate_ids"] == ["q0-candidate-1", "q0-candidate-2", "q0-candidate-3"]
+    result = confirm(draft)
+    assert result.story_plan["status"] == "ready_for_edit"
+    assert sum(shot["suggested_duration_us"] for beat in result.story_plan["beats"] for shot in beat["shots"]) == 30_000_000
+    assert all(shot["decided_by"].startswith("model:") for beat in result.story_plan["beats"] for shot in beat["shots"])
+    assert len(payloads) == len(expected_counts)  # Confirmation makes no extra calls.
 
 
 def test_live_draft_requires_confirmation_and_preserves_model_evidence(inputs, tmp_path, model):
@@ -174,13 +310,13 @@ def test_assistant_confirmation_is_not_recorded_as_human(inputs, tmp_path, model
     assert result.story_plan["narration_cues"][0]["text_source"] == "assistant_review"
 
 
-def test_close_narration_budget_rejected_before_tts(inputs, tmp_path, model):
+def test_close_narration_estimate_does_not_block_complete_text_before_tts(inputs, tmp_path, model):
     draft = draft_for(inputs, tmp_path)
-    assert draft["beats"][-1]["narration_max_chars"] == 18
+    assert draft["beats"][-1]["narration_max_chars"] == 10
     texts = {b["beat_id"]: b["narration_draft"] for b in draft["beats"]}
     texts["beat-close"] = "这是一段远远超过五秒钟朗读预算的过长中文旁白。"
-    with pytest.raises(PlanningError, match="最多 18 字"):
-        confirm_draft(draft, approved_text_by_beat=texts, reviewer="测试者", reviewed_at="2026-11-16T10:00:00+08:00")
+    result = confirm_draft(draft, approved_text_by_beat=texts, reviewer="测试者", reviewed_at="2026-11-16T10:00:00+08:00")
+    assert result.story_plan["narration_cues"][-1]["text"] == texts["beat-close"]
 
 
 def test_failed_real_request_keeps_replayable_input_evidence(inputs, tmp_path, monkeypatch):
@@ -389,20 +525,87 @@ def test_short_alias_prompt_bounds_text_but_keeps_full_asr_archive(inputs, tmp_p
     assert "candidate-0" not in call["request"]["payload"]["prompt"]
 
 
-def test_narration_schema_budget_includes_punctuation_and_targets_short_single_sentence(inputs, tmp_path, model):
+def test_narration_prompt_separates_speech_budget_from_decoding_bound(inputs, tmp_path, model):
     draft = draft_for(inputs, tmp_path)
     for beat, request in zip(draft["beats"], model):
         limit = beat["narration_max_chars"]
         prompt = json.loads(request["prompt"])
-        # Real Qwen previously generated 27 spoken characters under maxLength=31
-        # for a 23-character beat. The grammar must forbid that first response.
-        assert request["format"]["properties"]["narration_draft"]["maxLength"] == limit
-        assert prompt["narration_length_includes_punctuation"] is True
-        assert prompt["narration_target_chars"] == {"min": max(4, int(limit * 0.6)), "max": limit - 1}
+        assert "maxLength" not in request["format"]["properties"]["narration_draft"]
+        assert prompt["narration_length_includes_punctuation"] is False
+        assert prompt["narration_target_chars"] == {"min": 1, "max": max(16, limit)}
+        assert prompt["narration_budget_is_advisory"] is True
         assert "不要复述ASR" in prompt["task"] and "不要堆叠地名" in prompt["task"]
-        assert f"总长最多 {limit} 个字符（包括标点）" in prompt["task"]
-    assert model[0]["format"]["properties"]["narration_draft"]["maxLength"] == 37
-    assert model[2]["format"]["properties"]["narration_draft"]["maxLength"] == 18
+        assert f"粗估参考为 {limit} 个朗读字" in prompt["task"]
+        assert "不设最低字数" in prompt["task"]
+        assert "单张关键帧不能证明" in prompt["task"]
+        assert "禁止截词、截句" in prompt["task"]
+        assert "猴子坐在台阶旁。" in {example["prefer"] for example in prompt["narration_examples"]}
+    assert draft["beats"][0]["narration_max_chars"] == 23
+    assert draft["beats"][2]["narration_max_chars"] == 10
+
+
+def test_full_and_short_candidate_ids_share_narration_rules(inputs, tmp_path, model):
+    draft = draft_for(inputs, tmp_path)
+    selector = OllamaSelector(project_root=tmp_path)
+    beat = build_outline(inputs[0])[0]
+    for short_ids in (False, True):
+        selector.select(beat=beat, candidates=draft["beats"][0]["candidates"], context={
+            "thematic_montage": True, "require_visual": True, "draft_narration": True,
+            "contact_sheet": True, "short_candidate_ids": short_ids,
+        })
+    full, short = (json.loads(request["prompt"]) for request in model[-2:])
+    for field in ("narration_max_chars", "narration_target_chars", "narration_counting_rule",
+                  "narration_length_includes_punctuation", "narration_examples"):
+        assert full[field] == short[field]
+    assert full["task"].split("同时返回 narration_draft：")[1] == short["task"].split("同时返回 narration_draft：")[1]
+
+
+@pytest.mark.parametrize("text", [
+    "餐厅里热闹的氛围。", "我们先去超市买些。", "也别忘了多带几。", "猴子在树上嬉戏，展示。", "车窗外，。",
+])
+def test_period_does_not_hide_obvious_unfinished_phrase(text):
+    from quickcut.planning.selection import narration_review
+    review = narration_review(text, 15_000_000)
+    assert review["status"] == "requires_edit"
+    assert "NARRATION_INCOMPLETE_SENTENCE" in {warning["code"] for warning in review["warnings"]}
+
+
+@pytest.mark.parametrize("text", [
+    "猴子坐在台阶旁。", "货架上摆满了商品。", "店里坐着不少食客。", "先把雨伞带上。",
+    "走走停停。", "还想再看几眼。", "这是模型展示。", "路上没有但是。",
+    "衣服多带几件。", "行李少带些。", "饮料先拿几瓶。", "我们衣服多带几件。",
+])
+def test_complete_short_sentences_are_not_rejected_by_tail_heuristics(text):
+    from quickcut.planning.selection import narration_review
+    assert narration_review(text, 5_000_000)["warnings"] == []
+
+
+def test_speech_estimate_excludes_punctuation_and_is_only_advisory():
+    from quickcut.planning.selection import narration_review
+    assert narration_review("猴子，坐在台阶旁。", 4_300_000)["warnings"] == []
+    review = narration_review("猴子坐在台阶旁边休息。", 4_300_000)
+    assert not review["warnings"]
+    assert review["status"] == "pending_confirmation"
+    assert review["advisories"][0]["code"] == "NARRATION_DURATION_ESTIMATE"
+    assert review["estimated_duration_us"] > 4_300_000
+
+
+@pytest.mark.parametrize("text,budget_us,max_chars", [
+    ("我们沿着小路慢慢地往前走。", 4_000_000, 15),  # Saved PR #10 reference.
+    ("好。", 1_000_000, None),  # Minimum character reference exceeds short budgets.
+])
+def test_duration_advisory_accounts_for_saved_or_minimum_character_reference(text, budget_us, max_chars):
+    from quickcut.planning.selection import narration_review
+    review = narration_review(text, budget_us, max_chars=max_chars)
+    assert review["character_count"] <= review["max_chars"]
+    assert review["estimated_duration_us"] > budget_us
+    assert review["warnings"] == []
+    assert review["status"] == "pending_confirmation"
+    assert review["advisories"][0]["code"] == "NARRATION_DURATION_ESTIMATE"
+    assert f"字数参考为{review['max_chars']}字" in review["advisories"][0]["message"]
+    assert f"计划画面{budget_us / 1_000_000:g}秒" in review["advisories"][0]["message"]
+    if max_chars is not None:
+        assert review["max_chars"] == max_chars
 
 
 def test_unknown_short_alias_is_never_silently_mapped(inputs, tmp_path, monkeypatch):
@@ -419,8 +622,10 @@ def test_unknown_short_alias_is_never_silently_mapped(inputs, tmp_path, monkeypa
 
 
 @pytest.mark.parametrize("bad_text,warning_code", [
-    ("沿着山林间的小路缓缓向前走感受这一刻自然带来的宁静美丽和远处慢慢落下的暖色光线。", "NARRATION_TOO_LONG"),
+    ("餐厅里热闹的氛围。", "NARRATION_INCOMPLETE_SENTENCE"),
     ("也别忘了多带几", "NARRATION_INCOMPLETE_SENTENCE"),
+    ("我们先去超市买些。", "NARRATION_INCOMPLETE_SENTENCE"),
+    ("猴子在树上嬉戏，展示。", "NARRATION_INCOMPLETE_SENTENCE"),
     ("A peaceful forest.", "NARRATION_NON_CHINESE"),
     ("", "NARRATION_EMPTY"),
 ])
@@ -430,6 +635,8 @@ def test_bad_narration_preserves_real_selection_but_blocks_confirmation(inputs, 
     requests = []
     def bad_first(request, *, timeout):
         requests.append(json.loads(request.data))
+        if set(requests[-1]["format"]["properties"]) == {"narration_draft"}:
+            return io.BytesIO(json.dumps({"done": True, "response": json.dumps({"narration_draft": bad_text})}).encode())
         if len(requests) == 1:
             answer = {"shot_order": ["C01"], "reasons": {"C01": "主题一致"},
                       "roles": {"C01": "atmosphere"}, "narration_draft": bad_text}
@@ -438,7 +645,7 @@ def test_bad_narration_preserves_real_selection_but_blocks_confirmation(inputs, 
         return original(request, timeout=timeout)
     monkeypatch.setattr(selection, "open_ollama", bad_first)
     draft = draft_for(inputs, tmp_path)
-    assert len(requests) == 3
+    assert len(requests) == 5  # Three selections, two text-only repairs.
     assert draft["status"] == "needs_review"
     assert draft["beats"][0]["narration_draft"] == bad_text
     assert draft["beats"][0]["narration_review"]["status"] == "requires_edit"
@@ -458,7 +665,96 @@ def test_bad_narration_preserves_real_selection_but_blocks_confirmation(inputs, 
     assert result.story_plan["status"] == "ready_for_edit"
     assert result.story_plan["narration_cues"][0]["text"] == "林间光影。"
     assert result.story_plan["narration_cues"][0]["text_source"] == "assistant_review"
-    assert len(requests) == 3 and draft == original_draft
+    assert len(requests) == 5 and draft == original_draft
+
+
+@pytest.mark.parametrize("initial", ["餐厅内部热闹，吉", "餐厅里热闹的氛围。", "店里坐着许多正在用餐的食客，远处也摆着好几张餐桌，门口还有几位客人。"])
+def test_narration_only_rewrite_preserves_selection_and_original_evidence(inputs, tmp_path, model, monkeypatch, initial):
+    from quickcut.planning import selection
+    original = selection.open_ollama
+    requests = []
+    def respond(request, *, timeout):
+        payload = json.loads(request.data)
+        requests.append(payload)
+        if set(payload["format"]["properties"]) == {"narration_draft"}:
+            prompt = json.loads(payload["prompt"])
+            assert prompt["previous_text"] == initial
+            assert prompt["previous_tail"] == initial[-16:]
+            assert prompt["selected_candidate_ids"] == ["candidate-0"]
+            assert {item["candidate_id"] for item in prompt["image_mapping"]} == {"candidate-0"}
+            assert "maxLength" not in payload["format"]["properties"]["narration_draft"]
+            answer = {"narration_draft": "店里坐着不少食客。"}
+            return io.BytesIO(json.dumps({"done": True, "response": json.dumps(answer)}).encode())
+        response = original(request, timeout=timeout)
+        if len(requests) == 1:
+            body = json.loads(response.read())
+            answer = json.loads(body["response"])
+            answer["narration_draft"] = initial
+            body["response"] = json.dumps(answer)
+            return io.BytesIO(json.dumps(body).encode())
+        return response
+    monkeypatch.setattr(selection, "open_ollama", respond)
+    draft = draft_for(inputs, tmp_path)
+    first = draft["beats"][0]
+    raw = first["selection"]["raw_response"]
+    assert len(requests) == len(draft["model_attempts"]) == 4
+    assert first["narration_draft"] == "店里坐着不少食客。"
+    assert json.loads(raw["body"]["response"])["narration_draft"] == initial
+    assert raw["canonicalized"]["narration_draft"] == initial
+    assert first["selected_candidate_ids"] == ["candidate-0"]
+    assert raw["narration_rewrites"][0]["accepted"] is True
+    assert raw["narration_result"]["approved"] is False
+    assert len(list((tmp_path / "planning-evidence").glob("*.json"))) == 4
+    assert confirm(draft).story_plan["narration_cues"][0]["text"] == first["narration_draft"]
+    assert len(requests) == 4
+
+
+@pytest.mark.parametrize("failure", ["timeout", "incomplete_body", "bad_status", "incomplete_error_body"])
+def test_rewrite_service_failure_keeps_valid_selection_and_complete_long_text(inputs, tmp_path, model, monkeypatch, failure):
+    from quickcut.planning import selection
+    original = selection.open_ollama
+    long_text = "店里坐着许多正在用餐的食客，远处也摆着好几张餐桌，门口还有几位客人。"
+    rewrite_calls = []
+    class IncompleteBody(io.BytesIO):
+        def read(self, *args):
+            raise http.client.IncompleteRead(b'{"done":', 100)
+    def respond(request, *, timeout):
+        payload = json.loads(request.data)
+        if set(payload["format"]["properties"]) == {"narration_draft"}:
+            rewrite_calls.append(payload)
+            if failure == "incomplete_body":
+                return IncompleteBody()
+            if failure == "bad_status":
+                raise http.client.BadStatusLine("incomplete HTTP response")
+            if failure == "incomplete_error_body":
+                raise selection.urllib.error.HTTPError(request.full_url, 500, "model unavailable", {}, IncompleteBody())
+            raise TimeoutError("rewrite unavailable")
+        response = original(request, timeout=timeout)
+        body = json.loads(response.read())
+        answer = json.loads(body["response"])
+        answer["narration_draft"] = long_text
+        body["response"] = json.dumps(answer)
+        return io.BytesIO(json.dumps(body).encode())
+    monkeypatch.setattr(selection, "open_ollama", respond)
+    draft = draft_for(inputs, tmp_path)
+    for beat in draft["beats"]:
+        assert beat["narration_draft"] == long_text
+        assert not beat["narration_review"]["warnings"]
+    raw = draft["model_calls"][0]["raw_response"]
+    assert raw["narration_rewrites"][0]["status"] == "failed"
+    assert len(rewrite_calls) == 2  # The same complete text already fits the 15-second middle beat.
+    assert len(draft["model_attempts"]) == len(draft["beats"]) + 2
+    for call in draft["model_calls"]:
+        repairs = call["raw_response"].get("narration_rewrites", [])
+        if not repairs:
+            continue
+        assert len(repairs) == 1 and repairs[0]["retryable"] is False
+        archive = json.loads(Path(repairs[0]["archive_path"]).read_text())
+        assert archive == repairs[0]
+        if failure in {"incomplete_body", "incomplete_error_body"}:
+            assert archive["raw_body"] == '{"done":'
+    assert raw["narration_result"]["text"] == long_text
+    assert confirm(draft).story_plan["status"] == "ready_for_edit"
 
 
 def test_each_incomplete_draft_sentence_is_reviewable_without_rerunning_real_selection(inputs, tmp_path, monkeypatch):
@@ -470,7 +766,118 @@ def test_each_incomplete_draft_sentence_is_reviewable_without_rerunning_real_sel
         return io.BytesIO(json.dumps({"done": True, "response": json.dumps(answer)}).encode())
     monkeypatch.setattr("quickcut.planning.selection.open_ollama", incomplete)
     draft = draft_for(inputs, tmp_path)
-    assert len(requests) == 3
+    assert len(requests) == 9  # Two bounded format retries per beat; never reselect.
     assert all(beat["narration_review"]["status"] == "requires_edit" for beat in draft["beats"])
     with pytest.raises(PlanningError, match="句末标点"):
         confirm(draft)
+
+
+@pytest.mark.parametrize("done", [False, None])
+def test_incomplete_inference_stops_before_narration_rewrite(inputs, tmp_path, model, monkeypatch, done):
+    from quickcut.planning import selection
+    original = selection.open_ollama
+    def respond(request, *, timeout):
+        body = json.loads(original(request, timeout=timeout).read())
+        body["done"] = done
+        return io.BytesIO(json.dumps(body).encode())
+    monkeypatch.setattr(selection, "open_ollama", respond)
+    with pytest.raises(PlanningError, match="推理响应未完成") as exc:
+        draft_for(inputs, tmp_path)
+    assert len(model) == 1
+    assert not exc.value.detail["attempt_record"]["inference_executed"]
+    archives = list((tmp_path / "planning-evidence").glob("*.json"))
+    assert len(archives) == 1
+    assert json.loads(archives[0].read_text())["status"] == "incomplete_response"
+
+
+@pytest.mark.parametrize("failure_at", ["initial_write", "rewrite_request", "rewrite_response", "final_selection"])
+def test_archive_write_failure_is_structured_and_stops_draft(inputs, tmp_path, model, monkeypatch, failure_at):
+    from pathlib import Path
+    from quickcut.planning import selection
+    original_call = selection.open_ollama
+    original_write = Path.write_text
+    def respond(request, *, timeout):
+        payload = json.loads(request.data)
+        if set(payload["format"]["properties"]) == {"narration_draft"}:
+            answer = {"narration_draft": "店里坐着不少食客。"}
+            return io.BytesIO(json.dumps({"done": True, "response": json.dumps(answer)}).encode())
+        body = json.loads(original_call(request, timeout=timeout).read())
+        answer = json.loads(body["response"])
+        answer["narration_draft"] = "餐厅内部热闹，吉"
+        body["response"] = json.dumps(answer)
+        return io.BytesIO(json.dumps(body).encode())
+    def write(path, data, *args, **kwargs):
+        if path.parent.name == "planning-evidence":
+            record = json.loads(data)
+            fail = (
+                failure_at == "initial_write" and record.get("status") == "requested"
+                or failure_at == "rewrite_request" and record.get("kind") == "narration_rewrite" and record.get("status") == "requested"
+                or failure_at == "rewrite_response" and record.get("kind") == "narration_rewrite" and record.get("status") == "reviewed"
+                or failure_at == "final_selection" and "narration_result" in record
+            )
+            if fail:
+                raise OSError("simulated archive disk failure")
+        return original_write(path, data, *args, **kwargs)
+    monkeypatch.setattr(selection, "open_ollama", respond)
+    monkeypatch.setattr(Path, "write_text", write)
+    with pytest.raises(PlanningError, match="证据归档读写失败") as exc:
+        draft_for(inputs, tmp_path)
+    assert exc.value.detail["archive_io_error"] is True
+    assert "simulated archive disk failure" in exc.value.detail["error"]
+    assert len(model) == (0 if failure_at == "initial_write" else 1)
+
+
+@pytest.mark.parametrize("bad_response", ["not-json", {"done": False},
+    {"done": True, "response": {"narration_draft": "短句", "shot_order": []}}])
+def test_rewrite_format_failure_retries_text_only_with_feedback(inputs, tmp_path, model, monkeypatch, bad_response):
+    from quickcut.planning import selection
+    original = selection.open_ollama
+    rewrites = []
+    def respond(request, *, timeout):
+        payload = json.loads(request.data)
+        if set(payload["format"]["properties"]) == {"narration_draft"}:
+            rewrites.append(json.loads(payload["prompt"]))
+            answer = bad_response if len(rewrites) == 1 else {"done": True, "response": {"narration_draft": "树影落在路边。"}}
+            return io.BytesIO((answer if isinstance(answer, str) else json.dumps(answer)).encode())
+        body = json.loads(original(request, timeout=timeout).read())
+        if len(model) == 1:
+            answer = json.loads(body["response"])
+            answer["narration_draft"] = "餐厅内部热闹，吉"
+            body["response"] = json.dumps(answer)
+        return io.BytesIO(json.dumps(body).encode())
+    monkeypatch.setattr(selection, "open_ollama", respond)
+    draft = draft_for(inputs, tmp_path)
+    assert len(model) == 3 and len(rewrites) == 2
+    assert rewrites[1]["previous_rewrite_feedback"]["error"]
+    assert rewrites[0]["selected_candidate_ids"] == rewrites[1]["selected_candidate_ids"]
+    assert draft["beats"][0]["narration_draft"] == "树影落在路边。"
+    assert len(draft["model_attempts"]) == 5
+
+
+@pytest.mark.parametrize("missing_visual", [False, True])
+def test_rewrite_images_follow_selection_order_and_require_all_selected_evidence(tmp_path, monkeypatch, missing_visual):
+    from quickcut.planning.selection import Selection
+    selector = OllamaSelector(project_root=tmp_path)
+    chosen = Selection(beat_id="beat-test", ordered_candidate_ids=["b", "a"],
+                       narration_draft="餐厅内部热闹，吉", raw_response={})
+    calls = []
+    def images(candidates, *, image_mapping):
+        assert [c["candidate_id"] for c in candidates] == ["b", "a"]
+        image_mapping.extend({"candidate_id": cid, "image_index": i} for i, cid in enumerate(["b"] if missing_visual else ["b", "a"]))
+        return ["fixture"]
+    def respond(request, *, timeout):
+        calls.append(request)
+        return io.BytesIO(json.dumps({"done": True, "response": {"narration_draft": "树影落在路边。"}}).encode())
+    monkeypatch.setattr(selector, "_images", images)
+    monkeypatch.setattr("quickcut.planning.selection.open_ollama", respond)
+    selector._repair_narration(chosen, beat={"purpose": "开场", "duration_budget_us": 10_000_000},
+        candidates=[{"candidate_id": cid, "origin": "user"} for cid in ["a", "b"]],
+        context={"require_visual": True})
+    assert len(calls) == (0 if missing_visual else 1)
+    assert chosen.ordered_candidate_ids == ["b", "a"]
+    if missing_visual:
+        assert chosen.narration_draft == "餐厅内部热闹，吉"
+        assert chosen.raw_response["narration_rewrite_skip_reason"] == "selected_visual_evidence_unavailable"
+        assert chosen.raw_response["narration_result"]["review"]["warnings"]
+    else:
+        assert chosen.narration_draft == "树影落在路边。"

@@ -126,6 +126,60 @@ def test_review_exposes_only_frozen_candidate_view(browser):
     assert "inputs" not in data["draft"] and "model_calls" not in data["draft"]
 
 
+@pytest.mark.parametrize("text", ["我们沿着公园小路慢慢走，看看身边的花草。", "我们沿着公园小路慢慢走，看看身边的花草。" * 2])
+def test_duration_advisory_is_public_and_does_not_block_confirmation(browser, text):
+    client, jobs, submitted = browser
+    job_id = review_ready(client, jobs)
+    body = {"draft_id": frozen_draft()["draft_id"], "review_revision": 0,
+            "selection_overrides": {"beat-open": ["c1"]}, "draft_text_edits": {"beat-open": text}}
+    response = client.post(f"/api/jobs/{job_id}/selection", json=body)
+    assert response.status_code == 200, response.text
+    beat = response.json()["draft"]["beats"][0]
+    review = beat["narration_review"]
+    count = sum(char.isalnum() for char in text)
+    assert count > beat["narration_max_chars"] == review["max_chars"] == 10
+    assert review["character_count"] == count
+    assert review["estimated_duration_us"] == round((count / 2.5 + 0.8) * 1_000_000)
+    assert "以配音实测为准" in review["estimate_basis"]
+    assert review["advisories"][0]["code"] == "NARRATION_DURATION_ESTIMATE"
+    assert beat["review_warnings"] == review["warnings"] == []
+    assert review["status"] == "pending_confirmation" and review["approved"] is False
+    assert client.get(f"/api/jobs/{job_id}").json()["draft"]["beats"][0]["narration_review"] == review
+    assert len(submitted) == 1
+    approve = confirmation()
+    approve.update(review_revision=1, approved_text_by_beat={"beat-open": text})
+    response = client.post(f"/api/jobs/{job_id}/confirm", json=approve)
+    assert response.status_code == 200, response.text
+    assert submitted[-1][2]["approved_text_by_beat"] == {"beat-open": text}
+
+
+@pytest.mark.parametrize("length", [160, 161])
+def test_narration_editor_limit_counts_punctuation_and_spaces(browser, length):
+    client, jobs, submitted = browser
+    job_id = review_ready(client, jobs)
+    prefix, suffix = "我们走进公园", "慢慢看风景。"
+    text = prefix + ("， " * length)[:length - len(prefix) - len(suffix)] + suffix
+    assert len(text) == length
+    body = {"draft_id": frozen_draft()["draft_id"], "review_revision": 0,
+            "selection_overrides": {"beat-open": ["c1"]}, "draft_text_edits": {"beat-open": text}}
+    response = client.post(f"/api/jobs/{job_id}/selection", json=body)
+    if length == 161:
+        assert response.status_code == 422
+        assert not jobs.get(job_id).get("draft_text_edits")
+    else:
+        assert response.status_code == 200, response.text
+    approve = confirmation()
+    approve.update(review_revision=1 if length == 160 else 0, approved_text_by_beat={"beat-open": text})
+    response = client.post(f"/api/jobs/{job_id}/confirm", json=approve)
+    if length == 161:
+        assert response.status_code == 422
+        assert "字符" in response.json()["detail"]
+        assert len(submitted) == 1
+    else:
+        assert response.status_code == 200, response.text
+        assert submitted[-1][2]["approved_text_by_beat"]["beat-open"] == text
+
+
 def test_confirmation_records_real_actor_and_server_time(browser):
     client, jobs, submitted = browser
     job_id = review_ready(client, jobs)
@@ -148,8 +202,10 @@ def test_confirmation_records_real_actor_and_server_time(browser):
     lambda p: p["boundaries"][0].update(shot_index=True),
     lambda p: p["boundaries"][0]["source_range_us"].update(begin=-1),
     lambda p: p["boundaries"][0]["source_range_us"].update(end=16_000_000),
-    lambda p: p["approved_text_by_beat"].update({"beat-open": "非常非常非常非常非常非常非常长的旁白"}),
+    lambda p: p["approved_text_by_beat"].update({"beat-open": ""}),
+    lambda p: p["approved_text_by_beat"].update({"beat-open": "   "}),
     lambda p: p["approved_text_by_beat"].update({"beat-open": "林间枝条"}),
+    lambda p: p["approved_text_by_beat"].update({"beat-open": "我们买些。"}),
     lambda p: p["approved_text_by_beat"].update({"beat-open": "Nature."}),
 ])
 def test_unapproved_stale_or_invalid_boundaries_never_start_voice(browser, mutation):
@@ -198,6 +254,34 @@ def test_completed_job_returns_to_review_and_keeps_the_film(browser):
     assert view["result"]["duration_us"] == 30_000_000
     assert view["downloads"]["video"].endswith("/files/video")
     assert view["draft"]["beats"]
+
+
+def test_review_can_open_previous_export_without_approving_new_edits(browser, monkeypatch):
+    client, jobs, submitted = browser
+    job_id = review_ready(client, jobs)
+    result = {"duration_us": 30_000_000, "revision": 1, "package_directory": "export-r1"}
+    jobs.update(job_id, status="completed", stage="completed", result=result)
+    write_json(jobs.directory(job_id) / "run-report.json", result)
+    opened = []
+    def open_previous(root):
+        opened.append(root)
+        return {"status": "opened", "draft_name": "previous-r1"}
+    monkeypatch.setattr(jobs, "open_editor", open_previous)
+    assert client.post(f"/api/jobs/{job_id}/return-review").status_code == 200
+    submitted.clear()
+    response = client.post(f"/api/jobs/{job_id}/open-editor")
+    assert response.status_code == 200, response.text
+    view = client.get(f"/api/jobs/{job_id}").json()
+    assert view["status"] == "needs_review" and view["result"]["revision"] == 1
+    assert view["result"]["package_directory"] == "export-r1"
+    assert view["result"]["editor"]["draft_name"] == "previous-r1"
+    assert opened == [jobs.directory(job_id)] and not submitted
+    jobs.active.add(job_id)
+    try:
+        assert client.post(f"/api/jobs/{job_id}/open-editor").status_code == 409
+        assert len(opened) == 1
+    finally:
+        jobs.active.discard(job_id)
 
 
 def test_failed_render_returns_to_review_without_reupload(browser):
